@@ -1,7 +1,7 @@
 {
-  "name": "newapp",
+  "name": "mymtn-nextgen-docs",
   "version": "1.0.0",
-  "description": "this is a 5-card slider for ioco assessment",
+  "description": "This is Mymtn nextgen documentation",
   "scripts": {
     "start": "react-scripts start",
     "watch:dev:sass": "node-sass resources/sass/main.scss public/css/style.css -w",
