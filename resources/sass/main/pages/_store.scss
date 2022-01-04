@@ -1,0 +1,118 @@
+
+.ioco{
+
+
+
+    &__carousel-item{
+
+        transition: all 1.5s ease-in-out;
+        
+        
+        &--pik{
+
+
+            display: block;
+
+             @include responsive(tablet-landscape){
+
+                width: 900px;
+            }
+
+            @include responsive(tablet-portrait){
+
+                width: 800px;
+            }
+
+            @include responsive(tablet-port-medium){
+
+                width: 600px;
+            }
+
+            @include responsive(phone){
+
+                width: 540px;
+            }
+
+            
+            @include responsive(medium-phone){
+
+                width: 450px;
+            }
+
+            @include responsive(small-phone){
+
+                width: 300px;
+            }
+        
+        }
+
+
+       
+       
+        
+    }
+}
+
+
+
+@keyframes fadeIn {
+    0% {
+ 
+        opacity: .5;
+    }
+    20% {
+ 
+        opacity: .6;
+    }
+    40% {
+ 
+        opacity: .8;
+    }
+    90% {
+ 
+        opacity: .9;
+    }
+    100% {
+        
+        opacity:1 ;
+    }
+}
+
+
+
+
+@keyframes scalr {
+
+	2% {
+	  transform: scale(.8)
+	}
+    10% {
+        transform: scale(.85)
+      }
+  
+    40% {
+    transform: scale(.9)
+    }
+    
+	100% {
+        transform: scale(1)
+	}
+}
+
+@keyframes appear {
+
+	2% {
+	  opacity: .2
+	}
+    10%{
+        opacity: .3
+      }
+    20% {
+        opacity: .7
+    }
+    
+	100% {
+        opacity: 1
+	}
+}
+

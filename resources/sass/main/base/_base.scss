@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Libre+Franklin:wght@500&family=Roboto&family=Turret+Road:wght@200;300&display=swap');
+
+
+
+
+/* Below, Create a basic reset of the browser applied styles */
+
+*,
+::after,
+::before
+{
+	margin: 0;
+	padding: 0;
+	box-sizing: inherit;
+	
+}
+
+/* ========================================================================================================
+
+	The html element below will be used to set a root font-size for the project. This base font-size will
+	be used as the base for all the measurements we are going to set on the page. This powerfull technique
+	will make it easier for us to modify and mantain the code since we are only going to have a single place
+	where we make a change and automatically any related code. To enable users the chance to modify our styles,
+	we are going to use percentage values-a really recommended practice.
+	
+   =======================================================================================================*/
+   
+   
+html{
+	
+	font-size: 62.5%;
+
+}
+
+/* Below, Create a project wide font-definitions */
+
+body{
+	
+
+	box-sizing: border-box;
+	font-family: 'Roboto', sans-serif; 
+	max-width: 1800px;
+	margin: 0 auto;
+    background-color: #f2f1f1;
+	//font-family: 'Poppins', sans-serif;
+
+	
+
+
+	
+}
+
+.clearfix{
+
+    content: "";
+    display: 'table';
+    clear: both;
+}
+
+
