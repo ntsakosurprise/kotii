@@ -52,14 +52,13 @@ html {
 /* Below, Create a project wide font-definitions */
 body {
   box-sizing: border-box;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   max-width: 1800px;
-  margin: 0 auto;
-  background-color: #f2f1f1; }
+  margin: 0 auto; }
 
 .clearfix {
   content: "";
-  display: 'table';
+  display: "table";
   clear: both; }
 
 .footer {
@@ -333,8 +332,8 @@ body {
 
 .header {
   width: 100%;
-  background-color: #FFF;
-  height: 60px;
+  background-color: #f2f1f1;
+  height: 70px;
   text-align: center;
   padding-top: 25px;
   box-shadow: -15px 10px 25px 5px rgba(146, 104, 104, 0.04);
@@ -374,16 +373,38 @@ body {
   .header__brand, .header__primary-nav, .header__secondary-nav {
     float: left; }
   .header__brand {
-    width: 20%;
-    text-align: right; }
-    .header__brand--link {
-      text-decoration: none;
+    width: 30%;
+    position: relative; }
+    .header__brand--fig {
       display: inline-block;
-      top: -25px;
-      position: relative; }
-      .header__brand--link-logo {
-        width: 85px;
-        border: solid 3px #FFF; }
+      vertical-align: top; }
+      .header__brand--fig-link {
+        text-decoration: none;
+        display: inline-block;
+        top: -25px;
+        position: relative; }
+        .header__brand--fig-link-logo {
+          width: 85px;
+          border: solid 3px #FFF; }
+    .header__brand--em-text {
+      display: inline-block;
+      font-size: 2.3rem;
+      vertical-align: top;
+      margin-left: 2%; }
+    .header__brand--docs-circle {
+      position: absolute;
+      background: #4e6cb4;
+      height: 40px;
+      width: 40px;
+      border-radius: 100%;
+      left: 65%;
+      top: 30px; }
+      .header__brand--docs-circle-text {
+        display: inline-block;
+        font-size: 1.2rem;
+        position: relative;
+        top: 12px;
+        color: #FFF; }
   .header__primary-nav {
     width: 55%;
     text-align: left;
@@ -400,7 +421,7 @@ body {
           height: 100vh;
           z-index: 3;
           opacity: 0;
-          animation: appear .5s ease-in;
+          animation: appear 0.5s ease-in;
           animation-fill-mode: forwards; } }
       .header__primary-nav--nav-link {
         margin-right: 2%;
@@ -408,7 +429,7 @@ body {
         display: inline-block;
         text-decoration: none;
         color: #000;
-        transition: all .7s ease-in; }
+        transition: all 0.7s ease-in; }
         @media only screen and (max-width: 600px) {
           .header__primary-nav--nav-link {
             display: block;
@@ -416,7 +437,7 @@ body {
             font-size: 2rem;
             text-align: center; } }
         .header__primary-nav--nav-link::after {
-          content: '';
+          content: "";
           width: 8px;
           height: 8px;
           background-color: transparent;
@@ -425,15 +446,15 @@ body {
           position: relative;
           margin-top: 4px;
           visibility: hidden;
-          transition: all .7s ease-in; }
+          transition: all 0.7s ease-in; }
         .header__primary-nav--nav-link:hover::after {
           background-color: #ffcc00;
           margin-left: 5px;
           visibility: visible;
-          animation: fade .4s ease-in;
+          animation: fade 0.4s ease-in;
           animation-fill-mode: backwards; }
   .header__secondary-nav {
-    width: 25%;
+    width: 15%;
     text-align: left; }
     @media only screen and (max-width: 600px) {
       .header__secondary-nav {
@@ -454,37 +475,35 @@ body {
           display: inline-block;
           vertical-align: top; }
         .header__secondary-nav--nav-link-circle {
-          width: 15px;
-          height: 15px;
-          background-color: #ffcc00;
           margin-right: 15px;
-          border-radius: 50%;
           margin-top: 3px; }
+          .header__secondary-nav--nav-link-circle img {
+            width: 30px; }
         .header__secondary-nav--nav-link-text {
           font-size: 1.8rem;
-          opacity: .5; }
+          opacity: 0.5; }
         .header__secondary-nav--nav-link:hover .header__secondary-nav--nav-link-text-text {
           opacity: 1;
-          transition: all .5s ease-in; }
+          transition: all 0.5s ease-in; }
         .header__secondary-nav--nav-link:hover .header__secondary-nav--nav-link-text-circle {
           transform: rotate(360deg);
-          transition: all .5s ease-in; }
+          transition: all 0.5s ease-in; }
 
 @keyframes fade {
   0% {
     opacity: 0; }
   50% {
-    opacity: .5; }
+    opacity: 0.5; }
   100% {
     opacity: 1; } }
 
 @keyframes appear {
   2% {
-    opacity: .2; }
+    opacity: 0.2; }
   10% {
-    opacity: .3; }
+    opacity: 0.3; }
   20% {
-    opacity: .7; }
+    opacity: 0.7; }
   100% {
     opacity: 1; } }
 

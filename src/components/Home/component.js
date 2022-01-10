@@ -1,28 +1,23 @@
-import React, {Component} from 'react'
+import React, { Component } from "react";
 
-import Carousel from '../Carousel/component'
-import SlickCarousel from '../CarouselSlick/component'
-import items from  './items'
+import Carousel from "../Carousel/component";
+import SlickCarousel from "../CarouselSlick/component";
+import items from "./items";
 
-class Home extends Component{
+class Home extends Component {
+  render() {
+    const settings = {
+      autoplay: false,
+      speed: 300,
+      slidesToShow: 5,
+    };
 
-    render(){
-
-        const settings = {
-            autoplay:false,
-            speed: 300,
-            slidesToShow: 5
-
-        }
-
-        return(
-            
-            // <Carousel />
-            <SlickCarousel settings={settings} items={[...items]} shouldShowHead={true} />
-
-        )
-    }
+    return (
+      // <Carousel />
+      // <SlickCarousel settings={settings} items={[...items]} shouldShowHead={true} />
+      <p>Landing Page</p>
+    );
+  }
 }
 
-
-export default Home
+export default Home;
