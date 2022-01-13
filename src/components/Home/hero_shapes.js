@@ -1,24 +1,26 @@
 import React from "react";
-
+import Icon from "@material-ui/core/Icon";
+import AccountTreeIcon from "@material-ui/icons/AccountTree";
+import FolderIcon from "@material-ui/icons/Folder";
+import FolderButton from "./btn";
 const HeroShapes = () => {
   return (
     <section className="home__hero__shapes">
       <div className="home__hero__shapes--1"></div>
       <div className="home__hero__shapes--2"></div>
       <div className="home__hero__shapes--3">
-        <section className="home__hero_shapes--content">
-          <div>icon</div>
-          <div className="home__hero_shapes--content-fds">
-            <button>
-              <span>icon</span>
-              <span>redux</span>
-            </button>
+        <section className="home__hero__shapes--content">
+          <div className="home__hero__shapes--content-st">
+            <Icon>
+              <AccountTreeIcon style={{ fontSize: "10rem", color: "white" }} />
+            </Icon>
+          </div>
+          <div className="home__hero__shapes--content-fds">
+            <FolderButton />
+            <FolderButton />
+            <FolderButton />
           </div>
         </section>
-        <small className="home__hero__text--secondary-tx">
-          Made to easily onboard new Developer
-        </small>
-        <small className="home__hero__text--secondary-dot">.</small>
       </div>
     </section>
   );

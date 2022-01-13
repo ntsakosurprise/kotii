@@ -1,4 +1,6 @@
 import React from "react";
+import Icon from "@material-ui/core/Icon";
+import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
 
 const SupportContent = () => {
   return (
@@ -15,13 +17,25 @@ const SupportContent = () => {
 
       <section className="home__support__rt">
         <p className="home__support__rt--tx">
-          Backed by a supportive and reliable team
+          Backed by a supportive and reliable team!
         </p>
+
         <p className="home__support__rt--emo">
-          <i class="fa fa-smile-o" aria-hidden="true"></i>
+          <Icon>
+            <EmojiEmotionsIcon
+              style={{
+                fontSize: "150px",
+                position: "absolute",
+                bottom: "120px",
+                left: "40%",
+                color: "green",
+              }}
+            />
+          </Icon>
         </p>
       </section>
       <strong className="clearfix" />
+      <button className="home__support__btn">Explore docs</button>
     </div>
   );
 };
