@@ -375,6 +375,11 @@ body {
   .header__brand {
     width: 30%;
     position: relative; }
+    @media only screen and (max-width: 600px) {
+      .header__brand {
+        width: 50%;
+        text-align: left;
+        padding-left: 2%; } }
     .header__brand--fig {
       display: inline-block;
       vertical-align: top; }
@@ -383,14 +388,23 @@ body {
         display: inline-block;
         top: -25px;
         position: relative; }
+        @media only screen and (max-width: 450px) {
+          .header__brand--fig-link {
+            top: -15px; } }
         .header__brand--fig-link-logo {
           width: 85px;
           border: solid 3px #FFF; }
+          @media only screen and (max-width: 450px) {
+            .header__brand--fig-link-logo {
+              width: 75px; } }
     .header__brand--em-text {
       display: inline-block;
       font-size: 2.3rem;
       vertical-align: top;
       margin-left: 2%; }
+      @media only screen and (max-width: 450px) {
+        .header__brand--em-text {
+          font-size: 1.8rem; } }
     .header__brand--docs-circle {
       position: absolute;
       background: #4e6cb4;
@@ -399,19 +413,31 @@ body {
       border-radius: 100%;
       left: 65%;
       top: 30px; }
+      @media only screen and (max-width: 600px) {
+        .header__brand--docs-circle {
+          left: 155px;
+          text-align: center; } }
+      @media only screen and (max-width: 450px) {
+        .header__brand--docs-circle {
+          left: 120px;
+          width: 30px;
+          height: 30px; } }
       .header__brand--docs-circle-text {
         display: inline-block;
         font-size: 1.2rem;
         position: relative;
         top: 12px;
         color: #FFF; }
+        @media only screen and (max-width: 450px) {
+          .header__brand--docs-circle-text {
+            top: 8px; } }
   .header__primary-nav {
     width: 55%;
     text-align: left;
     padding-left: 2%; }
     .header__primary-nav--nav {
       width: 100%; }
-      @media only screen and (max-width: 600px) {
+      @media only screen and (max-width: 900px) {
         .header__primary-nav--nav {
           background-color: #ffcc00;
           position: absolute;
@@ -430,7 +456,7 @@ body {
         text-decoration: none;
         color: #000;
         transition: all 0.7s ease-in; }
-        @media only screen and (max-width: 600px) {
+        @media only screen and (max-width: 900px) {
           .header__primary-nav--nav-link {
             display: block;
             margin-bottom: 3rem;
@@ -456,18 +482,20 @@ body {
   .header__secondary-nav {
     width: 15%;
     text-align: left; }
-    @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: 900px) {
       .header__secondary-nav {
         float: none;
         position: absolute;
         right: 15%;
         width: 50%;
-        text-align: right; } }
-    @media only screen and (max-width: 600px) {
-      .header__secondary-nav {
-        right: 20%; } }
+        text-align: right;
+        left: 50%; } }
     .header__secondary-nav--nav {
       width: 100%; }
+      @media only screen and (max-width: 900px) {
+        .header__secondary-nav--nav {
+          width: 100px;
+          text-align: center; } }
       .header__secondary-nav--nav-link {
         width: 30%;
         color: #000; }

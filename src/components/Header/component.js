@@ -28,7 +28,7 @@ class Header extends Component {
     const { state } = this;
     const { showMenu = false } = state;
 
-    console.log("tOGGLE MENU");
+    console.log("tOGGLE MENU", showMenu);
 
     this.setState({ showMenu: !showMenu });
   };
@@ -36,6 +36,7 @@ class Header extends Component {
   render() {
     const { state } = this;
     const { showMenu = false, width = 0 } = state;
+    console.log("the state", showMenu, width);
 
     return (
       <header className="header">
@@ -55,7 +56,7 @@ class Header extends Component {
           </p>
         </section>
         <section className="header__primary-nav">
-          {width <= 600 && !showMenu ? (
+          {width <= 900 && !showMenu ? (
             <div className="header__menu" onClick={() => this.toggleMenu()}>
               <span className="header__menu-bar-1"></span>
               <span className="header__menu-bar-2"></span>
@@ -63,7 +64,7 @@ class Header extends Component {
             </div>
           ) : null}
 
-          {width <= 600 && showMenu ? (
+          {width <= 900 && showMenu ? (
             <div className="header__close" onClick={() => this.toggleMenu()}>
               <span className="header__close-text">x</span>
             </div>
@@ -76,7 +77,7 @@ class Header extends Component {
                         <span className="header__menu-bar-3"></span>
                     </div> */}
 
-          {width <= 600 ? (showMenu ? primaryMenu() : null) : primaryMenu()}
+          {width <= 900 ? (showMenu ? primaryMenu() : null) : primaryMenu()}
         </section>
         <section className="header__secondary-nav">
           <nav className="header__secondary-nav--nav">
