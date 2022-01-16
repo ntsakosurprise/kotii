@@ -102,14 +102,20 @@ export default Header;
 function primaryMenu() {
   return (
     <nav className="header__primary-nav--nav">
-      <Link to="/store" className="header__primary-nav--nav-link">
+      <Link to="/intro" className="header__primary-nav--nav-link">
         Introduction
       </Link>
-      <Link to="/products-services" className="header__primary-nav--nav-link">
-        Framework
+      <Link to="/get-started" className="header__primary-nav--nav-link">
+        Get started
       </Link>
-      <Link to="/help-support" className="header__primary-nav--nav-link">
-        Application
+      <Link to="/contribute" className="header__primary-nav--nav-link">
+        Contributing
+      </Link>
+      <Link
+        to="https://www.github.com"
+        className="header__primary-nav--nav-link"
+      >
+        Github
       </Link>
     </nav>
   );
