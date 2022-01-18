@@ -5,6 +5,9 @@
   "description": "This is Mymtn nextgen documentation",
   "scripts": {
     "start": "react-scripts start",
+    "build": "react-scripts build",
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -d build",
     "watch:dev:sass": "node-sass resources/sass/main.scss public/css/style.css -w",
     "prod:compile:sass": "node-sass resources/sass/main.scss public/css/style.comp.css",
     "test": "echo \"Error: no test specified\" && exit 1"
