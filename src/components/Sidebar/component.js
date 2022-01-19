@@ -1,10 +1,17 @@
 import React, { Component } from "react";
-import Container from "";
+import Grid from "@mui/material";
+import Link from "@mui/material";
 
-import Carousel from "../Carousel/component";
+const SidebarNav = () => {
+  <Link>Getting Started</Link>;
+};
 
 const Sidebar = () => {
-  return <div className="introduction">I am the introduction</div>;
+  return (
+    <Grid item>
+      <SidebarNav />
+    </Grid>
+  );
 };
 
 export default Sidebar;
