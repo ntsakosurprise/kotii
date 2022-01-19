@@ -1,11 +1,13 @@
 import * as React from "react";
-import Container from "@mui/material";
-import Grid from "@mui/material";
+import { Container } from "@mui/material";
+import { Grid, CssBaseline } from "@mui/material";
 
-const MUIContainer = () => {
+const MUIContainer = ({ children }) => {
   return (
-    <Container container spacing={2}>
-      <Grid>{children}</Grid>
+    <Container>
+      <Grid container direction="row" spacing={6}>
+        {children}
+      </Grid>
     </Container>
   );
 };
