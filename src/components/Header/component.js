@@ -102,7 +102,7 @@ export default Header;
 function primaryMenu() {
   return (
     <nav className="header__primary-nav--nav">
-      <Link to="/intro" className="header__primary-nav--nav-link">
+      <Link to="/introduction" className="header__primary-nav--nav-link">
         Introduction
       </Link>
       <Link to="/get-started" className="header__primary-nav--nav-link">
