@@ -1,12 +1,7 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  Link,
-  Box,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from "@mui/material";
+import { Box } from "@mui/material";
+import CustomizedAccordions from "./customAccordion";
+import NavMenu from "./nav";
 
 const items = [
   {
@@ -41,14 +36,9 @@ const items = [
 
 const DropDownItem = ({ menuItem }) => {
   return (
-    <Accordion>
-      <AccordionSummary>{menuItem.mainItem}</AccordionSummary>
-      <AccordionDetails>
-        {menuItem.items.map((it, ii) => {
-          return <Link key={ii}>{it.name}</Link>;
-        })}
-      </AccordionDetails>
-    </Accordion>
+    <CustomizedAccordions summary={menuItem.mainItem}>
+      <NavMenu items={menuItem.items} />
+    </CustomizedAccordions>
   );
 };
 
@@ -68,9 +58,21 @@ const SidebarNav = () => {
 
 const Sidebar = () => {
   return (
-    <Grid item xs={12} md={4}>
-      <SidebarNav />
-    </Grid>
+    <div
+      style={{
+        width: "300px",
+        position: "fixed",
+        top: "150px",
+        minHeight: "100vh",
+        left: 0,
+        display: "inline-block",
+        backgroundColor: "#f2f1f1",
+      }}
+    >
+      <div style={{ minHeight: "10vh" }}>
+        <SidebarNav />
+      </div>
+    </div>
   );
 };
 

@@ -14,10 +14,10 @@ import SupportContent from "./support";
 
 const Introduction = () => {
   return (
-    <MUIContainer>
+    <>
       <Sidebar />
       <IntroContent />
-    </MUIContainer>
+    </>
   );
 };
 
