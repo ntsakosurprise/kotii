@@ -32,6 +32,48 @@ const items = [
       },
     ],
   },
+  {
+    mainItem: "Components",
+    itemBase: "components/",
+    items: [
+      {
+        name: "Icons",
+        to: "icons",
+      },
+      {
+        name: "Shared",
+        to: "shared",
+      },
+    ],
+  },
+  {
+    mainItem: "Application",
+    itemBase: "application/",
+    items: [
+      {
+        name: "framework",
+        to: "framework",
+      },
+      {
+        name: "FrameTwo",
+        to: "frameTwo",
+      },
+    ],
+  },
+  {
+    mainItem: "Api",
+    itemBase: "api/",
+    items: [
+      {
+        name: "framework",
+        to: "framework",
+      },
+      {
+        name: "FrameTwo",
+        to: "frameTwo",
+      },
+    ],
+  },
 ];
 
 const DropDownItem = ({ menuItem }) => {

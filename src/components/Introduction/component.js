@@ -1,24 +1,11 @@
-import React, { Component } from "react";
-import MUIContainer from "../MUIContainer/component";
-import Sidebar from "../Sidebar/component";
-import IntroContent from "./introContent";
-
-import Carousel from "../Carousel/component";
-import SlickCarousel from "../CarouselSlick/component";
-import items from "./items";
-import HeroShapes from "./hero_shapes";
-import HeroText from "./hero_text";
-import Code from "./code";
-import FancyContent from "./introContent";
-import SupportContent from "./support";
+import React, { Component, useEffect, useState } from "react";
+import INTRO from "../../mds/intro/INTRO.md";
+import Docs from "../Docs/component";
+import useLoadMD from "../../hooks/loadmd";
 
 const Introduction = () => {
-  return (
-    <>
-      <Sidebar />
-      <IntroContent />
-    </>
-  );
+  const mdContent = useLoadMD({ fileName: INTRO });
+  return <Docs mdContent={mdContent} />;
 };
 
 export default Introduction;

@@ -1,8 +1,7 @@
 import React from "react";
-import HeroText from "./hero_text";
-import { Grid } from "@mui/material";
+//import HeroText from "./hero_text";
 
-const IntroContent = ({ children }) => {
+const DocsMain = ({ children }) => {
   return (
     <main
       style={{
@@ -13,10 +12,10 @@ const IntroContent = ({ children }) => {
         width: "70%",
       }}
     >
-      <HeroText />
+      {/* <HeroText /> */}
       {children}
     </main>
   );
 };
 
-export default IntroContent;
+export default DocsMain;
