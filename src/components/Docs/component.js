@@ -9,7 +9,7 @@ const Docs = ({ children, mdContent = {} }) => {
     <>
       <Sidebar />
       <DocsMain>
-        <Markdown children={mdContent.md} />
+        <Markdown options={{ forceBlock: true }} children={mdContent.md} />
         {/* {children} */}
       </DocsMain>
     </>
