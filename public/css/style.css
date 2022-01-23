@@ -1108,6 +1108,58 @@ body {
   background-color: red;
   width: 24px; }
 
+.markdown {
+  width: 100%;
+  position: relative; }
+  .markdown h1 {
+    font-size: 3rem;
+    font-weight: bolder;
+    margin-bottom: 30px; }
+  .markdown h2 {
+    font-size: 2.5rem;
+    margin-bottom: 25px; }
+  .markdown p {
+    font-size: 1.8rem;
+    margin-bottom: 10px; }
+  .markdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 20px; }
+    .markdown ul li {
+      font-size: 1.6rem; }
+  .markdown a {
+    text-decoration: none;
+    color: #3390ee;
+    font-weight: bold; }
+  .markdown pre {
+    margin: 16px auto;
+    padding: 16px;
+    background-color: #dae0e6;
+    direction: ltr;
+    border-radius: 10px;
+    overflow: auto; }
+    .markdown pre code {
+      color: #0c0c0c; }
+  .markdown table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0px;
+    min-width: 650px; }
+    .markdown table th {
+      font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+      font-weight: 500;
+      font-size: 0.875rem;
+      line-height: 1.5rem;
+      letter-spacing: 0.01071em;
+      display: table-cell;
+      vertical-align: inherit;
+      border-bottom: 1px solid #515151;
+      text-align: left;
+      padding: 16px;
+      color: white; }
+
 .ioco__carousel-item {
   transition: all 1.5s ease-in-out; }
   .ioco__carousel-item--pik {

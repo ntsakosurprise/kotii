@@ -28,9 +28,11 @@
     "react-carousel": "^4.3.0",
     "react-dom": "^17.0.2",
     "react-icons": "^4.2.0",
+    "react-markdown": "^8.0.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
-    "react-slick": "^0.28.1"
+    "react-slick": "^0.28.1",
+    "remark-gfm": "^3.0.1"
   },
   "readmeFilename": "README.md",
   "browserslist": {
