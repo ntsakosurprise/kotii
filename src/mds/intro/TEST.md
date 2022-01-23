@@ -1,110 +1,108 @@
-# A demo of \`react-markdown\`
+# Installation
 
-\`react-markdown\` is a markdown component for React.
+<p class="description">Install MUI, the world's most popular React UI framework.</p>
 
-👉 Changes are re-rendered as you type.
+MUI is available as an [npm package](https://www.npmjs.com/package/@mui/material).
 
-👈 Try writing some markdown on the left.
+## npm
 
-## Overview
+To install and save in your `package.json` dependencies, run:
 
-- Follows [CommonMark](https://commonmark.org)
-- Optionally follows [GitHub Flavored Markdown](https://github.github.com/gfm/)
-- Renders actual React elements instead of using \`dangerouslySetInnerHTML\`
-- Lets you define your own components (to render \`MyHeading\` instead of \`h1\`)
-- Has a lot of plugins
+```sh
+// with npm
+npm install @mui/material @emotion/react @emotion/styled
 
-## Table of contents
+// with yarn
+yarn add @mui/material @emotion/react @emotion/styled
+```
 
-Here is an example of a plugin in action
-([\`remark-toc\`](https://github.com/remarkjs/remark-toc)).
-This section is replaced by an actual table of contents.
+<!-- #react-peer-version -->
 
-## Syntax highlighting
+Please note that [react](https://www.npmjs.com/package/react) >= 17.0.0 and [react-dom](https://www.npmjs.com/package/react-dom) >= 17.0.0 are peer dependencies.
 
-Here is an example of a plugin to highlight code:
-[\`rehype-highlight\`](https://github.com/rehypejs/rehype-highlight).
+Or if you want to use `styled-components` as a styling engine:
 
-\`\`\`js
-import React from 'react'
-import ReactDOM from 'react-dom'
-import ReactMarkdown from 'react-markdown'
-import rehypeHighlight from 'rehype-highlight'
+```sh
+// with npm
+npm install @mui/material @mui/styled-engine-sc styled-components
 
-ReactDOM.render(
-<ReactMarkdown rehypePlugins={[rehypeHighlight]}><span>{'# Your markdown here'}</span></ReactMarkdown>,
-document.querySelector('#content')
-)
-\`\`\`
+// with yarn
+yarn add @mui/material @mui/styled-engine-sc styled-components
+```
 
-Pretty neat, eh?
+> 💡 Take a look at the [Styled Engine guide](/guides/styled-engine/) for more information about how to configure `styled-components` as the style engine.
 
-## GitHub flavored markdown (GFM)
+## Roboto font
 
-For GFM, you can _also_ use a plugin:
-[\`remark-gfm\`](https://github.com/remarkjs/react-markdown#use).
-It adds support for GitHub-specific extensions to the language:
-tables, strikethrough, tasklists, and literal URLs.
+MUI was designed with the [Roboto](https://fonts.google.com/specimen/Roboto)
+font in mind. So be sure to follow [these instructions](/components/typography/#general).
+For instance, via Google Web Fonts:
 
-These features **do not work by default**.
-👆 Use the toggle above to add the plugin.
+```html
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+/>
+```
 
-|    Feature | Support                |
-| ---------: | :--------------------- |
-| CommonMark | 100%                   |
-|        GFM | 100% w/ \`remark-gfm\` |
+## Font icons
 
-~~strikethrough~~
+To use the font `Icon` component, you must first add the [Material icons](https://fonts.google.com/icons) font.
+Here are [some instructions](/components/icons/#font-icons)
+on how to do so.
+For instance, via Google Web Fonts:
 
-- [ ] task list
-- [x] checked item
+```html
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+/>
+```
 
-https://example.com
+## SVG icons
 
-## HTML in markdown
+In order to use prebuilt SVG Material icons, such as those found in the [icons demos](/components/icons/)
+you must first install the [@mui/icons-material](https://www.npmjs.com/package/@mui/icons-material) package:
 
-⚠️ HTML in markdown is quite unsafe, but if you want to support it, you can
-use [\`rehype-raw\`](https://github.com/rehypejs/rehype-raw).
-You should probably combine it with
-[\`rehype-sanitize\`](https://github.com/rehypejs/rehype-sanitize).
+<!-- #default-branch-switch -->
 
-<blockquote>
-  👆 Use the toggle above to add the plugin.
-</blockquote>
+```sh
+// with npm
+npm install @mui/icons-material
 
-## Components
+// with yarn
+yarn add @mui/icons-material
+```
 
-You can pass components to change things:
+## CDN
 
-\`\`\`js
-import React from 'react'
-import ReactDOM from 'react-dom'
-import ReactMarkdown from 'react-markdown'
-import MyFancyRule from './components/my-fancy-rule.js'
+You can start using MUI with minimal Front-end infrastructure,
+which is great for prototyping.
 
-ReactDOM.render(
-<ReactMarkdown
-components={{
-      // Use h2s instead of h1s
-      h1: 'h2',
-      // Use a component instead of hrs
-      hr: ({node, ...props}) => <MyFancyRule {...props} />
-    }}
+Two Universal Module Definition (**UMD**) files are provided:
 
->
+- one for development: https://unpkg.com/@mui/material@latest/umd/material-ui.development.js
+- one for production: https://unpkg.com/@mui/material@latest/umd/material-ui.production.min.js
 
-    # Your markdown here
+You can follow [this CDN example](https://github.com/mui-org/material-ui/tree/master/examples/cdn) to quickly get started.
 
-</ReactMarkdown>,
-document.querySelector('#content')
-)
-\`\`\`
+⚠️ Using this approach in **production** is **discouraged** though -
+the client has to download the entire library, regardless of which components are actually used,
+affecting performance and bandwidth utilization.
 
-## More info?
+⚠️ The UMD links are using the `latest` tag to point to the latest version of the library.
+This pointer is **unstable**, it shifts as we release new versions.
+You should consider pointing to a specific version, such as [v5.0.0](https://unpkg.com/@mui/material@5.0.0/umd/material-ui.development.js).
 
-Much more info is available in the
-[readme on GitHub](https://github.com/remarkjs/react-markdown)!
+## Design resources
 
----
+<a href="https://mui.com/store/items/figma-react/?utm_source=docs&utm_medium=referral&utm_campaign=installation-figma" style="margin-left: 8px; margin-top: 8px; display: inline-block;"><img src="/static/images/download-figma.svg" alt="figma" /></a>
+<a href="https://mui.com/store/items/adobe-xd-react/?utm_source=docs&utm_medium=referral&utm_campaign=installation-adobe-xd" style="margin-left: 32px; margin-top: 8px; display: inline-block;"><img src="/static/images/download-adobe-xd.svg" alt="adobe-xd" /></a>
+<a href="https://mui.com/store/items/sketch-react/?utm_source=docs&utm_medium=referral&utm_campaign=installation-sketch" style="margin-left: 32px; margin-top: 8px; display: inline-block;"><img src="/static/images/download-sketch.svg" alt="sketch" /></a>
 
-A component by [Espen Hovlandsdal](https://espen.codes/)
+A set of reusable components for design tools is available, designed to match the React components and to help you craft great products:
+
+- [Figma](https://mui.com/store/items/figma-react/?utm_source=docs&utm_medium=referral&utm_campaign=installation-figma): A large UI kit with over 600 handcrafted MUI components.
+- [Adobe XD](https://mui.com/store/items/adobe-xd-react/?utm_source=docs&utm_medium=referral&utm_campaign=installation-adobe-xd): A large UI kit with over 600 handcrafted MUI components.
+- [Sketch](https://mui.com/store/items/sketch-react/?utm_source=docs&utm_medium=referral&utm_campaign=installation-sketch): A large UI kit with over 600 handcrafted MUI symbols.
+- [UXPin](https://www.uxpin.com/merge/mui-library): A large UI kit of MUI components. The design tool renders the components in a web runtime. It uses the same React implementation as your production environment.

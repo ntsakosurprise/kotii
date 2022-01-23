@@ -1135,12 +1135,14 @@ body {
   .markdown pre {
     margin: 16px auto;
     padding: 16px;
-    background-color: #dae0e6;
     direction: ltr;
     border-radius: 10px;
     overflow: auto; }
+    .markdown pre div {
+      border-radius: 1rem !important; }
     .markdown pre code {
-      color: #0c0c0c; }
+      color: #0c0c0c;
+      font-size: 1.3rem !important; }
   .markdown table {
     display: table;
     width: 100%;
