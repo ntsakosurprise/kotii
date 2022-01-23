@@ -5,6 +5,7 @@ import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
+import { Link } from "@mui/material";
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -20,7 +21,13 @@ const Accordion = styled((props) => (
 
 const AccordionSummary = styled((props) => (
   <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
+    // expandIcon={
+    //   Icon ? (
+    //     <Icon sx={{ fontSize: "0.9rem" }} />
+    //   ) : (
+    //     <ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />
+    //   )
+    // }
     {...props}
   />
 ))(({ theme }) => ({
@@ -42,20 +49,47 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
 
-export default function CustomizedAccordions({ summary, children }) {
+export default function CustomizedAccordions({
+  summary,
+  children,
+  icon = null,
+  noItmes = false,
+  to = "",
+}) {
   // const [expanded, setExpanded] = React.useState('panel1');
 
   // const handleChange = (panel) => (event, newExpanded) => {
   //   setExpanded(newExpanded ? panel : false);
   // };
+  console.log("THE accordion PROP", icon);
+  const Icon = icon;
 
   return (
     <div>
       <Accordion>
-        <AccordionSummary>
-          <Typography fontSize="2rem">{summary}</Typography>
+        <AccordionSummary
+          expandIcon={
+            icon ? (
+              <Icon
+                sx={{
+                  fontSize: "2rem",
+                  color: "#1483e6",
+                  fontWeight: "bolder",
+                  cursor: "pointer",
+                }}
+              />
+            ) : (
+              <ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />
+            )
+          }
+        >
+          {!noItmes ? (
+            <Typography fontSize="2rem">{summary}</Typography>
+          ) : (
+            <Link href={to}>{summary}</Link>
+          )}
         </AccordionSummary>
-        <AccordionDetails>{children}</AccordionDetails>
+        {!noItmes ? <AccordionDetails>{children}</AccordionDetails> : null}
       </Accordion>
     </div>
   );
