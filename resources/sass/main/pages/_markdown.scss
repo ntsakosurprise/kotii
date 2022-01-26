@@ -1,6 +1,13 @@
 .markdown {
   width: 100%;
   position: relative;
+
+  h2,
+  h3,
+  h4 {
+    margin-bottom: 25px;
+    margin-top: 20px;
+  }
   h1 {
     font-size: 3rem;
     font-weight: bolder;
@@ -8,7 +15,10 @@
   }
   h2 {
     font-size: 2.5rem;
-    margin-bottom: 25px;
+  }
+
+  h3 {
+    font-size: 2rem;
   }
   p {
     font-size: 1.8rem;
@@ -66,5 +76,14 @@
       padding: 16px;
       color: rgb(255, 255, 255);
     }
+  }
+  em {
+    background-color: #33363c;
+    color: #eeeee7;
+    border-radius: 2px;
+    font-size: 1.6rem;
+    font-weight: normal;
+    padding-right: 4px;
+    padding-left: 3px;
   }
 }

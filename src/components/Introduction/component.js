@@ -5,7 +5,7 @@ import Docs from "../Docs/component";
 import useLoadMD from "../../hooks/loadmd";
 
 const Introduction = () => {
-  const mdContent = useLoadMD({ fileName: TEST });
+  const mdContent = useLoadMD({ fileName: INTRO });
   return <Docs mdContent={mdContent} />;
 };
 

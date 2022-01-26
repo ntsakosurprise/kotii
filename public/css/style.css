@@ -1111,13 +1111,19 @@ body {
 .markdown {
   width: 100%;
   position: relative; }
+  .markdown h2,
+  .markdown h3,
+  .markdown h4 {
+    margin-bottom: 25px;
+    margin-top: 20px; }
   .markdown h1 {
     font-size: 3rem;
     font-weight: bolder;
     margin-bottom: 30px; }
   .markdown h2 {
-    font-size: 2.5rem;
-    margin-bottom: 25px; }
+    font-size: 2.5rem; }
+  .markdown h3 {
+    font-size: 2rem; }
   .markdown p {
     font-size: 1.8rem;
     margin-bottom: 10px; }
@@ -1161,6 +1167,14 @@ body {
       text-align: left;
       padding: 16px;
       color: white; }
+  .markdown em {
+    background-color: #33363c;
+    color: #eeeee7;
+    border-radius: 2px;
+    font-size: 1.6rem;
+    font-weight: normal;
+    padding-right: 4px;
+    padding-left: 3px; }
 
 .ioco__carousel-item {
   transition: all 1.5s ease-in-out; }

@@ -10,9 +10,16 @@ const nestedHeaderStyles = {
   width: "48%",
   marginRight: "1%",
 };
+
 export default function CustomMenuList({ items }) {
   const [nested, setNested] = React.useState([]);
   const [shouldShowNested, setShowNested] = React.useState(false);
+
+  const updateNested = ({ ev, i }) => {
+    console.log("the ev and i", ev);
+    console.log("i;;", i);
+    setShowNested(!shouldShowNested);
+  };
 
   return (
     <MenuList>
@@ -32,14 +39,12 @@ export default function CustomMenuList({ items }) {
                     color: "red",
                   },
                 }}
-                onClick={() => {
-                  setShowNested(!shouldShowNested);
-                }}
+                onClick={updateNested}
               >
+                <span style={{ ...nestedHeaderStyles }}>{item.name}</span>
                 <span style={{ ...nestedHeaderStyles }}>
                   {shouldShowNested ? <RemoveSharpIcon /> : <AddSharpIcon />}
                 </span>
-                <span style={{ ...nestedHeaderStyles }}>{item.name}</span>
               </h2>
               {shouldShowNested ? (
                 <MenuList>

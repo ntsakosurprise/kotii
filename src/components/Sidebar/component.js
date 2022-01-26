@@ -53,14 +53,30 @@ const items = [
     itemBase: "components/",
     items: [
       {
-        name: "Icons",
-        to: "icons",
-      },
-      {
         name: "INPUTS",
         nested: [
           { name: "AutoComplete", to: "autocomplete" },
           { name: "Button", to: "button" },
+          { name: "Checkbox", to: "checkbox" },
+          { name: "Checkmark", to: "checkmark" },
+          { name: "Radiobutton", to: "radiobutton" },
+          { name: "Rating", to: "rating" },
+          { name: "Select", to: "select" },
+          { name: "Slider", to: "slider" },
+          { name: "Switch", to: "switch" },
+          { name: "Texfield", to: "textfield" },
+          { name: "Rating", to: "rating" },
+          { name: "Select", to: "select" },
+          { name: "Slider", to: "slider" },
+          { name: "Switch", to: "switch" },
+          { name: "Texfield", to: "textfield" },
+        ],
+      },
+      {
+        name: "Data Display",
+        nested: [
+          { name: "Avatar", to: "avatar" },
+          { name: "Badge", to: "badge" },
           { name: "Checkbox", to: "checkbox" },
           { name: "Checkmark", to: "checkmark" },
           { name: "Radiobutton", to: "radiobutton" },
