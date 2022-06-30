@@ -1,0 +1,9 @@
+{
+  "name": "kotii",
+  "version": "1.0.0",
+  "description": "A monorepo for kotii framework and related packages",
+  "main": "index.js",
+  "author": "NtsakoSurprise",
+  "license": "MIT",
+  "private": false
+}
