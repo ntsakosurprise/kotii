@@ -12,6 +12,8 @@
     "npm": "please-use-yarn"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
     "husky": "^8.0.1",
     "lerna": "^5.1.6",
     "nx": "^14.3.6"
