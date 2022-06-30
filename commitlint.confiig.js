@@ -34,6 +34,7 @@ module.exports = {
 			[
 				'build',
 				'chore',
+                'config',
 				'ci',
 				'docs',
 				'feat',
