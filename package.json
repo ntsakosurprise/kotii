@@ -12,6 +12,7 @@
     "npm": "please-use-yarn"
   },
   "devDependencies": {
+    "husky": "^8.0.1",
     "lerna": "^5.1.6",
     "nx": "^14.3.6"
   }
