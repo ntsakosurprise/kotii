@@ -11,7 +11,7 @@
     "yarn": ">=1.22.18",
     "npm": "please-use-yarn"
   },
-  "scripts": {"lint-commit":"commit"},
+  "scripts": {"lint-commit":"commit","prettier": "prettier --write"},
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
