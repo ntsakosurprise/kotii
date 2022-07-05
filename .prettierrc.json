@@ -1,3 +1,1 @@
-{ "trailingComa":"all",
-    "singleQuote":true,
-    "printWidth": 80}
+{ "trailingComa": "all", "singleQuote": true, "printWidth": 80 }
