@@ -66,6 +66,7 @@
     "gh-pages": "^3.2.3",
     "husky": "^8.0.1",
     "lerna": "^5.1.8",
-    "node-sass": "^7.0.1"
+    "node-sass": "^7.0.1",
+    "prettier": "^2.7.1"
   }
 }
