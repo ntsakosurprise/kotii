@@ -41,6 +41,8 @@ In some cases, this documentation provides an interactive editor where you can t
 
 A picture is worth a glancing, please refer to the interactive editor below:
 
+<code>My made up tag</>
+
 ### Team Support
 
 We are fully aware that you can go through the docs and still have inconveniences understanding some parts of it, in that case, you shouldn’t hesitate to reach out to the team for assistance. We work in a collaborative environment that encourages knowledge sharing and assistance. Please reach out, we’d love to help! :smile:
