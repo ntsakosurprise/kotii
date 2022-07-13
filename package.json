@@ -2,6 +2,11 @@
   "name": "mymtn-nextgen-docs",
   "version": "1.0.0",
   "description": "This is Mymtn nextgen documentation",
+  "engines": {
+    "node": ">=17.2.0",
+    "yarn": ">=1.22.11",
+    "npm": "Please-use-yarn"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
