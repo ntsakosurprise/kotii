@@ -1,0 +1,31 @@
+{
+  "name": "kotii-web",
+  "version": "0.0.0",
+  "description": "A docs website for kotii boilerplate",
+  "keywords": [
+    "react",
+    "boilerplate",
+    "react-ssr"
+  ],
+  "author": "mashelesepru@gmail.com <turtrozz@gmail.com>",
+  "homepage": "https://github.com/ntsakosurprise/kotii#readme",
+  "license": "ISC",
+  "main": "lib/kotii-web.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ntsakosurprise/kotii.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/ntsakosurprise/kotii/issues"
+  }
+}
