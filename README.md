@@ -1,49 +1,48 @@
+# Introduction
 
-# Project Building Instructions
+## Welcome
 
-iOCO carousel a simple and lightweight carousel that utilizes the react framework. 
+This is a documentaion website for MyMtnNextgen app and its related resources. The site has been made with the purpose of helping anyone understand the project and its implementation better and in detail.
 
+It has been made to be very simple and intuitive, following a chronological order presentation style. In preparing the documentation, the team has placed a greater emphasis on new developers who have a little to no insight into the ins and outs of the project.
 
+Nonetheless, this documentation has also been made effective enough to cater for seasoned developers to aid them in their daily work operations in the context of <blockquote>myMTN </blockquote>.
 
- When I first started work on this project, I wanted to achieve two things: 
+In the context of _MyMtnNextgen_, this documentation site presents information about things such as the _project set up_, _framework_, _conventions_ used and followed, _best practices_, _components_ usage, and many other features.
 
-1. Build a custom carousel component that was entirely based on my own algorithms and taste of design
+### Code Snippets
 
-2. Build a second reusable carousel that was entirely based on others' approaches, and thereby utilising the react framework libraries
+As an added convenience, some pages might have code snippets that you can quickly copy and integrate into your work in progress. This may not be as needed, but it can be imagined that there may be a case of usage for it.
 
+As an example, you may be reading about how a given component works and wish to quickly test that part of the component before you fully utilise it, and in that case, it would be convenient for you to just quickly copy, paste, and test.
 
-As I started out the project, I set out to follow the intended approach, but after some time in the process, I encountered some minor issue with the time and some other project I was part of. 
+Please refer to the code below for an example of a snippet:
 
-By the time I got off the other project that had taken my needed time, I realised that I had less time to work on my initial approach, so I went to skip the custom approach and just went with the project really required me to do, which is going the second option route.
+```jsx
+import * as React from React
+import Card from "./project/cardpath/card"
 
-Following that second option in building the project, I took the following approach: 
+const CardDisplayer = ()=>{
+    return(
+            <Card bgColor="red" size={20}>
+                <span>This is a test card</span>
+            </Card>
+        )
 
-1. I installed a popular react library known as react-slick to kick-start the project. I have used this library in the past with the jQuery library, so it became easier for me to quickly the project going. 
+}
 
-2. I set up my carousel component with a state made up of items that I needed displayed on the carousel. 
+export default CardDisplayer;
 
-3. I've made some configurations to get the carousel to where I wanted it. 
+```
 
-4. I did an override of some of the react-slick styles to get the exact design design and outcome that I needed 
+### Interactive Editor
 
-5. Because I had already styled the content, getting the component to work was quick. 
+In some cases, this documentation provides an interactive editor where you can type and edit code with live results. This has an added benefit that further immense you into the project as gives you instant results that can visually aid you and give you an idea of how a given feature is implemented.
 
-6. I have used the external CSS approach for all my CSS. 
+A picture is worth a glancing, please refer to the interactive editor below:
 
-7. The code uses the latest React framework (as of this publish) for the project, albeit with a slight old approach (I could have used the latest approach, but I decided otherwise just to quickly save time) 
+<code>My made up tag</>
 
+### Team Support
 
-8. The project uses sass for creating the styling information. 
-
-9. The project is catered for three popular devices using responsive design.
-
-     
-
-
-
-
-
-# Stay In Touch
-
-[Twitter @ntsakosurprise](https://twitter.com/ntsakosurprise).
-
+We are fully aware that you can go through the docs and still have inconveniences understanding some parts of it, in that case, you shouldn’t hesitate to reach out to the team for assistance. We work in a collaborative environment that encourages knowledge sharing and assistance. Please reach out, we’d love to help! :smile:
