@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { generate } from "shortid";
-import _ from "lodash";
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable react/prop-types */
 import { useTheme } from "Hooks";
+import _ from "lodash";
+import React, { useEffect, useState } from "react";
+import { generate } from "shortid";
+import styled from "styled-components";
 
 const Container = styled.div`
   display: grid;
