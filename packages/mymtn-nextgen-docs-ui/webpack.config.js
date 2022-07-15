@@ -5,7 +5,7 @@ import HTMLWebpackPlugin from "html-webpack-plugin";
 export const entry = "./src/index.js";
 export const target = "web";
 export const output = {
-  path: path.join("dist"),
+  path: path.join(__dirname, "dist"),
   filename: "bundle.js",
   chunkFilename: "[id].js",
   publicPath: "",
