@@ -1,0 +1,9 @@
+{
+  "name": "nextgen-docs-utils",
+  "version": "0.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "use-local-storage": "^2.3.6"
+  }
+}
