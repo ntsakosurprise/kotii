@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import i18next from "i18next";
+// import i18next from "i18next";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { initialize } from "../config";
@@ -7,14 +7,14 @@ const LanguageContext = React.createContext(null);
 
 export const LanguageProvider = (props) => {
   const { language, changeLanguage } = useState("en");
-  const t = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     initialize();
   });
 
   const changeCurrentLanguage = (language) => {
-    i18next.changeLanguage(language, () => {
+    i18n.changeLanguage(language, () => {
       changeLanguage(language);
     });
   };
