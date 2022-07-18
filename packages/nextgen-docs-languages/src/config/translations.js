@@ -1,10 +1,10 @@
 export const translations = {
   en: {
-    translations: {
+    translation: {
       greet: "Hellow WOrld",
     },
   },
   ts: {
-    translations: "Minjhani va misava",
+    translation: "Minjhani va misava",
   },
 };
