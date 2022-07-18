@@ -7,6 +7,7 @@ import styled, { ThemeProvider } from "styled-components";
 import { ThemeSelector } from "UI";
 import { getFromStorage, setInStorage } from "Utilities";
 import WebFont from "webfontloader";
+import { LanguageProvider } from "../../nextgen-docs-languages";
 
 const Container = styled.div`
   margin: 5px auto 5px auto;
@@ -46,20 +47,22 @@ const App = () => {
     <>
       {isThemeLoaded && (
         <ThemeProvider theme={selectedTheme}>
-          <GlobalStyle />
-          <Container style={{ fontFamily: selectedTheme.font }}>
-            <Root />
-            <button className="btn" onClick={manageDialog}>
-              Create a Theme
-            </button>
-            {/* <Dialog
+          <LanguageProvider language="en">
+            <GlobalStyle />
+            <Container style={{ fontFamily: selectedTheme.font }}>
+              <Root />
+              <button className="btn" onClick={manageDialog}>
+                Create a Theme
+              </button>
+              {/* <Dialog
               header="Create a Theme"
               body={<MakeTheme create={createTheme} />}
               open={showDialog}
               callback={manageDialog}
             /> */}
-            <ThemeSelector setter={setSelectedTheme} />
-          </Container>
+              <ThemeSelector setter={setSelectedTheme} />
+            </Container>
+          </LanguageProvider>
         </ThemeProvider>
       )}
     </>
