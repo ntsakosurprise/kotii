@@ -2,5 +2,9 @@
   "name": "nextgen-docs-languages",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "i18next": "^21.8.14",
+    "react-i18next": "^11.18.1"
+  }
 }
