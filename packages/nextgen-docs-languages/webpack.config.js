@@ -6,10 +6,28 @@ module.exports = {
   entry: "./src/index.js",
   target: "web",
   output: {
-    path: path.join(__dirname, "dist"),
+    path: path.join(__dirname),
     filename: "index.js",
     chunkFilename: "[id].js",
     publicPath: "",
+    library: "nextgen-docs-languages",
+    libraryTarget: "umd",
+  },
+  externals: {
+    react: {
+      root: "React",
+      commonjs2: "react",
+      commonjs: "react",
+      amd: "react",
+      umd: "react",
+    },
+    "react-dom": {
+      root: "ReactDOM",
+      commonjs2: "react-dom",
+      commonjs: "react-dom",
+      amd: "react-dom",
+      umd: "react-dom",
+    },
   },
   resolve: {
     extensions: [".js", ".jsx"],
@@ -57,6 +75,7 @@ module.exports = {
       // },
     ],
   },
+
   // plugins: [
   //   new HTMLWebpackPlugin({
   //     template: __dirname + "/public/index.html",
