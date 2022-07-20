@@ -10,8 +10,9 @@ const LanguageContext = React.createContext(null);
 //console.log(config);
 
 export const LanguageProvider = (props) => {
-  const [language, setCurrentLanguage] = useState("en");
   const { t, i18n } = useTranslation();
+  const [language, setCurrentLanguage] = useState(i18n.language);
+
   console.log("the children;;", props);
 
   initialize();
