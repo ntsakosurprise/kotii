@@ -5,6 +5,7 @@ import { useLanguage } from "../../context/language-provider";
 const options = [
   { value: "en", label: "English" },
   { value: "ts", label: "Tsonga" },
+  { value: "ve", label: "Venda" },
 ];
 
 const LanguageSwitcher = () => {
