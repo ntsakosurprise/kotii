@@ -1,3 +1,3 @@
-import initialize from "./initialize";
+import { initialize } from "./initialize";
 
 export { initialize };
