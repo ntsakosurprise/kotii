@@ -10,7 +10,7 @@ const LanguageContext = React.createContext(null);
 //console.log(config);
 
 export const LanguageProvider = (props) => {
-  const { language, changeLanguage } = useState("en");
+  const { language, setCurrentLanguage } = useState("en");
   const { t, i18n } = useTranslation();
   console.log("the children;;", props);
 
@@ -21,8 +21,9 @@ export const LanguageProvider = (props) => {
   // });
 
   const changeCurrentLanguage = (language) => {
-    i18n.changeLanguage(language, () => {
-      changeLanguage(language);
+    i18n.changeLanguage(language, (setCurrentLanguage) => {
+      console.log("Language has successfully been set");
+      console.log(language);
     });
   };
   const get = (message = "") => {
