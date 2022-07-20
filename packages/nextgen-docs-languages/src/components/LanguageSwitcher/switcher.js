@@ -8,13 +8,13 @@ const options = [
 ];
 
 const LanguageSwitcher = () => {
-  const { changeCurrentLanguage, language } = useLanguage;
+  const { changeCurrentLanguage, language } = useLanguage();
   const [selectedOption, setSelectedOption] = useState(language);
 
   const switchLanguage = (value) => {
     console.log("the props;;", value);
-    changeCurrentLanguage();
-    setSelectedOption();
+    changeCurrentLanguage(value);
+    setSelectedOption(value);
   };
 
   return (
@@ -22,7 +22,9 @@ const LanguageSwitcher = () => {
       <Select
         defaultValue={selectedOption}
         onChange={(e) => {
-          switchLanguage(e.target.value);
+          console.log("onchange event;;;", e);
+
+          switchLanguage(e.value);
         }}
         options={options}
       />
