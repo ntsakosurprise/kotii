@@ -28,11 +28,14 @@ i18n.use(initReactI18next).init({
     ts: {
       translations: require("./locales/ts/translations.json"),
     },
+    ve: {
+      translations: require("./locales/ve/translations.json"),
+    },
   },
   ns: ["translations"],
   defaultNS: "translations",
 });
 
-// i18n.languages = ["en", "ts"];
+i18n.languages = ["en", "ts", "ve"];
 
 // export default i18n;
