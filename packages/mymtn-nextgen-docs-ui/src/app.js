@@ -10,6 +10,15 @@ import styled from "styled-components";
 const Container = styled.div`
   margin: 5px auto 5px auto;
 `;
+
+const Test = () => {
+  const { get } = useLanguage();
+  return (
+    <p>
+      Message: <span>{get("greetings")}</span>
+    </p>
+  );
+};
 const App = () => {
   console.log("languageProvider", LanguageProvider);
   console.log("useLanguage;;;", useLanguage);
@@ -53,6 +62,7 @@ const App = () => {
         <div>
           <p>Surprise</p>
         </div>
+        <Test />
         {/* <GlobalStyle />
             <Container style={{ fontFamily: selectedTheme.font }}>
               <Root />
