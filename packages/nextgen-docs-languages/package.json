@@ -5,8 +5,9 @@
   "license": "MIT",
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
-    "start": "webpack-dev-server --open --hot --mode development",
-    "build": "webpack --mode production"
+    "start": "webpack-dev-server --watch",
+    "build": "webpack --mode production",
+    "buildDev": "webpack --mode development"
   },
   "dependencies": {
     "i18next": "^21.8.14",
@@ -17,6 +18,7 @@
     "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
+    "babel-cli": "^6.26.0",
     "babel-loader": "^8.2.3",
     "style-loader": "^3.3.1",
     "webpack": "^5.69.1",
