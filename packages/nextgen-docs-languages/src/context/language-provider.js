@@ -1,25 +1,35 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 // import i18next from "i18next";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { initialize } from "../config/index";
+/* eslint-disable no-unused-vars */
+// import { config } from "../config/index";
+import { initialize } from "../config";
 const LanguageContext = React.createContext(null);
+//console.log(config);
 
 export const LanguageProvider = (props) => {
   const { language, changeLanguage } = useState("en");
   const { t, i18n } = useTranslation();
   console.log("the children;;", props);
 
-  useEffect(() => {
-    initialize();
-  });
+  initialize();
+
+  // useEffect(() => {
+  //   initialize();
+  // });
 
   const changeCurrentLanguage = (language) => {
     i18n.changeLanguage(language, () => {
       changeLanguage(language);
     });
   };
-  const get = (message = "") => t(message);
+  const get = (message = "") => {
+    console.log("GET MESSAGE;;;", message);
+    console.log(t);
+    return t(message);
+  };
   return (
     <LanguageContext.Provider
       value={{
