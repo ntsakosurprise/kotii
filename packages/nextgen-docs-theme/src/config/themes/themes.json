@@ -1,6 +1,16 @@
 {
   "themes": {
-    "light": { "link": {} },
+    "light": {
+      "id": "t_001",
+      "name": "light",
+      "colors": {
+        "link": { "text": "teal", "opacity": 1 },
+        "body": "#FFFFFF",
+        "text": "#000000",
+        "button": { "text": "#000000", "background": "#FFFFFF" },
+        "font": "Tinos"
+      }
+    },
     "dark": { "link": {} }
   }
 }
