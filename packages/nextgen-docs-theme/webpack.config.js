@@ -33,6 +33,7 @@ module.exports = {
     extensions: [".js", ".jsx"],
     alias: {
       Config: "/src/config/",
+      Components: "/src/components/",
       HOC: "/src/hoc/",
       Hooks: "/src/hooks/index",
       Context: "/src/context/",
