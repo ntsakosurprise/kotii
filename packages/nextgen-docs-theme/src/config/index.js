@@ -1,2 +1,2 @@
-import { initialize } from "./config";
-export { initialize };
+import { logStoredThemesStatus } from "./config";
+export { logStoredThemesStatus };
