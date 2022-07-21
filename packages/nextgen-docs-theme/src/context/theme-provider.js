@@ -6,4 +6,4 @@ export const LanguageProvider = (props) => {
   return <ThemeContext.Provider>{props.children}</ThemeContext.Provider>;
 };
 
-export const useTheme = () => React.useContext(ThemeContext);
+export const useThemeContext = () => React.useContext(ThemeContext);

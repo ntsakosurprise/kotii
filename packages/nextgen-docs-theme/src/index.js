@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
-import LanguageSwitcher from "./components/LanguageSwitcher";
-import { LanguageProvider, useLanguage } from "./context/language-provider";
+// import LanguageSwitcher from "./components/LanguageSwitcher";
+import { GlobalStyle } from "AppGlobals";
+import { ThemeProvider, useThemeContext } from "Context";
 
-export { LanguageProvider, useLanguage, LanguageSwitcher };
+export { ThemeProvider, GlobalStyle, useThemeContext };
