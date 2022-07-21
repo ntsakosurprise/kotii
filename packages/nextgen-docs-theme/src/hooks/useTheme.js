@@ -17,5 +17,5 @@ export const useTheme = () => {
     setThemeStatus(true);
   }, []);
 
-  return { theme, changeTheme, isThemeLoaded };
+  return { theme, themes, changeTheme, isThemeLoaded };
 };

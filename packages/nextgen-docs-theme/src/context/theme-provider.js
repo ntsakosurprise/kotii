@@ -5,12 +5,12 @@ import React, { useEffect } from "react";
 const ThemeContext = React.createContext(null);
 
 export const ThemeProvider = (props) => {
-  const [theme, isThemeLoaded, changeTheme] = useTheme();
+  const [theme, themes, isThemeLoaded, changeTheme] = useTheme();
   useEffect(() => {
     logStoredThemesStatus();
   });
   return (
-    <ThemeContext.Provider value={(theme, isThemeLoaded, changeTheme)}>
+    <ThemeContext.Provider value={(theme, themes, isThemeLoaded, changeTheme)}>
       {props.children}
     </ThemeContext.Provider>
   );
