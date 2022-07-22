@@ -1,39 +1,59 @@
 /* eslint-disable no-unused-vars */
+import { GlobalStyle } from "AppGlobals";
 import {
   LanguageProvider,
   LanguageSwitcher,
   useLanguage,
 } from "nextgen-docs-languages";
-import React from "react";
-import styled from "styled-components";
+import {
+  ThemeGlobalStyle,
+  // GlobalStyle,
+  ThemeProvider,
+  ThemeSwitcher,
+  useTheme,
+  useThemeContext,
+} from "nextgen-docs-theme";
+import React, { useState } from "react";
+// import { ThemeProvider } from "styled-components";
 
-const Container = styled.div`
-  margin: 5px auto 5px auto;
-`;
+// const Container = styled.div`
+//   margin: 5px auto 5px auto;
+// `;
 
 const Test = () => {
-  const { get } = useLanguage();
+  const { get, language } = useLanguage();
+  const [test, setTest] = useState("i am the test");
+  console.log("the TEST;;;", test);
+  console.log(setTest);
   return (
     <p>
-      Message: <span>{get("greetings")}</span>
+      <span>
+        {get("greetings")}, {get("message")} {test}
+      </span>
+      <p>The current language is set to {language}</p>
+      <button onClick={() => setTest("I am the test 2")}>Click me</button>
     </p>
   );
 };
-const App = () => {
-  console.log("languageProvider", LanguageProvider);
-  console.log("useLanguage;;;", useLanguage);
 
-  // setInStorage("themes", Themes);
-  // console.log("the themes");
-  // console.log(getFromStorage("themes"));
-  // const { theme, isThemeLoaded, getWebFonts } = useTheme();
+const TestGlobal = () => {
+  const { theme } = useThemeContext();
+  console.log("Test Global theme", theme);
+  return <GlobalStyle theme={theme} />;
+};
+const App = () => {
+  console.log("languageProvider", ThemeProvider);
+  console.log("useLanguage;;;", useTheme);
+
+  // const { theme, isThemeLoaded } = useTheme();
   // const [selectedTheme, setSelectedTheme] = useState(theme);
   // const [showDialog, setShowDialog] = useState(false);
   // const [newTheme, setNewTheme] = useState();
+  // console.log("THE APP THEME;;;", theme);
 
   // useEffect(() => {
   //   setSelectedTheme(theme);
-  //   console.log("the setTheme;;;", selectedTheme);
+  //   console.log("the setThemeaa;;;", selectedTheme);
   // }, [isThemeLoaded]);
 
   // useEffect(() => {
@@ -55,31 +75,21 @@ const App = () => {
   // console.log("resetStyles;;;", selectedTheme);
   return (
     <>
-      {/* {isThemeLoaded && (
-        <ThemeProvider theme={selectedTheme}> */}
-      <LanguageProvider language="en">
-        <LanguageSwitcher />
-        <div>
-          <p>Surprise</p>
-        </div>
-        <Test />
-        {/* <GlobalStyle />
-            <Container style={{ fontFamily: selectedTheme.font }}>
-              <Root />
-              <button className="btn" onClick={manageDialog}>
-                Create a Theme
-              </button>
-              <Dialog
-              header="Create a Theme"
-              body={<MakeTheme create={createTheme} />}
-              open={showDialog}
-              callback={manageDialog}
-            />
-              <ThemeSelector setter={setSelectedTheme} />
-            </Container> */}
-      </LanguageProvider>
-      {/* </ThemeProvider>
-      )} */}
+      <ThemeProvider>
+        {/* <GlobalStyle theme={theme} /> */}
+        {/* <TestGlobal /> */}
+        <ThemeGlobalStyle globalStyle={GlobalStyle} />
+
+        <ThemeSwitcher />
+        <LanguageProvider language="en">
+          <LanguageSwitcher />
+
+          <div>
+            <p>Surprise</p>
+          </div>
+          <Test />
+        </LanguageProvider>
+      </ThemeProvider>
     </>
   );
 };
