@@ -1,6 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
-import { GlobalStyle } from "AppGlobals";
+import { ThemeGlobalStyle } from "AppGlobals";
 import ThemeSwitcher from "Components";
 import { ThemeProvider, useThemeContext } from "Context";
+import { useTheme } from "Hooks";
 
-export { ThemeProvider, GlobalStyle, useThemeContext, ThemeSwitcher };
+export {
+  ThemeProvider,
+  ThemeGlobalStyle,
+  useThemeContext,
+  ThemeSwitcher,
+  useTheme,
+};
