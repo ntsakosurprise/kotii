@@ -3,7 +3,7 @@ import { getFromStorage, setInStorage } from "Utilities";
 
 export const useTheme = () => {
   const themes = getFromStorage("themes");
-  const [theme, setThemeMode] = useState(themes.light);
+  const [theme, setThemeMode] = useState(getFromStorage("theme"));
   const [isThemeLoaded, setThemeStatus] = useState(false);
 
   const changeTheme = (currentTheme) => {
@@ -13,7 +13,7 @@ export const useTheme = () => {
 
   useEffect(() => {
     const currentTheme = getFromStorage(theme);
-    currentTheme ? setThemeMode(currentTheme) : setThemeMode(themes.light);
+    currentTheme ? setThemeMode(currentTheme) : setThemeMode(theme);
     setThemeStatus(true);
   }, []);
 
