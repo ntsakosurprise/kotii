@@ -3,7 +3,7 @@ const path = require("path");
 // const HTMLWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  entry: "./lib/index.js",
+  entry: "./lib/loader.js",
   target: "web",
   output: {
     path: path.join(__dirname),
@@ -12,6 +12,7 @@ module.exports = {
     publicPath: "",
     library: "nextgen-docs-markdown",
     libraryTarget: "umd",
+    globalObject: "this",
   },
   externals: {
     react: {
