@@ -14,6 +14,7 @@ import {
   useThemeContext,
 } from "nextgen-docs-theme";
 import React, { useState } from "react";
+import { Root } from "Startup";
 // import { ThemeProvider } from "styled-components";
 
 // const Container = styled.div`
@@ -83,6 +84,7 @@ const App = () => {
         <ThemeSwitcher />
         <LanguageProvider language="en">
           <LanguageSwitcher />
+          <Root />
 
           <div>
             <p>Surprise</p>
