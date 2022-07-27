@@ -10,7 +10,7 @@ module.exports = {
     filename: "index.js",
     chunkFilename: "[id].js",
     publicPath: "",
-    library: "nextgen-docs-languages",
+    library: "nextgen-docs-theme",
     libraryTarget: "umd",
   },
   externals: {
