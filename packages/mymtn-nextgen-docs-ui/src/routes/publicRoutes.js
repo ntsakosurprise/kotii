@@ -5,7 +5,7 @@
 // import HelpSupport from "Pages";
 // import ProductServices from "Pages";
 // import Store from "../Store/component";
-import { GetStarted } from "Docs";
+import { Welcome } from "Docs";
 import { HelpSupport, Home, Personal, ProductServices } from "Pages";
 
 export default [
@@ -30,9 +30,9 @@ export default [
     path: "/products-services",
   },
   {
-    component: GetStarted,
-    name: "GetStarted",
-    path: "/get-started",
+    component: Welcome,
+    name: "Welcome",
+    path: "/get-started/welcome",
   },
   //   {
   //     component: Store,

@@ -102,8 +102,8 @@ function primaryMenu() {
       <Link to="/help-support" className="header__primary-nav--nav-link">
         Help & Support
       </Link>
-      <Link to="/get-started" className="header__primary-nav--nav-link">
-        Get Started
+      <Link to="/get-started/welcome" className="header__primary-nav--nav-link">
+        Welcome
       </Link>
     </nav>
   );

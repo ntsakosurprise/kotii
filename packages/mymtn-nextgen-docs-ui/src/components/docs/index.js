@@ -1,3 +1,3 @@
-import { GetStarted } from "./GetStarted/component";
+import { Welcome } from "./GetStarted/Welcome";
 
-export { GetStarted };
+export { Welcome };
