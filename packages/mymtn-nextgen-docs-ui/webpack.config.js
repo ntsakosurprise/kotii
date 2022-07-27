@@ -16,6 +16,8 @@ module.exports = {
     alias: {
       Layouts: "/src/components/layout/index",
       Pages: "/src/components/pages/index",
+      Docs: "/src/components/docs/index",
+      Modules: "/src/modules",
       Startup: "/src/components/startup/index",
       UI: "/src/components/ui/index",
       Config: "/src/config/",
