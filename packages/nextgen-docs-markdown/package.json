@@ -2,5 +2,9 @@
   "name": "nextgen-docs-markdown",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "marked": "^4.0.18",
+    "prism": "^4.1.2"
+  }
 }
