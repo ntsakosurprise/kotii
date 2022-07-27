@@ -5,6 +5,7 @@ import {
   LanguageSwitcher,
   useLanguage,
 } from "nextgen-docs-languages";
+import { test2 } from "nextgen-docs-markdown";
 import {
   ThemeGlobalStyle,
   // GlobalStyle,
@@ -25,6 +26,8 @@ const Test = () => {
   const { get, language } = useLanguage();
   const [test, setTest] = useState("i am the test");
   console.log("the TEST;;;", test);
+
+  console.log(test2());
   console.log(setTest);
   return (
     <p>
