@@ -5,13 +5,8 @@
 // import HelpSupport from "Pages";
 // import ProductServices from "Pages";
 // import Store from "../Store/component";
-import {
-  GetStarted,
-  HelpSupport,
-  Home,
-  Personal,
-  ProductServices,
-} from "Pages";
+import { GetStarted } from "Docs";
+import { HelpSupport, Home, Personal, ProductServices } from "Pages";
 
 export default [
   {
