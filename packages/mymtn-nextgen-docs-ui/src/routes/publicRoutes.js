@@ -5,7 +5,13 @@
 // import HelpSupport from "Pages";
 // import ProductServices from "Pages";
 // import Store from "../Store/component";
-import { Home, Personal, HelpSupport, ProductServices } from "Pages";
+import {
+  GetStarted,
+  HelpSupport,
+  Home,
+  Personal,
+  ProductServices,
+} from "Pages";
 
 export default [
   {
@@ -27,6 +33,11 @@ export default [
     component: ProductServices,
     name: "Product",
     path: "/products-services",
+  },
+  {
+    component: GetStarted,
+    name: "GetStarted",
+    path: "/get-started",
   },
   //   {
   //     component: Store,
