@@ -17,7 +17,8 @@ module.exports = {
       Layouts: "/src/components/layout/index",
       Pages: "/src/components/pages/index",
       Docs: "/src/components/docs/index",
-      Modules: "/src/modules",
+      Markdowns: "/src/mds/",
+      Modules: "/src/modules/",
       Startup: "/src/components/startup/index",
       UI: "/src/components/ui/index",
       Config: "/src/config/",
@@ -52,6 +53,10 @@ module.exports = {
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.md$/,
+        use: ["nextgen-docs-markdown"],
       },
       // {
       //   test: /\.scss$/,
