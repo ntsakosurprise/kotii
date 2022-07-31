@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import { GlobalStyle } from "AppGlobals";
+import { docs } from "Markdowns/get-started/welcome.md";
 import {
   LanguageProvider,
   LanguageSwitcher,
   useLanguage,
 } from "nextgen-docs-languages";
-import { test2 } from "nextgen-docs-markdown";
 import {
   ThemeGlobalStyle,
   // GlobalStyle,
@@ -27,7 +27,7 @@ const Test = () => {
   const [test, setTest] = useState("i am the test");
   console.log("the TEST;;;", test);
 
-  console.log(test2());
+  console.log(docs);
   console.log(setTest);
   return (
     <p>
