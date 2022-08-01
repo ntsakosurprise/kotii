@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import { useThemeContext } from "Context";
 import React, { useState } from "react";
 import Select from "react-select";
@@ -9,7 +11,7 @@ import Select from "react-select";
 //   { value: "ve", label: "Venda" },
 // ];
 
-const ThemeSwitcher = () => {
+const MarkdownRender = ({ renders, demos, demosComponents }) => {
   const { changeTheme, theme, themes } = useThemeContext();
   const [selectedOption, setSelectedOption] = useState(theme);
   console.log("the themSWITCHER;;;", themes);
@@ -73,4 +75,4 @@ const ThemeSwitcher = () => {
   );
 };
 
-export default ThemeSwitcher;
+export default MarkdownRender;
