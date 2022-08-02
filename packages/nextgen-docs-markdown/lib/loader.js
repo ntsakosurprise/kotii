@@ -2,16 +2,15 @@ const { parseMarkdown } = require("./markdownParser");
 
 console.log(parseMarkdown);
 
+// eslint-disable-next-line no-unused-vars
 module.exports = function (source) {
-  console.log("MarkDownFolder", rePath);
-  console.log("the source;;", source);
   this.getLogger();
-  const rePath = this.resourcePath;
-  console.log("MarkDownFolder", rePath);
-  console.log("the source;;", source);
+  // const reContext = this.context;
+  // const rePath = this.resourcePath;
+  // console.log("MarkDownFolder", rePath);
+  //   console.log("the source;;", reContext);
   const docs = {
-    doc1: "I'm doc 1",
-    doc2: "I'm doc 2",
+    content: source,
   };
 
   const loaded = `
