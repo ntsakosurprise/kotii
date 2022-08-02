@@ -1,13 +1,12 @@
-/* eslint-disable react/no-unescaped-entities */
-import { ThemeGlobalStyle } from "AppGlobals";
-import ThemeSwitcher from "Components";
-import { ThemeProvider, useThemeContext } from "Context";
-import { useTheme } from "Hooks";
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import App from "./app";
+//import "../public/css/style.css";
 
-export {
-  ThemeProvider,
-  ThemeGlobalStyle,
-  useThemeContext,
-  ThemeSwitcher,
-  useTheme,
-};
+ReactDOM.render(
+  <Router>
+    <Route component={App} />
+  </Router>,
+  document.getElementById("root")
+);
