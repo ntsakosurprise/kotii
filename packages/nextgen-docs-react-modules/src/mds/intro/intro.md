@@ -1,48 +1,75 @@
-# Introduction
+# This is level one heading of Markdown Syntax
 
-## Welcome
+Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 
-This is a documentaion website for MyMtnNextgen app and its related resources. The site has been made with the purpose of helping anyone understand the project and its implementation better and in detail.
+## This is level 2: Where does it come from?
 
-It has been made to be very simple and intuitive, following a chronological order presentation style. In preparing the documentation, the team has placed a greater emphasis on new developers who have a little to no insight into the ins and outs of the project.
+Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur
 
-Nonetheless, this documentation has also been made effective enough to cater for seasoned developers to aid them in their daily work operations in the context of <blockquote>myMTN </blockquote>.
+## Below is my table:
 
-In the context of _MyMtnNextgen_, this documentation site presents information about things such as the _project set up_, _framework_, _conventions_ used and followed, _best practices_, _components_ usage, and many other features.
+| Chiefs | Pirates | Dynamos |
+| ------ | ------- | ------- |
+| 49     | 90      | 95      |
+| 49     | 90      | 95      |
+| 49     | 90      | 95      |
+| 49     | 90      | 95      |
+| 49     | 90      | 95      |
 
-### Code Snippets
+## Checkout my heading with a custom ID {#custom-id}
 
-As an added convenience, some pages might have code snippets that you can quickly copy and integrate into your work in progress. This may not be as needed, but it can be imagined that there may be a case of usage for it.
+Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 
-As an example, you may be reading about how a given component works and wish to quickly test that part of the component before you fully utilise it, and in that case, it would be convenient for you to just quickly copy, paste, and test.
+### My block quote:
 
-Please refer to the code below for an example of a snippet:
+> Once upon a time there was a man, and the man was the man
 
-```jsx
-import * as React from React
-import Card from "./project/cardpath/card"
+I also wanna my make my name bold **Surprise** and my surname italic _Mashele_
 
-const CardDisplayer = ()=>{
-    return(
-            <Card bgColor="red" size={20}>
-                <span>This is a test card</span>
-            </Card>
-        )
+## Checkout My Favorite food in order
 
-}
+1. Spaghetti
+2. Pap
+3. Rice
+4. Beef
+5. Cereals
 
-export default CardDisplayer;
+## My favorite artists are as follows
+
+- Nas
+- Kendrick Lamar
+- J Cole
+- Eminem
+- Jay Z
+- Kanye West
+- Pusha T
+
+## A link to my portfolios is as follows: [SurprisePortfolio](https://www.surpriseportfolio.com). I enjoy coding in javascript, which takes the form of the following sytanx `const name = "my name"`. Below this line, I will have a horizontal rule takes the form:
+
+## Below IS a bigger code block::
 
 ```
+js
+const test = "I'm the test"
+const function showTest(){
 
-### Interactive Editor
+    console.log('Please see the test result", test)
+}
+```
 
-In some cases, this documentation provides an interactive editor where you can type and edit code with live results. This has an added benefit that further immense you into the project as gives you instant results that can visually aid you and give you an idea of how a given feature is implemented.
+Below we are going to have a joy emoji like this: :joy: We are also going to have footnote in the following form: [^1]
 
-A picture is worth a glancing, please refer to the interactive editor below:
+See the strikethrough here: ~I'm strikethrough~ and I should also emphasize that the to make text important,we need to use the following syntax in markdown: ==This is important== The Superscript and subscript take the following form: H~2~0 and x^2^
 
-<code>My made up tag</>
+## Below is my to do list:
 
-### Team Support
+- [x] Read a book
+- [] Tell a story
+- [] Hug my wife
+- [] Pray to God
+- [] Pray for the world
+- [] Hope for world peace
+- [] Tell my mama I love her
 
-We are fully aware that you can go through the docs and still have inconveniences understanding some parts of it, in that case, you shouldn’t hesitate to reach out to the team for assistance. We work in a collaborative environment that encourages knowledge sharing and assistance. Please reach out, we’d love to help! :smile:
+The meaning of my name is: Surprise
+: A thing that brings people the unexpected
