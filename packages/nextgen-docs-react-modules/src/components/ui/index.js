@@ -1,7 +1,8 @@
 import Carousel from "./Carousel/component";
 import CarouselSlick from "./CarouselSlick/component";
-import { ThemeSelector } from "./ThemeSelector/component";
-import { MakeTheme } from "./MakeTheme/component";
 import { Dialog } from "./Dialog/component";
+import { MakeTheme } from "./MakeTheme/component";
+import SplitView from "./SplitView/component";
+import { ThemeSelector } from "./ThemeSelector/component";
 
-export { Carousel, CarouselSlick, ThemeSelector, MakeTheme, Dialog };
+export { Carousel, CarouselSlick, ThemeSelector, MakeTheme, Dialog, SplitView };

@@ -13,4 +13,4 @@ const useLoadMD = ({ fileName }) => {
   return mdContent;
 };
 
-export default useLoadMD;
+export { useLoadMD };

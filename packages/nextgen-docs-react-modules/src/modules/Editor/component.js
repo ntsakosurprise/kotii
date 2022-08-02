@@ -1,6 +1,7 @@
-import React from "react";
+/* eslint-disable react/display-name */
 import { Grid } from "@mui/material";
-import SplitView from "../SplitView";
+import React from "react";
+import { SplitView } from "UI";
 
 export default () => {
   return (

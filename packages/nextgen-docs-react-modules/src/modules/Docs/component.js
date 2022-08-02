@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from "react";
-import Sidebar from "../Sidebar/component";
-import DocsMain from "../DocsMain/component";
+/* eslint-disable react/no-children-prop */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+import React from "react";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
+import remarkGfm from "remark-gfm";
+import DocsMain from "../DocsMain/component";
 
 const Docs = ({ children, mdContent = {} }) => {
   console.log("docs.md;;", mdContent);
   return (
     <>
-      <Sidebar />
+      {/* <Sidebar /> */}
       <DocsMain>
         <ReactMarkdown
           remarkPlugins={[[remarkGfm, { singleTilde: false }]]}

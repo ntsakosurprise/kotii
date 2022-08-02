@@ -1,13 +1,15 @@
+import { publicRoutes } from "AppRoutes";
+import { Footer, Header } from "Layouts";
 import React, { Component } from "react";
-import { Switch, withRouter } from "react-router-dom";
+import { Switch } from "react-router-dom";
 import Public from "../Public/component";
-import { publicRoutes, privateRoutes } from "AppRoutes";
 
 class Routes extends Component {
   render() {
     console.log("publicRoutes;;", publicRoutes);
     return (
       <Switch>
+        <Header />
         {publicRoutes.map((r, i) => {
           return (
             <Public
@@ -19,6 +21,7 @@ class Routes extends Component {
             />
           );
         })}
+        <Footer />
       </Switch>
     );
   }

@@ -1,2 +1,3 @@
+import { useLoadMD } from "./loadmd";
 import { useTheme } from "./useTheme";
-export { useTheme };
+export { useLoadMD, useTheme };
