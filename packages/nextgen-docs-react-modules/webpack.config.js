@@ -11,25 +11,25 @@ module.exports = {
     filename: "index.js",
     chunkFilename: "[id].js",
     publicPath: "",
-    library: "nextgen-docs-theme",
-    libraryTarget: "umd",
+    // library: "nextgen-docs-react-modules",
+    // libraryTarget: "umd",
   },
-  externals: {
-    react: {
-      root: "React",
-      commonjs2: "react",
-      commonjs: "react",
-      amd: "react",
-      umd: "react",
-    },
-    "react-dom": {
-      root: "ReactDOM",
-      commonjs2: "react-dom",
-      commonjs: "react-dom",
-      amd: "react-dom",
-      umd: "react-dom",
-    },
-  },
+  // externals: {
+  //   react: {
+  //     root: "React",
+  //     commonjs2: "react",
+  //     commonjs: "react",
+  //     amd: "react",
+  //     umd: "react",
+  //   },
+  //   "react-dom": {
+  //     root: "ReactDOM",
+  //     commonjs2: "react-dom",
+  //     commonjs: "react-dom",
+  //     amd: "react-dom",
+  //     umd: "react-dom",
+  //   },
+  // },
   resolve: {
     extensions: [".js", ".jsx"],
     alias: {
@@ -61,6 +61,10 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: "babel-loader",
+      },
+      {
+        test: /\.md$/,
+        use: ["nextgen-docs-markdown"],
       },
       // {
       //   test: /\.html$/,

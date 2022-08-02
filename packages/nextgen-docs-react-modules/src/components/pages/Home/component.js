@@ -5,7 +5,7 @@ export const Home = () => {
   // console.log("carouselSlick;;;", CarouselSlick);
 
   return (
-    <div>test</div>
+    <div style={{ color: "red", fontSize: "50px" }}>test</div>
     // <Carousel />
     //   <CarouselSlick
     //     settings={settings}

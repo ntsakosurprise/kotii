@@ -1,4 +1,4 @@
-import Docs from "./Docs/component";
+import DocsComponent from "./DocsComponent/component";
 import Editor from "./Editor/component";
 
-export { Docs, Editor };
+export { DocsComponent, Editor };

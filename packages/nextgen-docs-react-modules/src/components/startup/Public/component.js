@@ -1,7 +1,8 @@
+/* eslint-disable react/display-name */
+/* eslint-disable react/prop-types */
+import { Footer, Header } from "Layouts";
 import React from "react";
 import { Route } from "react-router-dom";
-
-import { Header, Footer } from "Layouts";
 
 export default ({ component: Component, ...rest }) => {
   console.log("testHEADER");

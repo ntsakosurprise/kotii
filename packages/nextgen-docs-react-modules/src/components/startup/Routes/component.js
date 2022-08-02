@@ -1,5 +1,4 @@
 import { publicRoutes } from "AppRoutes";
-import { Footer, Header } from "Layouts";
 import React, { Component } from "react";
 import { Switch } from "react-router-dom";
 import Public from "../Public/component";
@@ -9,7 +8,6 @@ class Routes extends Component {
     console.log("publicRoutes;;", publicRoutes);
     return (
       <Switch>
-        <Header />
         {publicRoutes.map((r, i) => {
           return (
             <Public
@@ -21,7 +19,6 @@ class Routes extends Component {
             />
           );
         })}
-        <Footer />
       </Switch>
     );
   }

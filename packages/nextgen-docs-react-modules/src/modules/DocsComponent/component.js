@@ -8,7 +8,7 @@ import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from "remark-gfm";
 import DocsMain from "../DocsMain/component";
 
-const Docs = ({ children, mdContent = {} }) => {
+const DocsComponent = ({ children, mdContent = {} }) => {
   console.log("docs.md;;", mdContent);
   return (
     <>
@@ -44,4 +44,4 @@ const Docs = ({ children, mdContent = {} }) => {
   );
 };
 
-export default Docs;
+export default DocsComponent;
