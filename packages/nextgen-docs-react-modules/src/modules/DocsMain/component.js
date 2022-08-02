@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 //import HeroText from "./hero_text";
+import MarkdownElement from "../MarkdownElement";
 
 const DocsMain = ({ children }) => {
   return (
@@ -14,7 +15,7 @@ const DocsMain = ({ children }) => {
       }}
     >
       {/* <HeroText /> */}
-      {children}
+      <MarkdownElement>{children}</MarkdownElement>
     </main>
   );
 };
