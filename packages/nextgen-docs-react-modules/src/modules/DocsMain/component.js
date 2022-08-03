@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import React from "react";
+import { JSONNMStyles } from "../JSONMStyles";
 //import HeroText from "./hero_text";
 import MarkdownElement from "../MarkdownElement";
-
 const DocsMain = ({ children }) => {
   return (
     <main
@@ -15,7 +15,9 @@ const DocsMain = ({ children }) => {
       }}
     >
       {/* <HeroText /> */}
-      <MarkdownElement>{children}</MarkdownElement>
+      <MarkdownElement setCustom={true}>
+        <JSONNMStyles>{children}</JSONNMStyles>
+      </MarkdownElement>
     </main>
   );
 };
