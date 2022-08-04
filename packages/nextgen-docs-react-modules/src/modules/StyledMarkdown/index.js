@@ -64,7 +64,7 @@ const StyledMarkdown = styled(GoogleFonts)(() => ({
     maxWidth: "100%",
     minWidth: "100px",
     padding: "0",
-    fontSize: "30px",
+    fontSize: "15px",
     fontFamily: "MyFancyCustomFont, monospace",
   },
   "& code": {
