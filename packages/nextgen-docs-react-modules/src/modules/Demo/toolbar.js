@@ -8,6 +8,26 @@ import {
 } from "react-icons/ai";
 import styled from "styled-components";
 
+const ToolbarNav = styled("div")(() => ({
+  nav: {
+    // position: "fixed",
+    // bottom: "0",
+    width: "100%",
+    padding: "12px",
+    maxWidth: "500px",
+    margin: "0 auto",
+    left: "0",
+    right: "0",
+  },
+  ".nav": {
+    "&-container": {
+      display: "flex",
+      width: "100%",
+      listStyle: "none",
+      justifyContent: "space-around",
+    },
+  },
+}));
 const ListItem = styled("li")(() => ({
   display: "flex",
   position: "relative",
@@ -36,8 +56,8 @@ const ListIcon = styled("div")(() => ({
   fontSize: "1.6em",
   backgroundColor: "#fff",
   borderRadius: "50%",
-  height: "46px",
-  width: "46px",
+  height: "25px",
+  width: "25px",
   transition: "margin-top 250ms ease-in-out, box-shadow 250ms ease-in-out",
 }));
 
@@ -47,70 +67,7 @@ const ListText = styled("span")(() => ({
   transform: "scale(0)",
   transition: "transform 250ms ease-in-out",
 }));
-const ToolbarNav = styled("div")(() => ({
-  nav: {
-    position: "fixed",
-    bottom: "0",
-    width: "100%",
-    padding: "24px",
-    maxWidth: "500px",
-    margin: "0 auto",
-    left: "0",
-    right: "0",
-  },
-  ".nav": {
-    "&-box": {
-      display: "flex",
-      padding: "8px",
-      backgroundColor: "#fff",
-      boxShadow: "0px 0px 16px 0px #4444",
-      borderRadius: "8px",
-    },
-    "&-container": {
-      display: "flex",
-      width: "100%",
-      listStyle: "none",
-      justifyContent: "space-around",
-    },
-    "&__item": {
-      display: "flex",
-      position: "relative",
-      padding: "2px",
-      "&.active": {
-        ".nav__item-icon": {
-          marginTop: "-26px",
-          boxShadow: "0px 0px 16px 0px #4444",
-        },
-        ".nav__item-text": { transform: "scale(1)" },
-      },
-      "&-link": {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        color: "#2f3046",
-        textDecoration: "none",
-      },
-      "&-icon": {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "1.6em",
-        backgroundColor: "#fff",
-        borderRadius: "50%",
-        height: "46px",
-        width: "46px",
-        transition:
-          "margin-top 250ms ease-in-out, box-shadow 250ms ease-in-out",
-      },
-      "&-text": {
-        position: "absolute",
-        bottom: "0",
-        transform: "scale(0)",
-        transition: "transform 250ms ease-in-out",
-      },
-    },
-  },
-}));
+
 const DemoToolbar = () => {
   const items = [
     {
@@ -144,7 +101,7 @@ const DemoToolbar = () => {
       let { text, icon } = current;
       return (
         <ListItem key={i}>
-          <DemoLink>
+          <DemoLink href={`#${text}`}>
             <ListIcon>{getIcon(icon.toLowerCase())}</ListIcon>
             <ListText>{text}</ListText>
           </DemoLink>
