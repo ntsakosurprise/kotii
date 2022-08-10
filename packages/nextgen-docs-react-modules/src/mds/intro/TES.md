@@ -1,13 +1,7 @@
-import \* as React from React
-import Card from "./project/cardpath/card"
+import React from "react";
+import DemoCard from "./card";
+const SampleDemo = () => {
+return <DemoCard />;
+};
 
-const CardDisplayer = ()=>{
-return(
-<Card bgColor="red" size={20}>
-<span>This is a test card</span>
-</Card>
-)
-
-}
-
-export default CardDisplayer;
+export default SampleDemo;
