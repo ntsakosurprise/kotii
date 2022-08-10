@@ -22,7 +22,7 @@ const ToolbarNav = styled("div")(() => ({
   ".nav": {
     "&-container": {
       display: "flex",
-      width: "100%",
+      width: "50%",
       listStyle: "none",
       justifyContent: "space-around",
     },
