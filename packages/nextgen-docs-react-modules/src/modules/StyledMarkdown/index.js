@@ -37,13 +37,15 @@ const StyledMarkdown = styled(GoogleFonts)(() => ({
   },
   "& table tr:nth-child(2n)": { background: "#f5f7fa" },
   "& pre": {
-    background: "#eee",
-    borderLeft: "10px solid #9684A3",
+    // background: "#eee",
+    background: "#001E3C;",
+    borderLeft: "5px solid #9684A3",
     borderRadius: "10px",
     padding: "10px",
     letterSpacing: ".5px",
     fontSize: "10pt",
-    color: "#96b38a",
+    // color: "#96b38a",
+    color: "white",
     fontWeight: "bold",
   },
   "& pre::-webkit-scrollbar": {
