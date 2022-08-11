@@ -1,5 +1,6 @@
 /* eslint-disable react/display-name */
-import React from "react";
+import { docs } from "Markdowns/intro/TES.md";
+import React, { useState } from "react";
 import styled from "styled-components";
 import SampleDemo from "./sample";
 import { ShowCase } from "./showcase";
@@ -17,13 +18,26 @@ const Sandbox = styled("div")(() => ({
 }));
 
 const Demo = () => {
+  const [showSource, setSourceShow] = useState(false);
+  const [liveEdit, setLiveEditor] = useState(true);
+  const toggleSource = () => {
+    setSourceShow(!showSource);
+  };
+  const setLiveEdit = () => {
+    setLiveEditor(!liveEdit);
+  };
+
   return (
     <Sandbox>
       <ShowCase>
         <SampleDemo />
       </ShowCase>
-      <DemoToolbar />
-      <DemoSource />
+      <DemoToolbar
+        toggleSource={toggleSource}
+        liveEdit={setLiveEdit}
+        docs={docs}
+      />
+      <DemoSource showSource={showSource} docs={docs} liveEdit={liveEdit} />
     </Sandbox>
   );
 };
