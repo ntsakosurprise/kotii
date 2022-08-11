@@ -27,7 +27,7 @@ const CardDemoHeader = styled("div")(() => ({
 
 const Card = styled("div")(() => ({
   width: "50%",
-  // padding: "0 25px",
+  padding: "0 25px",
   WebktiBoxSizing: "border-box",
   MozBoxSizing: "border-box",
   boxSizing: "border-box",
@@ -172,41 +172,54 @@ const CardPostContentMeta = styled("div")(() => ({
 }));
 const DemoCard = () => {
   return (
-    <Card>
-      {/* <CardTitle>Nomarl</CardTitle> */}
+    <>
+      <div className="container">
+        {/* <CardDemoHeader>
+          <h1>React Card Demo</h1>
+          <span>
+            Made with <i className="fa fa-heart animated infinite pulse"></i> by{" "}
+            <a href="#">Deven</a>
+          </span>
+        </CardDemoHeader> */}
+        <Card>
+          <CardTitle>Nomarl</CardTitle>
 
-      <CardPost>
-        <CardThumbnail>
-          <CardThumbnailDate>
-            <CardThumbnailDateDay>27</CardThumbnailDateDay>
-            <CardThumbnailDateMonth>Mar</CardThumbnailDateMonth>
-          </CardThumbnailDate>
-          <CardThumbnailImage src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/169963/photo-1429043794791-eb8f26f44081.jpeg" />
-        </CardThumbnail>
-        <CardPostContent>
-          <CardPostContentCategory>Photos</CardPostContentCategory>
-          <CardPostContentTitle>City Lights in New York</CardPostContentTitle>
-          <CardPostContentSubTitle>
-            The city that never sleeps.
-          </CardPostContentSubTitle>
-          <CardPostContentDesc>
-            {" "}
-            New York, the largest city in the U.S., is an architectural marvel
-            with plenty of historic monuments, magnificent buildings and
-            countless dazzling skyscrapers.
-          </CardPostContentDesc>
-          <CardPostContentMeta>
-            <span className="timestamp">
-              <i className="fa fa-clock-">o</i>6 mins ago
-            </span>
-            <span className="comments">
-              <i className="fa fa-comments"></i>
-              <a href="#">39 comments</a>
-            </span>
-          </CardPostContentMeta>
-        </CardPostContent>
-      </CardPost>
-    </Card>
+          <CardPost>
+            <CardThumbnail>
+              <CardThumbnailDate>
+                <CardThumbnailDateDay>27</CardThumbnailDateDay>
+                <CardThumbnailDateMonth>Mar</CardThumbnailDateMonth>
+              </CardThumbnailDate>
+              <CardThumbnailImage src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/169963/photo-1429043794791-eb8f26f44081.jpeg" />
+            </CardThumbnail>
+            <CardPostContent>
+              <CardPostContentCategory>Photos</CardPostContentCategory>
+              <CardPostContentTitle>
+                City Lights in New York
+              </CardPostContentTitle>
+              <CardPostContentSubTitle>
+                The city that never sleeps.
+              </CardPostContentSubTitle>
+              <CardPostContentDesc>
+                {" "}
+                New York, the largest city in the U.S., is an architectural
+                marvel with plenty of historic monuments, magnificent buildings
+                and countless dazzling skyscrapers.
+              </CardPostContentDesc>
+              <CardPostContentMeta>
+                <span className="timestamp">
+                  <i className="fa fa-clock-">o</i>6 mins ago
+                </span>
+                <span className="comments">
+                  <i className="fa fa-comments"></i>
+                  <a href="#">39 comments</a>
+                </span>
+              </CardPostContentMeta>
+            </CardPostContent>
+          </CardPost>
+        </Card>
+      </div>
+    </>
   );
 };
 

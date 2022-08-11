@@ -7,8 +7,13 @@ import DemoSource from "./source";
 import DemoToolbar from "./toolbar";
 
 const Sandbox = styled("div")(() => ({
-  backgroundColor: "red",
+  // backgroundColor: "red",
+  // background: "#eee",
+  background: "#001E3C;",
   position: "relative",
+  padding: "10px",
+  display: "flex",
+  flexDirection: "column",
 }));
 
 const Demo = () => {
