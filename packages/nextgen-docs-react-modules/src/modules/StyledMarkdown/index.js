@@ -38,8 +38,9 @@ const StyledMarkdown = styled(GoogleFonts)(() => ({
   "& table tr:nth-child(2n)": { background: "#f5f7fa" },
   "& pre": {
     // background: "#eee",
-    background: "#001E3C;",
-    borderLeft: "5px solid #9684A3",
+    //background: "#001E3C;",
+    background: "#20354A",
+    // borderLeft: "5px solid #9684A3",
     borderRadius: "10px",
     padding: "10px",
     letterSpacing: ".5px",
@@ -48,14 +49,14 @@ const StyledMarkdown = styled(GoogleFonts)(() => ({
     color: "white",
     fontWeight: "bold",
   },
-  "& pre::-webkit-scrollbar": {
-    backgroundColor: "#DED7E6",
-    height: "10px",
-  },
-  "& pre::-webkit-scrollbar-thumb": {
-    background: "#9684A3",
-    borderTopRightRadius: "10px",
-  },
+  // "& pre::-webkit-scrollbar": {
+  //   backgroundColor: "#DED7E6",
+  //   height: "10px",
+  // },
+  // "& pre::-webkit-scrollbar-thumb": {
+  //   background: "#9684A3",
+  //   borderTopRightRadius: "10px",
+  // },
 
   "& pre code": {
     display: "block",
