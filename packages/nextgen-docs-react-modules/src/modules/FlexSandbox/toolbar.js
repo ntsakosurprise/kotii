@@ -9,48 +9,44 @@ import {
 import styled from "styled-components";
 
 const ToolbarNav = styled("div")(() => ({
-  width: "100%",
-  maxWidth: "500px",
-  color: "inherit",
-  fontSize: "16px",
-  alignSelf: "flex-end",
-}));
-
-const Navigation = styled("nav")(() => ({
-  display: "flex",
-  width: "100%",
-  listStyle: "none",
-}));
-
-const UnorderedList = styled("ul")(() => ({
-  display: "flex",
-  flexDirection: "row",
-  justifyContent: "flex-end",
-  width: "100%",
-  listStyle: "none",
+  nav: {
+    // position: "fixed",
+    // bottom: "0",
+    width: "100%",
+    padding: "12px",
+    maxWidth: "500px",
+    margin: "0 auto",
+    left: "0",
+    right: "0",
+  },
+  ".nav": {
+    "&-container": {
+      display: "flex",
+      width: "50%",
+      listStyle: "none",
+      justifyContent: "space-around",
+    },
+  },
 }));
 const ListItem = styled("li")(() => ({
   display: "flex",
   position: "relative",
-  justifyContent: "center",
-  alignItems: "center",
-  // padding: "2px",
-  height: "50px",
-  width: "50px",
-  borderRadius: "50%",
-  backgroundColor: "yellow",
-  marginRight: "1%",
-  cursor: "pointer",
-  ":hover": {
-    backgroundColor: "white",
+  padding: "2px",
+  "&.active": {
+    ".nav__item-icon": {
+      marginTop: "-26px",
+      boxShadow: "0px 0px 16px 0px #4444",
+    },
+    ".nav__item-text": { transform: "scale(1)" },
   },
 }));
 
-const DemoItemsContainer = styled("a")(() => ({
-  // display: "flex",
-  // flexDirection: "column",
-  // alignItems: "center",
+const DemoLink = styled("a")(() => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
   color: "#2f3046",
+  textDecoration: "none",
 }));
 
 const ListIcon = styled("div")(() => ({
@@ -58,7 +54,7 @@ const ListIcon = styled("div")(() => ({
   alignItems: "center",
   justifyContent: "center",
   fontSize: "1.6em",
-  // backgroundColor: "#fff",
+  backgroundColor: "#fff",
   borderRadius: "50%",
   height: "25px",
   width: "25px",
@@ -105,19 +101,21 @@ const DemoToolbar = () => {
       let { text, icon } = current;
       return (
         <ListItem key={i}>
-          <DemoItemsContainer>
+          <DemoLink href={`#${text}`}>
             <ListIcon>{getIcon(icon.toLowerCase())}</ListIcon>
             <ListText>{text}</ListText>
-          </DemoItemsContainer>
+          </DemoLink>
         </ListItem>
       );
     });
   };
   return (
     <ToolbarNav>
-      <Navigation>
-        <UnorderedList>{getToolbarItems()}</UnorderedList>
-      </Navigation>
+      <nav className="nav">
+        <div className="nav-box">
+          <ul className="nav-container">{getToolbarItems()}</ul>
+        </div>
+      </nav>
     </ToolbarNav>
   );
 };
