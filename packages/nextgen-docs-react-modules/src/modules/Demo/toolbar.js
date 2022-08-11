@@ -1,9 +1,11 @@
+/* eslint-disable react/prop-types */
+import copy from "copy-to-clipboard";
 import React from "react";
 import {
-  AiOutlineHome,
+  AiOutlineCode,
+  AiOutlineCopy,
+  AiOutlineEdit,
   AiOutlineInfoCircle,
-  AiOutlineMessage,
-  AiOutlineProfile,
   AiOutlineSetting,
 } from "react-icons/ai";
 import styled from "styled-components";
@@ -72,14 +74,15 @@ const ListText = styled("span")(() => ({
   transition: "transform 250ms ease-in-out",
 }));
 
-const DemoToolbar = () => {
+const DemoToolbar = ({ toggleSource, docs, liveEdit }) => {
   const items = [
     {
       text: "Home",
       icon: "home",
+      action: "toggle",
     },
-    { text: "Profile", icon: "profile" },
-    { text: "messages", icon: "messages" },
+    { text: "Profile", icon: "profile", action: "edit" },
+    { text: "messages", icon: "messages", action: "copy" },
     { text: "help", icon: "help" },
     { text: "settings", icon: "settings" },
   ];
@@ -87,11 +90,11 @@ const DemoToolbar = () => {
   const getIcon = (icon) => {
     switch (icon) {
       case "home":
-        return <AiOutlineHome />;
+        return <AiOutlineCode />;
       case "profile":
-        return <AiOutlineProfile />;
+        return <AiOutlineEdit />;
       case "messages":
-        return <AiOutlineMessage />;
+        return <AiOutlineCopy />;
       case "help":
         return <AiOutlineInfoCircle />;
       case "settings":
@@ -100,11 +103,33 @@ const DemoToolbar = () => {
         return null;
     }
   };
+  const copySource = () => {
+    copy(docs.content);
+  };
+
+  const getItemAction = (action) => {
+    switch (action) {
+      case "toggle":
+        return toggleSource;
+      case "edit":
+        return liveEdit;
+      case "copy":
+        return copySource;
+      case "help":
+        return <AiOutlineInfoCircle />;
+      case "settings":
+        return <AiOutlineSetting />;
+      default:
+        return null;
+    }
+  };
+
   const getToolbarItems = () => {
     return items.map((current, i) => {
-      let { text, icon } = current;
+      let { text, icon, action = "toggle" } = current;
+      let itemAction = getItemAction(action);
       return (
-        <ListItem key={i}>
+        <ListItem key={i} onClick={itemAction}>
           <DemoItemsContainer>
             <ListIcon>{getIcon(icon.toLowerCase())}</ListIcon>
             <ListText>{text}</ListText>
@@ -113,6 +138,7 @@ const DemoToolbar = () => {
       );
     });
   };
+
   return (
     <ToolbarNav>
       <Navigation>
