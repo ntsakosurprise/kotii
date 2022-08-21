@@ -90,5 +90,9 @@ module.exports = {
       filename: "index.html",
       inject: "body",
     }),
+    new webpack.ProvidePlugin({
+      process: "process",
+      Buffer: ["buffer", "Buffer"],
+    }),
   ],
 };
