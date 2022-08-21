@@ -14,19 +14,13 @@ require("prismjs/components/prism-jsx");
 //   color: "green",
 // }));
 
-const DemoSource = ({ showSource, docs, liveEdit, runCode, textEditor }) => {
+const DemoSource = ({ showSource, docs, liveEdit, textEditor }) => {
   console.log("docs;;;", docs);
   console.log("liveedit;;;", liveEdit);
   console.log("tHE TEXT EDITOR;;;", textEditor);
   if (!showSource) return null;
   if (liveEdit)
-    return (
-      <LiveEditor
-        content={docs.content}
-        textEditor={textEditor}
-        run={runCode}
-      />
-    );
+    return <LiveEditor content={docs.content} textEditor={textEditor} />;
   return (
     <StyledMarkdown>
       <pre>
