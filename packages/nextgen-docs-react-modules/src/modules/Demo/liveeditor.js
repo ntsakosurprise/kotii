@@ -47,10 +47,21 @@ const TextArea = styled("textarea")(() => ({
   borderRadius: "10px",
 }));
 
-function LiveEditor({ content, textEditor, run = () => "" }) {
-  const [currentCode, setCurrentCode] = useState(content);
-  const updatePreview = ({ target: value }) => {
+const codeTest = `const TestComp = ()=>{
+    return<div>I'm the test comp</div>
+  } 
+   function Test(){
+  
+    return <><TestComp/></>
+   }
+  
+   <Test />
+  `;
+function LiveEditor({ content, textEditor }) {
+  const [currentCode, setCurrentCode] = useState(codeTest);
+  const updatePreview = ({ target: { value } }) => {
     setCurrentCode(value);
+    console.log("THE TEXTEDITOR;;;", textEditor);
     textEditor.run(value);
   };
   return (
