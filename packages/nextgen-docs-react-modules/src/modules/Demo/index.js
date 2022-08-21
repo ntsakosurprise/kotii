@@ -1,7 +1,9 @@
 /* eslint-disable react/display-name */
 import { docs } from "Markdowns/intro/TES.md";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import createTextEditor from "./altedit";
+import Preview from "./preview";
 import SampleDemo from "./sample";
 import { ShowCase } from "./showcase";
 import DemoSource from "./source";
@@ -19,7 +21,11 @@ const Sandbox = styled("div")(() => ({
 
 const Demo = () => {
   const [showSource, setSourceShow] = useState(false);
-  const [liveEdit, setLiveEditor] = useState(true);
+  const [liveEdit, setLiveEditor] = useState(false);
+  const [textEditor, setTextEditor] = useState(null);
+
+  let previewRef = React.createRef();
+
   const toggleSource = () => {
     setSourceShow(!showSource);
   };
@@ -27,17 +33,34 @@ const Demo = () => {
     setLiveEditor(!liveEdit);
   };
 
+  useEffect(() => {
+    console.log("Dependecy changed");
+    setTextEditor(createTextEditor(previewRef));
+  }, [liveEdit]);
+
+  console.log("the LIVE EDIT;;", liveEdit);
+
   return (
     <Sandbox>
       <ShowCase>
-        <SampleDemo />
+        {liveEdit ? (
+          <Preview ref={(elem) => (previewRef = elem)} />
+        ) : (
+          <SampleDemo />
+        )}
+        {/* <Preview ref={previewRef} /> */}
       </ShowCase>
       <DemoToolbar
         toggleSource={toggleSource}
         liveEdit={setLiveEdit}
         docs={docs}
       />
-      <DemoSource showSource={showSource} docs={docs} liveEdit={liveEdit} />
+      <DemoSource
+        showSource={showSource}
+        docs={docs}
+        liveEdit={liveEdit}
+        textEditor={textEditor}
+      />
     </Sandbox>
   );
 };
