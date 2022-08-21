@@ -4,9 +4,7 @@
 import React from "react";
 
 const Preview = (props, ref) => {
-  return (
-    <div ref={(previewNode) => (previewNode = ref)}>I am the PreviewRef</div>
-  );
+  return <div ref={ref}>I am the PreviewRef</div>;
 };
 
 export default React.forwardRef(Preview);
