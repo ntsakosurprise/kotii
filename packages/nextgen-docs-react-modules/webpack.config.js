@@ -14,6 +14,7 @@ module.exports = {
     // library: "nextgen-docs-react-modules",
     // libraryTarget: "umd",
   },
+  devtool: "source-map",
   // externals: {
   //   react: {
   //     root: "React",
