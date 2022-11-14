@@ -47,18 +47,33 @@ const TextArea = styled("textarea")(() => ({
   borderRadius: "10px",
 }));
 
-const codeTest = `const TestComp = ()=>{
-    return<div>I'm the test comp</div>
-  } 
+const codeTest = `
+import styled from "styled-components";
+import SampleDemo from "./sample";
+const TestComp = ()=>{
+    console.log('IAM ACORN',styled)
+    return<div style={{color:"red"}}>I'm the test comp</div>
+  }
    function Test(){
-  
-    return <><TestComp/></>
+
+    return <><SampleDemo /> <TestComp/> </>
    }
-  
+
    <Test />
   `;
+
+const codeTest2 = `import React from 'react'
+  import SampleDemo from './sample'
+  
+  const ShowSample = ()=>{
+  
+    return <SampleDemo />
+  }
+  <ShowSample />
+  
+  `;
 function LiveEditor({ content, textEditor }) {
-  const [currentCode, setCurrentCode] = useState(codeTest);
+  const [currentCode, setCurrentCode] = useState(codeTest2);
   const updatePreview = ({ target: { value } }) => {
     setCurrentCode(value);
     console.log("THE TEXTEDITOR;;;", textEditor);

@@ -5,5 +5,4 @@ import DemoCard from "./card";
 const SampleDemo = () => {
   return <DemoCard />;
 };
-
 export default SampleDemo;

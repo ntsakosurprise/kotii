@@ -1,15 +1,15 @@
-import generate from "@babel/generator";
+// import generate from "@babel/generator";
 import * as parser from "@babel/parser";
 import traverse from "@babel/traverse";
 import * as t from "@babel/types";
+import { generate } from "escodegen";
 import React from "react";
 import ReactDOM from "react-dom";
-import JsxParser from "react-jsx-parser";
-const snippet = "<button>Click Me</button>";
+// const snippet = "<button>Click Me</button>";
 
 const createTextEditor = (domEl, moduleResolver = () => {}) => {
-  const convertCodeToAST = () => {
-    const ast = parser.parse(snippet, {
+  const convertCodeToAST = (code) => {
+    const ast = parser.parse(code, {
       plugins: ["jsx"],
     });
     console.log("THE MADE AST;;;", ast);
@@ -35,16 +35,16 @@ const createTextEditor = (domEl, moduleResolver = () => {}) => {
     });
   };
 
-  // const getAnonymousFunction = (codeToRun) => {
-  //   console.log("get anonymous function running;;", codeToRun);
-  //   return new Function("React", "render", "require", generate(codeToRun));
-  // };
+  const getAnonymousFunction = (codeToRun) => {
+    console.log("get anonymous function running;;", codeToRun);
+    return new Function("React", "render", "require", generate(codeToRun));
+  };
 
-  const render = (node) => {
+  const render = (node, err = false) => {
     console.log("THE NODE;;;", node);
     console.log("THE EL;;;", domEl);
 
-    ReactDOM.render(<JsxParser jsx={node} />, domEl);
+    ReactDOM.render(err ? node : node, domEl);
   };
 
   const require = (moduleName) => {
@@ -55,15 +55,16 @@ const createTextEditor = (domEl, moduleResolver = () => {}) => {
     console.log("parsing code", code);
     try {
       //let tsc = transpileCode(code);
-      let ast = convertCodeToAST();
+      let ast = convertCodeToAST(code);
       console.log("The ast;;;", ast);
       traverseAST(ast);
-      render(generate(ast).code);
-      // return getAnonymousFunction(ast);
+      console.log("GenerateStuff", generate(ast));
+      // render(generate(ast).code);
+      return getAnonymousFunction(ast);
     } catch (parseError) {
       console.log("PARSING ERROR;;;", parseError);
       console.log(parseError.stack);
-      render(<pre style={{ color: "red" }}>{parseError.message}</pre>);
+      render(<pre style={{ color: "red" }}>{parseError.message}</pre>, true);
     }
   };
 

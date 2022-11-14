@@ -2,7 +2,7 @@
 import { docs } from "Markdowns/intro/TES.md";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import createTextEditor from "./altedit";
+import createTextEditor from "./editor";
 import Preview from "./preview";
 import SampleDemo from "./sample";
 import { ShowCase } from "./showcase";
@@ -35,7 +35,11 @@ const Demo = () => {
 
   useEffect(() => {
     console.log("Dependecy changed");
-    setTextEditor(createTextEditor(previewRef));
+    setTextEditor(
+      createTextEditor(previewRef, () => {
+        return React;
+      })
+    );
   }, [liveEdit]);
 
   console.log("the LIVE EDIT;;", liveEdit);

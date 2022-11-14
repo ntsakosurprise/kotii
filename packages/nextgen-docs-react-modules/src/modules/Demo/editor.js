@@ -21,7 +21,7 @@ const createTextEditor = (domEl, moduleResolver = () => {}) => {
 
   const convertCodeToAST = (code) => {
     console.log("converting to ast;;;", code);
-    return Acorn.parse(code, { sourceType: "module", ecmaVersion: 2015 });
+    return Acorn.parse(code, { sourceType: "module", ecmaVersion: 2020 });
   };
 
   const isReactNode = (node) => {
@@ -35,7 +35,7 @@ const createTextEditor = (domEl, moduleResolver = () => {}) => {
 
     return (
       nodeType === "ExpressionStatement" &&
-      nodeObjectName === "react" &&
+      nodeObjectName === "React" &&
       nodeFunc === "createElement"
     );
   };
@@ -45,22 +45,37 @@ const createTextEditor = (domEl, moduleResolver = () => {}) => {
     return body.find(isReactNode);
   };
 
-  // const setWrappingRender = (ast, reactNode) => {
-  //   console.log("setting wrapping;;;", ast, reactNode);
-  //   if (reactNode) {
-  //     const reactNodeIndex = ast.body.indexOf(reactNode);
-  //     const createElSrc = generate(reactNode).slice(0, -1);
-  //     const wrappingReactRender = Acorn.parse(`render(${createElSrc})`);
-  //     ast.body[reactNodeIndex] = wrappingReactRender;
-  //     return true;
-  //   }
+  const setWrappingRender = (ast, reactNode) => {
+    console.log("setting wrapping;;;", ast, reactNode);
+    if (reactNode) {
+      const reactNodeIndex = ast.body.indexOf(reactNode);
+      console.log("The react node;;f", reactNodeIndex);
+      const createElSrc = generate(reactNode).slice(0, -1);
+      console.log("createELSRC;;", createElSrc);
+      const wrappingReactRender = Acorn.parse(`render(${createElSrc})`, {
+        ecmaVersion: 2015,
+      }).body[0];
+      console.log("wrrappoiinp", wrappingReactRender);
+      ast.body[reactNodeIndex] = wrappingReactRender;
+      return true;
+    }
 
-  //   return false;
-  // };
+    return false;
+  };
 
   const getAnonymousFunction = (codeToRun) => {
     console.log("get anonymous function running;;", codeToRun);
-    return new Function("React", "render", "require", generate(codeToRun));
+    console.log(generate(codeToRun));
+
+    let anonymousFunction = new Function(
+      "React",
+      "render",
+      "require",
+      generate(codeToRun)
+    );
+    console.log("Anonymous function;;;", anonymousFunction);
+    console.log(anonymousFunction.toString());
+    return anonymousFunction;
   };
 
   const render = (node) => {
@@ -78,10 +93,11 @@ const createTextEditor = (domEl, moduleResolver = () => {}) => {
     try {
       //let tsc = transpileCode(code);
       let ast = convertCodeToAST(transpileCode(code));
+      console.log("THE AST;;;", ast);
       // let ast = convertCodeToAST(code);
       let nodeSearchRes = searchNode(ast);
       console.log("TheNODEsearchRes;;;", nodeSearchRes);
-      // setWrappingRender(ast, nodeSearchRes);
+      setWrappingRender(ast, nodeSearchRes);
       return getAnonymousFunction(ast);
     } catch (parseError) {
       console.log("PARSING ERROR;;;", parseError);
