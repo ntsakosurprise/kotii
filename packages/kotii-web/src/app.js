@@ -1,11 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { GlobalStyle } from "AppGlobals";
-import { docs } from "Markdowns/get-started/welcome.md";
 import {
   LanguageProvider,
   LanguageSwitcher,
   useLanguage,
-} from "nextgen-docs-languages";
+} from "kotii-languages";
 import {
   ThemeGlobalStyle,
   // GlobalStyle,
@@ -13,7 +12,8 @@ import {
   ThemeSwitcher,
   useTheme,
   useThemeContext,
-} from "nextgen-docs-theme";
+} from "kotii-theme";
+import { docs } from "Markdowns/get-started/welcome.md";
 import React, { useState } from "react";
 import { Root } from "Startup";
 // import { ThemeProvider } from "styled-components";
