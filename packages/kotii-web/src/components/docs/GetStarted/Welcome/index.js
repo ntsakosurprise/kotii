@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useLanguage } from "nextgen-docs-languages";
+import { useLanguage } from "kotii-languages";
 import React from "react";
 export const Welcome = () => {
   const { get, language } = useLanguage();

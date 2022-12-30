@@ -56,7 +56,7 @@ module.exports = {
       },
       {
         test: /\.md$/,
-        use: ["nextgen-docs-markdown"],
+        use: ["kotii-markdown"],
       },
       // {
       //   test: /\.scss$/,
