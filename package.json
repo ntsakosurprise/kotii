@@ -19,13 +19,11 @@
     ]
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "predeploy": "yarn run build",
-    "deploy": "gh-pages -d build",
-    "watch:dev:sass": "node-sass resources/sass/main.scss public/css/style.css -w",
-    "prod:compile:sass": "node-sass resources/sass/main.scss public/css/style.comp.css",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "run-p clean run-s build:api",
+    "build:api": "tsc -b ./packages/tsconfig.api-base.json",
+    "bootstrap": "lerna bootstrap",
+    "clean": "lerna run --parallel clean",
+    "release": "lerna publish"
   },
   "license": "ISC",
   "readmeFilename": "README.md",
