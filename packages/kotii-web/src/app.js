@@ -82,6 +82,7 @@ const App = () => {
       <ThemeProvider>
         {/* <GlobalStyle theme={theme} /> */}
         {/* <TestGlobal /> */}
+
         <ThemeGlobalStyle globalStyle={GlobalStyle} />
 
         <ThemeSwitcher />
