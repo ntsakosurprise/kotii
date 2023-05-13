@@ -1,0 +1,7 @@
+{
+  "borderRadius": {
+    "sm": 2,
+    "md": 4,
+    "lg": 6
+  }
+}
