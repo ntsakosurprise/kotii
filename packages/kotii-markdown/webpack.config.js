@@ -10,7 +10,7 @@ module.exports = {
     filename: "index.js",
     chunkFilename: "[id].js",
     publicPath: "",
-    library: "nextgen-docs-markdown",
+    library: "kotii-markdown",
     libraryTarget: "umd",
     globalObject: "this",
   },
