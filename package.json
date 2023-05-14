@@ -10,12 +10,7 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "packages/kotii-ui/*",
-      "packages/kotii-markdown/*",
-      "packages/kotii-react-modules/*",
-      "packages/kotii-theme/*",
-      "packages/kotii-languages/*",
-      "packages/kotii-utils/*"
+      "packages/*"
     ]
   },
   "scripts": {
