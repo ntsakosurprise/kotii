@@ -33,3 +33,5 @@ const getMarkdownComponents = (contentDictionary) => {};
 export const parseMarkdown = (markdown) => {
   extractMetaData(markdown);
 };
+
+export { extractMetaData };
