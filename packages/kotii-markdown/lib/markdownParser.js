@@ -2,7 +2,7 @@
 
 /* Markdown Content Regular Expressions */
 
-const extractMetadataPattern = /--- \s(.*): (.*)\n ---/;
+const extractMetadataPattern = /---[\r\n]([\s\S]*)[\r\n]---/;
 
 // Define initial identifiers
 
