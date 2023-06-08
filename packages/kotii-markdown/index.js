@@ -12,9 +12,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
 	else if(typeof exports === 'object')
-		exports["nextgen-docs-markdown"] = factory();
+		exports["kotii-markdown"] = factory();
 	else
-		root["nextgen-docs-markdown"] = factory();
+		root["kotii-markdown"] = factory();
 })(this, () => {
 return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
@@ -25,7 +25,7 @@ return /******/ (() => { // webpackBootstrap
   \***********************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("var _require = __webpack_require__(/*! ./markdownParser */ \"./lib/markdownParser.js\"),\n    parseMarkdown = _require.parseMarkdown;\n\nconsole.log(parseMarkdown); // eslint-disable-next-line no-unused-vars\n\nmodule.exports = function (source) {\n  this.getLogger(); // const reContext = this.context;\n  // const rePath = this.resourcePath;\n  // console.log(\"MarkDownFolder\", rePath);\n  //   console.log(\"the source;;\", reContext);\n\n  var docs = {\n    content: source\n  };\n  var loaded = \"\\n\\n   export const docs = \".concat(JSON.stringify(docs, null, 2), \"\\n  \\n  \");\n  return loaded;\n};\n\n//# sourceURL=webpack://nextgen-docs-markdown/./lib/loader.js?");
+eval("var _require = __webpack_require__(/*! ./markdownParser */ \"./lib/markdownParser.js\"),\n  parseMarkdown = _require.parseMarkdown;\nconsole.log(parseMarkdown);\n\n// eslint-disable-next-line no-unused-vars\nmodule.exports = function (source) {\n  this.getLogger();\n  // const reContext = this.context;\n  // const rePath = this.resourcePath;\n  // console.log(\"MarkDownFolder\", rePath);\n  //   console.log(\"the source;;\", reContext);\n  var docs = {\n    content: source\n  };\n  var loaded = \"\\n\\n   export const docs = \".concat(JSON.stringify(docs, null, 2), \"\\n  \\n  \");\n  return loaded;\n};\n\n//# sourceURL=webpack://kotii-markdown/./lib/loader.js?");
 
 /***/ }),
 
@@ -36,7 +36,7 @@ eval("var _require = __webpack_require__(/*! ./markdownParser */ \"./lib/markdow
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"parseMarkdown\": () => (/* binding */ parseMarkdown)\n/* harmony export */ });\n/* eslint-disable no-unused-vars */\nvar extractHeader = function extractHeader(markdown) {};\n\nvar extractDescription = function extractDescription(markdown) {};\n\nvar extractContent = function extractContent(markdown) {};\n\nvar getMarkdownDemos = function getMarkdownDemos(markdown) {};\n\nvar getMarkdownComponents = function getMarkdownComponents(contentDictionary) {};\n\nvar parseMarkdown = function parseMarkdown() {};\n\n//# sourceURL=webpack://nextgen-docs-markdown/./lib/markdownParser.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"parseMarkdown\": () => (/* binding */ parseMarkdown)\n/* harmony export */ });\n/* eslint-disable no-unused-vars */\nvar extractHeader = function extractHeader(markdown) {};\nvar extractDescription = function extractDescription(markdown) {};\nvar extractContent = function extractContent(markdown) {};\nvar getMarkdownDemos = function getMarkdownDemos(markdown) {};\nvar getMarkdownComponents = function getMarkdownComponents(contentDictionary) {};\nvar parseMarkdown = function parseMarkdown() {};\n\n//# sourceURL=webpack://kotii-markdown/./lib/markdownParser.js?");
 
 /***/ })
 

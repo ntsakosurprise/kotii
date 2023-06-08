@@ -1,7 +1,7 @@
 {
-  "name": "mymtn-nextgen-docs",
+  "name": "kotii-react-modules",
   "version": "1.0.0",
-  "description": "This is Mymtn nextgen documentation",
+  "description": "This is a kotii react modules for various purposes",
   "engines": {
     "node": ">=17.2.0",
     "yarn": ">=1.22.11",

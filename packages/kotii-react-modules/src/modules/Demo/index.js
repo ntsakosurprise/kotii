@@ -36,7 +36,7 @@ const Demo = () => {
   useEffect(() => {
     console.log("Dependecy changed");
     setTextEditor(
-      createTextEditor(previewRef, () => {
+      createTextEditor(previewRef, React, () => {
         return React;
       })
     );

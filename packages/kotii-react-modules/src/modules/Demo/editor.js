@@ -5,11 +5,15 @@ import * as Acorn from "acorn";
 // console.log("THE TRANFORM", transform);
 import { generate } from "escodegen";
 import objectPath from "object-path";
-import React from "react";
-import ReactDOM from "react-dom";
+//import React from "react";
+import ReactDOM from "react-dom/client";
 
-const createTextEditor = (domEl, moduleResolver = () => {}) => {
+const createTextEditor = (domEl, React, moduleResolver = () => {}) => {
   console.log("The passed in domEL", domEl);
+  //console.log("THE REACT MODULE;;;", React);
+  const reObj = React;
+  const root =
+    domEl && domEl.current !== null ? ReactDOM.createRoot(domEl) : null;
   const transpileCode = (code) => {
     console.log("The raw code;;;", code);
     const transformedCode = babelTransform(code, {
@@ -29,13 +33,22 @@ const createTextEditor = (domEl, moduleResolver = () => {}) => {
     const nodeType = node.type;
     const nodeObjectName = objectPath.get(
       node,
-      "expression.callee.object.name"
+      "expression.callee.object.object.name"
     );
     const nodeFunc = objectPath.get(node, "expression.callee.property.name");
+    console.log("nodeType:::", nodeType);
+    console.log("nodeObjectName:::", nodeObjectName);
+    console.log("nodeFunc:::", nodeFunc);
+    console.log(
+      "Test Result;;;",
+      nodeType === "ExpressionStatement" &&
+        nodeObjectName === "_react" &&
+        nodeFunc === "createElement"
+    );
 
     return (
       nodeType === "ExpressionStatement" &&
-      nodeObjectName === "React" &&
+      nodeObjectName === "_react" &&
       nodeFunc === "createElement"
     );
   };
@@ -66,6 +79,7 @@ const createTextEditor = (domEl, moduleResolver = () => {}) => {
   const getAnonymousFunction = (codeToRun) => {
     console.log("get anonymous function running;;", codeToRun);
     console.log(generate(codeToRun));
+    render(generate(codeToRun));
 
     let anonymousFunction = new Function(
       "React",
@@ -81,7 +95,9 @@ const createTextEditor = (domEl, moduleResolver = () => {}) => {
   const render = (node) => {
     console.log("THE NODE;;;", node);
     console.log("THE EL;;;", domEl);
-    ReactDOM.render(node, domEl);
+
+    root ? root.render(node) : ReactDOM.createRoot(domEl).render(node);
+    //root.render(node);
   };
 
   const require = (moduleName) => {
@@ -108,6 +124,7 @@ const createTextEditor = (domEl, moduleResolver = () => {}) => {
 
   return {
     // returns transpiled code in a wrapper function which can be invoked later
+    react: reObj,
     compile: function (code) {
       console.log("compiling");
       return beginParsing(code);
@@ -117,7 +134,11 @@ const createTextEditor = (domEl, moduleResolver = () => {}) => {
     run: function (code) {
       console.log("The code is running;;;", code);
       console.log("THE VALUE OF THIS;;;", this);
-      this.compile(code)(React, render, require);
+      try {
+        this.compile(code)(this.reObj, render, require);
+      } catch (error) {
+        console.log("THE QUOTE ERROR", error);
+      }
     },
   };
 };
