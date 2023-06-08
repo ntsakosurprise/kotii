@@ -19,5 +19,8 @@
     "build": "run-s clean build:tsc",
     "build:tsc": "tsc -b",
     "clean": "rimraf lib coverage tsconfig.tsbuildinfo"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0"
   }
 }
