@@ -5,5 +5,8 @@
   "license": "MIT",
   "dependencies": {
     "use-local-storage": "^2.3.6"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0"
   }
 }
