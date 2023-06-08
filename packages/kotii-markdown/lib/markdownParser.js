@@ -2,8 +2,19 @@
 
 /* Markdown Content Regular Expressions */
 
+const extractMetadataPattern = /--- \s(.*): (.*)\n ---/;
+
+// Define initial identifiers
+
+const metaData = {};
+
 // Extract meta data from a markdown document
-const extractMetaData = (markdown) => {};
+const extractMetaData = (markdown) => {
+  console.log("THE MARKDOWN;;;", markdown);
+  const metaMatchResult = markdown.match(extractMetadataPattern);
+  console.log("The metaMatchResult", metaMatchResult);
+  //if (!metaMatchResult) return metaData;
+};
 
 // Extract header information
 const extractHeader = (markdown) => {};
@@ -19,4 +30,6 @@ const extractContent = (markdown) => {};
 const getMarkdownDemos = (markdown) => {};
 const getMarkdownComponents = (contentDictionary) => {};
 
-export const parseMarkdown = () => {};
+export const parseMarkdown = (markdown) => {
+  extractMetaData(markdown);
+};
