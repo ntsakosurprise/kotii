@@ -4,9 +4,12 @@
 
 const extractMetadataPattern = /---[\r\n]([\s\S]*)[\r\n]---/;
 const metaKeyPairsPattern = /(.*):(.*)?/g;
+const extractDescriptionPattern = /<p className="description">(.+)?<\/p>/;
 // Define initial identifiers
 
 const metaData = {};
+const tableOfContents = [];
+const specialData = [];
 
 // Extract meta data from a markdown document
 const extractMetaData = (markdown) => {
@@ -49,15 +52,31 @@ const extractMetaKeyPairs = (extractedHeaderString) => {
 const extractTitle = (markdown) => {};
 
 // Extract possible Description
-const extractDescription = (markdown) => {};
+const extractDescription = (markdown) => {
+  const descriptionMatch = markdown.match(extractDescriptionPattern);
+  if (!descriptionMatch) return false;
+  console.log("The matched descriptionFull", descriptionMatch[0]);
+  console.log("The matched descriptionText", descriptionMatch[1]);
+  return true;
+};
 
 // Extrack markdown content to be rendered as-is
 const extractContent = (markdown) => {};
 const getMarkdownDemos = (markdown) => {};
 const getMarkdownComponents = (contentDictionary) => {};
+const getMarkdownVideos = (contentDictionary) => {};
 
 export const parseMarkdown = (markdown) => {
   extractMetaData(markdown);
 };
 
-export { extractMetaData, extractMetaKeyPairs };
+export {
+  extractMetaData,
+  extractMetaKeyPairs,
+  extractDescription,
+  extractTitle,
+  extractContent,
+  getMarkdownDemos,
+  getMarkdownComponents,
+  getMarkdownVideos,
+};
