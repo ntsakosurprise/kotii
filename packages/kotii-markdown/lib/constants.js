@@ -4,6 +4,8 @@ title: A Markdown test for Kotii-markdown
 header: This is a test Markdown
 ---
 
+<p className="description">THis component describes some information</p>
+
 # This is level one heading of Markdown Syntax
 
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
@@ -21,6 +23,8 @@ Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots 
 | 49     | 90      | 95      |
 | 49     | 90      | 95      |
 | 49     | 90      | 95      |
+
+{{"component": "/pages/component.js"}}
 
 ## Checkout my heading with a custom ID {#custom-id}
 
@@ -54,6 +58,7 @@ I also wanna my make my name bold **Surprise** and my surname italic _Mashele_
 
 ## Below IS a bigger code block::
 
+{{"video": "/pages/components/video.js", "shouldAutoPlay: "true"}}
 
 
 Below we are going to have a joy emoji like this: :joy: We are also going to have footnote in the following form: [^1]
@@ -69,6 +74,8 @@ See the strikethrough here: ~I'm strikethrough~ and I should also emphasize that
 - [] Pray for the world
 - [] Hope for world peace
 - [] Tell my mama I love her
+
+{{"demo": "/pages/demos/video.js", "hideToolbar":"false","options": {"codePen":"true"}}}
 
 The meaning of my name is: Surprise
 : A thing that brings people the unexpected
