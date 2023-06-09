@@ -3,21 +3,47 @@
 /* Markdown Content Regular Expressions */
 
 const extractMetadataPattern = /---[\r\n]([\s\S]*)[\r\n]---/;
-
+const metaKeyPairsPattern = /(.*):(.*)?/g;
 // Define initial identifiers
 
 const metaData = {};
 
 // Extract meta data from a markdown document
 const extractMetaData = (markdown) => {
-  console.log("THE MARKDOWN;;;", markdown);
+  //   console.log("THE MARKDOWN;;;", markdown);
   const metaMatchResult = markdown.match(extractMetadataPattern);
-  console.log("The metaMatchResult", metaMatchResult);
+  console.log(
+    "The metaMatchResult",
+    metaMatchResult ? metaMatchResult[1] : metaMatchResult
+  );
+  if (!metaMatchResult) return null;
+  return true;
+
+  //return extractMetaKeyPairs(extractHeader);
   //if (!metaMatchResult) return metaData;
 };
 
 // Extract header information
-const extractHeader = (markdown) => {};
+const extractMetaKeyPairs = (extractedHeaderString) => {
+  const keyPairs = {};
+  let matchedHeaderResults = null;
+  console.log("The searchedString", extractedHeaderString);
+  while (
+    (matchedHeaderResults = metaKeyPairsPattern.exec(extractedHeaderString))
+  ) {
+    console.log("THe matchedHeader", matchedHeaderResults);
+    const key = matchedHeaderResults[1];
+    const value = matchedHeaderResults[2];
+
+    console.log("THe value", key);
+    console.log("The value", value);
+    // console.log("The value with the replace string", value.replace(/(.*)/, $1));
+
+    keyPairs[key] = value.trim();
+  }
+  console.log("THE keyPairs;;;", keyPairs);
+  return true;
+};
 
 // Extrack title information
 const extractTitle = (markdown) => {};
@@ -34,4 +60,4 @@ export const parseMarkdown = (markdown) => {
   extractMetaData(markdown);
 };
 
-export { extractMetaData };
+export { extractMetaData, extractMetaKeyPairs };
