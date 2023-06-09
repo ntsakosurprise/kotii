@@ -5,11 +5,12 @@
 const extractMetadataPattern = /---[\r\n]([\s\S]*)[\r\n]---/;
 const metaKeyPairsPattern = /(.*):(.*)?/g;
 const extractDescriptionPattern = /<p className="description">(.+)?<\/p>/;
+const extractSpecialContentPattern = /{{("component"|"demo"|"video"):(.*)}}/g;
 // Define initial identifiers
 
 const metaData = {};
 const tableOfContents = [];
-const specialData = [];
+const specialContent = [];
 
 // Extract meta data from a markdown document
 const extractMetaData = (markdown) => {
@@ -65,6 +66,34 @@ const extractContent = (markdown) => {};
 const getMarkdownDemos = (markdown) => {};
 const getMarkdownComponents = (contentDictionary) => {};
 const getMarkdownVideos = (contentDictionary) => {};
+const extractSpecialContent = (markdown) => {
+  let specialContentMatch = null;
+
+  while ((specialContentMatch = extractSpecialContentPattern.exec(markdown))) {
+    console.log(
+      "Possible Special ContentMatch",
+      specialContentMatch ? specialContentMatch : null
+    );
+    let nestedStringRegex = /"(.*)":(.*?).?}/;
+    let regularStringRegex = /"(.*)":(.*)[^}]/;
+    let regexToUse = specialContentMatch[0].match(/}{3}$/)
+      ? nestedStringRegex
+      : regularStringRegex;
+
+    const specialContentCleanMatch = specialContentMatch[0].match(regexToUse);
+    console.log("SpecialContentCleanMatch", specialContentCleanMatch);
+    console.log(
+      "SpecialContentJSONIFIED",
+      JSON.parse(`{${specialContentCleanMatch[0]}}`)
+    );
+    // console.log(
+    //   "Special Content JSON parsed",
+    //   JSON.parse(`{${specialContentMatch[0]}}`)
+    // );
+  }
+
+  return true;
+};
 
 export const parseMarkdown = (markdown) => {
   extractMetaData(markdown);
@@ -76,6 +105,7 @@ export {
   extractDescription,
   extractTitle,
   extractContent,
+  extractSpecialContent,
   getMarkdownDemos,
   getMarkdownComponents,
   getMarkdownVideos,
