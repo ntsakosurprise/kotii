@@ -49,6 +49,8 @@ I also wanna my make my name bold **Surprise** and my surname italic _Mashele_
 - Kanye West
 - Pusha T
 
+{{"component": "/pages/component.js"}}
+
 ## A link to my portfolios is as follows: [SurprisePortfolio](https://www.surpriseportfolio.com). I enjoy coding in javascript, which takes the form of the following sytanx `const name = "my name"`. Below this line, I will have a horizontal rule takes the form:
 
 ## Below IS a bigger code block::
