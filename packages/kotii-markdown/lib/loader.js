@@ -1,9 +1,14 @@
 const path = require("path");
 // import path from "path";
-//const fs = require("fs");
-const { parseMarkdown } = require("./markdownParser");
-
-console.log(parseMarkdown);
+const fs = require("fs");
+// const { parseMarkdown } = require("./markdownParser");
+const { getLanguageLocal } = require("./utils");
+const supportedLanguages = ["ts", "ve"];
+// const languagesFullNames = [
+//   { name: "Xitsonga", locale: "ts" },
+//   { name: "Tshivenda", locale: "ve" },
+// ];
+const validLanguagePattern = /_(?<locale>.*?)\.md/;
 
 // eslint-disable-next-line no-unused-vars
 module.exports = function (markdown) {
@@ -14,14 +19,42 @@ module.exports = function (markdown) {
   const fileName = path.basename(filePath); // Get filename(including extension)
   const fileExtension = path.extname(filePath); // Get file extension
   const fileNamePlain = path.basename(filePath, fileExtension); // Get filename without extension
+  const folderFiles = fs.readdirSync(fileFolder);
+  const validFolderFiles = folderFiles.filter((f) => {
+    // console.log("EXec test", validLanguagePattern.exec(f));
+
+    if (validLanguagePattern.test(f)) {
+      let locale = getLanguageLocal(validLanguagePattern, f);
+      // let locale = validLanguagePattern.exec(f)?.groups?.locale;
+      console.log("THE LOCAL;;", locale);
+      if (supportedLanguages.includes(locale)) return true;
+    }
+  });
+
+  const languages = validFolderFiles.map((validLanguage) => {
+    console.log("validLanguage", validLanguage);
+    console.log("The path Join", path.join(fileFolder, validLanguage));
+    return {
+      rawMdText: fs.readFileSync(path.join(fileFolder, validLanguage), {
+        encoding: "utf-8",
+      }),
+      fileName: validLanguage,
+      locale: getLanguageLocal(validLanguagePattern, validLanguage),
+    };
+  });
+
   // const rePath = this.resourcePath;
   // console.log("MarkDownFolder", rePath);
+  // console.log("THE fs Module", fs);
   console.log("resource root", resourceRootFolder);
   console.log("file path;", filePath);
   console.log("fileFolder", fileFolder);
   console.log("fileName", fileName);
   console.log("FileExtension", fileExtension);
   console.log("FileNamePlain", fileNamePlain);
+  console.log("Folder files", folderFiles);
+  console.log("Valid folder files;;;", validFolderFiles);
+  console.log("Languages;;;", languages);
   // console.log("The source BASE PATH", path.dirname(reContext));
 
   //parseMarkdown(markdown);
