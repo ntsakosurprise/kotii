@@ -104,8 +104,19 @@ const extractSpecialContent = (markdown) => {
   // return true;
 }; // Extract special content
 
+const beginExtraction = (markdown) => {
+  const metaDataString = extractMetaData(markdown) || "";
+  const metaDataKeys = extractMetaKeyPairs(metaDataString) || null;
+  const description = extractDescription(markdown) || null;
+  const specialContent = extractSpecialContent(markdown);
+  return {
+    metaDataKeys,
+    description,
+    specialContent,
+  };
+};
 export const parseMarkdown = (markdown) => {
-  extractMetaData(markdown);
+  return beginExtraction(markdown);
 };
 
 export {
