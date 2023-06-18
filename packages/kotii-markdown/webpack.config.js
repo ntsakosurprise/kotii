@@ -4,7 +4,7 @@ const path = require("path");
 
 module.exports = {
   entry: "./lib/loader.js",
-  target: "web",
+  target: "node",
   output: {
     path: path.join(__dirname),
     filename: "index.js",
