@@ -21,7 +21,7 @@ const extractMetaData = (markdown) => {
     metaMatchResult ? metaMatchResult[1] : metaMatchResult
   );
   if (!metaMatchResult) return null;
-  return true;
+  return metaMatchResult;
 
   //return extractMetaKeyPairs(extractHeader);
   //if (!metaMatchResult) return metaData;
@@ -45,8 +45,10 @@ const extractMetaKeyPairs = (extractedHeaderString) => {
 
     keyPairs[key] = value.trim();
   }
-  console.log("THE keyPairs;;;", keyPairs);
-  return true;
+  if (keyPairs) return keyPairs;
+  return null;
+  // console.log("THE keyPairs;;;", keyPairs);
+  // return true;
 };
 
 // Extrack title information
@@ -55,10 +57,12 @@ const extractTitle = (markdown) => {};
 // Extract possible Description
 const extractDescription = (markdown) => {
   const descriptionMatch = markdown.match(extractDescriptionPattern);
-  if (!descriptionMatch) return false;
+  if (!descriptionMatch) return null;
   console.log("The matched descriptionFull", descriptionMatch[0]);
   console.log("The matched descriptionText", descriptionMatch[1]);
-  return true;
+  return descriptionMatch[1];
+
+  // return true;
 };
 
 // Extrack markdown content to be rendered as-is
