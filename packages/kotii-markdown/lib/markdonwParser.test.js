@@ -17,7 +17,7 @@ describe("Markdown Parser Extracters", () => {
     expect(extractMetaKeyPairs(keyValueString)).toBeTruthy();
   });
 
-  test("Should return true given a string", () => {
+  test("Should return true given a string f", () => {
     expect(extractDescription(markdown)).toBeTruthy();
   });
 
