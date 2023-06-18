@@ -81,6 +81,7 @@ const extractSpecialContent = (markdown) => {
       : regularStringRegex;
 
     const specialContentCleanMatch = specialContentMatch[0].match(regexToUse);
+    specialContent.push(JSON.parse(`{${specialContentCleanMatch[0]}}`));
     console.log("SpecialContentCleanMatch", specialContentCleanMatch);
     console.log(
       "SpecialContentJSONIFIED",
@@ -92,6 +93,7 @@ const extractSpecialContent = (markdown) => {
     // );
   }
 
+  console.log("THEsPECIALcONTENT;;;", specialContent);
   return true;
 };
 
