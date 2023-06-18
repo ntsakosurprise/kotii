@@ -1,19 +1,19 @@
 ---
-title: A Markdown test for Kotii-markdown
-header: This is a test Markdown
+title: Xikambelo xa matsalelo ya program ya kotii-mardown
+header: Lexi a xikambelo xa markdown
 ---
 
-<p className="description">THis component describes some information</p>
+<p className="description">Component leyi yi hlamusela tsalelo ro karhi</p>
 
-# This is level one heading of Markdown Syntax
+# Leyi i hloko kulu ya pakiwelo ra Markdown
 
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 
-## This is level 2: Where does it come from?
+## Leyi i hloko ya 2: Yi suka kwihi xana?
 
 Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur
 
-## Below is my table:
+## Laha hansi it tafula:
 
 | Chiefs | Pirates | Dynamos |
 | ------ | ------- | ------- |
@@ -25,17 +25,17 @@ Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots 
 
 {{"component": "/componenets/pages/component.js"}}
 
-## Checkout my heading with a custom ID {#custom-id}
+## Leyi i hluku ra tsalwa leri ri nga na yo ti endlela ID {#custom-id}
 
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
 
-### My block quote:
+### Block quote ya mina:
 
-> Once upon a time there was a man, and the man was the man
+> Khale ka khaleni a kuri na wanuna, na swona, wanuna a ri wanuna
 
-I also wanna my make my name bold **Surprise** and my surname italic _Mashele_
+Ni lava ku tiyisisa vito ra mina **Surprise** na xivongo italic _Mashele_
 
-## Checkout My Favorite food in order
+## Vona swakudya swa mina swo rhandzeka hi ku landzelelana
 
 1. Spaghetti
 2. Pap
@@ -43,7 +43,7 @@ I also wanna my make my name bold **Surprise** and my surname italic _Mashele_
 4. Beef
 5. Cereals
 
-## My favorite artists are as follows
+## Swichayi leswi ni swi rhandzaka swinene
 
 - Nas
 - Kendrick Lamar
@@ -53,17 +53,17 @@ I also wanna my make my name bold **Surprise** and my surname italic _Mashele_
 - Kanye West
 - Pusha T
 
-## A link to my portfolios is as follows: [SurprisePortfolio](https://www.surpriseportfolio.com). I enjoy coding in javascript, which takes the form of the following sytanx . Below this line, I will have a horizontal rule takes the form:
+## Link ya portfolio ya mina hi leyi: [SurprisePortfolio](https://www.surpriseportfolio.com). ni rhandza ku progrema hi javascript, leyi yi nga na matsalelo lawa . Laha hansi ni tava na hikihato wa le hansi:
 
-## Below IS a bigger code block::
+## Laha hansi a code block leyi yi kulu::
 
 {{"video": "/components/pages/components/video.js", "shouldAutoPlay": true}}
 
-Below we are going to have a joy emoji like this: :joy: We are also going to have footnote in the following form: [^1]
+Laha hansi hi tava na emoji ya tsako hi ndlela leyi: :joy: hi ta thlela hi va na footnot hi ndlela leyi: [^1]
 
-See the strikethrough here: ~I'm strikethrough~ and I should also emphasize that the to make text important,we need to use the following syntax in markdown: ==This is important== The Superscript and subscript take the following form: H~2~0 and x^2^
+Vona hikahato wo tsema: ~hikahato wo tsema~ ni ta thlela ni tiyisisa leswaki ku tiyisisa text hi leswi,ho fanela hi tirhisa pakelo leri eka markdown: ==Leswi swi na nkonka== Superscript na subscript swi hi ndlela leyi: H~2~0 and x^2^
 
-## Below is my to do list:
+## List ya leswi ni lavaka ku swi endla:
 
 - [x] Read a book
 - [] Tell a story
@@ -75,5 +75,5 @@ See the strikethrough here: ~I'm strikethrough~ and I should also emphasize that
 
 {{"demo": "/components/pages/demos/video.js", "hideToolbar":false,"options": {"codePen":true,"anotherProps": true}}}
 
-The meaning of my name is: Surprise
-: A thing that brings people the unexpected
+Vito ra mina ri vula: Xihlamariso
+: I xi endliwa lexi xi endlaka swo ka swi tshembisi
