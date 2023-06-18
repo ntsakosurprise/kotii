@@ -10,7 +10,6 @@ const extractSpecialContentPattern = /{{("component"|"demo"|"video"):(.*)}}/g;
 
 const metaData = {};
 const tableOfContents = [];
-const specialContent = [];
 
 // Extract meta data from a markdown document
 const extractMetaData = (markdown) => {
@@ -71,6 +70,7 @@ const getMarkdownDemos = (markdown) => {};
 const getMarkdownComponents = (contentDictionary) => {};
 const getMarkdownVideos = (contentDictionary) => {};
 const extractSpecialContent = (markdown) => {
+  const specialContent = [];
   let specialContentMatch = null;
 
   while ((specialContentMatch = extractSpecialContentPattern.exec(markdown))) {
@@ -97,9 +97,12 @@ const extractSpecialContent = (markdown) => {
     // );
   }
 
-  console.log("THEsPECIALcONTENT;;;", specialContent);
-  return true;
-};
+  if (specialContent) return specialContent;
+  return [];
+
+  // console.log("THEsPECIALcONTENT;;;", specialContent);
+  // return true;
+}; // Extract special content
 
 export const parseMarkdown = (markdown) => {
   extractMetaData(markdown);
