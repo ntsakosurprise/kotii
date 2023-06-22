@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs");
 // const { parseMarkdown } = require("./markdownParser");
 const { getLanguageLocal } = require("./utils");
+const { parseMarkdown } = require("./markdownParser");
 const supportedLanguages = ["ts", "ve"];
 // const languagesFullNames = [
 //   { name: "Xitsonga", locale: "ts" },
@@ -34,12 +35,14 @@ module.exports = function (markdown) {
   const languages = validFolderFiles.map((validLanguage) => {
     console.log("validLanguage", validLanguage);
     console.log("The path Join", path.join(fileFolder, validLanguage));
+    let rawMarkdown = fs.readFileSync(path.join(fileFolder, validLanguage), {
+      encoding: "utf-8",
+    });
     return {
-      rawMdText: fs.readFileSync(path.join(fileFolder, validLanguage), {
-        encoding: "utf-8",
-      }),
+      rawMdText: rawMarkdown,
       fileName: validLanguage,
       locale: getLanguageLocal(validLanguagePattern, validLanguage),
+      parsedMarkdwon: parseMarkdown(rawMarkdown),
     };
   });
 
