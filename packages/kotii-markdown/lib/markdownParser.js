@@ -44,7 +44,7 @@ const extractMetaKeyPairs = (extractedHeaderString) => {
 
     keyPairs[key] = value.trim();
   }
-  if (keyPairs) return keyPairs;
+  if (keyPairs && Object.keys(keyPairs).length > 0) return keyPairs;
   return null;
   // console.log("THE keyPairs;;;", keyPairs);
   // return true;
@@ -97,8 +97,8 @@ const extractSpecialContent = (markdown) => {
     // );
   }
 
-  if (specialContent) return specialContent;
-  return [];
+  if (specialContent && specialContent.length > 0) return specialContent;
+  return null;
 
   // console.log("THEsPECIALcONTENT;;;", specialContent);
   // return true;
