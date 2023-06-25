@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-/* Markdown Content Regular Expressions */
+import { marked } from "marked";
 
 const extractMetadataPattern = /---[\r\n]([\s\S]*)[\r\n]---/;
 const metaKeyPairsPattern = /(.*):(.*)?/g;
@@ -8,7 +8,9 @@ const extractDescriptionPattern = /<p className="description">(.+)?<\/p>/;
 const extractSpecialContentPattern = /{{("component"|"demo"|"video"):(.*)}}/g;
 // Define initial identifiers
 
-const metaData = {};
+// Define Renderer
+
+// const metaData = {};
 const tableOfContents = [];
 
 // Extract meta data from a markdown document
@@ -103,16 +105,73 @@ const extractSpecialContent = (markdown) => {
   // console.log("THEsPECIALcONTENT;;;", specialContent);
   // return true;
 }; // Extract special content
+const convertMarkdown = (markdown) => {
+  const renderer = {
+    heading(text, level) {
+      const escapedText = text.toLowerCase().replace(/[^\w]+/g, "-");
+
+      if (level === 1 || level >= 4) {
+        return true;
+      }
+
+      return `
+              <h${level}>
+                <a name="${escapedText}" class="anchor" href="#${escapedText}">
+                  <span class="header-link"></span>
+                </a>
+                ${text}
+              </h${level}>`;
+    },
+  };
+
+  marked.use({
+    async: false,
+    renderer,
+    pedantic: false,
+    gfm: true,
+    breaks: false,
+    sanitize: false,
+    smartypants: false,
+    xhtml: false,
+  });
+  return marked.parse(markdown);
+};
+
+const splitMarkdown = (markdown) => {
+  // let specialContentMatch = []
+  // while ((specialContentMatch = extractSpecialContentPattern.exec(markdown))){
+
+  //    return true
+  // }
+  const separatorRegex = /{{"/gm;
+  console.log("The separator;;;", separatorRegex);
+  const splitContent = markdown.split(
+    /({{(?:"component"|"demo"|"video"):(?:.*)}})/
+  );
+  console.log("The split.length", splitContent.length);
+  console.log("The split", splitContent);
+
+  splitContent.map((it) => {
+    console.log("SPLIT ITEM;;;", it);
+  });
+  console.log("The split.length", splitContent.length);
+  return splitContent || {};
+};
+// const getMardkdownConveter = () => {
+//   return convertMarkdown(markdown);
+// };
 
 const beginExtraction = (markdown) => {
   const metaDataString = extractMetaData(markdown) || "";
   const metaDataKeys = extractMetaKeyPairs(metaDataString) || null;
   const description = extractDescription(markdown) || null;
   const specialContent = extractSpecialContent(markdown);
+  // const toc = extractTableOfContent(markdown);
   return {
     metaDataKeys,
     description,
     specialContent,
+    // toc,
   };
 };
 export const parseMarkdown = (markdown) => {
@@ -129,4 +188,6 @@ export {
   getMarkdownDemos,
   getMarkdownComponents,
   getMarkdownVideos,
+  splitMarkdown,
+  convertMarkdown,
 };
