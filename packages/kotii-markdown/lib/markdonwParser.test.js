@@ -4,6 +4,7 @@ import {
   extractMetaData,
   extractMetaKeyPairs,
   extractSpecialContent,
+  splitMarkdown,
 } from "./markdownParser";
 
 describe("Markdown Parser Extracters", () => {
@@ -39,5 +40,9 @@ describe("Markdown Parser Extracters", () => {
     expect(
       extractSpecialContent("An invalid markdown string mirror")
     ).toBeNull();
+  });
+
+  test("it should return truthy given markdown string", () => {
+    expect(splitMarkdown(markdown)).toBeTruthy();
   });
 });
