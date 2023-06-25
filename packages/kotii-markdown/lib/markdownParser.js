@@ -6,6 +6,8 @@ const extractMetadataPattern = /---[\r\n]([\s\S]*)[\r\n]---/;
 const metaKeyPairsPattern = /(.*):(.*)?/g;
 const extractDescriptionPattern = /<p className="description">(.+)?<\/p>/;
 const extractSpecialContentPattern = /{{("component"|"demo"|"video"):(.*)}}/g;
+const markdownSplitPattern = /({{(?:"component"|"demo"|"video"):(?:.*)}})/gm;
+const idifyStringPattern = /\s/g;
 // Define initial identifiers
 
 // Define Renderer
@@ -105,15 +107,34 @@ const extractSpecialContent = (markdown) => {
   // console.log("THEsPECIALcONTENT;;;", specialContent);
   // return true;
 }; // Extract special content
+const IdifyString = (string) => {
+  console.log("IDIFY STRING", string);
+  const idified = string.trim().toLowerCase().replace(idifyStringPattern, "-");
+  console.log("IDIFIED STRING", idified);
+  return idified || " ";
+};
 const convertMarkdown = (markdown) => {
+  console.log("The Convert Markdown", convertMarkdown);
+
   const renderer = {
     heading(text, level) {
       const escapedText = text.toLowerCase().replace(/[^\w]+/g, "-");
 
       if (level === 1 || level >= 4) {
-        return true;
+        return false;
       }
 
+      // if (level === 2){
+      //   if(tableOfContents.length === 0){
+
+      //     tableOfContents.push({
+      //       id: ,
+      //       children: []
+      //     })
+      //   }else{
+
+      //   }
+      // }
       return `
               <h${level}>
                 <a name="${escapedText}" class="anchor" href="#${escapedText}">
@@ -138,16 +159,7 @@ const convertMarkdown = (markdown) => {
 };
 
 const splitMarkdown = (markdown) => {
-  // let specialContentMatch = []
-  // while ((specialContentMatch = extractSpecialContentPattern.exec(markdown))){
-
-  //    return true
-  // }
-  const separatorRegex = /{{"/gm;
-  console.log("The separator;;;", separatorRegex);
-  const splitContent = markdown.split(
-    /({{(?:"component"|"demo"|"video"):(?:.*)}})/
-  );
+  const splitContent = markdown.split(markdownSplitPattern);
   console.log("The split.length", splitContent.length);
   console.log("The split", splitContent);
 
@@ -190,4 +202,5 @@ export {
   getMarkdownVideos,
   splitMarkdown,
   convertMarkdown,
+  IdifyString,
 };
