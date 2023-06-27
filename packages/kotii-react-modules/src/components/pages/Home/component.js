@@ -1,14 +1,15 @@
 /* eslint-disable no-unused-vars */
-import Demo from "Modules/Demo";
 import FlexSandbox from "Modules/FlexSandbox";
 import React from "react";
+import Video from "../../demos/video";
 
 export const Home = () => {
   // console.log("carouselSlick;;;", CarouselSlick);
 
   return (
     <div style={{ color: "red", fontSize: "50px" }}>
-      <Demo />
+      {/* <Demo /> */}
+      <Video />
       <FlexSandbox />
     </div>
     // <Carousel />
