@@ -1,11 +1,15 @@
-import { keyValueString, markdown } from "./constants";
+import { keyValueString, markdown, tocTestMarkdown } from "./constants";
 import {
+  convertMarkdown,
   extractDescription,
   extractMetaData,
   extractMetaKeyPairs,
   extractSpecialContent,
+  idifyString,
   splitMarkdown,
 } from "./markdownParser";
+
+// const splitMark = splitMarkdown(markdown);
 
 describe("Markdown Parser Extracters", () => {
   test("Should return a null given unmatched string", () => {
@@ -44,5 +48,14 @@ describe("Markdown Parser Extracters", () => {
 
   test("it should return truthy given markdown string", () => {
     expect(splitMarkdown(markdown)).toBeTruthy();
+  });
+  test("should return a truthy with valid string", () => {
+    expect(idifyString(" My name is my name")).toBeTruthy();
+  });
+  test("should return a truthy with valid markdown string", () => {
+    expect(convertMarkdown("## My nameis my name")).toBeTruthy();
+  });
+  test("should return a truthy with valid markdown toc string", () => {
+    expect(convertMarkdown(tocTestMarkdown)).toBeTruthy();
   });
 });

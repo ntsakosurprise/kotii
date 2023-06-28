@@ -32,17 +32,23 @@ module.exports = function (markdown) {
     }
   });
 
+  // const convertedMarkdown = convertMarkdown(markdown);
+
   const languages = validFolderFiles.map((validLanguage) => {
     console.log("validLanguage", validLanguage);
     console.log("The path Join", path.join(fileFolder, validLanguage));
-    let rawMarkdown = fs.readFileSync(path.join(fileFolder, validLanguage), {
+    let languageFilePath = path.join(fileFolder, validLanguage);
+    console.log("LigoPath;;;", languageFilePath);
+    let rawMarkdown = fs.readFileSync(languageFilePath, {
       encoding: "utf-8",
     });
+    this.addDependency(languageFilePath);
+
     return {
       rawMdText: rawMarkdown,
       fileName: validLanguage,
       locale: getLanguageLocal(validLanguagePattern, validLanguage),
-      parsedMarkdwon: parseMarkdown(rawMarkdown),
+      parsedMarkdown: parseMarkdown(rawMarkdown),
     };
   });
 
@@ -58,6 +64,8 @@ module.exports = function (markdown) {
   console.log("Folder files", folderFiles);
   console.log("Valid folder files;;;", validFolderFiles);
   console.log("Languages;;;", languages);
+  // console.log("THISLOADER;;;", this);
+  this.addDependency(filePath);
   // console.log("The source BASE PATH", path.dirname(reContext));
 
   //parseMarkdown(markdown);
