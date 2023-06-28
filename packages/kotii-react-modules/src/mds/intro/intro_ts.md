@@ -23,7 +23,7 @@ Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots 
 | 49     | 90      | 95      |
 | 49     | 90      | 95      |
 
-{{"component": "/componenets/pages/component.js"}}
+{{"component": "/components/special/component.js"}}
 
 ## Leyi i hluku ra tsalwa leri ri nga na yo ti endlela ID {#custom-id}
 
@@ -57,7 +57,7 @@ Ni lava ku tiyisisa vito ra mina **Surprise** na xivongo italic _Mashele_
 
 ## Laha hansi a code block leyi yi kulu::
 
-{{"video": "/components/pages/components/video.js", "shouldAutoPlay": true}}
+{{"video": "/components/videos/video.js", "shouldAutoPlay": true}}
 
 Laha hansi hi tava na emoji ya tsako hi ndlela leyi: :joy: hi ta thlela hi va na footnot hi ndlela leyi: [^1]
 
@@ -73,7 +73,7 @@ Vona hikahato wo tsema: ~hikahato wo tsema~ ni ta thlela ni tiyisisa leswaki ku 
 - [] Hope for world peace
 - [] Tell my mama I love her
 
-{{"demo": "/components/pages/demos/video.js", "hideToolbar":false,"options": {"codePen":true,"anotherProps": true}}}
+{{"demo": "/components/demos/card.js", "hideToolbar":false,"options": {"codePen":true,"anotherProps": true}}}
 
 Vito ra mina ri vula: Xihlamariso
 : I xi endliwa lexi xi endlaka swo ka swi tshembisi
