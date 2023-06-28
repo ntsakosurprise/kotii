@@ -6,6 +6,7 @@ const extractMetadataPattern = /---[\r\n]([\s\S]*)[\r\n]---/;
 const metaKeyPairsPattern = /(.*):(.*)?/g;
 const extractDescriptionPattern = /<p className="description">(.+)?<\/p>/;
 const extractSpecialContentPattern = /{{("component"|"demo"|"video"):(.*)}}/g;
+const specialToJsonPattern = /("component"|"demo"|"video"):(.*)/;
 const markdownSplitPattern = /({{(?:"component"|"demo"|"video"):(?:.*)}})/gm;
 const idifyStringPattern = /\s/g;
 // Define initial identifiers
@@ -13,7 +14,7 @@ const idifyStringPattern = /\s/g;
 // Define Renderer
 
 // const metaData = {};
-const tableOfContents = [];
+let tableOfContents = [];
 
 // Extract meta data from a markdown document
 const extractMetaData = (markdown) => {
@@ -107,40 +108,65 @@ const extractSpecialContent = (markdown) => {
   // console.log("THEsPECIALcONTENT;;;", specialContent);
   // return true;
 }; // Extract special content
-const IdifyString = (string) => {
+const idifyString = (string) => {
   console.log("IDIFY STRING", string);
   const idified = string.trim().toLowerCase().replace(idifyStringPattern, "-");
   console.log("IDIFIED STRING", idified);
-  return idified || " ";
+  return idified;
 };
 const convertMarkdown = (markdown) => {
   console.log("The Convert Markdown", convertMarkdown);
 
   const renderer = {
     heading(text, level) {
-      const escapedText = text.toLowerCase().replace(/[^\w]+/g, "-");
+      // const escapedText = text.toLowerCase().replace(/[^\w]+/g, "-");
+      let textModified = text.replaceAll("&#39;", "'");
+      let headingID = idifyString(textModified);
+      let tocLen = tableOfContents.length;
+      let tocIndex = tocLen - 1;
 
-      if (level === 1 || level >= 4) {
-        return false;
+      console.log("The current level;;", level);
+      if (level === 1 || level > 4) {
+        console.log("Excepted Headings;;;", level);
+        return `
+        <h${level}>
+          ${textModified}
+        </h${level}>`;
       }
 
-      // if (level === 2){
-      //   if(tableOfContents.length === 0){
+      if (level === 2) {
+        tableOfContents.push({
+          id: headingID,
+          children: [],
+        });
+      } else if (level === 3) {
+        if (tocLen >= 1) {
+          tableOfContents[tocIndex].children.push({
+            id: headingID,
+            children: [],
+          });
+        }
+      } else if (level === 4) {
+        if (tocLen > 0) {
+          console.log("Child4 being configured");
+          if (tableOfContents[tocIndex].children.length > 0) {
+            let tocChildLen = tableOfContents[tocIndex].children.length;
+            let tocChildIndex = tocChildLen - 1;
+            tableOfContents[tocIndex].children[tocChildIndex].children.push({
+              id: headingID,
+            });
+          }
+        }
+      }
 
-      //     tableOfContents.push({
-      //       id: ,
-      //       children: []
-      //     })
-      //   }else{
-
-      //   }
-      // }
+      console.log("Heading Rendere toc;;", tableOfContents);
+      console.log(
+        "tableOfContentsJsonIFIED;;;",
+        JSON.stringify(tableOfContents)
+      );
       return `
-              <h${level}>
-                <a name="${escapedText}" class="anchor" href="#${escapedText}">
-                  <span class="header-link"></span>
-                </a>
-                ${text}
+              <h${level} id="${headingID}">
+                ${textModified}
               </h${level}>`;
     },
   };
@@ -155,7 +181,9 @@ const convertMarkdown = (markdown) => {
     smartypants: false,
     xhtml: false,
   });
-  return marked.parse(markdown);
+  let html = marked.parse(markdown).replaceAll("&#39;", "'");
+  console.log("The returned HTML;;;", html);
+  return html;
 };
 
 const splitMarkdown = (markdown) => {
@@ -167,7 +195,7 @@ const splitMarkdown = (markdown) => {
     console.log("SPLIT ITEM;;;", it);
   });
   console.log("The split.length", splitContent.length);
-  return splitContent || {};
+  return splitContent;
 };
 // const getMardkdownConveter = () => {
 //   return convertMarkdown(markdown);
@@ -178,15 +206,40 @@ const beginExtraction = (markdown) => {
   const metaDataKeys = extractMetaKeyPairs(metaDataString) || null;
   const description = extractDescription(markdown) || null;
   const specialContent = extractSpecialContent(markdown);
+  const markDownSplit = splitMarkdown(markdown);
+  const html = markDownSplit.map((mk) => {
+    console.log("SPLITITEM;;;", mk);
+    if (specialToJsonPattern.test(mk)) {
+      //  let regexToUse = nested ? : specialToJsonPattern.exec(mk)
+      let matchedString = specialToJsonPattern.exec(mk);
+      let specialString = matchedString[0];
+      // let itemNeeded = matchedString[0]
+      console.log("THE FeedBack;;;", matchedString);
+      console.log("THE SPecialString;;;", specialString);
+      console.log(
+        "SpeicalString with itemsRemoved",
+        specialString.replace(/.{2}$/, "")
+      );
+
+      return JSON.parse(`{${specialString.replace(/.{2}$/, "")}}`);
+    }
+    return convertMarkdown(mk).replace(/\n/g, "").trim();
+  });
+  console.log("SplitMARKDOWN;;;", markDownSplit);
+  console.log("THE HTML;;;", html);
+  console.log("THE TABLE OF CONTENTS;;;", tableOfContents);
   // const toc = extractTableOfContent(markdown);
   return {
     metaDataKeys,
     description,
     specialContent,
-    // toc,
+    markDownSplit,
+    html: html,
+    toc: tableOfContents,
   };
 };
 export const parseMarkdown = (markdown) => {
+  tableOfContents = [];
   return beginExtraction(markdown);
 };
 
@@ -202,5 +255,5 @@ export {
   getMarkdownVideos,
   splitMarkdown,
   convertMarkdown,
-  IdifyString,
+  idifyString,
 };
