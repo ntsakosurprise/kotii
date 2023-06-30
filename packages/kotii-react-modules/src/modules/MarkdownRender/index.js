@@ -2,9 +2,32 @@
 /* eslint-disable react/prop-types */
 import PropTypes from "prop-types";
 import React from "react";
+import styled from "styled-components";
+import MarkdownAd from "../MarkdownAd";
 import MarkdownElement from "../MarkdownElement";
+import MarkdownHeader from "../MarkdownHeader";
+import MarkdownSidebar from "../MarkdownSidebar";
+import MarkdownTOC from "../MarkdownTOC";
+import MarkdownVideo from "../MarkdownVideo";
 import StandardComponent from "../StandardComponent";
 
+const MarkdownRenderCanvas = styled("div")(() => ({
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+}));
+
+const MarkdownContentArea = styled("div")(() => ({
+  width: "100%",
+  display: "flex",
+  flexDirection: "row",
+  top: "100px",
+  position: "relative",
+}));
+const MainArea = styled("div")(() => ({
+  width: "60%",
+  order: 1,
+}));
 const TestDemo = () => {
   return <div>I am the Demo</div>;
 };
@@ -30,8 +53,21 @@ const markdownComponentType = (mkComponent, markdownComponents) => {
     case "component":
       return (
         <StandardComponent>
-          <ComponentInContext />
+          {/* <ComponentInContext /> */}
+          <p>Test</p>
         </StandardComponent>
+      );
+    case "video":
+      return (
+        <MarkdownVideo>
+          <ComponentInContext />
+        </MarkdownVideo>
+      );
+    case "ad":
+      return (
+        <MarkdownAd>
+          <ComponentInContext />
+        </MarkdownAd>
       );
     default:
       return null;
@@ -43,19 +79,27 @@ const MarkdownRender = ({ markdownData, markdownComponents }) => {
   console.log("MARKDODWN RENDER PROPS: modules", markdownComponents);
   const englishContent = markdownData[0];
   const { fileName, parsedMarkdown } = englishContent;
-  const { html } = parsedMarkdown;
+  const { html, toc } = parsedMarkdown;
 
   console.log("Filename;;;", fileName);
   console.log("html", html);
 
   return (
-    <div>
-      {html.map((markdownHtmlItem, i) => {
-        if (isHtmlString(markdownHtmlItem))
-          return <MarkdownElement htmlString={markdownHtmlItem} key={i} />;
-        return markdownComponentType(markdownHtmlItem, markdownComponents);
-      })}
-    </div>
+    <MarkdownRenderCanvas>
+      <MarkdownHeader />
+
+      <MarkdownContentArea>
+        <MarkdownSidebar />
+        <MainArea>
+          {html.map((markdownHtmlItem, i) => {
+            if (isHtmlString(markdownHtmlItem))
+              return <MarkdownElement htmlString={markdownHtmlItem} key={i} />;
+            return markdownComponentType(markdownHtmlItem, markdownComponents);
+          })}
+        </MainArea>
+        <MarkdownTOC toc={toc} />
+      </MarkdownContentArea>
+    </MarkdownRenderCanvas>
   );
 };
 
