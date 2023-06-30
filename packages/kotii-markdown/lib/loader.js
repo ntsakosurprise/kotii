@@ -2,9 +2,9 @@ const path = require("path");
 // import path from "path";
 const fs = require("fs");
 // const { parseMarkdown } = require("./markdownParser");
-const { getLanguageLocal } = require("./utils");
+const { getLanguageLocal, capitalizeFirstLetter } = require("./utils");
 const { parseMarkdown } = require("./markdownParser");
-const supportedLanguages = ["ts", "ve"];
+const supportedLanguages = ["ts", "ve", "en"];
 // const languagesFullNames = [
 //   { name: "Xitsonga", locale: "ts" },
 //   { name: "Tshivenda", locale: "ve" },
@@ -23,12 +23,15 @@ module.exports = function (markdown) {
   const folderFiles = fs.readdirSync(fileFolder);
   const validFolderFiles = folderFiles.filter((f) => {
     // console.log("EXec test", validLanguagePattern.exec(f));
-
-    if (validLanguagePattern.test(f)) {
+    console.log("THE fileName", f);
+    console.log("THE FILENAME;;;", fileName);
+    console.log("THE FILENAME CONDITION;;;", fileName === f);
+    let isDefaultFileName = fileName === f;
+    if (validLanguagePattern.test(f) || isDefaultFileName) {
       let locale = getLanguageLocal(validLanguagePattern, f);
       // let locale = validLanguagePattern.exec(f)?.groups?.locale;
       console.log("THE LOCAL;;", locale);
-      if (supportedLanguages.includes(locale)) return true;
+      if (supportedLanguages.includes(locale) || isDefaultFileName) return true;
     }
   });
 
@@ -52,32 +55,98 @@ module.exports = function (markdown) {
     };
   });
 
+  languages.map((ln) => {
+    // console.log("Language item;;;", ln);
+
+    ln.parsedMarkdown.specialContent.map((sp) => {
+      // console.log("Language special", sp);
+      let special = sp.special;
+      let specialPath = special.component
+        ? special.component
+        : special.video
+        ? special.video
+        : special.demo;
+      let specialSplit = specialPath.split("/");
+      let fileNamePortion = specialSplit[specialSplit.length - 1];
+      let fullFilePath = /src/.test(specialPath)
+        ? path.join(resourceRootFolder, specialPath)
+        : path.join(resourceRootFolder, `/src${specialPath}`);
+      // console.log("THE COMPONENT FILE PATH;;;", fullFilePath);
+      // console.log("THE FILENAME PORTION;;;", fileNamePortion);
+      let fileContent = fs.readFileSync(fullFilePath, { encoding: "utf-8" });
+      let itemImported = `import ${capitalizeFirstLetter(
+        fileNamePortion.replace(/\.js$/, "")
+      )} from "MarkdownComps/${specialSplit[2]}/${fileNamePortion}"`;
+      // console.log("ITEM IMPORTED;;;", itemImported);
+      this.addDependency(fullFilePath);
+      // console.log("THE FILE CONTENTS;;;", fileContent);
+      sp.file = {
+        name: fileNamePortion,
+        contents: fileContent,
+        imports: itemImported,
+        componentName: capitalizeFirstLetter(
+          fileNamePortion.replace(/\.js$/, "")
+        ),
+      };
+
+      console.log("SPECIALSPLIT;;;", specialSplit);
+      return sp;
+      // let specialFileName = specialSplit[0];
+      // console.log("The special fileNAme;;;", specialFileName);
+    });
+  });
+
+  // console.log(
+  //   "firstLanguageSpecialShape;;;",
+  //   languages[0].parsedMarkdown.specialContent[0]
+  // );
+
   // const rePath = this.resourcePath;
   // console.log("MarkDownFolder", rePath);
   // console.log("THE fs Module", fs);
-  console.log("resource root", resourceRootFolder);
-  console.log("file path;", filePath);
-  console.log("fileFolder", fileFolder);
-  console.log("fileName", fileName);
-  console.log("FileExtension", fileExtension);
-  console.log("FileNamePlain", fileNamePlain);
-  console.log("Folder files", folderFiles);
-  console.log("Valid folder files;;;", validFolderFiles);
-  console.log("Languages;;;", languages);
+  let importsArray = [];
+  let importsIDs = [];
+
+  languages.map((ln) => {
+    let specialCont = ln.parsedMarkdown.specialContent;
+    specialCont.map((sp) => {
+      !importsIDs.includes(sp.file.componentName)
+        ? importsIDs.push(sp.file.componentName)
+        : "";
+      !importsArray.includes(sp.file.imports)
+        ? importsArray.push(sp.file.imports)
+        : "";
+    });
+  });
+
+  // console.log("resource root", resourceRootFolder);
+  // console.log("file path;", filePath);
+  // console.log("fileFolder", fileFolder);
+  // console.log("fileName", fileName);
+  // console.log("FileExtension", fileExtension);
+  // console.log("FileNamePlain", fileNamePlain);
+  // console.log("Folder files", folderFiles);
+  // console.log("Valid folder files;;;", validFolderFiles);
+  // console.log("Languages;;;", languages);
+  // console.log("The IMports;;;", importsArray);
   // console.log("THISLOADER;;;", this);
   this.addDependency(filePath);
   // console.log("The source BASE PATH", path.dirname(reContext));
 
   //parseMarkdown(markdown);
-  const docs = {
-    content: markdown,
-  };
 
   const loaded = `
 
-   export const docs = ${JSON.stringify(docs, null, 2)}
-  
-  `;
+   ${importsArray.join("\r\n")}
+   
+   export const docs = ${JSON.stringify(languages, null, 2)}
+   export const modules = {${importsIDs
+     .map((importID) => {
+       return `${JSON.stringify(importID)}: ${importID},`;
+     })
+     .join("\n")}}
+ 
+ `;
 
   return loaded;
 };
