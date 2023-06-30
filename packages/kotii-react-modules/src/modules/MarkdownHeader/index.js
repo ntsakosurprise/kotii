@@ -9,6 +9,7 @@ const Header = styled("div")(() => {
     height: "100px",
     backgroundColor: "red",
     top: 0,
+    zIndex: 2,
   };
 });
 
