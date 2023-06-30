@@ -79,10 +79,10 @@ const extractSpecialContent = (markdown) => {
   let specialContentMatch = null;
 
   while ((specialContentMatch = extractSpecialContentPattern.exec(markdown))) {
-    console.log(
-      "Possible Special ContentMatch",
-      specialContentMatch ? specialContentMatch : null
-    );
+    // console.log(
+    //   "Possible Special ContentMatch",
+    //   specialContentMatch ? specialContentMatch : null
+    // );
     let nestedStringRegex = /"(.*)":(.*?).?}/;
     let regularStringRegex = /"(.*)":(.*)[^}]/;
     let regexToUse = specialContentMatch[0].match(/}{3}$/)
@@ -90,12 +90,14 @@ const extractSpecialContent = (markdown) => {
       : regularStringRegex;
 
     const specialContentCleanMatch = specialContentMatch[0].match(regexToUse);
-    specialContent.push(JSON.parse(`{${specialContentCleanMatch[0]}}`));
-    console.log("SpecialContentCleanMatch", specialContentCleanMatch);
-    console.log(
-      "SpecialContentJSONIFIED",
-      JSON.parse(`{${specialContentCleanMatch[0]}}`)
-    );
+    specialContent.push({
+      special: JSON.parse(`{${specialContentCleanMatch[0]}}`),
+    });
+    // console.log("SpecialContentCleanMatch", specialContentCleanMatch);
+    // console.log(
+    //   "SpecialContentJSONIFIED",
+    //   JSON.parse(`{${specialContentCleanMatch[0]}}`)
+    // );
     // console.log(
     //   "Special Content JSON parsed",
     //   JSON.parse(`{${specialContentMatch[0]}}`)
@@ -109,13 +111,13 @@ const extractSpecialContent = (markdown) => {
   // return true;
 }; // Extract special content
 const idifyString = (string) => {
-  console.log("IDIFY STRING", string);
+  // console.log("IDIFY STRING", string);
   const idified = string.trim().toLowerCase().replace(idifyStringPattern, "-");
-  console.log("IDIFIED STRING", idified);
+  // console.log("IDIFIED STRING", idified);
   return idified;
 };
 const convertMarkdown = (markdown) => {
-  console.log("The Convert Markdown", convertMarkdown);
+  // console.log("The Convert Markdown", convertMarkdown);
 
   const renderer = {
     heading(text, level) {
@@ -125,9 +127,9 @@ const convertMarkdown = (markdown) => {
       let tocLen = tableOfContents.length;
       let tocIndex = tocLen - 1;
 
-      console.log("The current level;;", level);
+      // console.log("The current level;;", level);
       if (level === 1 || level > 4) {
-        console.log("Excepted Headings;;;", level);
+        // console.log("Excepted Headings;;;", level);
         return `
         <h${level}>
           ${textModified}
@@ -148,7 +150,7 @@ const convertMarkdown = (markdown) => {
         }
       } else if (level === 4) {
         if (tocLen > 0) {
-          console.log("Child4 being configured");
+          // console.log("Child4 being configured");
           if (tableOfContents[tocIndex].children.length > 0) {
             let tocChildLen = tableOfContents[tocIndex].children.length;
             let tocChildIndex = tocChildLen - 1;
@@ -159,11 +161,11 @@ const convertMarkdown = (markdown) => {
         }
       }
 
-      console.log("Heading Rendere toc;;", tableOfContents);
-      console.log(
-        "tableOfContentsJsonIFIED;;;",
-        JSON.stringify(tableOfContents)
-      );
+      // console.log("Heading Rendere toc;;", tableOfContents);
+      // console.log(
+      //   "tableOfContentsJsonIFIED;;;",
+      //   JSON.stringify(tableOfContents)
+      // );
       return `
               <h${level} id="${headingID}">
                 ${textModified}
@@ -182,19 +184,19 @@ const convertMarkdown = (markdown) => {
     xhtml: false,
   });
   let html = marked.parse(markdown).replaceAll("&#39;", "'");
-  console.log("The returned HTML;;;", html);
+  // console.log("The returned HTML;;;", html);
   return html;
 };
 
 const splitMarkdown = (markdown) => {
   const splitContent = markdown.split(markdownSplitPattern);
-  console.log("The split.length", splitContent.length);
-  console.log("The split", splitContent);
+  // console.log("The split.length", splitContent.length);
+  // console.log("The split", splitContent);
 
   splitContent.map((it) => {
-    console.log("SPLIT ITEM;;;", it);
+    // console.log("SPLIT ITEM;;;", it);
   });
-  console.log("The split.length", splitContent.length);
+  // console.log("The split.length", splitContent.length);
   return splitContent;
 };
 // const getMardkdownConveter = () => {
@@ -208,26 +210,27 @@ const beginExtraction = (markdown) => {
   const specialContent = extractSpecialContent(markdown);
   const markDownSplit = splitMarkdown(markdown);
   const html = markDownSplit.map((mk) => {
-    console.log("SPLITITEM;;;", mk);
+    // console.log("SPLITITEM;;;", mk);
     if (specialToJsonPattern.test(mk)) {
       //  let regexToUse = nested ? : specialToJsonPattern.exec(mk)
       let matchedString = specialToJsonPattern.exec(mk);
       let specialString = matchedString[0];
       // let itemNeeded = matchedString[0]
-      console.log("THE FeedBack;;;", matchedString);
-      console.log("THE SPecialString;;;", specialString);
-      console.log(
-        "SpeicalString with itemsRemoved",
-        specialString.replace(/.{2}$/, "")
-      );
+      // console.log("THE FeedBack;;;", matchedString);
+      // console.log("THE SPecialString;;;", specialString);
+      // console.log(
+      //   "SpeicalString with itemsRemoved",
+      //   specialString.replace(/.{2}$/, "")
+      // );
 
       return JSON.parse(`{${specialString.replace(/.{2}$/, "")}}`);
     }
     return convertMarkdown(mk).replace(/\n/g, "").trim();
   });
-  console.log("SplitMARKDOWN;;;", markDownSplit);
-  console.log("THE HTML;;;", html);
-  console.log("THE TABLE OF CONTENTS;;;", tableOfContents);
+  // console.log("SplitMARKDOWN;;;", markDownSplit);
+  // console.log("THE HTML;;;", html);
+  // console.log("THE TABLE OF CONTENTS;;;", tableOfContents);
+  // console.log("ThespecialcontenT;;;", specialContent);
   // const toc = extractTableOfContent(markdown);
   return {
     metaDataKeys,
