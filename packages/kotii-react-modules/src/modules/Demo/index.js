@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 // import { docs } from "Markdowns/intro/TES.md";
-import { docs } from "Markdowns/intro/intro.md";
+import { docs, modules } from "Markdowns/intro/intro.md";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import createTextEditor from "./editor";
@@ -21,9 +21,12 @@ const Sandbox = styled("div")(() => ({
 }));
 
 const Demo = () => {
+  console.log("THE DEMOSOURCE;;;", docs);
+  console.log("THE DEMOMODULES;;;", modules);
   const [showSource, setSourceShow] = useState(false);
   const [liveEdit, setLiveEditor] = useState(false);
   const [textEditor, setTextEditor] = useState(null);
+  const { Video } = modules;
 
   let previewRef = React.createRef();
 
@@ -47,6 +50,7 @@ const Demo = () => {
 
   return (
     <Sandbox>
+      <Video />
       <ShowCase>
         {liveEdit ? (
           <Preview ref={(elem) => (previewRef = elem)} />
