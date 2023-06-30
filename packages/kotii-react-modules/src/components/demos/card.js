@@ -28,7 +28,7 @@ function Cards() {
           <h3>React Cards</h3>
           <p>Card components with React</p>
           <i>
-            <blockquote>React, CSS, JSX </blockquote>
+            <blockquote>React, CSS, JSX, JS </blockquote>
           </i>
           <div className="icon-container">
             {/* <a

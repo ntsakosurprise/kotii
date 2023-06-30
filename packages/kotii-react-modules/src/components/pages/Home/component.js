@@ -1,16 +1,14 @@
 /* eslint-disable no-unused-vars */
-import FlexSandbox from "Modules/FlexSandbox";
+import { docs, modules } from "Markdowns/intro/intro.md";
 import React from "react";
-import Card from "../../demos/card";
-import Component from "../../special/component";
-import Video from "../../videos/video";
+import MarkdownRender from "../../../modules/MarkdownRender";
 
-export const Home = () => {
+/*export const Home = () => {
   // console.log("carouselSlick;;;", CarouselSlick);
 
   return (
     <div style={{ color: "red", fontSize: "50px" }}>
-      {/* <Demo /> */}
+      <Demo />
       <Card />
       <Component />
       <Video />
@@ -23,4 +21,10 @@ export const Home = () => {
     //     shouldShowHead={true}
     //   />
   );
+};*/
+
+export const Home = () => {
+  // console.log("carouselSlick;;;", CarouselSlick);
+
+  return <MarkdownRender docs={docs} modules={modules} />;
 };
