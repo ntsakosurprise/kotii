@@ -208,7 +208,9 @@ const beginExtraction = (markdown) => {
   const metaDataKeys = extractMetaKeyPairs(metaDataString) || null;
   const description = extractDescription(markdown) || null;
   const specialContent = extractSpecialContent(markdown);
-  const markDownSplit = splitMarkdown(markdown);
+  const markDownSplit = splitMarkdown(
+    markdown.replace(extractMetadataPattern, "")
+  );
   const html = markDownSplit.map((mk) => {
     // console.log("SPLITITEM;;;", mk);
     if (specialToJsonPattern.test(mk)) {
