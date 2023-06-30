@@ -139,8 +139,8 @@ module.exports = function (markdown) {
 
    ${importsArray.join("\r\n")}
    
-   export const docs = ${JSON.stringify(languages, null, 2)}
-   export const modules = {${importsIDs
+   export const markdownData = ${JSON.stringify(languages, null, 2)}
+   export const markdownComponents = {${importsIDs
      .map((importID) => {
        return `${JSON.stringify(importID)}: ${importID},`;
      })
