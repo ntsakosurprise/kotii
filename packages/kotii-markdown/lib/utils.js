@@ -4,4 +4,9 @@ const getLanguageLocal = (pattern, match) => {
   return pattern.exec(match)?.groups?.locale;
 };
 
-export { getLanguageLocal };
+const capitalizeFirstLetter = (text) => {
+  console.log("The text Uppercasing;;;", text);
+  return `${text.slice(0, 1).toUpperCase()}${text.slice(1)}`;
+};
+
+export { getLanguageLocal, capitalizeFirstLetter };
