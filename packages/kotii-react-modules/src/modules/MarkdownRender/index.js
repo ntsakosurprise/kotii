@@ -15,6 +15,7 @@ const MarkdownRenderCanvas = styled("div")(() => ({
   width: "100%",
   display: "flex",
   flexDirection: "column",
+  overflow: "hidden",
 }));
 
 const MarkdownContentArea = styled("div")(() => ({
@@ -53,8 +54,7 @@ const markdownComponentType = (mkComponent, markdownComponents) => {
     case "component":
       return (
         <StandardComponent>
-          {/* <ComponentInContext /> */}
-          <p>Test</p>
+          <ComponentInContext />
         </StandardComponent>
       );
     case "video":
