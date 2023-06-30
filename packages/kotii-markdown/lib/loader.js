@@ -124,7 +124,7 @@ module.exports = function (markdown) {
   // console.log("fileFolder", fileFolder);
   // console.log("fileName", fileName);
   // console.log("FileExtension", fileExtension);
-  // console.log("FileNamePlain", fileNamePlain);
+  console.log("FileNamePlain", fileNamePlain);
   // console.log("Folder files", folderFiles);
   // console.log("Valid folder files;;;", validFolderFiles);
   // console.log("Languages;;;", languages);
