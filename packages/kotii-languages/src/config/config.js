@@ -18,6 +18,20 @@ export const initialize = () => {
   // });
   // i18n.languages = ["en", "ts"];
 };
+
+export const addLanguages = (langs) => {
+  console.log("The langs to ADDLANGUAGES", langs);
+  langs.forEach((element) => {
+    console.log("forEACHELEMENT");
+    const { locale, trans } = element;
+    console.log("THE LOCALE", locale);
+    console.log("'trans", trans);
+    console.log("JSONSTRINGIFIED;;;", JSON.stringify(trans));
+
+    i18n.addResourceBundle(locale, "translations", trans);
+  });
+};
+
 i18n.use(initReactI18next).init({
   fallbackLng: "en",
   lng: "ts",
@@ -36,6 +50,6 @@ i18n.use(initReactI18next).init({
   defaultNS: "translations",
 });
 
-i18n.languages = ["en", "ts", "ve"];
+//i18n.languages = ["en", "ts", "ve"];
 
 // export default i18n;
