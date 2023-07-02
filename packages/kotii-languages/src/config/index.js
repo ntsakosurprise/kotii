@@ -1,2 +1,2 @@
-import { initialize } from "./config";
-export { initialize };
+import { addLanguages, initialize } from "./config";
+export { initialize, addLanguages };
