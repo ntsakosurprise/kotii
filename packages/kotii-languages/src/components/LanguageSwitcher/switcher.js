@@ -6,6 +6,8 @@ const options = [
   { value: "en", label: "English" },
   { value: "ts", label: "Tsonga" },
   { value: "ve", label: "Venda" },
+  { value: "pe", label: "Pedi" },
+  { value: "zu", label: "zulu" },
 ];
 
 const LanguageSwitcher = () => {
