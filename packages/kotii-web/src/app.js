@@ -13,7 +13,8 @@ import {
   useTheme,
   useThemeContext,
 } from "kotii-theme";
-import { docs } from "Markdowns/get-started/welcome.md";
+import { peTranslation, zuTranslation } from "Language";
+// import { docs } from "Markdowns/get-started/welcome.md";
 import React, { useState } from "react";
 import { Root } from "Startup";
 // import { ThemeProvider } from "styled-components";
@@ -27,7 +28,7 @@ const Test = () => {
   const [test, setTest] = useState("i am the test");
   console.log("the TEST;;;", test);
 
-  console.log(docs);
+  // console.log(docs);
   console.log(setTest);
   return (
     <p>
@@ -48,6 +49,7 @@ const TestGlobal = () => {
 const App = () => {
   console.log("languageProvider", ThemeProvider);
   console.log("useLanguage;;;", useTheme);
+  console.log("Translation", zuTranslation, peTranslation);
 
   // const { theme, isThemeLoaded } = useTheme();
   // const [selectedTheme, setSelectedTheme] = useState(theme);
@@ -86,7 +88,13 @@ const App = () => {
         <ThemeGlobalStyle globalStyle={GlobalStyle} />
 
         <ThemeSwitcher />
-        <LanguageProvider language="en">
+        <LanguageProvider
+          ln="en"
+          translations={[
+            { locale: "zu", trans: zuTranslation },
+            { locale: "pe", trans: peTranslation },
+          ]}
+        >
           <LanguageSwitcher />
           <Root />
 
