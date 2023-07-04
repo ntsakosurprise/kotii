@@ -1,2 +1,7 @@
-import { addLanguages, initialize } from "./config";
-export { initialize, addLanguages };
+import {
+  addLanguages,
+  initialize,
+  removeDefaultLanguage,
+  setLanguages,
+} from "./config";
+export { initialize, addLanguages, setLanguages, removeDefaultLanguage };

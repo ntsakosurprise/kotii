@@ -3,6 +3,7 @@
 // import i18next from "i18next";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import "../config/config";
 /* eslint-disable no-unused-vars */
 // import { config } from "../config/index";
 import { addLanguages, initialize } from "../config";
@@ -11,9 +12,13 @@ const LanguageContext = React.createContext(null);
 
 export const LanguageProvider = (props) => {
   const { t, i18n } = useTranslation();
-  const [language, setCurrentLanguage] = useState(i18n.language);
+  const [language, setCurrentLanguage] = useState(
+    props.language || i18n.language
+  );
+
   const { children, ln, translations } = props;
   const [updateLanguages, setUpdateLanguages] = useState(null);
+  //const [languagesSet, setLanguagesSet] = useState(false);
 
   // console.log("the children;;", ln);
   console.log("PROVIDER TRANSLATIONS", props);
@@ -24,6 +29,7 @@ export const LanguageProvider = (props) => {
 
   useEffect(() => {
     addLanguages(translations);
+    //removeDefaultLanguage(translations, setLanguagesSet);
     setUpdateLanguages(translations);
   }, []);
 
@@ -37,11 +43,18 @@ export const LanguageProvider = (props) => {
       setCurrentLanguage(language);
     });
   };
+  const getLanguageNames = () => {
+    return translations.map((trans) => {
+      return { name: trans.label, locale: trans.locale };
+    });
+  };
   const get = (message = "") => {
     console.log("GET MESSAGE;;;", message);
     console.log(t);
     return t(message);
   };
+
+  //if (!languagesSet) return null;
 
   return (
     <LanguageContext.Provider
@@ -49,6 +62,7 @@ export const LanguageProvider = (props) => {
         language,
         changeCurrentLanguage,
         get,
+        getLanguageNames,
       }}
     >
       {children}
