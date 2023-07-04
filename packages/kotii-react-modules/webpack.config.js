@@ -54,6 +54,7 @@ module.exports = {
       Constants: "/src/constants/",
       Assets: "/src/assets/",
       AppGlobals: "/src/globals/index",
+      MarkdownComps: "/src/components/",
     },
   },
   module: {
@@ -65,7 +66,7 @@ module.exports = {
       },
       {
         test: /\.md$/,
-        use: ["nextgen-docs-markdown"],
+        use: ["kotii-markdown"],
       },
       // {
       //   test: /\.html$/,

@@ -10,7 +10,7 @@ export default ({ component: Component, ...rest }) => {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <Route
         {...rest}
         render={(props) => {

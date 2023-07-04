@@ -1,6 +1,14 @@
 /* eslint-disable no-unused-vars */
+import { LanguageProvider } from "kotii-languages";
 import React from "react";
 import { Root } from "Startup";
+import {
+  enTranslation,
+  peTranslation,
+  tsTranslation,
+  veTranslation,
+  zuTranslation,
+} from "./config";
 // import { ThemeProvider } from "styled-components";
 
 // const Container = styled.div`
@@ -38,13 +46,21 @@ const App = () => {
   // console.log("resetStyles;;;", selectedTheme);
   console.log("app runinng");
   return (
-    <>
+    <LanguageProvider
+      translations={[
+        { locale: "ts", trans: tsTranslation, label: "Tsonga" },
+        { locale: "pe", trans: peTranslation, label: "Pedi" },
+        { locale: "zu", trans: zuTranslation, label: "Zulu" },
+        { locale: "ve", trans: veTranslation, label: "Venda" },
+        { locale: "en", trans: enTranslation, label: "English" },
+      ]}
+    >
       <Root />
 
       <div>
         <p>Surprise</p>
       </div>
-    </>
+    </LanguageProvider>
   );
 };
 
