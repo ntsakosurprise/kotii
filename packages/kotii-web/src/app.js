@@ -13,7 +13,12 @@ import {
   useTheme,
   useThemeContext,
 } from "kotii-theme";
-import { peTranslation, zuTranslation } from "Language";
+import {
+  peTranslation,
+  tsTranslation,
+  veTranslation,
+  zuTranslation,
+} from "Language";
 // import { docs } from "Markdowns/get-started/welcome.md";
 import React, { useState } from "react";
 import { Root } from "Startup";
@@ -91,8 +96,10 @@ const App = () => {
         <LanguageProvider
           ln="en"
           translations={[
-            { locale: "zu", trans: zuTranslation },
-            { locale: "pe", trans: peTranslation },
+            { locale: "zu", trans: zuTranslation, label: "zulu" },
+            { locale: "pe", trans: peTranslation, label: "pedi" },
+            { locale: "ve", trans: veTranslation, label: "venda" },
+            { locale: "ts", trans: tsTranslation, label: "tsonga" },
           ]}
         >
           <LanguageSwitcher />
