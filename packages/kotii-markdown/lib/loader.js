@@ -46,11 +46,14 @@ module.exports = function (markdown) {
       encoding: "utf-8",
     });
     this.addDependency(languageFilePath);
+    let isDefaultFileName = fileName === validLanguage;
 
     return {
       rawMdText: rawMarkdown,
       fileName: validLanguage,
-      locale: getLanguageLocal(validLanguagePattern, validLanguage),
+      locale: isDefaultFileName
+        ? "en"
+        : getLanguageLocal(validLanguagePattern, validLanguage),
       parsedMarkdown: parseMarkdown(rawMarkdown),
     };
   });
