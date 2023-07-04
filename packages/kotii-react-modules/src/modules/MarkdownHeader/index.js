@@ -1,3 +1,4 @@
+import { LanguageSwitcher, useLanguage } from "kotii-languages";
 import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
@@ -14,9 +15,14 @@ const Header = styled("div")(() => {
 });
 
 const MarkdownHeader = () => {
+  const { get } = useLanguage();
   return (
     <Header>
-      <p>I am the header</p>
+      <div style={{ width: "300px" }}>
+        <LanguageSwitcher />
+      </div>
+
+      <p>I am the header with translation {get("message")}</p>
     </Header>
   );
 };
