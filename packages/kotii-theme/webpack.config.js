@@ -10,7 +10,7 @@ module.exports = {
     filename: "index.js",
     chunkFilename: "[id].js",
     publicPath: "",
-    library: "nextgen-docs-theme",
+    library: "kotii-theme",
     libraryTarget: "umd",
   },
   externals: {
