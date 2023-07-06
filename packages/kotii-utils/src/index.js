@@ -1,4 +1,8 @@
-import { getFromStorage, setInStorage } from "./localStorage";
+import {
+  getFromStorage,
+  removeFromStorage,
+  setInStorage,
+} from "./localStorage";
 import {
   capitalizeFirstLetter,
   capitalizeLastLetter,
@@ -9,4 +13,5 @@ export {
   capitalizeLastLetter,
   getFromStorage,
   setInStorage,
+  removeFromStorage,
 };

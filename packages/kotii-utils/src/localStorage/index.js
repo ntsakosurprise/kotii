@@ -1,3 +1,7 @@
-import { getFromStorage, setInStorage } from "./localStorage";
+import {
+  getFromStorage,
+  removeFromStorage,
+  setInStorage,
+} from "./localStorage";
 
-export { setInStorage, getFromStorage };
+export { setInStorage, getFromStorage, removeFromStorage };
