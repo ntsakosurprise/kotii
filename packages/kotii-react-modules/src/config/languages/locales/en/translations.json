@@ -1,4 +1,10 @@
 {
   "greetings": "Hello, How are you?",
-  "message": "I'm happy to meet you"
+  "message": "I'm happy to meet you",
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "contact": "Contact",
+    "help": "Help"
+  }
 }

@@ -1,4 +1,10 @@
 {
   "greetings": "Ngisekhaya",
-  "message": "Ngizizwa njengomdlali webhola, osanda kuthola isheke"
+  "message": "Ngizizwa njengomdlali webhola, osanda kuthola isheke",
+  "navigation": {
+    "Home": "Ikhaya",
+    "About": "Mayelana",
+    "Contact": "Xhumana",
+    "Help": "Usizo"
+  }
 }
