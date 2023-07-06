@@ -1,5 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { LanguageProvider } from "kotii-languages";
+import {
+  // GlobalStyle,
+  ThemeProvider,
+  ThemeSwitcher,
+} from "kotii-theme";
 import React from "react";
 import { Root } from "Startup";
 import {
@@ -46,21 +51,29 @@ const App = () => {
   // console.log("resetStyles;;;", selectedTheme);
   console.log("app runinng");
   return (
-    <LanguageProvider
-      translations={[
-        { locale: "ts", trans: tsTranslation, label: "Tsonga" },
-        { locale: "pe", trans: peTranslation, label: "Pedi" },
-        { locale: "zu", trans: zuTranslation, label: "Zulu" },
-        { locale: "ve", trans: veTranslation, label: "Venda" },
-        { locale: "en", trans: enTranslation, label: "English" },
-      ]}
-    >
-      <Root />
+    <ThemeProvider>
+      {/* <GlobalStyle theme={theme} /> */}
+      {/* <TestGlobal /> */}
 
-      <div>
-        <p>Surprise</p>
-      </div>
-    </LanguageProvider>
+      {/* <ThemeGlobalStyle globalStyle={GlobalStyle} /> */}
+
+      <ThemeSwitcher />
+      <LanguageProvider
+        translations={[
+          { locale: "ts", trans: tsTranslation, label: "Tsonga" },
+          { locale: "pe", trans: peTranslation, label: "Pedi" },
+          { locale: "zu", trans: zuTranslation, label: "Zulu" },
+          { locale: "ve", trans: veTranslation, label: "Venda" },
+          { locale: "en", trans: enTranslation, label: "English" },
+        ]}
+      >
+        <Root />
+
+        <div>
+          <p>Surprise</p>
+        </div>
+      </LanguageProvider>
+    </ThemeProvider>
   );
 };
 
