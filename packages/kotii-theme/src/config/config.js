@@ -1,16 +1,19 @@
 import { getFromStorage, setInStorage } from "kotii-utils";
-import { grommetThemes, themes } from "./themes";
+import { grommetThemes } from "./themes";
 
 const processDefaultTheme = () => {
+  console.log("PROCESSDEFAULTHEME;;;");
+
   if (!getFromStorage("theme"))
-    setInStorage("theme", grommetThemes.seaWaveTheme);
+    setInStorage("theme", JSON.stringify(grommetThemes.seaWaveTheme));
 };
-setInStorage("themes", themes);
+//removeFromStorage("themes");
+setInStorage("themes", JSON.stringify(grommetThemes));
 processDefaultTheme();
 
 export const logStoredThemesStatus = () => {
   if (getFromStorage("themes")) {
-    console.log("Themes have been set");
+    console.log("Themes have been set", grommetThemes);
   } else {
     console.log("Themes are not yet available");
   }

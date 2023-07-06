@@ -1,6 +1,6 @@
-import { useThemeContext } from "Context";
 import React, { useState } from "react";
 import Select from "react-select";
+import { useKotiiTheme } from "../../context";
 // import { themes } from "../../config/themes";
 
 // const options = [
@@ -10,7 +10,7 @@ import Select from "react-select";
 // ];
 
 const ThemeSwitcher = () => {
-  const { changeTheme, theme, themes } = useThemeContext();
+  const { changeTheme, theme, themes } = useKotiiTheme();
   const [selectedOption, setSelectedOption] = useState(theme);
   console.log("the themSWITCHER;;;", themes);
   console.log(changeTheme, theme);
@@ -23,10 +23,13 @@ const ThemeSwitcher = () => {
 
   const getOptions = () => {
     const optionDictionary = [];
-    for (let themeName in themes) {
-      console.log("the theme I;;", themeName);
+    console.log("getOptionsThemes", themes);
+    const themeNames = Object.keys(themes);
+    themeNames.forEach((themeName) => {
+      console.log("the theme Name", themeName);
       optionDictionary.push({ value: themes[themeName], label: themeName });
-    }
+    });
+
     return optionDictionary;
   };
 

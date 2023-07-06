@@ -3,4 +3,7 @@ import {
   useThemeContext,
 } from "./theme-provider";
 
-export { ThemeProvider as ThemeProvider, useThemeContext };
+export {
+  ThemeProvider as KotiiThemeProvider,
+  useThemeContext as useKotiiTheme,
+};

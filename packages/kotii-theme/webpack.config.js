@@ -5,6 +5,8 @@ const path = require("path");
 module.exports = {
   entry: "./src/index.js",
   target: "web",
+  mode: "development",
+  devtool: "inline-source-map",
   output: {
     path: path.join(__dirname),
     filename: "index.js",
@@ -48,7 +50,7 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: "babel-loader",
+        use: ["babel-loader", "source-map-loader"],
       },
       // {
       //   test: /\.html$/,
