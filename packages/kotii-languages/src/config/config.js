@@ -67,6 +67,7 @@ i18n.use(initReactI18next).init(
     lng: "en",
     debug: true,
     resources: {},
+    keySeparator: ".",
     ns: ["translations"],
     defaultNS: "translations",
   },
