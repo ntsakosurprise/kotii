@@ -2,7 +2,10 @@
 import { logStoredThemesStatus } from "Config";
 import { useTheme } from "Hooks";
 import React, { useEffect } from "react";
-import { ThemeProvider } from "styled-components";
+// import { ThemeProvider } from "styled-components";
+import { Grommet } from "grommet";
+
+// Create ThemeContent
 const ThemeContext = React.createContext(null);
 
 export const CustomThemeProvider = (props) => {
@@ -15,13 +18,13 @@ export const CustomThemeProvider = (props) => {
     logStoredThemesStatus();
   });
   return (
-    <ThemeProvider theme={theme}>
+    <Grommet theme={theme}>
       <ThemeContext.Provider
         value={{ theme, themes, isThemeLoaded, changeTheme }}
       >
         {props.children}
       </ThemeContext.Provider>
-    </ThemeProvider>
+    </Grommet>
   );
 };
 
