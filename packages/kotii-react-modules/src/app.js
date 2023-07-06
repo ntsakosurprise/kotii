@@ -2,7 +2,7 @@
 import { LanguageProvider } from "kotii-languages";
 import {
   // GlobalStyle,
-  ThemeProvider,
+  KotiiThemeProvider,
 } from "kotii-theme";
 import React from "react";
 import { Root } from "Startup";
@@ -50,7 +50,7 @@ const App = () => {
   // console.log("resetStyles;;;", selectedTheme);
   console.log("app runinng");
   return (
-    <ThemeProvider>
+    <KotiiThemeProvider>
       {/* <GlobalStyle theme={theme} /> */}
       {/* <TestGlobal /> */}
 
@@ -71,7 +71,7 @@ const App = () => {
           <p>Surprise</p>
         </div>
       </LanguageProvider>
-    </ThemeProvider>
+    </KotiiThemeProvider>
   );
 };
 

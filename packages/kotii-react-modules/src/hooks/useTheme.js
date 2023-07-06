@@ -1,5 +1,5 @@
+import { getFromStorage, setInStorage } from "kotii-utils";
 import { useEffect, useState } from "react";
-import { getFromStorage, setInStorage } from "Utilities";
 
 export const useTheme = () => {
   const themes = getFromStorage("themes");

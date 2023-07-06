@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useTheme } from "Hooks";
+import { getFromStorage } from "kotii-utils";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { getFromStorage } from "Utilities";
 
 const ThemedButton = styled.button`
   border: 0;

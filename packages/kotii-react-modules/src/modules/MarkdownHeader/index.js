@@ -1,5 +1,5 @@
 import { LanguageSwitcher, useLanguage } from "kotii-languages";
-import { ThemeSwitcher } from "kotii-theme";
+import { ThemeSwitcher, useKotiiTheme } from "kotii-theme";
 import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
@@ -69,6 +69,8 @@ const renderItems = (items) => {
 
 const MarkdownHeader = () => {
   const { get } = useLanguage();
+  const { theme } = useKotiiTheme();
+  console.log("THE CURRENT THEME IN REACT-MODULES;", theme);
   const listItems = [
     {
       text: `${get("navigation.home")}`,
@@ -89,7 +91,9 @@ const MarkdownHeader = () => {
       <div style={{ width: "300px", display: "flex" }}>
         <LanguageSwitcher />
       </div>
-      <ThemeSwitcher />
+      <div style={{ width: "300px", display: "flex" }}>
+        <ThemeSwitcher />
+      </div>
     </Header>
   );
 };
