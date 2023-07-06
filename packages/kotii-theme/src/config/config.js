@@ -1,8 +1,9 @@
 import { getFromStorage, setInStorage } from "kotii-utils";
-import { themes } from "./themes";
+import { grommetThemes, themes } from "./themes";
 
 const processDefaultTheme = () => {
-  if (!getFromStorage("theme")) setInStorage("theme", themes.calm);
+  if (!getFromStorage("theme"))
+    setInStorage("theme", grommetThemes.seaWaveTheme);
 };
 setInStorage("themes", themes);
 processDefaultTheme();
