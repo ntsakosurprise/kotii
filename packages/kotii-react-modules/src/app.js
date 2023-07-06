@@ -3,7 +3,6 @@ import { LanguageProvider } from "kotii-languages";
 import {
   // GlobalStyle,
   ThemeProvider,
-  ThemeSwitcher,
 } from "kotii-theme";
 import React from "react";
 import { Root } from "Startup";
@@ -57,7 +56,6 @@ const App = () => {
 
       {/* <ThemeGlobalStyle globalStyle={GlobalStyle} /> */}
 
-      <ThemeSwitcher />
       <LanguageProvider
         translations={[
           { locale: "ts", trans: tsTranslation, label: "Tsonga" },
