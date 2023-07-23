@@ -23,13 +23,10 @@ const ThemeSwitcher = () => {
 
   const getOptions = () => {
     const optionDictionary = [];
-    console.log("getOptionsThemes", themes);
-    const themeNames = Object.keys(themes);
-    themeNames.forEach((themeName) => {
-      console.log("the theme Name", themeName);
+    for (let themeName in themes) {
+      console.log("the theme I;;", themeName);
       optionDictionary.push({ value: themes[themeName], label: themeName });
-    });
-
+    }
     return optionDictionary;
   };
 
