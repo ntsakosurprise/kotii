@@ -16,11 +16,14 @@
     "access": "public"
   },
   "scripts": {
-    "build": "run-s clean build:tsc",
     "build:tsc": "tsc -b",
-    "clean": "rimraf lib coverage tsconfig.tsbuildinfo"
+    "clean": "rimraf lib coverage tsconfig.tsbuildinfo",
+    "start": "webpack-dev-server --watch",
+    "build": "webpack --mode production",
+    "buildDev": "webpack --mode development"
   },
   "devDependencies": {
+    "@testing-library/react": "^14.0.0",
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.6.1",
     "ts-loader": "^9.4.4"
