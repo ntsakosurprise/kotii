@@ -7,10 +7,14 @@ export const setInStorage = (key, value) => {
 export const getFromStorage = (key) => {
   console.log("GETFROM STORAGE;;;", key);
   console.log("Get from Storage;;;", localStorage.getItem(key));
-  if (!key) return null;
-  if (!localStorage.getItem(key)) return null;
-  if (localStorage.getItem(key) === "undefined") return null;
-  return JSON.parse(localStorage.getItem(key));
+  let foundItem = key ? localStorage.getItem(key) : null;
+  if (!foundItem) return null;
+  if (!foundItem) return null;
+  if (foundItem === "undefined") return null;
+  if (typeof foundItem === "object" && Object.keys(foundItem).length === 0)
+    return null;
+  console.log("JSON PARSED ITEM;;;", JSON.parse(foundItem));
+  return JSON.parse(foundItem);
 };
 
 export const removeFromStorage = (key) => {
