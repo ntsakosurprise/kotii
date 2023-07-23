@@ -21,6 +21,8 @@
     "clean": "rimraf lib coverage tsconfig.tsbuildinfo"
   },
   "devDependencies": {
-    "jest": "^29.5.0"
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.6.1",
+    "ts-loader": "^9.4.4"
   }
 }
