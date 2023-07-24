@@ -23,17 +23,18 @@
     "buildDev": "webpack --mode development"
   },
   "devDependencies": {
-    "@testing-library/react": "^14.0.0",
-    "jest": "^29.5.0",
-    "jest-environment-jsdom": "^29.6.1",
-    "ts-loader": "^9.4.4",
     "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
+    "@storybook/cli": "^7.1.0",
+    "@testing-library/react": "^14.0.0",
     "babel-cli": "^6.26.0",
     "babel-loader": "^8.2.3",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.6.1",
     "source-map-loader": "^4.0.1",
     "style-loader": "^3.3.1",
+    "ts-loader": "^9.4.4",
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.7.4"
