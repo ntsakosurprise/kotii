@@ -9,10 +9,10 @@ module.exports = {
   devtool: "inline-source-map",
   output: {
     path: path.join(__dirname),
-    filename: "index.js",
+    filename: "bundle.js",
     chunkFilename: "[id].js",
     publicPath: "",
-    library: "kotii-theme",
+    library: "kotii-ui",
     libraryTarget: "umd",
   },
   externals: {
