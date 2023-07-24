@@ -1,9 +1,22 @@
 import { LanguageSwitcher, useLanguage } from "kotii-languages";
 import { ThemeSwitcher, useKotiiTheme } from "kotii-theme";
+
 import PropTypes from "prop-types";
 import React from "react";
 import styled from "styled-components";
 
+const Header = styled("header")((theme) => {
+  return {
+    width: "100%",
+    position: "fixed",
+    height: "100px",
+    backgroundColor: theme.backgroundColor,
+    top: 0,
+    zIndex: 2,
+    display: "flex",
+    flexDirection: "row",
+  };
+});
 const List = styled("ul")(() => ({
   position: "relative",
   display: "flex",
@@ -44,19 +57,6 @@ const ListLink = styled("a")(() => ({
   textDecoration: "none",
 }));
 
-const Header = styled("header")(() => {
-  return {
-    width: "100%",
-    position: "fixed",
-    height: "100px",
-    backgroundColor: "red",
-    top: 0,
-    zIndex: 2,
-    display: "flex",
-    flexDirection: "row",
-  };
-});
-
 const renderItems = (items) => {
   return items.map((ite, i) => {
     return (
@@ -69,8 +69,9 @@ const renderItems = (items) => {
 
 const MarkdownHeader = () => {
   const { get } = useLanguage();
-  const { theme } = useKotiiTheme();
-  console.log("THE CURRENT THEME IN REACT-MODULES;", theme);
+  const { theme, grommetTheme } = useKotiiTheme();
+  console.log("THE CURRENT THEME IN REACT-MODULES;", grommetTheme);
+  console.log("THEMEBACKGROUND;;;", theme.backgroundColor);
   const listItems = [
     {
       text: `${get("navigation.home")}`,
