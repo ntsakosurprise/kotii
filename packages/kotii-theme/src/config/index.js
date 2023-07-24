@@ -1,2 +1,7 @@
-import { logStoredThemesStatus } from "./config";
-export { logStoredThemesStatus };
+import {
+  checkOrSetThemes,
+  getTheme,
+  getThemes,
+  logStoredThemesStatus,
+} from "./config";
+export { logStoredThemesStatus, getTheme, getThemes, checkOrSetThemes };
