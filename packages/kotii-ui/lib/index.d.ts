@@ -1,1 +1,1 @@
-declare const myName: string;
+declare const num: number;

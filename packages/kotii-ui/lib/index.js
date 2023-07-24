@@ -1,4 +1,4 @@
 "use strict";
-const myName = "My name is my name";
-console.log(myName);
+const num = 6;
+console.log("NUMBER 5", num);
 //# sourceMappingURL=index.js.map
