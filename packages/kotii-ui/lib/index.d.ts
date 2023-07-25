@@ -1,1 +1,2 @@
-declare const num: number;
+import { Button } from "./components";
+export { Button };
