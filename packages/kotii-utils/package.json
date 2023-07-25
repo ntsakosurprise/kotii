@@ -10,6 +10,7 @@
     "buildDev": "webpack --mode development"
   },
   "dependencies": {
+    "styled-components": "^6.0.5",
     "use-local-storage": "^2.3.6"
   },
   "devDependencies": {
