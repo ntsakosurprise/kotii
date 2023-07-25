@@ -1,3 +1,3 @@
-import Box from "./Box";
-import Button from "./Button";
+import { Button } from "./controls";
+import { Box } from "./layout";
 export { Button, Box };
