@@ -43,6 +43,7 @@ module.exports = {
       Constants: "/src/constants/",
       Assets: "/src/assets/",
       AppGlobals: "/src/globals/index",
+      Types: "/src/types",
     },
   },
   module: {
