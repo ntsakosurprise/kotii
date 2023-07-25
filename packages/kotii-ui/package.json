@@ -48,6 +48,7 @@
     "webpack-dev-server": "^4.7.4"
   },
   "dependencies": {
+    "grommet": "^2.33.1",
     "styled-components": "^6.0.5"
   }
 }
