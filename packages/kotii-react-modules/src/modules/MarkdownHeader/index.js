@@ -1,5 +1,6 @@
 import { LanguageSwitcher, useLanguage } from "kotii-languages";
 import { ThemeSwitcher, useKotiiTheme } from "kotii-theme";
+import { Button } from "kotii-ui";
 
 import PropTypes from "prop-types";
 import React from "react";
@@ -91,6 +92,7 @@ const MarkdownHeader = () => {
       <List>{renderItems(listItems)}</List>
       <div style={{ width: "300px", display: "flex" }}>
         <LanguageSwitcher />
+        <Button text="I'm a Kotii-ui-button" />
       </div>
       <div style={{ width: "300px", display: "flex" }}>
         <ThemeSwitcher />
