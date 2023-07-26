@@ -1,16 +1,22 @@
-import { backgroundAltType, backgroundType, borderType } from "./types";
-
+import { MouseEventHandler } from "react";
 import {
   AlignAroundBetween,
   AnimationT,
+  backgroundAltType,
+  backgroundType,
+  Border,
+  borderType,
   Direction,
+  Justify,
+  Margins,
+  Overflow,
   Size,
   SizeNoneXs,
 } from "./types";
 export interface BaseProps {
   direction?: Direction;
   pad?: string;
-  border?: borderType | boolean;
+  border?: borderType | boolean | Border | [any];
   size?: Size;
   background?: string | backgroundType | backgroundAltType;
   a11yTitle?: string;
@@ -26,5 +32,11 @@ export interface BaseProps {
   children: React.ReactNode;
   focusIndicator?: boolean;
   gap?: SizeNoneXs | "xlarge";
+  gridArea?: string;
+  hoverIndicator?: string | boolean;
   height?: "xxsmall" | "xsmall" | Size | "xlarge" | "xxlarge";
+  justify?: Justify;
+  margin?: SizeNoneXs | "xxsmall" | "xlarge" | "xxlarge" | Margins;
+  onClick?: MouseEventHandler<HTMLElement>;
+  overflow?: Overflow | string;
 }
