@@ -8241,7 +8241,7 @@ grommet-icons@^4.10.0, grommet-icons@^4.11.0:
   resolved "https://registry.npmjs.org/grommet-icons/-/grommet-icons-4.11.0.tgz"
   integrity sha512-ArXf2XyXmpk5JsQ8NudzNz3mbWv+TeZkPiyog2s9yoNAWTlIr3vzNjr97uon/Xm4Uiq2kiHkvO4i2fG1u6EaDg==
 
-grommet@^2.32.2:
+grommet@^2.32.2, grommet@^2.33.1:
   version "2.33.1"
   resolved "https://registry.npmjs.org/grommet/-/grommet-2.33.1.tgz"
   integrity sha512-KvU/vNZvtvuYnL5gmBHSuJbsZBgRxJA92c75u8OVGqQA+uuoJWP2nGECNbLT4aYHumcDOcgqkZbTfJ2J1wKk5A==

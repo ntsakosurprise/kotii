@@ -1,2 +1,6 @@
 import Box from "./Box";
-export { Box };
+import Card from "./Card";
+import Footer from "./Footer";
+import Header from "./Header";
+import Page from "./Page";
+export { Box, Card, Header, Footer, Page };
