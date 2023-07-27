@@ -1,18 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { GlobalStyle } from "AppGlobals";
-import {
-  LanguageProvider,
-  LanguageSwitcher,
-  useLanguage,
-} from "kotii-languages";
-import {
-  ThemeGlobalStyle,
-  // GlobalStyle,
-  ThemeProvider,
-  ThemeSwitcher,
-  useTheme,
-  useThemeContext,
-} from "kotii-theme";
+import { LanguageProvider, useLanguage } from "kotii-languages";
+import { KotiiThemeProvider, useTheme, useThemeContext } from "kotii-theme";
+import { Page } from "kotii-ui";
 import {
   peTranslation,
   tsTranslation,
@@ -52,66 +42,27 @@ const TestGlobal = () => {
   return <GlobalStyle theme={theme} />;
 };
 const App = () => {
-  console.log("languageProvider", ThemeProvider);
   console.log("useLanguage;;;", useTheme);
   console.log("Translation", zuTranslation, peTranslation);
+  console.log("Kotii-ui Page Component:", Page);
 
-  // const { theme, isThemeLoaded } = useTheme();
-  // const [selectedTheme, setSelectedTheme] = useState(theme);
-  // const [showDialog, setShowDialog] = useState(false);
-  // const [newTheme, setNewTheme] = useState();
-  // console.log("THE APP THEME;;;", theme);
-
-  // useEffect(() => {
-  //   setSelectedTheme(theme);
-  //   console.log("the setThemeaa;;;", selectedTheme);
-  // }, [isThemeLoaded]);
-
-  // useEffect(() => {
-  //   WebFont.load({
-  //     google: { families: getWebFonts() },
-  //   });
-  // });
-
-  // const manageDialog = () => {
-  //   setShowDialog(!showDialog);
-  // };
-
-  // const createTheme = (newTheme) => {
-  //   console.log(newTheme);
-  //   setShowDialog(false);
-  //   setNewTheme(newTheme);
-  // };
-
-  // console.log("resetStyles;;;", selectedTheme);
   return (
-    <>
-      <ThemeProvider>
-        {/* <GlobalStyle theme={theme} /> */}
-        {/* <TestGlobal /> */}
-
-        <ThemeGlobalStyle globalStyle={GlobalStyle} />
-
-        <ThemeSwitcher />
-        <LanguageProvider
-          ln="en"
-          translations={[
-            { locale: "zu", trans: zuTranslation, label: "zulu" },
-            { locale: "pe", trans: peTranslation, label: "pedi" },
-            { locale: "ve", trans: veTranslation, label: "venda" },
-            { locale: "ts", trans: tsTranslation, label: "tsonga" },
-          ]}
-        >
-          <LanguageSwitcher />
-          <Root />
-
-          <div>
-            <p>Surprise</p>
-          </div>
-          <Test />
-        </LanguageProvider>
-      </ThemeProvider>
-    </>
+    <KotiiThemeProvider>
+      {/* <ThemeSwitcher /> */}
+      <Page kind="wide">TEST</Page>
+      <LanguageProvider
+        ln="en"
+        translations={[
+          { locale: "zu", trans: zuTranslation, label: "zulu" },
+          { locale: "pe", trans: peTranslation, label: "pedi" },
+          { locale: "ve", trans: veTranslation, label: "venda" },
+          { locale: "ts", trans: tsTranslation, label: "tsonga" },
+        ]}
+      >
+        {/* <LanguageSwitcher /> */}
+        <Root />
+      </LanguageProvider>
+    </KotiiThemeProvider>
   );
 };
 

@@ -35,6 +35,7 @@
     "kotii-languages": "*",
     "kotii-markdown": "*",
     "kotii-theme": "*",
+    "kotii-ui": "*",
     "lodash": "^4.17.21",
     "object-path": "^0.11.8",
     "prop-types": "^15.7.2",
