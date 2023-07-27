@@ -47,6 +47,28 @@ export type Border =
   | "between";
 
 export type Overflow = "auto" | "hidden" | "scroll" | "visible";
+export type Corners =
+  | "top"
+  | "left"
+  | "bottom"
+  | "right"
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-right";
+export type OverflowViewPorts = { vertical?: string; horizontal?: string };
+
+export interface Skeleton {
+  animation: boolean;
+  color?: string;
+  depth?: number;
+  message?: Message;
+}
+
+type Message = {
+  start: string;
+  end: string;
+};
 
 export type animationType = {
   type?: string;
@@ -55,19 +77,24 @@ export type animationType = {
   size?: "xsmall" | Size;
 };
 
-export type borderType = {
+export type BorderType = {
   color?: string;
   size?: Size;
 };
 
-export type borderSidesType = {
+export type BorderSidesType = {
   color?: string;
   size?: string;
   style?: string;
   side?: string;
 }[];
 
-export type backgroundType = {
+export type BorderCorners = {
+  size?: string;
+  corners?: Corners;
+};
+
+export type BackgroundType = {
   color?: string;
   dark?: boolean;
   opacity?: boolean;
@@ -79,7 +106,7 @@ export type backgroundType = {
   rotate?: number;
 };
 
-export type backgroundAltType = { dark: string; light: string };
+export type BackgroundAltType = { dark: string; light: string };
 
 export type HoverIndicator = {
   color: string;
@@ -97,7 +124,7 @@ export type HoverIndicatorElevation = {
   elevation?: string;
 };
 
-export type Margins = {
+export type Spacings = {
   vertical: string;
   horizontal: string;
   top: string;

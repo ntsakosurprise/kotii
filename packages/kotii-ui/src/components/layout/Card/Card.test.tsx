@@ -2,17 +2,15 @@ import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import React from "react";
 
-import Box from "./Card";
+import Card from "./Card";
 
-describe("Running Test for Marbella Button", () => {
-  test("Check Button Disabled", () => {
+describe("Running Test for Card", () => {
+  test("Check Card Renders", () => {
     render(
-      <Box size="large" direction="row">
+      <Card height="small" width="small" background="green">
         <p>My name</p>
-      </Box>
+      </Card>
     );
-    expect(
-      screen.getByRole("button", { name: "Button marbella" })
-    ).toBeDisabled();
+    expect(screen.getByText("My name")).toBeInTheDocument();
   });
 });
