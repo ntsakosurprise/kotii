@@ -29,7 +29,7 @@ const ThemeContext = React.createContext(null);
 
 export const CustomThemeProvider = (props) => {
   const { theme, themes, isThemeLoaded, changeTheme } = useTheme();
-  const [darkMode, setDarkMode] = React.useState(false);
+  const [darkMode, setDarkMode] = React.useState(true);
 
   console.log("currentTheme;;;", theme);
   console.log("CurrentThemes", themes);
@@ -38,6 +38,10 @@ export const CustomThemeProvider = (props) => {
   useEffect(() => {
     logStoredThemesStatus();
   }, []);
+  useEffect(() => {
+    console.log("The updates theme;;;", theme);
+    console.log("Grommet", grommet);
+  }, [theme]);
   return (
     <ThemeContext.Provider
       value={{ theme, themes, isThemeLoaded, changeTheme, grommetTheme }}
