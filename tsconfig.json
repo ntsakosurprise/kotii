@@ -3,6 +3,7 @@
     "jsx": "react",
     "module": "esnext",
     "moduleResolution": "node",
+    "allowJs": true,
     "esModuleInterop": true,
     "declaration": true,
     "noImplicitAny": false,
