@@ -9,13 +9,14 @@ const config: Config = {
   preset: "ts-jest",
   testEnvironment: "jsdom",
   transform: {
-    "^.+\\.ts?$": "ts-jest",
+    "^.+\\.(js|jsx|ts|tsx)$": "ts-jest",
   },
-  transformIgnorePatterns: ["<rootDir>/node_modules/"],
+  // transformIgnorePatterns: ["<rootDir>/node_modules/"],
   moduleFileExtensions: ["js", "jsx", "ts", "tsx", "json", "png", "md", "html"],
   // transform: {
   //   "^.+\\.(js|jsx)?$": "babel-jest",
   // },
+  // moduleDirectories: ["."],
   moduleNameMapper: {
     "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|md|html)$":
       "<rootDir>/assetsTransformer.js",
@@ -194,10 +195,7 @@ const config: Config = {
   // transform: undefined,
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  // transformIgnorePatterns: [
-  //   "/node_modules/",
-  //   "\\.pnp\\.[^\\/]+$"
-  // ],
+  transformIgnorePatterns: ["/node_modules/", "<rootDir>/node_modules/"],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,
