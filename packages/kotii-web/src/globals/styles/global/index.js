@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 // import { resetStyles } from "../base/reset.styles";
 // import { markDownStyles } from "../markdown/markdown.styles";
 
@@ -35,9 +35,6 @@ h1, h2, h3, h4, h5, h6, p, blockquote, pre,
     body {
 		line-height: 1;
         box-sizing: border-box;
-		background: ${({ theme }) => theme.colors.body};
-        font-family: ${({ theme }) => theme.font};
-        color: ${({ theme }) => theme.colors.text};
         margin: 0 auto;
 	}
 
@@ -62,7 +59,6 @@ h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 	}
 	a{
 		text-decoration: none;
-		color: ${({ theme }) => theme.colors.link.text};
-    
+		
     
     `;

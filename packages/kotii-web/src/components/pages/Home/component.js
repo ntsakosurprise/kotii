@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Button, Page } from "kotii-ui";
+import { Box, Button, Page } from "kotii-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 export const Home = () => {
@@ -22,7 +22,7 @@ export const Home = () => {
   // console.log("carouselSlick;;;", CarouselSlick);
 
   return (
-    <Page kind="wide">
+    <Box>
       <div>
         <h1>{t("greetings")}</h1>
         <p>
@@ -39,7 +39,7 @@ export const Home = () => {
         </button>
         <Button />
       </div>
-    </Page>
+    </Box>
 
     // <Carousel />
     //   <CarouselSlick

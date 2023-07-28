@@ -1,22 +1,19 @@
 /* eslint-disable no-unused-vars */
-import { GlobalStyle } from "AppGlobals";
-import { LanguageProvider, useLanguage } from "kotii-languages";
-import { KotiiThemeProvider, useTheme, useThemeContext } from "kotii-theme";
-import { Page } from "kotii-ui";
+import {
+  LanguageProvider,
+  LanguageSwitcher,
+  useLanguage,
+} from "kotii-languages";
+import { KotiiThemeProvider, ThemeSwitcher } from "kotii-ui";
 import {
   peTranslation,
   tsTranslation,
   veTranslation,
   zuTranslation,
 } from "Language";
-// import { docs } from "Markdowns/get-started/welcome.md";
 import React, { useState } from "react";
 import { Root } from "Startup";
-// import { ThemeProvider } from "styled-components";
-
-// const Container = styled.div`
-//   margin: 5px auto 5px auto;
-// `;
+import { GlobalStyle } from "./globals";
 
 const Test = () => {
   const { get, language } = useLanguage();
@@ -37,19 +34,15 @@ const Test = () => {
 };
 
 const TestGlobal = () => {
-  const { theme } = useThemeContext();
-  console.log("Test Global theme", theme);
-  return <GlobalStyle theme={theme} />;
+  // const { theme } = useThemeContext();
+  // console.log("Test Global theme", theme);
+  // return <GlobalStyle theme={theme} />;
 };
 const App = () => {
-  console.log("useLanguage;;;", useTheme);
-  console.log("Translation", zuTranslation, peTranslation);
-  console.log("Kotii-ui Page Component:", Page);
-
   return (
     <KotiiThemeProvider>
-      {/* <ThemeSwitcher /> */}
-      <Page kind="wide">TEST</Page>
+      <GlobalStyle />
+      <ThemeSwitcher />
       <LanguageProvider
         ln="en"
         translations={[
@@ -59,8 +52,9 @@ const App = () => {
           { locale: "ts", trans: tsTranslation, label: "tsonga" },
         ]}
       >
-        {/* <LanguageSwitcher /> */}
+        <LanguageSwitcher />
         <Root />
+        {/* <Test /> */}
       </LanguageProvider>
     </KotiiThemeProvider>
   );
