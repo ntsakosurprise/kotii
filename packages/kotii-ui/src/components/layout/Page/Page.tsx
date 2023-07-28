@@ -1,4 +1,4 @@
-import { Page as Gpage, PageContent } from "grommet";
+import { Page as Gpage } from "grommet";
 import React from "react";
 import styled from "styled-components";
 // import { BoxProps } from "./types";
@@ -10,9 +10,7 @@ const WrappedPage = styled.div<PageProps>``;
 const Page: React.FC<PageProps> = ({ children, ...props }) => {
   return (
     <WrappedPage>
-      <Gpage {...props}>
-        <PageContent background="red">{children}</PageContent>
-      </Gpage>
+      <Gpage {...props}>{children}</Gpage>
     </WrappedPage>
   );
 };

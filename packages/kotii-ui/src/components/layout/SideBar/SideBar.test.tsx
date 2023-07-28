@@ -4,18 +4,13 @@ import React from "react";
 
 import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
-import Page from "../Page";
-import PageContent from "./PageContent";
+import SideBar from "./SideBar";
 
-describe("Running Test for Page component", () => {
-  test("Check if page component renders", () => {
+describe("Running Test for Grid component", () => {
+  test("Check if Grid component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Page kind="wide" pad={"none"}>
-          <PageContent>
-            <p>{DOM_BY_TEXT}</p>
-          </PageContent>
-        </Page>
+        <SideBar />
       </KotiiThemeProvider>
     );
     // expect(

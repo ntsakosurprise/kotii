@@ -2,17 +2,19 @@ import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import React from "react";
 
-import Box from "./Header";
+import { DOM_BY_TEXT } from "../../../constants";
+import { KotiiThemeProvider } from "../../../context";
+import Header from "./Header";
 
-describe("Running Test for Marbella Button", () => {
-  test("Check Button Disabled", () => {
+describe("Running Test for Header component", () => {
+  test("Check Header component renders", () => {
     render(
-      <Box size="large" direction="row">
-        <p>My name</p>
-      </Box>
+      <KotiiThemeProvider>
+        <Header>
+          <p>{DOM_BY_TEXT}</p>
+        </Header>
+      </KotiiThemeProvider>
     );
-    expect(
-      screen.getByRole("button", { name: "Button marbella" })
-    ).toBeDisabled();
+    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

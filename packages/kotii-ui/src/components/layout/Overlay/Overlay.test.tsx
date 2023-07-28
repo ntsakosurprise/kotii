@@ -4,18 +4,13 @@ import React from "react";
 
 import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
-import Page from "../Page";
-import PageContent from "./PageContent";
+import Overlay from "./Overlay";
 
-describe("Running Test for Page component", () => {
-  test("Check if page component renders", () => {
+describe("Running Test for PageHeader component", () => {
+  test("Check if page header component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Page kind="wide" pad={"none"}>
-          <PageContent>
-            <p>{DOM_BY_TEXT}</p>
-          </PageContent>
-        </Page>
+        <Overlay />
       </KotiiThemeProvider>
     );
     // expect(

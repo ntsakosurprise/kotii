@@ -2,17 +2,16 @@ import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import React from "react";
 
-import Box from "./Footer";
+import { DOM_BY_TEXT } from "../../../constants";
+import Footer from "./Footer";
 
-describe("Running Test for Marbella Button", () => {
-  test("Check Button Disabled", () => {
+describe("Running Test for Footer component", () => {
+  test("Check Footer component Renders", () => {
     render(
-      <Box size="large" direction="row">
-        <p>My name</p>
-      </Box>
+      <Footer>
+        <p>{DOM_BY_TEXT}</p>
+      </Footer>
     );
-    expect(
-      screen.getByRole("button", { name: "Button marbella" })
-    ).toBeDisabled();
+    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

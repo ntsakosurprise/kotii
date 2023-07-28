@@ -5,6 +5,7 @@ import {
   Footer,
   Header,
   Page,
+  PageContent,
   ThemeSwitcher,
 } from "./components";
 import { KotiiThemeProvider, useKotiiTheme } from "./context";
@@ -15,6 +16,7 @@ export {
   Button,
   Box,
   Page,
+  PageContent,
   Footer,
   Header,
   Card,
