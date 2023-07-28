@@ -1,3 +1,24 @@
-import { Box, Button, Card, Footer, Header, Page } from "./components";
-import { KotiiThemeProvider } from "./context";
-export { Button, Box, Page, Footer, Header, Card, KotiiThemeProvider };
+import {
+  Box,
+  Button,
+  Card,
+  Footer,
+  Header,
+  Page,
+  ThemeSwitcher,
+} from "./components";
+import { KotiiThemeProvider, useKotiiTheme } from "./context";
+import { useTheme } from "./hooks";
+
+export {
+  Button,
+  Box,
+  Page,
+  Footer,
+  Header,
+  Card,
+  KotiiThemeProvider,
+  useKotiiTheme,
+  useTheme,
+  ThemeSwitcher,
+};
