@@ -34,16 +34,16 @@ module.exports = {
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
     alias: {
-      Config: "/src/config/",
-      Components: "/src/components/",
+      Config: "./src/config/",
+      Components: "./src/components/",
       HOC: "/src/hoc/",
-      Hooks: "/src/hooks/index",
-      Context: "/src/context/",
+      Hooks: "./src/hooks/index",
+      Context: "./src/context/",
       Utilities: "/src/utils/index",
       Constants: "/src/constants/",
       Assets: "/src/assets/",
       AppGlobals: "/src/globals/index",
-      Types: "/src/types",
+      Types: "./src/types",
     },
   },
   module: {

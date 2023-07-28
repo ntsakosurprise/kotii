@@ -2,6 +2,14 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./lib"
+    // "baseUrl": "./"
+    // "paths": {
+    //   "Config": ["./src/config/"],
+    //   "Hooks": ["./src/hooks/index"],
+    //   "Components": ["./src/components/"],
+    //   "Types": ["types"],
+    //   "Context": ["./src/context/"]
+    // }
   },
   "include": ["./src"]
 }
