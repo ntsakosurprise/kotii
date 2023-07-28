@@ -1,12 +1,16 @@
 import { MouseEventHandler } from "react";
 import {
   AlignAroundBetween,
+  AlignBase,
   AnimationT,
   BackgroundAltType,
   BackgroundType,
+  Basis,
   Border,
   BorderType,
   Direction,
+  GrowShrink,
+  HorizVert,
   Justify,
   Overflow,
   Size,
@@ -30,7 +34,7 @@ export interface BaseProps {
   as?: React.ComponentType<any>;
   fill?: HorizVert | boolean;
   flex?: GrowShrink | { grow: number; shrink: number };
-  children: React.ReactNode;
+  children?: React.ReactNode;
   focusIndicator?: boolean;
   gap?: SizeNoneXs | "xlarge";
   gridArea?: string;
