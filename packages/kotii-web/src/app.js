@@ -4,7 +4,7 @@ import {
   LanguageSwitcher,
   useLanguage,
 } from "kotii-languages";
-import { KotiiThemeProvider, ThemeSwitcher } from "kotii-ui";
+import { KotiiGlobal, KotiiThemeProvider, ThemeSwitcher } from "kotii-ui";
 import {
   peTranslation,
   tsTranslation,
@@ -13,7 +13,7 @@ import {
 } from "Language";
 import React, { useState } from "react";
 import { Root } from "Startup";
-import { GlobalStyle } from "./globals";
+// import { GlobalStyle } from "./globals";
 
 const Test = () => {
   const { get, language } = useLanguage();
@@ -41,7 +41,7 @@ const TestGlobal = () => {
 const App = () => {
   return (
     <KotiiThemeProvider>
-      <GlobalStyle />
+      <KotiiGlobal />
       <ThemeSwitcher />
       <LanguageProvider
         ln="en"
