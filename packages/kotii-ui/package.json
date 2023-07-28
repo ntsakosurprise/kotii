@@ -48,6 +48,6 @@
   },
   "dependencies": {
     "grommet": "^2.33.1",
-    "styled-components": "^6.0.5"
+    "styled-components": "5.3.11"
   }
 }
