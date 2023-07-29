@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
+import { Button, Header, Page, PageContent } from "kotii-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
-
 export const Home = () => {
   const { t, i18n } = useTranslation();
 
@@ -16,24 +16,36 @@ export const Home = () => {
     i18n.changeLanguage(e.target.value);
   }
 
+  console.log("THE KOTII-UI::", Button);
+  console.log("THE UI PAGE", Page);
+
   // console.log("carouselSlick;;;", CarouselSlick);
 
   return (
-    <div>
-      <h1>{t("greetings")}</h1>
-      <p>
-        {t("message")}
-        <span>
-          <a href="#">{t("flex")}</a>
-        </span>
-      </p>
-      <button onClick={changeLanguage} value="en">
-        English
-      </button>
-      <button onClick={changeLanguage} value="ts">
-        Tsonga
-      </button>
-    </div>
+    <Page pad={"small"}>
+      <PageContent>
+        <Header>
+          <p>Header Content</p>
+        </Header>
+        <div>
+          <h1>{t("greetings")}</h1>
+          <p>
+            {t("message")}
+            <span>
+              <a href="#">{t("flex")}</a>
+            </span>
+          </p>
+          <button onClick={changeLanguage} value="en">
+            English
+          </button>
+          <button onClick={changeLanguage} value="ts">
+            Tsonga
+          </button>
+          <Button />
+        </div>
+      </PageContent>
+    </Page>
+
     // <Carousel />
     //   <CarouselSlick
     //     settings={settings}

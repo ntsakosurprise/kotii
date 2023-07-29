@@ -96,8 +96,8 @@ const MarkdownRender = ({ markdownData, markdownComponents }) => {
   const { html, toc } = parsedMarkdown;
   console.log("Kotii-markdown set Language:::", language);
 
-  console.log("Filename;;;", fileName);
-  console.log("html", html);
+  // console.log("Filename;;;", fileName);
+  // console.log("html", html);
 
   return (
     <MarkdownRenderCanvas>

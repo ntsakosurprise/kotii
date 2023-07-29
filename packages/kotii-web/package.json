@@ -35,6 +35,7 @@
     "kotii-languages": "*",
     "kotii-markdown": "*",
     "kotii-theme": "*",
+    "kotii-ui": "*",
     "lodash": "^4.17.21",
     "object-path": "^0.11.8",
     "prop-types": "^15.7.2",
@@ -47,6 +48,7 @@
     "react-syntax-highlighter": "^15.4.5",
     "remark-gfm": "^3.0.1",
     "shortid": "^2.2.16",
+    "styled-components": "^6.0.5",
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {

@@ -1,11 +1,11 @@
 {
-  "name": "kotii-react-modules",
+  "name": "kotii",
   "version": "1.0.0",
-  "description": "This is a kotii react modules for various purposes",
+  "description": "Kotii is a react boilerplate designed to be consistent and intuitive",
   "engines": {
     "node": ">=17.2.0",
     "yarn": ">=1.22.11",
-    "npm": "Please-use-yarn"
+    "npm": ">=8.19.2"
   },
   "private": true,
   "workspaces": {
@@ -15,7 +15,7 @@
   },
   "scripts": {
     "build": "run-p clean run-s build:api",
-    "build:api": "tsc -b ./packages/tsconfig.api-base.json",
+    "build:api": "tsc -b ./tsconfig.json",
     "bootstrap": "lerna bootstrap",
     "clean": "lerna run --parallel clean",
     "release": "lerna publish"
@@ -35,6 +35,9 @@
     ]
   },
   "dependencies": {
+    "@types/jsdom": "20",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "styled-components": "^5.3.5"

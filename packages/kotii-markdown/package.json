@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "marked": "^4.0.18",
-    "prism": "^4.1.2"
+    "prism": "^4.1.2",
+    "styled-components": "^6.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",

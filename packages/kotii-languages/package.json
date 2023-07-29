@@ -11,9 +11,10 @@
   },
   "dependencies": {
     "i18next": "^21.8.14",
+    "kotii-utils": "*",
     "react-i18next": "^11.18.1",
     "react-select": "^5.4.0",
-    "kotii-utils": "*"
+    "styled-components": "^6.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",

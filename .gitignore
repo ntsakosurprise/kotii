@@ -3,7 +3,8 @@ node_modules/
 .vscode/
 build/
 /packages/kotii-markdown/index.js
-.DS_Store
+/packages/kotii-languages/index.js
+**/.DS_Store
 *.tgz
 coverage
 /reports*/

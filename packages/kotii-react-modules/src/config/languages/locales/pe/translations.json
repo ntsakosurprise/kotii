@@ -1,4 +1,10 @@
 {
   "greetings": "ke lapeng",
-  "message": "Ho shebahala joalo ka mohlala ea sa tsoa fumana cheke"
+  "message": "Ho shebahala joalo ka mohlala ea sa tsoa fumana cheke",
+  "navigation": {
+    "Home": "Lehae",
+    "About": "Mabapi",
+    "Contact": "Tshoanya",
+    "Help": "Thuso"
+  }
 }

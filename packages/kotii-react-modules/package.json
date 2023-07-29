@@ -31,7 +31,9 @@
     "i18next": "^21.6.14",
     "kotii-languages": "*",
     "kotii-markdown": "*",
+    "kotii-theme": "*",
     "kotii-utils": "*",
+    "kotii-ui": "*",
     "lodash": "^4.17.21",
     "object-path": "^0.11.8",
     "prismjs": "^1.28.0",
@@ -53,7 +55,7 @@
     "react-syntax-highlighter": "^15.4.5",
     "remark-gfm": "^3.0.1",
     "shortid": "^2.2.16",
-    "styled-components": "^5.3.5",
+    "styled-components": "^6.0.5",
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
@@ -74,6 +76,7 @@
     "prettier": "2.6.2",
     "process": "^0.11.10",
     "sass-loader": "^12.6.0",
+    "source-map-loader": "^4.0.1",
     "style-loader": "^3.3.1",
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2",
