@@ -59,6 +59,18 @@ export type Corners =
 export type OverflowViewPorts = { vertical?: string; horizontal?: string };
 export type Weight = "normal" | "bold" | "lighter" | "bolder";
 export type RangeType = 1 | 2 | 3 | 4 | 5 | 6;
+export type FontSizes =
+  | "xsmall"
+  | "small"
+  | "medium"
+  | "large"
+  | "xlarge"
+  | "xxlarge"
+  | "2xl"
+  | "3xl"
+  | "4xl"
+  | "5xl"
+  | "6xl";
 
 export interface Skeleton {
   animation: boolean;

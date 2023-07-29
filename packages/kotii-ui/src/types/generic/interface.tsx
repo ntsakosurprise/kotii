@@ -56,3 +56,52 @@ export interface BaseProps {
     | { min: string; max: string };
   wrap?: boolean | "reverse";
 }
+
+export interface MarkdownType {
+  a: string;
+  img: Img;
+  p: P;
+  table: Table;
+  td: Td;
+  tbody: Tbody;
+  tfoot: Tfoot;
+  th: Th;
+  thead: Thead;
+  tr: Tr;
+}
+
+export interface Img {
+  component: string;
+}
+
+export interface P {
+  component: string;
+}
+
+export interface Table {
+  component: string;
+}
+
+export interface Td {
+  component: string;
+}
+
+export interface Tbody {
+  component: string;
+}
+
+export interface Tfoot {
+  component: string;
+}
+
+export interface Th {
+  component: string;
+}
+
+export interface Thead {
+  component: string;
+}
+
+export interface Tr {
+  component: string;
+}
