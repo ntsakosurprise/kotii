@@ -1,2 +1,5 @@
 import Heading from "./Heading";
-export { Heading };
+import Paragraph from "./Paragraph";
+import Tag from "./Tag";
+import Text from "./Text";
+export { Heading, Tag, Text, Paragraph };

@@ -4,8 +4,12 @@ import {
   Card,
   Footer,
   Header,
+  Heading,
   Page,
   PageContent,
+  Paragraph,
+  Tag,
+  Text,
   ThemeSwitcher,
 } from "./components";
 import { KotiiThemeProvider, useKotiiTheme } from "./context";
@@ -25,4 +29,8 @@ export {
   useTheme,
   ThemeSwitcher,
   GlobalStyle as KotiiGlobal,
+  Heading,
+  Text,
+  Paragraph,
+  Tag,
 };
