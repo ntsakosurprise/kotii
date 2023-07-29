@@ -1,6 +1,8 @@
-import { Align, BaseProps, Basis, Size } from "../../../types";
+import { Align, BaseProps, Basis, Corners, Size } from "../../../types";
 export interface PageHeaderProps extends Omit<BaseProps, "justify"> {
-  areas?: { name?: string; start?: number[]; end?: number[] }[] | string[][];
+  anchor?: Corners;
+  guidingChild?: number | "first" | "last";
+  interactiveChild?: number | "first" | "last";
   columns?:
     | "xsmall"
     | Size
