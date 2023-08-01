@@ -9,9 +9,11 @@ import {
   Corners,
   FontSizes,
   GrowShrink,
+  HorizVert,
   Opacity,
   RangeType,
   Size,
+  SizeNoneXs,
   SizeWithNone,
   Target,
   Weight,
@@ -33,4 +35,6 @@ export {
   BackgroundAltType,
   GrowShrink,
   Opacity,
+  HorizVert,
+  SizeNoneXs,
 };
