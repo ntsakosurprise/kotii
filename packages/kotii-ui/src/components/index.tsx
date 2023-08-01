@@ -1,5 +1,6 @@
 import { Button } from "./controls";
 import { Box, Card, Footer, Header, Page, PageContent } from "./layout";
+import { Carousel, Image, Video } from "./media";
 import { Heading, Paragraph, Tag, Text } from "./typography";
 import { Markdown, ThemeSwitcher } from "./utils/";
 export {
@@ -16,4 +17,7 @@ export {
   Text,
   Paragraph,
   Tag,
+  Video,
+  Carousel,
+  Image,
 };
