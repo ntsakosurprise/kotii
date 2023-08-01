@@ -168,7 +168,7 @@ export interface Background {
   dark?: string | boolean;
   image?: string;
   position?: string;
-  opacity?: Opacity;
+  opacity?: Opacity | number;
   repeat?: BGRepeat;
   size?: BGSize;
   light?: string;
@@ -179,6 +179,6 @@ export type DarkLight = {
   light?: string;
 };
 
-export type Opacity = boolean | number | "weak" | "medium" | "strong";
+export type Opacity = boolean | "weak" | "medium" | "strong";
 export type BGRepeat = "no-repeat" | "repeat" | string;
 export type BGSize = "cover" | "contain" | string;

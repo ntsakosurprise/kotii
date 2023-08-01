@@ -2,10 +2,14 @@ import { BaseProps } from "./generic/interface";
 import {
   Align,
   Background,
+  BackgroundAltType,
+  BackgroundType,
   Basis,
   ButtonType,
   Corners,
   FontSizes,
+  GrowShrink,
+  Opacity,
   RangeType,
   Size,
   SizeWithNone,
@@ -25,4 +29,8 @@ export {
   Background,
   Target,
   SizeWithNone,
+  BackgroundType,
+  BackgroundAltType,
+  GrowShrink,
+  Opacity,
 };
