@@ -5,13 +5,13 @@ import React from "react";
 
 import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
-import DataFilter from "./DataFilter";
+import DataFilters from "./DataFilters";
 
 describe("Running Test for Grid component", () => {
   test("Check if Grid component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DataFilter property="" />
+        <DataFilters />
       </KotiiThemeProvider>
     );
     // expect(
