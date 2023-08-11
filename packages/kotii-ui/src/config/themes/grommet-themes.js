@@ -1,19 +1,34 @@
 export const themes = {
   dark: {
     global: {
+      colors: {
+        background: {
+          dark: "#EADDCA",
+          light: "#964B00",
+        },
+        "app-background": {
+          dark: "#EADDCA",
+          light: "#964B00",
+        },
+      },
       font: {
         family: "Roboto",
       },
-      backgrounds: { dark: "black", light: "#302d2d" },
     },
   },
 
   light: {
     global: {
+      colors: {
+        background: { dark: "#f5f0f0", light: "white" },
+        "app-background": {
+          dark: "#f5f0f0",
+          light: "white",
+        },
+      },
       font: {
         family: "Roboto",
       },
-      backgrounds: { dark: "#f5f0f0", light: "white" },
     },
   },
 
@@ -67,6 +82,7 @@ export const themes = {
           dark: "grey-1",
           light: "grey-3",
         },
+        "app-background": { dark: "blue", light: "green" },
       },
       focus: {
         border: {
@@ -74,7 +90,7 @@ export const themes = {
         },
       },
 
-      backgrounds: { dark: "#ed9807", light: "#F9B644" },
+      background: { dark: "#ed9807", light: "#F9B644" },
       /* END: Mapping Colors to Grommet Namespaces */
     },
     anchor: {
@@ -135,13 +151,14 @@ export const themes = {
           dark: "grey-1",
           light: "grey-3",
         },
+        "app-background": { dark: "#d4111e", light: "#e84f59" },
       },
       focus: {
         border: {
           color: "gold",
         },
       },
-      backgrounds: { dark: "#d4111e", light: "#e84f59" },
+
       /* END: Mapping Colors to Grommet Namespaces */
     },
     /* BEGIN: Mapping Colors to Components */
