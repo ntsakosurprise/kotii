@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   Carousel,
+  Circle,
   Footer,
   Header,
   Heading,
@@ -10,6 +11,7 @@ import {
   Page,
   PageContent,
   Paragraph,
+  Square,
   Tag,
   Text,
   ThemeSwitcher,
@@ -39,4 +41,6 @@ export {
   Video,
   Image,
   Carousel,
+  Square,
+  Circle,
 };

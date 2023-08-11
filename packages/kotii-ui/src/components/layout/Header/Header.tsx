@@ -7,8 +7,8 @@ import { BaseProps } from "../../../types";
 
 const WrappedHeader = styled.div<BaseProps>``;
 const Header: React.FC<BaseProps> = ({
-  pad,
-  direction,
+  // pad,
+  // direction,
   children,
   ...props
 }) => {
