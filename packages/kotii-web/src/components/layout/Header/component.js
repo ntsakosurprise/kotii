@@ -1,110 +1,63 @@
-import React, { Component } from "react";
+import React from "react";
+// import { Link } from "react-router-dom";
+import { Box, Header, Text, ThemeSwitcher } from "kotii-ui";
+import { AiFillGithub, AiFillSetting } from "react-icons/ai";
 import { Link } from "react-router-dom";
 
-class Header extends Component {
-  constructor() {
-    super();
-    this.state = {
-      showMenu: false,
-      width: 0,
-    };
-    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
-  }
-
-  updateWindowDimensions() {
-    this.setState({ width: window.innerWidth, height: window.innerHeight });
-  }
-
-  componentDidMount() {
-    this.updateWindowDimensions();
-    window.addEventListener("resize", this.updateWindowDimensions);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateWindowDimensions);
-  }
-
-  toggleMenu = () => {
-    const { state } = this;
-    const { showMenu = false } = state;
-
-    console.log("tOGGLE MENU");
-
-    this.setState({ showMenu: !showMenu });
-  };
-
-  render() {
-    const { state } = this;
-    const { showMenu = false, width = 0 } = state;
-
-    return (
-      <header className="header">
-        <section className="header__brand">
-          <Link to="/" className="header__brand--link">
-            <img
-              src="/img/mtn_logo.png"
-              alt="MTN Logo"
-              className="header__brand--link-logo"
-            />
-          </Link>
-        </section>
-        <section className="header__primary-nav">
-          {width <= 600 && !showMenu ? (
-            <div className="header__menu" onClick={() => this.toggleMenu()}>
-              <span className="header__menu-bar-1"></span>
-              <span className="header__menu-bar-2"></span>
-              <span className="header__menu-bar-3"></span>
-            </div>
-          ) : null}
-
-          {width <= 600 && showMenu ? (
-            <div className="header__close" onClick={() => this.toggleMenu()}>
-              <span className="header__close-text">x</span>
-            </div>
-          ) : null}
-
-          {/* <div  className="header__menu" onClick={()=>this.toggleMenu()}>
-
-                        <span className="header__menu-bar-1"></span>
-                        <span className="header__menu-bar-2"></span>
-                        <span className="header__menu-bar-3"></span>
-                    </div> */}
-
-          {width <= 600 ? (showMenu ? primaryMenu() : null) : primaryMenu()}
-        </section>
-        <section className="header__secondary-nav">
-          <nav className="header__secondary-nav--nav">
-            <Link to="/personal" className="header__secondary-nav--nav-link">
-              <span className="header__secondary-nav--nav-link-circle" />
-              <span className="header__secondary-nav--nav-link-text">
-                Personal
-              </span>
-            </Link>
-          </nav>
-        </section>
-        <strong className="clearfix" />
-      </header>
-    );
-  }
-}
-
-export default Header;
-
-function primaryMenu() {
+const AppHeader = () => {
   return (
-    <nav className="header__primary-nav--nav">
-      <Link to="/store" className="header__primary-nav--nav-link">
-        Store
-      </Link>
-      <Link to="/products-services" className="header__primary-nav--nav-link">
-        Products & Services
-      </Link>
-      <Link to="/help-support" className="header__primary-nav--nav-link">
-        Help & Support
-      </Link>
-      <Link to="/get-started/welcome" className="header__primary-nav--nav-link">
-        Welcome
-      </Link>
-    </nav>
+    <Header
+      background="brand"
+      direction="row"
+      pad={{ vertical: "5px", horizontal: "15px" }}
+      responsive={true}
+    >
+      <Box direction="row">
+        <Link
+          to="/"
+          // style={{
+          //   display: "flex",
+          //   flexDirection: "row",
+          //   alignContent: "center",
+          //   alignItems: "center",
+          // }}
+        >
+          <p
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <img src="/img/kotii.png" alt="Kotii Logo" width={"40px"} />
+            <Text size="18px" color={"black"}>
+              Kotii
+            </Text>
+          </p>
+          <Text size="12px" color={"black"}>
+            Component Library
+          </Text>
+        </Link>
+      </Box>
+      <Box>
+        <Text>Item 2</Text>
+      </Box>
+      <Box
+        // alignSelf="end"
+        // background={"red"}
+        // fill="horizontal"
+        // width={"medium"}
+        direction="row"
+        alignContent="around"
+      >
+        <AiFillGithub color="#D680FF" />
+        <AiFillSetting color="#D680FF" />
+        <ThemeSwitcher />
+        {/* <Circle /> */}
+      </Box>
+    </Header>
   );
-}
+};
+
+export default AppHeader;

@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import {
   LanguageProvider,
-  LanguageSwitcher,
+  // LanguageSwitcher,
   useLanguage,
 } from "kotii-languages";
-import { KotiiGlobal, KotiiThemeProvider, ThemeSwitcher } from "kotii-ui";
+import { KotiiGlobal, KotiiThemeProvider, Square, Text } from "kotii-ui";
 import {
   peTranslation,
   tsTranslation,
@@ -42,7 +42,10 @@ const App = () => {
   return (
     <KotiiThemeProvider>
       <KotiiGlobal />
-      <ThemeSwitcher />
+      <Square width={500} background="app-background">
+        <Text color={"white"}>Square</Text>
+      </Square>
+      {/* <ThemeSwitcher /> */}
       <LanguageProvider
         ln="en"
         translations={[
@@ -52,7 +55,7 @@ const App = () => {
           { locale: "ts", trans: tsTranslation, label: "tsonga" },
         ]}
       >
-        <LanguageSwitcher />
+        {/* <LanguageSwitcher /> */}
         <Root />
         {/* <Test /> */}
       </LanguageProvider>

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Button, Header, Page, PageContent } from "kotii-ui";
+import { Button, Page, PageContent } from "kotii-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 export const Home = () => {
@@ -22,11 +22,8 @@ export const Home = () => {
   // console.log("carouselSlick;;;", CarouselSlick);
 
   return (
-    <Page pad={"small"}>
+    <Page pad={"small"} background="app-background">
       <PageContent>
-        <Header>
-          <p>Header Content</p>
-        </Header>
         <div>
           <h1>{t("greetings")}</h1>
           <p>
