@@ -1,13 +1,13 @@
 import React from "react";
 // import { Link } from "react-router-dom";
-import { Box, Header, Text, ThemeSwitcher } from "kotii-ui";
+import { Box, Header, Square, Text, ThemeSwitcher } from "kotii-ui";
 import { AiFillGithub, AiFillSetting } from "react-icons/ai";
 import { Link } from "react-router-dom";
 
 const AppHeader = () => {
   return (
     <Header
-      background="brand"
+      background="app-background"
       direction="row"
       pad={{ vertical: "5px", horizontal: "15px" }}
       responsive={true}
@@ -42,6 +42,7 @@ const AppHeader = () => {
       </Box>
       <Box>
         <Text>Item 2</Text>
+        <Square size="xsmall" background="app-background" border="10" />
       </Box>
       <Box
         // alignSelf="end"
@@ -54,6 +55,7 @@ const AppHeader = () => {
         <AiFillGithub color="#D680FF" />
         <AiFillSetting color="#D680FF" />
         <ThemeSwitcher />
+
         {/* <Circle /> */}
       </Box>
     </Header>

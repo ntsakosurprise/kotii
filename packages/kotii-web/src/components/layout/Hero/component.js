@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 // import { Link } from "react-router-dom";
 import { Box, Button, Circle, Square, Text, useKotiiTheme } from "kotii-ui";
 const buttonMinWidth = "105px";
@@ -32,6 +32,9 @@ const Hero = () => {
   const { changeTheme, changeThemeMode } = useKotiiTheme();
   const themeNames = ["dark", "light", "seaWave", "cherry"];
   const themeModes = ["dark", "light"];
+  useEffect(() => {
+    console.log("HERO REMOUNTED");
+  }, []);
   return (
     <Box
       direction={"column"}
@@ -104,6 +107,7 @@ const Hero = () => {
               <Text color={"white"}>Square</Text>
             </Square>
             <Circle />
+            <Square width="xsmall" background="app-background" />
             <Button
               label="changeTheme"
               onClick={() => changeTheme(themeNames[randomInteger(0, 3)])}
