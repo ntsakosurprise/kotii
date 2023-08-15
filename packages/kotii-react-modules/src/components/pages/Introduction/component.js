@@ -1,16 +1,20 @@
 /* eslint-disable no-unused-vars */
 // import { useLoadMD } from "Hooks";
-import { docs } from "Markdowns/intro/intro.md";
-import { DocsComponent } from "Modules";
+import { markdownData } from "Markdowns/intro/intro.md";
 import React from "react";
 
 const Introduction = () => {
   // const mdContent = useLoadMD({
   //   fileName: require("Markdowns/intro/INTRO.md"),
   // });
-  console.log("the docs;;;", docs);
+  console.log("the docs;;;", markdownData);
+  return (
+    <>
+      <p>Test</p>
+    </>
+  );
 
-  return <DocsComponent mdContent={{ md: docs.content }} />;
+  // return <DocsComponent mdContent={{ md: docs.content }} />;
 };
 
 export { Introduction };

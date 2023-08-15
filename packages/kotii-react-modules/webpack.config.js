@@ -6,6 +6,8 @@ const HTMLWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
   entry: "./src/index.js",
   target: "web",
+  mode: "development",
+  devtool: "inline-source-map",
   output: {
     path: path.join(__dirname),
     filename: "index.js",
@@ -14,7 +16,7 @@ module.exports = {
     // library: "nextgen-docs-react-modules",
     // libraryTarget: "umd",
   },
-  devtool: "source-map",
+  //devtool: "source-map",
   // externals: {
   //   react: {
   //     root: "React",
@@ -54,6 +56,7 @@ module.exports = {
       Constants: "/src/constants/",
       Assets: "/src/assets/",
       AppGlobals: "/src/globals/index",
+      MarkdownComps: "/src/components/",
     },
   },
   module: {
@@ -61,11 +64,12 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: "babel-loader",
+        // use: "babel-loader",
+        use: ["babel-loader", "source-map-loader"],
       },
       {
         test: /\.md$/,
-        use: ["nextgen-docs-markdown"],
+        use: ["kotii-markdown"],
       },
       // {
       //   test: /\.html$/,

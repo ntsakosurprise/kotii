@@ -1,11 +1,11 @@
-import { getFromStorage, setInStorage } from "Utilities";
-import { themes } from "./themes";
+import { getFromStorage } from "kotii-utils";
+// import { themes } from "./themes";
 
-const processDefaultTheme = () => {
-  if (!getFromStorage("theme")) setInStorage("theme", themes.calm);
-};
-setInStorage("themes", themes);
-processDefaultTheme();
+// const processDefaultTheme = () => {
+//   return null;
+// };
+//setInStorage("themes", themes);
+//processDefaultTheme();
 
 export const logStoredThemesStatus = () => {
   if (getFromStorage("themes")) {

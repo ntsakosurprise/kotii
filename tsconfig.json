@@ -3,6 +3,7 @@
     "jsx": "react",
     "module": "esnext",
     "moduleResolution": "node",
+    "allowJs": true,
     "esModuleInterop": true,
     "declaration": true,
     "noImplicitAny": false,
@@ -13,7 +14,9 @@
     "lib": ["dom", "esnext"],
     "strict": true,
     "sourceMap": true,
-    "target": "esnext"
+    "target": "esnext",
+    "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@types/"]
   },
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

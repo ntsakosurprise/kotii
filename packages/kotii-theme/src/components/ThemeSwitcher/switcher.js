@@ -1,6 +1,7 @@
-import { useThemeContext } from "Context";
+// import { Box, Button, Heading, Paragraph } from "grommet";
 import React, { useState } from "react";
 import Select from "react-select";
+import { useKotiiTheme } from "../../context";
 // import { themes } from "../../config/themes";
 
 // const options = [
@@ -10,7 +11,7 @@ import Select from "react-select";
 // ];
 
 const ThemeSwitcher = () => {
-  const { changeTheme, theme, themes } = useThemeContext();
+  const { changeTheme, theme, themes } = useKotiiTheme();
   const [selectedOption, setSelectedOption] = useState(theme);
   console.log("the themSWITCHER;;;", themes);
   console.log(changeTheme, theme);
@@ -69,6 +70,51 @@ const ThemeSwitcher = () => {
         options={[...getOptions()]}
         styles={customStyles}
       />
+      {/* <Box>
+        <p>Grommet boxx</p>
+        <Heading level="1">Hello Grommet Theme Toggle</Heading>
+        <Paragraph fill> */}
+      This is a{" "}
+      {/* <Anchor
+            as={"a"}
+              href="https://developer.hpe.com/blog/dark-mode-theming-in-grommet-theme-color-customization/"
+              target="_blank"
+              // function={() => {}}
+            >
+              theming tutorial
+            </Anchor> */}
+      {/* using Grommet.
+        </Paragraph>
+        <Button
+          label="Toggle Theme"
+          primary
+          alignSelf="center"
+          margin="large"
+          // onClick={() => setDarkMode(!darkMode)}
+        />
+      </Box> */}
+      {/* <Box pad="large">
+          <Heading level="1">Hello Grommet Theme Toggle</Heading>
+          <Paragraph fill>
+            This is a{" "}
+            <Anchor
+              href="https://developer.hpe.com/blog/dark-mode-theming-in-grommet-theme-color-customization/"
+              target="_blank"
+            >
+              theming tutorial
+            </Anchor>{" "}
+            using Grommet.
+          </Paragraph>
+
+          <Button
+            label="Toggle Theme"
+            primary
+            alignSelf="center"
+            margin="large"
+            onClick={() => setDarkMode(!darkMode)}
+          />
+          <DemoSection />
+        </Box> */}
     </div>
   );
 };

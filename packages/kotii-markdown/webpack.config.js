@@ -4,13 +4,13 @@ const path = require("path");
 
 module.exports = {
   entry: "./lib/loader.js",
-  target: "web",
+  target: "node",
   output: {
     path: path.join(__dirname),
     filename: "index.js",
     chunkFilename: "[id].js",
     publicPath: "",
-    library: "nextgen-docs-markdown",
+    library: "kotii-markdown",
     libraryTarget: "umd",
     globalObject: "this",
   },

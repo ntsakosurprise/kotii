@@ -1,3 +1,10 @@
+---
+title: A Markdown test for Kotii-markdown
+header: This is a test Markdown
+---
+
+<p className="description">THis component describes some information</p>
+
 # This is level one heading of Markdown Syntax
 
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
@@ -6,7 +13,7 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 
 Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur
 
-## Below is my table:
+### Below is my table:
 
 | Chiefs | Pirates | Dynamos |
 | ------ | ------- | ------- |
@@ -15,6 +22,10 @@ Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots 
 | 49     | 90      | 95      |
 | 49     | 90      | 95      |
 | 49     | 90      | 95      |
+
+#### I'm chilled
+
+{{"component": "/components/special/component.js"}}
 
 ## Checkout my heading with a custom ID {#custom-id}
 
@@ -44,18 +55,11 @@ I also wanna my make my name bold **Surprise** and my surname italic _Mashele_
 - Kanye West
 - Pusha T
 
-## A link to my portfolios is as follows: [SurprisePortfolio](https://www.surpriseportfolio.com). I enjoy coding in javascript, which takes the form of the following sytanx `const name = "my name"`. Below this line, I will have a horizontal rule takes the form:
+## A link to my portfolios is as follows: [SurprisePortfolio](https://www.surpriseportfolio.com). I enjoy coding in javascript, which takes the form of the following sytanx . Below this line, I will have a horizontal rule takes the form:
 
 ## Below IS a bigger code block::
 
-```
-js
-const test = "I'm the test"
-const function showTest(){
-
-    console.log('Please see the test result", test)
-}
-```
+{{"video": "/components/videos/video.js", "shouldAutoPlay": true}}
 
 Below we are going to have a joy emoji like this: :joy: We are also going to have footnote in the following form: [^1]
 
@@ -70,6 +74,8 @@ See the strikethrough here: ~I'm strikethrough~ and I should also emphasize that
 - [] Pray for the world
 - [] Hope for world peace
 - [] Tell my mama I love her
+
+{{"demo": "/components/demos/card.js", "hideToolbar":false,"options": {"codePen":true,"anotherProps": true}}}
 
 The meaning of my name is: Surprise
 : A thing that brings people the unexpected

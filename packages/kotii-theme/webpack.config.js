@@ -5,12 +5,14 @@ const path = require("path");
 module.exports = {
   entry: "./src/index.js",
   target: "web",
+  mode: "development",
+  devtool: "inline-source-map",
   output: {
     path: path.join(__dirname),
     filename: "index.js",
     chunkFilename: "[id].js",
     publicPath: "",
-    library: "nextgen-docs-theme",
+    library: "kotii-theme",
     libraryTarget: "umd",
   },
   externals: {
@@ -48,7 +50,7 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: "babel-loader",
+        use: ["babel-loader", "source-map-loader"],
       },
       // {
       //   test: /\.html$/,
