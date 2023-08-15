@@ -17,6 +17,13 @@ export type AnimationT =
   | "zoomOut";
 export type Size = "small" | "medium" | "large";
 export type SizeNoneXs = "none" | "xsmall" | Size;
+export type SizeWithNone =
+  | "none"
+  | "xsmall"
+  | "small"
+  | "medium"
+  | "large"
+  | "xlarge";
 export type Basis =
   | "full"
   | "1/2"
@@ -146,3 +153,32 @@ export type Spacings = {
   left: string;
   right: string;
 };
+
+export type ButtonType = {
+  background?: Background;
+  max?: number;
+  value?: boolean | number;
+  elevation?: SizeWithNone | string;
+};
+
+export type Target = "_self" | "_blank" | "_parent" | "_top" | "string";
+
+export interface Background {
+  color?: string | DarkLight;
+  dark?: string | boolean;
+  image?: string;
+  position?: string;
+  opacity?: Opacity | number;
+  repeat?: BGRepeat;
+  size?: BGSize;
+  light?: string;
+}
+
+export type DarkLight = {
+  dark?: string;
+  light?: string;
+};
+
+export type Opacity = boolean | "weak" | "medium" | "strong";
+export type BGRepeat = "no-repeat" | "repeat" | string;
+export type BGSize = "cover" | "contain" | string;

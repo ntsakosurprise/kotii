@@ -1,3 +1,4 @@
+import { CSSObject } from "styled-components";
 import {
   Align,
   BaseProps,
@@ -7,7 +8,7 @@ import {
   Weight,
 } from "../../../types";
 export interface PageHeaderProps extends Omit<BaseProps, "size" | "fill"> {
-  color?: string | { dark?: string; light?: string };
+  color?: string | { dark?: string; light?: string } | CSSObject;
   anchor?: Corners;
   weight?: Weight | number;
   truncate?: boolean;

@@ -2,15 +2,20 @@ import {
   Box,
   Button,
   Card,
+  Carousel,
+  Circle,
   Footer,
   Header,
   Heading,
+  Image,
   Page,
   PageContent,
   Paragraph,
+  Square,
   Tag,
   Text,
   ThemeSwitcher,
+  Video,
 } from "./components";
 import { KotiiThemeProvider, useKotiiTheme } from "./context";
 import { GlobalStyle } from "./globals";
@@ -33,4 +38,9 @@ export {
   Text,
   Paragraph,
   Tag,
+  Video,
+  Image,
+  Carousel,
+  Square,
+  Circle,
 };
