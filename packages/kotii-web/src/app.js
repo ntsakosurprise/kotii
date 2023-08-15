@@ -1,33 +1,26 @@
 /* eslint-disable no-unused-vars */
-import { GlobalStyle } from "AppGlobals";
 import {
   LanguageProvider,
-  LanguageSwitcher,
+  // LanguageSwitcher,
   useLanguage,
 } from "kotii-languages";
+import { KotiiGlobal, KotiiThemeProvider, Square, Text } from "kotii-ui";
 import {
-  ThemeGlobalStyle,
-  // GlobalStyle,
-  ThemeProvider,
-  ThemeSwitcher,
-  useTheme,
-  useThemeContext,
-} from "kotii-theme";
-import { docs } from "Markdowns/get-started/welcome.md";
+  peTranslation,
+  tsTranslation,
+  veTranslation,
+  zuTranslation,
+} from "Language";
 import React, { useState } from "react";
 import { Root } from "Startup";
-// import { ThemeProvider } from "styled-components";
-
-// const Container = styled.div`
-//   margin: 5px auto 5px auto;
-// `;
+// import { GlobalStyle } from "./globals";
 
 const Test = () => {
   const { get, language } = useLanguage();
   const [test, setTest] = useState("i am the test");
   console.log("the TEST;;;", test);
 
-  console.log(docs);
+  // console.log(docs);
   console.log(setTest);
   return (
     <p>
@@ -41,62 +34,32 @@ const Test = () => {
 };
 
 const TestGlobal = () => {
-  const { theme } = useThemeContext();
-  console.log("Test Global theme", theme);
-  return <GlobalStyle theme={theme} />;
+  // const { theme } = useThemeContext();
+  // console.log("Test Global theme", theme);
+  // return <GlobalStyle theme={theme} />;
 };
 const App = () => {
-  console.log("languageProvider", ThemeProvider);
-  console.log("useLanguage;;;", useTheme);
-
-  // const { theme, isThemeLoaded } = useTheme();
-  // const [selectedTheme, setSelectedTheme] = useState(theme);
-  // const [showDialog, setShowDialog] = useState(false);
-  // const [newTheme, setNewTheme] = useState();
-  // console.log("THE APP THEME;;;", theme);
-
-  // useEffect(() => {
-  //   setSelectedTheme(theme);
-  //   console.log("the setThemeaa;;;", selectedTheme);
-  // }, [isThemeLoaded]);
-
-  // useEffect(() => {
-  //   WebFont.load({
-  //     google: { families: getWebFonts() },
-  //   });
-  // });
-
-  // const manageDialog = () => {
-  //   setShowDialog(!showDialog);
-  // };
-
-  // const createTheme = (newTheme) => {
-  //   console.log(newTheme);
-  //   setShowDialog(false);
-  //   setNewTheme(newTheme);
-  // };
-
-  // console.log("resetStyles;;;", selectedTheme);
   return (
-    <>
-      <ThemeProvider>
-        {/* <GlobalStyle theme={theme} /> */}
-        {/* <TestGlobal /> */}
-
-        <ThemeGlobalStyle globalStyle={GlobalStyle} />
-
-        <ThemeSwitcher />
-        <LanguageProvider language="en">
-          <LanguageSwitcher />
-          <Root />
-
-          <div>
-            <p>Surprise</p>
-          </div>
-          <Test />
-        </LanguageProvider>
-      </ThemeProvider>
-    </>
+    <KotiiThemeProvider>
+      <KotiiGlobal />
+      <Square width={500} background="app-background">
+        <Text color={"white"}>Square</Text>
+      </Square>
+      {/* <ThemeSwitcher /> */}
+      <LanguageProvider
+        ln="en"
+        translations={[
+          { locale: "zu", trans: zuTranslation, label: "zulu" },
+          { locale: "pe", trans: peTranslation, label: "pedi" },
+          { locale: "ve", trans: veTranslation, label: "venda" },
+          { locale: "ts", trans: tsTranslation, label: "tsonga" },
+        ]}
+      >
+        {/* <LanguageSwitcher /> */}
+        <Root />
+        {/* <Test /> */}
+      </LanguageProvider>
+    </KotiiThemeProvider>
   );
 };
 

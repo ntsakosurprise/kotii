@@ -1,0 +1,104 @@
+@import url("https://fonts.googleapis.com/css?family=Fira+Mono|Montserrat");
+
+/*
+define custom properties for the font and colors used in the project
+*/
+/* :root {
+  --font-text: "Montserrat", sans-serif;
+  --font-code: "Fira Mono", monospace;
+  --color-bg: #fff;
+  --color-text: #0f2325;
+  --color-text-t: #0f232588;
+  --max-width: 700px; */
+/* translate slide is responsible to show one slide at a time, by translating all sections by 100%, 200% and so forth to the left */
+/* --translate-slide: 0;
+} */
+/* 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0; */
+/* } */
+
+/* body { */
+/* width: 100%;
+  min-height: 100vh;
+  font-family: var(--font-text);
+  color: var(--color-text); */
+/* render a couple of neat SVG elements atop a white background */
+/* background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><circle cx="90%" cy="80%" r="15%" fill="%230041F3"/><circle cx="0" cy="0" r="40%" fill="%23EE0034"/></svg>'),
+    var(--color-bg);
+  background-repeat: no-repeat; */
+/* center the single container in the page */
+/* display: flex;
+  justify-content: center;
+  align-items: center; */
+/* } */
+
+/* cap the width of the container */
+.App {
+  width: 85vw;
+  max-width: var(--max-width);
+  position: relative;
+  /* ! essential properties for the carousel */
+  /* position the sections in a grid */
+  display: grid;
+  /* include a single column layout, with implicit tracks added horizontally instead of vertically
+  have the columns, implicit or explcit, spread to cover 100% of the container
+  */
+  grid-template-columns: 100%;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  /* hide horizontal overflow, effectively hiding all columns except one */
+  overflow: hidden;
+  /* min height for visual appeal, to guarantee a reasonable width to height ratio despite the lack of content, which will be added in React-land */
+  min-height: 400px;
+  background: var(--color-bg);
+  box-shadow: 0 0 15px -2.5px var(--color-text-t);
+}
+
+.AppSlide {
+  background: var(--color-slide);
+  /* displayed the content in a single column and horizontally centered */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  /* vertically include white space around the elements */
+  justify-content: space-around;
+  /* transition for the transform property, which is handled in App.js by updating the translate-slide custom property */
+  transition: transform 0.3s ease-out;
+  transform: translateX(var(--translate-slide));
+}
+
+.AppControls {
+  /* position the controls always atop the other neighboring elements */
+  z-index: 100;
+  /* in the bottom left of the card */
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  /* by default hide them, show them when hovering on the card itself */
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+  background: var(--color-text);
+  padding: 0.5rem 0;
+  /* display the buttons side by side, in a 100px rectangle */
+  display: flex;
+  width: 100px;
+  justify-content: space-between;
+}
+
+/* on hover on the card, show the controls */
+.App:hover .AppControls {
+  opacity: 1;
+}
+
+svg {
+  /* spread the SVG to occupy the size of the wrapping elements(buttons) */
+  width: 100%;
+  height: 100%;
+  fill: var(--color-bg);
+  /* pointer events none to allow click events on the buttons */
+  pointer-events: none;
+}

@@ -1,5 +1,6 @@
 /* eslint-disable react/display-name */
-import { docs } from "Markdowns/intro/TES.md";
+// import { docs } from "Markdowns/intro/TES.md";
+import { markdownComponents, markdownData } from "Markdowns/intro/intro.md";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import createTextEditor from "./editor";
@@ -20,9 +21,12 @@ const Sandbox = styled("div")(() => ({
 }));
 
 const Demo = () => {
+  console.log("THE DEMOSOURCE;;;", markdownData);
+  console.log("THE DEMOMODULES;;;", markdownComponents);
   const [showSource, setSourceShow] = useState(false);
   const [liveEdit, setLiveEditor] = useState(false);
   const [textEditor, setTextEditor] = useState(null);
+  const { Video } = markdownComponents;
 
   let previewRef = React.createRef();
 
@@ -36,7 +40,7 @@ const Demo = () => {
   useEffect(() => {
     console.log("Dependecy changed");
     setTextEditor(
-      createTextEditor(previewRef, () => {
+      createTextEditor(previewRef, React, () => {
         return React;
       })
     );
@@ -46,6 +50,7 @@ const Demo = () => {
 
   return (
     <Sandbox>
+      <Video />
       <ShowCase>
         {liveEdit ? (
           <Preview ref={(elem) => (previewRef = elem)} />
@@ -57,11 +62,11 @@ const Demo = () => {
       <DemoToolbar
         toggleSource={toggleSource}
         liveEdit={setLiveEdit}
-        docs={docs}
+        docs={markdownData}
       />
       <DemoSource
         showSource={showSource}
-        docs={docs}
+        docs={markdownData}
         liveEdit={liveEdit}
         textEditor={textEditor}
       />

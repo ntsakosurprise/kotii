@@ -1,2 +1,16 @@
 import { logStoredThemesStatus } from "./config";
-export { logStoredThemesStatus };
+import {
+  enTranslation,
+  peTranslation,
+  tsTranslation,
+  veTranslation,
+  zuTranslation,
+} from "./languages";
+export {
+  logStoredThemesStatus,
+  zuTranslation,
+  peTranslation,
+  veTranslation,
+  tsTranslation,
+  enTranslation,
+};
