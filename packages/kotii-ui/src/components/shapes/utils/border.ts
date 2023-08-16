@@ -53,7 +53,7 @@ const splitBorderString = (
   borderString: string,
   splitBy: string | RegExp
 ): string[] => {
-  return borderString.split(splitBy);
+  return borderString.trim().split(splitBy);
 };
 
 const handleBorder = (
