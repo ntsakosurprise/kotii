@@ -1,6 +1,7 @@
 export type DoWidthHeightType = {
   width: string | number;
   height: string | number;
+  borderRadius?: string | number;
 };
 // export enum BorderLines {
 //   DOTTED,
