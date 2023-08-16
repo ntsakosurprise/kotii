@@ -1,20 +1,28 @@
 import React, { ReactNode } from "react";
 import styled from "styled-components";
+import { useKotiiTheme } from "../../../context/";
+import { createJSCSSSchema } from "../helpers";
+import { Shapes } from "../types";
 
-type CircleProps = {
+interface CircleProps extends Shapes {
   name?: string;
   children?: ReactNode;
-};
+}
 
-const StyledCircle = styled("div")(() => ({
-  width: "100px",
-  height: "100px",
-  background: "red",
-  borderRadius: "50%",
-}));
+const StyledCircle = styled("div")((props) => {
+  const styles = createJSCSSSchema(props, "circle");
+  console.log("The SHAPE STYLES", styles);
+  return { ...styles };
+});
 
 const Circle: React.FC<CircleProps> = ({ name, children, ...props }) => {
-  return <StyledCircle>{children ? children : null}</StyledCircle>;
+  const { theme, themes, changeTheme, themeMode = "dark" } = useKotiiTheme();
+  const newProps = { ...props, themeMode };
+  return (
+    <StyledCircle {...newProps} theme={theme}>
+      {children ? children : null}
+    </StyledCircle>
+  );
 };
 
 export default Circle;
