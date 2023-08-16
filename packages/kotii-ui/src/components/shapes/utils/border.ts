@@ -79,16 +79,19 @@ const handleBorder = (
   sides
     ? sides.map((item, i) => {
         let splitBorderSide = splitBorderString(item, ":");
-        let splitBorderSideValues = splitBorderString(splitBorderSide[1], "-");
-        let borderSideWidth = splitBorderSideValues[0];
-        let borderSideStyle = splitBorderSideValues[1];
-        let borderSideColor = splitBorderSideValues[2];
+        console.log("SPLIT:BORDER", splitBorderSide);
+        let firstItemSplit = splitBorderString(splitBorderSide[0], "-");
+        console.log("FIRSTITEM:", firstItemSplit);
 
-        borderSides[
-          `border${capitalizeFirstLetter(splitBorderSide[0])}`
-        ] = `${setMeasurementUnit(
-          borderSideWidth
-        )} ${borderSideStyle} ${borderSideColor}`;
+        firstItemSplit.length > 1
+          ? firstItemSplit.map((bSide, i) => {
+              handleBorderSides(borderSides, bSide, `${splitBorderSide[1]}`);
+            })
+          : handleBorderSides(
+              borderSides,
+              splitBorderSide[0],
+              splitBorderSide[1]
+            );
       })
     : "";
 
@@ -106,4 +109,21 @@ const setMeasurementUnit = (target: string, unit: string = "px") => {
   } else {
     return target;
   }
+};
+
+const handleBorderSides = (
+  ob: object,
+  borderSide: string,
+  borderSideItems: string
+): object => {
+  let splitBorderSideValues = splitBorderString(borderSideItems, "-");
+  let borderSideWidth = splitBorderSideValues[0];
+  let borderSideStyle = splitBorderSideValues[1];
+  let borderSideColor = splitBorderSideValues[2];
+
+  ob[`border${capitalizeFirstLetter(borderSide)}`] = `${setMeasurementUnit(
+    borderSideWidth
+  )} ${borderSideStyle} ${borderSideColor}`;
+
+  return ob;
 };
