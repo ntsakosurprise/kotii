@@ -18,4 +18,5 @@ export const defaultValues = {
     string: sizes,
   },
   background: SHAPES_COLOR,
+  border: "solid 2px yellow",
 };
