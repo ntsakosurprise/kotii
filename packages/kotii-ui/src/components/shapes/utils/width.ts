@@ -1,6 +1,6 @@
 import { checkPropertyValue } from "./checkers";
 import { extractProperty } from "./ekstractors";
-import { squareWidthHeight } from "./shapes";
+import { circleWidthHeight, squareWidthHeight } from "./shapes";
 import { DoWidthHeightType } from "./types";
 export const doWidthHeight = (
   props: object,
@@ -16,6 +16,8 @@ export const doWidthHeight = (
     case "square":
       console.log("case is SQUARE");
       return squareWidthHeight(width, height, shape);
+    case "circle":
+      return circleWidthHeight(width, height, shape);
   }
 
   return {
