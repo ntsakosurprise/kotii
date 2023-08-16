@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useKotiiTheme } from "../../../context/";
 import { Shapes } from "../types";
@@ -80,10 +80,7 @@ const Square: React.FC<SquareProps> = ({ children, ...props }) => {
   const { theme, themes, changeTheme, themeMode = "dark" } = useKotiiTheme();
   const newProps = { ...props, themeMode };
   console.log("ChangeThemeMode", changeTheme);
-  //console.log("THE THEMES FROM KOTII THEME", theme);
-  useEffect(() => {
-    console.log("The theme has changed, so I'm updating");
-  }, []);
+
   return (
     <StyledSquare {...newProps} theme={theme}>
       {children ? children : null}
