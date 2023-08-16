@@ -17,11 +17,7 @@ export const doBorder = (props, shape, themeMODE): object => {
   let rawBorder = borderWidth[splitBorder[0]] || splitBorder[0];
 
   console.log("TheRawBorder;;;", rawBorder);
-  let numericeBorder = rawBorder
-    ? number_check_pattern.test(rawBorder)
-      ? `${rawBorder}px`
-      : rawBorder
-    : 0;
+  let numericeBorder = rawBorder ? setMeasurementUnit(rawBorder, "px") : 0;
   console.log("THE NUMERIC BORDER;;;", numericeBorder);
   let textOrNumericBorder = rawBorder ? rawBorder : numericeBorder;
   console.log("BORDER SPLIT", splitBorder);
@@ -90,7 +86,9 @@ const handleBorder = (
 
         borderSides[
           `border${capitalizeFirstLetter(splitBorderSide[0])}`
-        ] = `${borderSideWidth} ${borderSideStyle} ${borderSideColor}`;
+        ] = `${setMeasurementUnit(
+          borderSideWidth
+        )} ${borderSideStyle} ${borderSideColor}`;
       })
     : "";
 
@@ -100,4 +98,12 @@ const handleBorder = (
     borderColor,
     ...borderSides,
   };
+};
+
+const setMeasurementUnit = (target: string, unit: string = "px") => {
+  if (number_check_pattern.test(target)) {
+    return `${target}${unit}`;
+  } else {
+    return target;
+  }
 };
