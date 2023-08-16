@@ -79,8 +79,18 @@ const handleBorder = (
   sides
     ? sides.map((item, i) => {
         let splitBorderSide = splitBorderString(item, ":");
+        let isVerticalOrHorizontal =
+          splitBorderSide[0] === "vertical"
+            ? ["top", "bottom"]
+            : splitBorderSide[0] === "horizontal"
+            ? ["left", "right"]
+            : [];
         console.log("SPLIT:BORDER", splitBorderSide);
-        let firstItemSplit = splitBorderString(splitBorderSide[0], "-");
+        let firstItemSplit =
+          isVerticalOrHorizontal.length > 0
+            ? isVerticalOrHorizontal
+            : splitBorderString(splitBorderSide[0], "-");
+
         console.log("FIRSTITEM:", firstItemSplit);
 
         firstItemSplit.length > 1
