@@ -8,9 +8,11 @@ import {
   Header,
   Heading,
   Image,
+  Oval,
   Page,
   PageContent,
   Paragraph,
+  Rectangle,
   Square,
   Tag,
   Text,
@@ -43,4 +45,6 @@ export {
   Carousel,
   Square,
   Circle,
+  Rectangle,
+  Oval,
 };
