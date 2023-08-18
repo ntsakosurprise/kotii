@@ -1,6 +1,11 @@
 import { checkPropertyValue } from "./checkers";
 import { extractProperty } from "./ekstractors";
-import { circleWidthHeight, squareWidthHeight } from "./shapes";
+import {
+  circleWidthHeight,
+  ovalWidthHeight,
+  rectangleWidthHeight,
+  squareWidthHeight,
+} from "./shapes";
 import { DoWidthHeightType } from "./types";
 export const doWidthHeight = (
   props: object,
@@ -18,6 +23,14 @@ export const doWidthHeight = (
       return squareWidthHeight(width, height, shape);
     case "circle":
       return circleWidthHeight(width, height, shape);
+    case "rectangle":
+      return rectangleWidthHeight(width, height, shape);
+
+    case "oval":
+      console.log("case is Rectangle;;;", width, height, shape);
+      let rectWidth = ovalWidthHeight(width, height, shape);
+      console.log("THE RECTWIDTH;;;", rectWidth);
+      return rectWidth;
   }
 
   return {

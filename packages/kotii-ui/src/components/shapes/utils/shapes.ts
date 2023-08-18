@@ -24,3 +24,35 @@ export const circleWidthHeight = (width, height, shape): DoWidthHeightType => {
   if (!height) return { width, height: width, borderRadius };
   return { width, height, borderRadius };
 };
+
+export const rectangleWidthHeight = (
+  width,
+  height,
+  shape
+): DoWidthHeightType => {
+  if (!width && !height)
+    return {
+      width: getDefaultValue("width", true),
+      height: getDefaultValue("width", true) / 2,
+    };
+  if (!width) return { width: height, height: height / 2 };
+  if (!height) return { width, height: width / 2 };
+  return { width, height: height / 2 };
+};
+
+export const ovalWidthHeight = (width, height, shape): DoWidthHeightType => {
+  if (!width && !height) {
+    let width = getDefaultValue("width", true);
+    let height = width / 2;
+    // let radiusDivisor = height / 2 + "px";
+    let borderRadius = BORDER_RADIUS;
+    return {
+      width,
+      height,
+      borderRadius,
+    };
+  }
+  if (!width) return { width: height, height: height / 2 };
+  if (!height) return { width, height: width / 2 };
+  return { width, height: height / 2 };
+};
