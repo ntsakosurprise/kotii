@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "lib",
+    // "rootDir": ".",
+    "allowJs": true,
+    "baseUrl": "./"
+
+    // "paths": {
+    //   "Config": ["src/config/"],
+    //   "Hooks": ["src/hooks/index"],
+    //   "Components": ["src/components/index"],
+    //   "Types": ["src/types"],
+    //   "Context": ["src/context/"],
+    //   "Constants": ["./src/constants/*"]
+    // }
+  },
+  "include": ["./src"]
+}

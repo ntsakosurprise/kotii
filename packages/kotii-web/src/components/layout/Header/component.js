@@ -42,7 +42,12 @@ const AppHeader = () => {
       </Box>
       <Box>
         <Text>Item 2</Text>
-        <Square size="xsmall" background="app-background" border="10" />
+        <Square
+          size="large"
+          background="app-background"
+          // border="large ridge green top left"
+          border="30 ridge green horizontal:50px-dotted-red bottom:60-solid-brown"
+        />
       </Box>
       <Box
         // alignSelf="end"

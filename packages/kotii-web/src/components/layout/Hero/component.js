@@ -1,6 +1,15 @@
 import React, { useEffect } from "react";
 // import { Link } from "react-router-dom";
-import { Box, Button, Circle, Square, Text, useKotiiTheme } from "kotii-ui";
+import {
+  Box,
+  Button,
+  Circle,
+  Oval,
+  Rectangle,
+  Square,
+  Text,
+  useKotiiTheme,
+} from "kotii-ui";
 const buttonMinWidth = "105px";
 const TokensButton = (props) => {
   return (
@@ -106,7 +115,9 @@ const Hero = () => {
             <Square width={10}>
               <Text color={"white"}>Square</Text>
             </Square>
-            <Circle />
+            <Circle background="app-background" size="xxsmall" />
+            <Rectangle background="app-background" />
+            <Oval />
             <Square width="xsmall" background="app-background" />
             <Button
               label="changeTheme"
