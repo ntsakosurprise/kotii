@@ -36,6 +36,7 @@
     "kotii-markdown": "*",
     "kotii-theme": "*",
     "kotii-ui": "*",
+    "kotii-logger": "*",
     "lodash": "^4.17.21",
     "object-path": "^0.11.8",
     "prop-types": "^15.7.2",
