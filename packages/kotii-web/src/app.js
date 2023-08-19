@@ -4,6 +4,7 @@ import {
   // LanguageSwitcher,
   useLanguage,
 } from "kotii-languages";
+import { logger } from "kotii-logger";
 import { KotiiGlobal, KotiiThemeProvider, Square, Text } from "kotii-ui";
 import {
   peTranslation,
@@ -39,6 +40,7 @@ const TestGlobal = () => {
   // return <GlobalStyle theme={theme} />;
 };
 const App = () => {
+  logger.log("events", "I'M RUNNING FROM THE LOGGER");
   return (
     <KotiiThemeProvider>
       <KotiiGlobal />
