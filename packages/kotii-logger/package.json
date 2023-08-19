@@ -47,8 +47,9 @@
     "webpack-dev-server": "^4.7.4"
   },
   "dependencies": {
+    "debug": "^4.3.4",
     "grommet": "^2.33.1",
-    "styled-components": "5.3.11",
-    "kotii-utils": "*"
+    "kotii-utils": "*",
+    "styled-components": "5.3.11"
   }
 }
