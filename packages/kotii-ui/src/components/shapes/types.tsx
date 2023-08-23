@@ -24,6 +24,7 @@ export interface Shapes
   size?: string | ShapesTShirtSizes;
   children?: ReactNode | ReactElement | JSX.Element | JSX.Element[];
   style?: CSSProperties;
+  name?: string;
 }
 
 export type ShapeNames = "square" | "circle";
