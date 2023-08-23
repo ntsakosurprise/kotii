@@ -2,6 +2,7 @@ import { checkPropertyValue } from "./checkers";
 import { extractProperty } from "./ekstractors";
 import {
   circleWidthHeight,
+  clipPathWidthHeight,
   ovalWidthHeight,
   rectangleWidthHeight,
   squareWidthHeight,
@@ -31,6 +32,8 @@ export const doWidthHeight = (
       let rectWidth = ovalWidthHeight(width, height, shape);
       console.log("THE RECTWIDTH;;;", rectWidth);
       return rectWidth;
+    case "clip-path":
+      return clipPathWidthHeight(width, height, shape);
   }
 
   return {
