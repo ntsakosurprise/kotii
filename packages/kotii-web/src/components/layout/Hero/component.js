@@ -75,7 +75,7 @@ const Hero = () => {
         </Text>
         <Shape
           size="large"
-          name={"rhombus"}
+          name={"octagon"}
           style={{
             backgroundImage: `url(${stones})`,
             backgroundSize: "cover",
