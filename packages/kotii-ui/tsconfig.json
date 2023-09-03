@@ -15,5 +15,5 @@
     //   "Constants": ["./src/constants/*"]
     // }
   },
-  "include": ["./src"]
+  "include": ["./src", "./globals.d.ts"]
 }

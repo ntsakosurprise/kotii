@@ -13,7 +13,9 @@ import {
   PageContent,
   Paragraph,
   Rectangle,
+  Shape,
   Square,
+  Svg,
   Tag,
   Text,
   ThemeSwitcher,
@@ -47,4 +49,6 @@ export {
   Circle,
   Rectangle,
   Oval,
+  Shape,
+  Svg as SVG,
 };

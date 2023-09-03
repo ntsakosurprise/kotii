@@ -34,7 +34,7 @@ import {
   SideBar,
   Stack,
 } from "./layout";
-import { Carousel, Image, Video } from "./media";
+import { Carousel, Image, Svg, Video } from "./media";
 import { Heading, Paragraph, Tag, Text } from "./typography";
 
 import {
@@ -45,7 +45,7 @@ import {
   ThemeSwitcher,
 } from "./utils/";
 
-import { Circle, Oval, Rectangle, Square } from "./shapes";
+import { Circle, Oval, Rectangle, Shape, Square } from "./shapes";
 
 export {
   Button,
@@ -94,4 +94,6 @@ export {
   Circle,
   Rectangle,
   Oval,
+  Shape,
+  Svg,
 };

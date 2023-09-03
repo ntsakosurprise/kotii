@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import stones from "../../../../public/img/stones.jpg";
+
 // import { Link } from "react-router-dom";
 import {
   Box,
@@ -6,6 +8,7 @@ import {
   Circle,
   Oval,
   Rectangle,
+  Shape,
   Square,
   Text,
   useKotiiTheme,
@@ -70,6 +73,20 @@ const Hero = () => {
         <Text size="60px" color={"white"}>
           Kotii Component Library
         </Text>
+        <Shape
+          size="large"
+          name={"octagon"}
+          style={{
+            backgroundImage: `url(${stones})`,
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+          }}
+        >
+          <Box background="app-background">
+            <Text>My Shape Text</Text>
+            <img src="/img/stones.jpg" alt="Kotii Logo" width={"40px"} />
+          </Box>
+        </Shape>
       </Box>
       <Box
         direction="row"

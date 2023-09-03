@@ -1,9 +1,10 @@
 import { doBackground } from "./utils/background";
 import { doBorder } from "./utils/border";
+import { doClippedShapes } from "./utils/shapes";
 import { DoWidthHeightType } from "./utils/types";
 import { doWidthHeight } from "./utils/width";
 
-export const createJSCSSSchema = (props, shape) => {
+export const createJSCSSSchema = (props, shape, clipShape = "") => {
   console.log("The passed props", props);
   console.log("KOTIITHEME PROVIDER;;;", props?.theme?.global?.colors);
   let themeMode = props?.themeMode;
@@ -12,12 +13,16 @@ export const createJSCSSSchema = (props, shape) => {
   let widthHeight: DoWidthHeightType = doWidthHeight(props, shape, size);
   let border = doBorder(props, shape, themeMode);
   let background = doBackground(props, shape, themeMode);
+  let clippedShape = clipShape
+    ? doClippedShapes(props, clipShape, themeMode)
+    : {};
   console.log("the Widthand the HEIGHT;;;", widthHeight);
 
   return {
     backgroundColor: background,
     ...widthHeight,
     ...border,
+    ...clippedShape,
     // border,
     // border: "solid red 2px",
   };
