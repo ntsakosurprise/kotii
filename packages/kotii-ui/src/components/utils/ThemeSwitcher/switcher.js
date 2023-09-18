@@ -1,6 +1,7 @@
 // import { Box, Button, Heading, Paragraph } from "grommet";
-import React, { useState } from "react";
-import { BsFillMoonStarsFill as MoonIcon } from "react-icons/bs";
+import React, { useEffect, useRef, useState } from "react";
+import { BsCheck, BsFillMoonStarsFill as MoonIcon } from "react-icons/bs";
+import { MdOutlineLightMode as ToggleLight } from "react-icons/md";
 import Switch from "react-switch";
 import styled from "styled-components";
 import { useKotiiTheme } from "../../../context";
@@ -12,6 +13,29 @@ import { useKotiiTheme } from "../../../context";
 //   { value: "ts", label: "Tsonga" },
 //   { value: "ve", label: "Venda" },
 // ];
+
+/**
+ * Hook that alerts clicks outside of the passed ref
+ */
+function useOutsideAlerter(ref, closeOnOutside) {
+  useEffect(() => {
+    /**
+     * Alert if clicked on outside of element
+     */
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        // alert("You clicked outside of me!");
+        closeOnOutside(false);
+      }
+    }
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
+}
 
 const ThemeSelector = styled("button")(() => {
   return {
@@ -51,7 +75,7 @@ const ListItem = styled("li")(() => {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "left",
     width: "100%",
   };
 });
@@ -69,13 +93,24 @@ const SwitcherSlider = styled("p")(() => {
     cursor: "pointer",
   };
 });
+
+const SwitcherTypo = styled("p")({
+  flexGrow: 2,
+  display: "flex",
+  flexDirection: "row",
+  gap: 10,
+});
 const ThemeSwitcher = () => {
   const { changeTheme, theme, themes } = useKotiiTheme();
   const [selectedOption, setSelectedOption] = useState(theme);
   const [showThemes, setShowThemes] = useState(false);
   const [switchChecked, setSwitch] = useState(false);
+  const [checkedItem, setCheckedItem] = useState(null);
   console.log("the themSWITCHER;;;", themes);
   console.log(changeTheme, theme);
+
+  const wrapperRef = useRef(null);
+  useOutsideAlerter(wrapperRef, setShowThemes);
 
   const switchTheme = (value) => {
     console.log("the props;;", value);
@@ -128,20 +163,41 @@ const ThemeSwitcher = () => {
     setSwitch(!switchChecked);
   };
 
+  const activateTheme = (eve) => {
+    const setValue = eve.target.attributes.value.nodeValue;
+    // console.log("SWITCH ACTIVATE", eve.target.attributes.value.nodeValue);
+    setCheckedItem(setValue);
+  };
+
   const getListItems = (items) => {
     return items.map((it, ix) => {
       return (
         <ListItem key={ix}>
-          <SwitcherText>{it.label}</SwitcherText>
-          <SwitcherSlider>
-            <Switch
-              onChange={handleSwitchleChange}
-              checked={switchChecked}
-              uncheckedIcon={false}
-              height={16}
-              width={32}
-            />
-          </SwitcherSlider>
+          <SwitcherTypo>
+            {checkedItem === it.label || (!checkedItem && ix === 0) ? (
+              <BsCheck />
+            ) : (
+              <BsCheck style={{ visibility: "hidden" }} />
+            )}
+            <SwitcherText value={it.label} onClick={activateTheme}>
+              {it.label}
+            </SwitcherText>
+          </SwitcherTypo>
+          {it.label === "light" ||
+          it.label === "dark" ||
+          it.label !== checkedItem ? null : (
+            <SwitcherSlider>
+              <Switch
+                onChange={handleSwitchleChange}
+                checked={switchChecked}
+                uncheckedIcon={false}
+                checkedIcon={<ToggleLight />}
+                // disabled={true}
+                height={16}
+                width={30}
+              />
+            </SwitcherSlider>
+          )}
         </ListItem>
       );
     });
@@ -152,7 +208,7 @@ const ThemeSwitcher = () => {
         <MoonIcon style={{ fontSize: "16px", color: "#f68fff" }} />
       </ThemeSelector>
       {showThemes ? (
-        <ThemeDropDown>
+        <ThemeDropDown ref={wrapperRef}>
           <List>{getListItems(getOptions())}</List>
         </ThemeDropDown>
       ) : null}
