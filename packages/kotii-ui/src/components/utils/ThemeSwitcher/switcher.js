@@ -1,7 +1,10 @@
 // import { Box, Button, Heading, Paragraph } from "grommet";
 import React, { useState } from "react";
-import Select from "react-select";
+import { BsFillMoonStarsFill as MoonIcon } from "react-icons/bs";
+import Switch from "react-switch";
+import styled from "styled-components";
 import { useKotiiTheme } from "../../../context";
+
 // import { themes } from "../../config/themes";
 
 // const options = [
@@ -10,9 +13,62 @@ import { useKotiiTheme } from "../../../context";
 //   { value: "ve", label: "Venda" },
 // ];
 
+const ThemeSelector = styled("button")(() => {
+  return { color: "green", cursor: "pointer", "&:hover": { color: "red" } };
+});
+
+const ThemeDropDown = styled("div")(() => {
+  return {
+    position: "relative",
+  };
+});
+
+const List = styled("ul")(() => {
+  return {
+    margin: 0,
+    padding: "15px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: "5px",
+    backgroundColor: "black",
+    position: "absolute",
+    width: "200px",
+    right: 0,
+  };
+});
+
+const ListItem = styled("li")(() => {
+  return {
+    margin: 0,
+    padding: 0,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+  };
+});
+
+const SwitcherText = styled("p")(() => {
+  return {
+    color: "green",
+    cursor: "pointer",
+  };
+});
+
+const SwitcherSlider = styled("p")(() => {
+  return {
+    color: "green",
+    cursor: "pointer",
+  };
+});
 const ThemeSwitcher = () => {
   const { changeTheme, theme, themes } = useKotiiTheme();
   const [selectedOption, setSelectedOption] = useState(theme);
+  const [showThemes, setShowThemes] = useState(false);
+  const [switchChecked, setSwitch] = useState(false);
   console.log("the themSWITCHER;;;", themes);
   console.log(changeTheme, theme);
 
@@ -59,9 +115,29 @@ const ThemeSwitcher = () => {
     },
   };
 
+  const showUpdatedThemes = () => {
+    setShowThemes(!showThemes);
+  };
+
+  const handleSwitchleChange = () => {
+    setSwitch(!switchChecked);
+  };
+
+  const getListItems = (items) => {
+    return items.map((it, ix) => {
+      return (
+        <ListItem key={ix}>
+          <SwitcherText>{it.label}</SwitcherText>
+          <SwitcherSlider>
+            <Switch onChange={handleSwitchleChange} checked={switchChecked} />
+          </SwitcherSlider>
+        </ListItem>
+      );
+    });
+  };
   return (
     <div>
-      <Select
+      {/* <Select
         defaultValue={selectedOption}
         onChange={(e) => {
           console.log("onchange event;;;", e);
@@ -69,52 +145,15 @@ const ThemeSwitcher = () => {
         }}
         options={[...getOptions()]}
         styles={customStyles}
-      />
-      {/* <Box>
-        <p>Grommet boxx</p>
-        <Heading level="1">Hello Grommet Theme Toggle</Heading>
-        <Paragraph fill> */}
-      This is a{" "}
-      {/* <Anchor
-            as={"a"}
-              href="https://developer.hpe.com/blog/dark-mode-theming-in-grommet-theme-color-customization/"
-              target="_blank"
-              // function={() => {}}
-            >
-              theming tutorial
-            </Anchor> */}
-      {/* using Grommet.
-        </Paragraph>
-        <Button
-          label="Toggle Theme"
-          primary
-          alignSelf="center"
-          margin="large"
-          // onClick={() => setDarkMode(!darkMode)}
-        />
-      </Box> */}
-      {/* <Box pad="large">
-          <Heading level="1">Hello Grommet Theme Toggle</Heading>
-          <Paragraph fill>
-            This is a{" "}
-            <Anchor
-              href="https://developer.hpe.com/blog/dark-mode-theming-in-grommet-theme-color-customization/"
-              target="_blank"
-            >
-              theming tutorial
-            </Anchor>{" "}
-            using Grommet.
-          </Paragraph>
-
-          <Button
-            label="Toggle Theme"
-            primary
-            alignSelf="center"
-            margin="large"
-            onClick={() => setDarkMode(!darkMode)}
-          />
-          <DemoSection />
-        </Box> */}
+      /> */}
+      <ThemeSelector onClick={showUpdatedThemes}>
+        <MoonIcon />
+      </ThemeSelector>
+      {showThemes ? (
+        <ThemeDropDown>
+          <List>{getListItems(getOptions())}</List>
+        </ThemeDropDown>
+      ) : null}
     </div>
   );
 };
