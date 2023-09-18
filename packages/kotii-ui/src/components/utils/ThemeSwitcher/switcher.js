@@ -14,7 +14,12 @@ import { useKotiiTheme } from "../../../context";
 // ];
 
 const ThemeSelector = styled("button")(() => {
-  return { color: "green", cursor: "pointer", "&:hover": { color: "red" } };
+  return {
+    color: "green",
+    cursor: "pointer",
+    "&:hover": { color: "red" },
+    backgroundColor: "transparent",
+  };
 });
 
 const ThemeDropDown = styled("div")(() => {
@@ -34,7 +39,7 @@ const List = styled("ul")(() => {
     borderRadius: "5px",
     backgroundColor: "black",
     position: "absolute",
-    width: "200px",
+    width: "150px",
     right: 0,
   };
 });
@@ -129,7 +134,13 @@ const ThemeSwitcher = () => {
         <ListItem key={ix}>
           <SwitcherText>{it.label}</SwitcherText>
           <SwitcherSlider>
-            <Switch onChange={handleSwitchleChange} checked={switchChecked} />
+            <Switch
+              onChange={handleSwitchleChange}
+              checked={switchChecked}
+              uncheckedIcon={false}
+              height={16}
+              width={32}
+            />
           </SwitcherSlider>
         </ListItem>
       );
@@ -137,17 +148,8 @@ const ThemeSwitcher = () => {
   };
   return (
     <div>
-      {/* <Select
-        defaultValue={selectedOption}
-        onChange={(e) => {
-          console.log("onchange event;;;", e);
-          switchTheme(e.value);
-        }}
-        options={[...getOptions()]}
-        styles={customStyles}
-      /> */}
       <ThemeSelector onClick={showUpdatedThemes}>
-        <MoonIcon />
+        <MoonIcon style={{ fontSize: "16px", color: "#f68fff" }} />
       </ThemeSelector>
       {showThemes ? (
         <ThemeDropDown>
