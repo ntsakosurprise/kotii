@@ -101,11 +101,11 @@ const SwitcherTypo = styled("p")({
   gap: 10,
 });
 const ThemeSwitcher = () => {
-  const { changeTheme, theme, themes } = useKotiiTheme();
+  const { changeTheme, theme, themes, themeName } = useKotiiTheme();
   const [selectedOption, setSelectedOption] = useState(theme);
   const [showThemes, setShowThemes] = useState(false);
   const [switchChecked, setSwitch] = useState(false);
-  const [checkedItem, setCheckedItem] = useState(null);
+  const [checkedItem] = useState(themeName);
   console.log("the themSWITCHER;;;", themes);
   console.log(changeTheme, theme);
 
@@ -167,14 +167,13 @@ const ThemeSwitcher = () => {
     const setValue = eve.target.attributes.value.nodeValue;
     // console.log("SWITCH ACTIVATE", eve.target.attributes.value.nodeValue);
     console.log("setItem", setValue);
-    changeTheme(themes[setValue]);
-    setCheckedItem(setValue);
+    changeTheme(setValue);
+    //setCheckedItem(setValue);
   };
 
-  // useEffect(() => {
-  //   console.log("SET-ITEM HAS CHANGED", checkedItem);
-  //   changeTheme(themes[checkedItem]);
-  // }, [checkedItem]);
+  useEffect(() => {
+    console.log("THE CURRENT THEME", theme);
+  }, []);
 
   const getListItems = (items) => {
     return items.map((it, ix) => {
