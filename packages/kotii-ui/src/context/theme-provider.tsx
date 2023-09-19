@@ -62,8 +62,8 @@ export const CustomThemeProvider = (props) => {
     console.log("directThemes theme", directThemes[themeName]);
     setCurrentTheme(directThemes[themeName]);
   }, [themeName]);
-  console.log("The theme name", themeName);
-  console.log("The them", directThemes[themeName]);
+  // console.log("The theme name", themeName);
+  // console.log("The them", directThemes[themeName]);
 
   return (
     <ThemeContext.Provider

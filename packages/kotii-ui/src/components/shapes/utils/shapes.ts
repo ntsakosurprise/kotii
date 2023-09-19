@@ -75,7 +75,7 @@ export const clipPathWidthHeight = (
 
 export const doClippedShapes = (props, shape, themeMode) => {
   if (!shapeClips[shape]) return {};
-  let flexLayout = doClippedShapesContentPostioning();
+  let flexLayout = doClippedShapesContentPositioning();
 
   return {
     clipPath: shapeClips[shape],
@@ -83,7 +83,7 @@ export const doClippedShapes = (props, shape, themeMode) => {
   };
 };
 
-const doClippedShapesContentPostioning = () => {
+const doClippedShapesContentPositioning = () => {
   return {
     display: "flex",
     flexDirection: "column",
