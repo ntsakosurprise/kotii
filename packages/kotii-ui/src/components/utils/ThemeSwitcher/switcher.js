@@ -103,21 +103,15 @@ const SwitcherTypo = styled("p")({
 const ThemeSwitcher = () => {
   const { changeTheme, theme, themes, themeName, themeMode, changeThemeMode } =
     useKotiiTheme();
-  const [selectedOption, setSelectedOption] = useState(theme);
+
   const [showThemes, setShowThemes] = useState(false);
-  const [switchChecked, setSwitch] = useState(false);
+
   // const [checkedItem] = useState(themeName);
   console.log("the themSWITCHER;;;", themes);
   console.log(changeTheme, theme);
 
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef, setShowThemes);
-
-  const switchTheme = (value) => {
-    console.log("the props;;", value);
-    changeTheme(value);
-    setSelectedOption(value);
-  };
 
   const getOptions = () => {
     const optionDictionary = [];
@@ -126,34 +120,6 @@ const ThemeSwitcher = () => {
       optionDictionary.push({ value: themes[themeName], label: themeName });
     }
     return optionDictionary;
-  };
-
-  const customStyles = {
-    menu: (provided, state) => ({
-      ...provided,
-      width: state.selectProps.width,
-      borderBottom: "1px dotted pink",
-      color: state.selectProps.menuColor,
-      padding: 20,
-    }),
-
-    option: (provided, state) => ({
-      ...provided,
-      borderBottom: "1px dotted pink",
-      color: state.isSelected ? "red" : "blue",
-      padding: 20,
-    }),
-
-    control: (_, { selectProps: { width } }) => ({
-      width: width,
-    }),
-
-    singleValue: (provided, state) => {
-      const opacity = state.isDisabled ? 0.5 : 1;
-      const transition = "opacity 300ms";
-
-      return { ...provided, opacity, transition };
-    },
   };
 
   const showUpdatedThemes = () => {
@@ -189,7 +155,7 @@ const ThemeSwitcher = () => {
         <ListItem key={ix}>
           <SwitcherTypo>
             {themeName === it.label ? (
-              <BsCheck />
+              <BsCheck style={{ color: "yellow" }} />
             ) : (
               <BsCheck style={{ visibility: "hidden" }} />
             )}
