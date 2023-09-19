@@ -52,7 +52,7 @@ const ThemeDropDown = styled("div")(() => {
   };
 });
 
-const List = styled("ul")(() => {
+const List = styled("ul")((props) => {
   return {
     margin: 0,
     padding: "15px",
@@ -63,7 +63,7 @@ const List = styled("ul")(() => {
     borderRadius: "5px",
     backgroundColor: "black",
     position: "absolute",
-    width: "150px",
+    width: props?.width ? props?.width : "150px",
     right: 0,
   };
 });
@@ -166,8 +166,15 @@ const ThemeSwitcher = () => {
   const activateTheme = (eve) => {
     const setValue = eve.target.attributes.value.nodeValue;
     // console.log("SWITCH ACTIVATE", eve.target.attributes.value.nodeValue);
+    console.log("setItem", setValue);
+    changeTheme(themes[setValue]);
     setCheckedItem(setValue);
   };
+
+  // useEffect(() => {
+  //   console.log("SET-ITEM HAS CHANGED", checkedItem);
+  //   changeTheme(themes[checkedItem]);
+  // }, [checkedItem]);
 
   const getListItems = (items) => {
     return items.map((it, ix) => {
@@ -209,7 +216,15 @@ const ThemeSwitcher = () => {
       </ThemeSelector>
       {showThemes ? (
         <ThemeDropDown ref={wrapperRef}>
-          <List>{getListItems(getOptions())}</List>
+          <List
+            width={
+              !checkedItem || checkedItem === "light" || checkedItem === "dark"
+                ? 100
+                : 150
+            }
+          >
+            {getListItems(getOptions())}
+          </List>
         </ThemeDropDown>
       ) : null}
     </div>
