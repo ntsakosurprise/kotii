@@ -101,11 +101,12 @@ const SwitcherTypo = styled("p")({
   gap: 10,
 });
 const ThemeSwitcher = () => {
-  const { changeTheme, theme, themes, themeName } = useKotiiTheme();
+  const { changeTheme, theme, themes, themeName, themeMode, changeThemeMode } =
+    useKotiiTheme();
   const [selectedOption, setSelectedOption] = useState(theme);
   const [showThemes, setShowThemes] = useState(false);
   const [switchChecked, setSwitch] = useState(false);
-  const [checkedItem] = useState(themeName);
+  // const [checkedItem] = useState(themeName);
   console.log("the themSWITCHER;;;", themes);
   console.log(changeTheme, theme);
 
@@ -160,7 +161,8 @@ const ThemeSwitcher = () => {
   };
 
   const handleSwitchleChange = () => {
-    setSwitch(!switchChecked);
+    changeThemeMode(themeMode);
+    // setSwitch(!switchChecked);
   };
 
   const activateTheme = (eve) => {
@@ -172,15 +174,21 @@ const ThemeSwitcher = () => {
   };
 
   useEffect(() => {
-    console.log("THE CURRENT THEME", theme);
-  }, []);
+    console.log(">>> SWITCH current theme", themeName);
+    console.log(">>> SWITCH ");
+    // return () => {
+    //   console.log(">>> Switch UNMOUNING");
+    // };
+  }, [themeName, themeMode]);
 
   const getListItems = (items) => {
     return items.map((it, ix) => {
+      // console.log(">>> THE CURRENT T THEMENAME", themeName);
+      // console.log(">>> THE T CURRENT LABEL", it);
       return (
         <ListItem key={ix}>
           <SwitcherTypo>
-            {checkedItem === it.label || (!checkedItem && ix === 0) ? (
+            {themeName === it.label ? (
               <BsCheck />
             ) : (
               <BsCheck style={{ visibility: "hidden" }} />
@@ -191,11 +199,11 @@ const ThemeSwitcher = () => {
           </SwitcherTypo>
           {it.label === "light" ||
           it.label === "dark" ||
-          it.label !== checkedItem ? null : (
+          themeName != it.label ? null : (
             <SwitcherSlider>
               <Switch
                 onChange={handleSwitchleChange}
-                checked={switchChecked}
+                checked={themeMode === "dark" ? false : true}
                 uncheckedIcon={false}
                 checkedIcon={<ToggleLight />}
                 // disabled={true}
@@ -216,11 +224,7 @@ const ThemeSwitcher = () => {
       {showThemes ? (
         <ThemeDropDown ref={wrapperRef}>
           <List
-            width={
-              !checkedItem || checkedItem === "light" || checkedItem === "dark"
-                ? 100
-                : 150
-            }
+            width={themeName === "light" || themeName === "dark" ? 100 : 150}
           >
             {getListItems(getOptions())}
           </List>
