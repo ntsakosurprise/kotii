@@ -11,7 +11,6 @@ import {
   Shape,
   Square,
   Text,
-  useKotiiTheme,
 } from "kotii-ui";
 const buttonMinWidth = "105px";
 const TokensButton = (props) => {
@@ -36,17 +35,22 @@ const TokensButton = (props) => {
   );
 };
 
-const randomInteger = (min, max) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
+// const randomInteger = (min, max) => {
+//   return Math.floor(Math.random() * (max - min + 1)) + min;
+// };
 
 const Hero = () => {
-  const { changeTheme, changeThemeMode } = useKotiiTheme();
-  const themeNames = ["dark", "light", "seaWave", "cherry"];
-  const themeModes = ["dark", "light"];
+  // const { changeTheme, changeThemeMode } = useKotiiTheme();
+  // const themeNames = ["dark", "light", "seaWave", "cherry"];
+  // const themeModes = ["dark", "light"];
   useEffect(() => {
-    console.log("HERO REMOUNTED");
+    console.log("!!! HERO REMOUNTED");
+    return () => {
+      console.log("!!! HERO UNMOUNTING");
+    };
   }, []);
+
+  useEffect(() => () => console.log("!!! HERO UNMOUNTING"), []);
   return (
     <Box
       direction={"column"}
@@ -136,14 +140,14 @@ const Hero = () => {
             <Rectangle background="app-background" />
             <Oval />
             <Square width="xsmall" background="app-background" />
-            <Button
+            {/* <Button
               label="changeTheme"
               onClick={() => changeTheme(themeNames[randomInteger(0, 3)])}
             />
             <Button
               label="changeThemeMode"
               onClick={() => changeThemeMode(themeModes[randomInteger(0, 1)])}
-            />
+            /> */}
           </Box>
         </Box>
       </Box>

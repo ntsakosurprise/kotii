@@ -1,11 +1,18 @@
 import React from "react";
 // import { Link } from "react-router-dom";
+import { LanguageSwitcher } from "kotii-languages";
 import { Box, Header, Square, SVG, Text, ThemeSwitcher } from "kotii-ui";
 import { AiFillGithub, AiFillSetting } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import KotiiSvg from "../../../../public/kotii.svg";
 
 const AppHeader = () => {
+  React.useEffect(() => {
+    console.log("!!! HEADER MOUNTS is MOUNTING");
+    return () => {
+      console.log("!!! HEADER IS unmounting");
+    };
+  }, []);
   return (
     <Header
       background="app-background"
@@ -63,7 +70,9 @@ const AppHeader = () => {
         // width={"medium"}
         direction="row"
         alignContent="around"
+        style={{ paddingLeft: "3%" }}
       >
+        <LanguageSwitcher />
         <AiFillGithub color="#D680FF" />
         <AiFillSetting color="#D680FF" />
         <ThemeSwitcher />
