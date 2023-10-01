@@ -1,20 +1,18 @@
 {
-  "name": "kotii-languages",
+  "name": "kotii-router-loader",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1",
+    "test": "jest",
+    "coverage": "jest --coverage",
     "start": "webpack-dev-server --watch",
     "build": "webpack --mode production",
     "buildDev": "webpack --mode development"
   },
   "dependencies": {
-    "i18next": "^21.8.14",
-    "kotii-utils": "*",
-    "react-i18next": "^11.18.1",
-    "react-icons": "^4.11.0",
-    "react-select": "^5.4.0",
+    "marked": "^4.0.18",
+    "prism": "^4.1.2",
     "styled-components": "^6.0.5"
   },
   "devDependencies": {
