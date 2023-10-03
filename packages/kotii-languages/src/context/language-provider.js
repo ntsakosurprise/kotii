@@ -18,6 +18,7 @@ export const LanguageProvider = (props) => {
 
   const { children, ln, translations } = props;
   const [updateLanguages, setUpdateLanguages] = useState(null);
+  const [languageName, setLanguageName] = useState("english");
   //const [languagesSet, setLanguagesSet] = useState(false);
 
   // console.log("the children;;", ln);
@@ -38,7 +39,8 @@ export const LanguageProvider = (props) => {
     console.log("NewLanguages;;;", i18n.languages);
   }, [updateLanguages]);
 
-  const changeCurrentLanguage = (language) => {
+  const changeCurrentLanguage = (language, langName) => {
+    setLanguageName(langName);
     i18n.changeLanguage(language, () => {
       setCurrentLanguage(language);
     });
@@ -63,6 +65,7 @@ export const LanguageProvider = (props) => {
         changeCurrentLanguage,
         get,
         getLanguageNames,
+        languageName,
       }}
     >
       {children}

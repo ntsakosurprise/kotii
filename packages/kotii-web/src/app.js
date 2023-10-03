@@ -5,6 +5,7 @@ import {
   useLanguage,
 } from "kotii-languages";
 import { logger } from "kotii-logger";
+// import { getPages, Routes as KotiiRouterRoot } from "kotii-router";
 import { KotiiGlobal, KotiiThemeProvider, Square, Text } from "kotii-ui";
 import {
   peTranslation,
@@ -13,7 +14,10 @@ import {
   zuTranslation,
 } from "Language";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { Root } from "Startup";
+// const routerLoader = require("kotii-router-loader!.");
+// console.log("THE RESULT", routerLoader);
 // import { GlobalStyle } from "./globals";
 
 const Test = () => {
@@ -41,6 +45,7 @@ const TestGlobal = () => {
 };
 const App = () => {
   logger.log("events", "I'M RUNNING FROM THE LOGGER");
+  // console.log("kotii-router-root", KotiiRouterRoot);
   return (
     <KotiiThemeProvider>
       <KotiiGlobal />
@@ -58,10 +63,199 @@ const App = () => {
         ]}
       >
         {/* <LanguageSwitcher /> */}
+        <header>
+          <Link
+            to="/"
+            // style={{
+            //   display: "flex",
+            //   flexDirection: "row",
+            //   alignContent: "center",
+            //   alignItems: "center",
+            // }}
+          >
+            <p
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text size="18px" color={"black"}>
+                Home
+              </Text>
+            </p>
+          </Link>
+          <Link
+            to="/about"
+            // style={{
+            //   display: "flex",
+            //   flexDirection: "row",
+            //   alignContent: "center",
+            //   alignItems: "center",
+            // }}
+          >
+            <p
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text size="18px" color={"black"}>
+                About
+              </Text>
+            </p>
+          </Link>
+          <Link
+            to="/posts"
+            // style={{
+            //   display: "flex",
+            //   flexDirection: "row",
+            //   alignContent: "center",
+            //   alignItems: "center",
+            // }}
+          >
+            <p
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text size="18px" color={"black"}>
+                Posts
+              </Text>
+            </p>
+          </Link>
+          <Link
+            to="/contact-us"
+            // style={{
+            //   display: "flex",
+            //   flexDirection: "row",
+            //   alignContent: "center",
+            //   alignItems: "center",
+            // }}
+          >
+            <p
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text size="18px" color={"black"}>
+                Posts
+              </Text>
+            </p>
+          </Link>
+          <Link
+            to="/faqs"
+            // style={{
+            //   display: "flex",
+            //   flexDirection: "row",
+            //   alignContent: "center",
+            //   alignItems: "center",
+            // }}
+          >
+            <p
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text size="18px" color={"black"}>
+                Faqs
+              </Text>
+            </p>
+          </Link>
+        </header>
         <Root />
+
         {/* <Test /> */}
       </LanguageProvider>
     </KotiiThemeProvider>
+  );
+};
+
+const AppOld = () => {
+  return (
+    <>
+      <header>
+        <Link
+          to="/"
+          // style={{
+          //   display: "flex",
+          //   flexDirection: "row",
+          //   alignContent: "center",
+          //   alignItems: "center",
+          // }}
+        >
+          <p
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text size="18px" color={"black"}>
+              Home
+            </Text>
+          </p>
+        </Link>
+        <Link
+          to="/about"
+          // style={{
+          //   display: "flex",
+          //   flexDirection: "row",
+          //   alignContent: "center",
+          //   alignItems: "center",
+          // }}
+        >
+          <p
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text size="18px" color={"black"}>
+              About
+            </Text>
+          </p>
+        </Link>
+        <Link
+          to="/posts"
+          // style={{
+          //   display: "flex",
+          //   flexDirection: "row",
+          //   alignContent: "center",
+          //   alignItems: "center",
+          // }}
+        >
+          <p
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text size="18px" color={"black"}>
+              Posts
+            </Text>
+          </p>
+        </Link>
+      </header>
+      <p>Im the current app</p>;<div>Footer</div>
+    </>
   );
 };
 
