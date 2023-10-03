@@ -18,8 +18,9 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "cli",
-    "anzii-cli",
+    "scripts",
+    "kotii-scripts",
+    "react scripts",
     "scaffold"
   ],
   "repository": {
