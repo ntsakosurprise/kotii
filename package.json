@@ -18,7 +18,8 @@
     "build:api": "tsc -b ./tsconfig.json",
     "bootstrap": "lerna bootstrap",
     "clean": "lerna run --parallel clean",
-    "release": "lerna publish"
+    "release": "lerna publish",
+    "start": "kotii-scripts start"
   },
   "license": "ISC",
   "readmeFilename": "README.md",
