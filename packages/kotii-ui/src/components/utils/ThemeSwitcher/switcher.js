@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { BsCheck, BsFillMoonStarsFill as MoonIcon } from "react-icons/bs";
 import { MdOutlineLightMode as ToggleLight } from "react-icons/md";
 import Switch from "react-switch";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { useKotiiTheme } from "../../../context";
 
 // import { themes } from "../../config/themes";
@@ -17,6 +17,34 @@ import { useKotiiTheme } from "../../../context";
 /**
  * Hook that alerts clicks outside of the passed ref
  */
+// const rotate = keyframes`
+//  from {
+//    transform: rotate(0deg);
+//  }
+
+//  to {
+//    transform: rotate(360deg);
+//  }
+// `;
+
+const downOutAnimation = keyframes` 
+0% {
+  transform: translateZ(-50px) transLateY(20px);
+  opacity: 0
+}
+40% {
+  opacity: 0.2
+}
+60%{ opacity: 0.5}
+80% {
+  transform: translateZ(-10px) transLateY(0px);
+  opacity: .8
+}
+100% {
+  transform: translateZ(0px) transLateY(0px);
+  opacity: 1
+}
+`;
 function useOutsideAlerter(ref, closeOnOutside) {
   useEffect(() => {
     /**
@@ -45,10 +73,15 @@ const ThemeSelector = styled("button")(() => {
     backgroundColor: "transparent",
   };
 });
-
-const ThemeDropDown = styled("div")(() => {
+const DropWithAnim = styled.div`
+  animation-name: ${downOutAnimation};
+  animation-duration: 2s;
+  animation-iteration-count: 1;
+`;
+const ThemeDropDown = styled(DropWithAnim)(() => {
   return {
     position: "relative",
+    opacity: 1,
   };
 });
 
@@ -63,6 +96,7 @@ const List = styled("ul")((props) => {
     borderRadius: "5px",
     backgroundColor: "black",
     position: "absolute",
+    top: "5px",
     width: props?.width ? props?.width : "150px",
     right: 0,
   };
@@ -163,9 +197,7 @@ const ThemeSwitcher = () => {
               {it.label}
             </SwitcherText>
           </SwitcherTypo>
-          {it.label === "light" ||
-          it.label === "dark" ||
-          themeName != it.label ? null : (
+          {themeName != it.label ? null : (
             <SwitcherSlider>
               <Switch
                 onChange={handleSwitchleChange}
@@ -189,11 +221,7 @@ const ThemeSwitcher = () => {
       </ThemeSelector>
       {showThemes ? (
         <ThemeDropDown ref={wrapperRef}>
-          <List
-            width={themeName === "light" || themeName === "dark" ? 100 : 150}
-          >
-            {getListItems(getOptions())}
-          </List>
+          <List width={150}>{getListItems(getOptions())}</List>
         </ThemeDropDown>
       ) : null}
     </div>
