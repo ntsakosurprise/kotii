@@ -6,7 +6,7 @@ import { useTheme } from "../hooks";
 // import { ThemeProvider } from "styled-components";
 
 import { defaultProps as grommetTheme, Grommet } from "grommet";
-type ThemeModeProps = "dark" | "light" | "auto";
+type ThemeModeProps = "dark" | "light";
 type ThemeProps = {
   theme: Object;
   themeName: string;
