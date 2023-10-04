@@ -9,7 +9,6 @@ methods.init = function () {
 };
 
 methods.handleInterpreterCliInput = function (data) {
-  console.log("HANDLING CLI INPUT");
   const self = this;
   const pao = self.pao;
   const contains = pao.pa_contains;
@@ -22,9 +21,14 @@ methods.handleInterpreterCliInput = function (data) {
   const chalk = self.chalk;
   let stopFurtherExecution = false;
 
-  // self.logSync("Handling send-output Cli event")
-  // self.logSync("About to send output to std")
+  self.logSync("Handling send-output Cli event");
+  self.logSync("About to send output to std");
 
+  /*
+   Use arg package to get passed arguments to the cli. 
+   This arg packages take two objects: 1. An object of commands to be checked for availability.
+   2. An object of possible arguments passed to the cli script/ program
+  */
   const commands = arg(
     {
       "--cli": Boolean,
@@ -45,106 +49,101 @@ methods.handleInterpreterCliInput = function (data) {
       "-i": "--install",
     },
     {
-      argv: pao.PROMPT.slice(2),
+      argv: pao.PROMPT.slice(2), // Get passed arguments from the third item in the array of passed arguments
     }
   );
 
-  // console.log('Templates path')
-  // console.log(`${__dirname}`)
-  // console.log(`${getRootDir()}/templates/web`)
-  // console.log(`${getWorkingFolder()}`)
-  // // console.log(loadFile('./.config.js'))
-  // console.log(require.main.filename)
-  // return
+  /**
+   * Passed expected commands will be included in the _ property of the commands object returned by arg
+     Below, we check if the _ property contain any items, and if the first item is not 'cli'.
+	 About the cli argument, we menually set this at the beginning of our cli operations to be used for
+	 some internal configurations for cli applications built with anzii framework.
+   * */
+  if (commands._.length > 0 && commands._[0] !== "cli") {
+    // Get passed user commands from arg object
+    let userPassedCommands = commands._;
+    console.log("userPassedCommands", userPassedCommands);
 
-  // let set = {
+    if (Object.keys(commands).length <= 1) {
+      let skip = false;
+      if (
+        userPassedCommands[0] === "create-anzii-app" &&
+        userPassedCommands.length > 2
+      )
+        skip = true;
 
-  // 	defApp: arg['--yes'],
-  // 	command: arg["create-anzii-app"],
-  // 	web: arg['--web'] || false,
-  // 	cli: arg['--cli'] || false,
-  // 	remote: arg['--remote'] || false,
-  // 	git: arg['--git'] || false
-
-  // }
-
-  console.log("THE COMMANDS INTERPRETER");
-  console.log(commands);
-  // console.log(commands._)
-  // console.log(commands._.length)
-  // console.log(commands._[0])
-  // console.log(commands._.length > 0 && commands._[0] !== 'cli')
-  // console.log(commands._.length > 0)
-  // console.log(commands._[0] !== 'cli')
-  try {
-    if (commands._.length > 0 && commands._[0] !== "cli") {
-      // console.log('THE COMMANDS ARE SUPPLIED')
-      let simpCommands = commands._;
-      console.log("SIMPcommands", simpCommands);
-
-      if (Object.keys(commands).length <= 1) {
-        let skip = false;
-        if (simpCommands[0] === "create-anzii-app" && simpCommands.length > 2)
-          skip = true;
-
-        let com = simpCommands[0];
-        if (com === "--help" || com === "-h") com = "help";
-        if (com == "--version" || com === "-v") com = "version";
-        if (com === "create-anzii-app") {
-          com = "createAnziiAppCommand";
-        } else {
-          com = `${com}Command`;
-        }
-
-        if (!skip) {
-          if (self[com]) {
-            return self[com]();
-          } else {
-            console.log("THE PROCESS IS EXITING WITH ERROR CODE", com);
-            process.exit(1);
-          }
-        }
+      let com = userPassedCommands[0]; // Get the first expected command
+      /*
+		map the command to any of the keys defined for a given expected command in the app. This was to enable alternative
+		commands to the cli
+	  */
+      if (com === "--help" || com === "-h") com = "help";
+      if (com == "--version" || com === "-v") com = "version";
+      if (com === "create-anzii-app") {
+        com = "createAnziiAppCommand"; // Set this command for create-anzii-app command help
+      } else {
+        com = `${com}Command`; // Append Command string to evey command
       }
 
-      for (let cmd = 0; cmd < simpCommands.length; ++cmd) {
-        if (contains(self.commands, cmd)) {
-          if (self[simpCommands[cmd]]) self[simpCommands[cmd]]();
-          stopFurtherExecution = true;
-          break;
+      /*
+	   Only process commands if they are not create-anzii-app and passed commands are less than or equal to 2.
+	   These are used for help purposes and end with a 'Command' string
+	   */
+      if (!skip) {
+        if (self[com]) {
+          return self[com]();
         } else {
-          let newOptions = { ...commands };
-          newOptions.commands = simpCommands;
-          delete newOptions._;
-          let i = newOptions.commands.indexOf("cli");
-          if (i > 0) newOptions.commands.splice(i, 1);
-
-          console.log(
-            chalk.yellow(
-              figlet.textSync("Welcome to ANZII-CLI", {
-                horizontalLayout: "full",
-              })
-            )
-          );
-
-          self.emit({
-            type: simpCommands[cmd],
-            data: {
-              commands: newOptions,
-              callback: self.getFeedback.bind(self),
-            },
-          });
-          break;
+          console.log("THE PROCESS IS EXITING WITH ERROR CODE", com);
+          process.exit(1);
         }
       }
-    } else {
-      console.log("THE LENGTH IS");
-      return self.showAvailableCommands();
     }
 
-    if (stopFurtherExecution) return;
-  } catch (error) {
-    console.log("THE COMMANDS ERROR", error);
+    for (let cmd = 0; cmd < userPassedCommands.length; ++cmd) {
+      let commandName = userPassedCommands[cmd];
+      console.log("COMMAND NAME", commandName);
+      console.log("THE SELF COMMANDS", self.commands);
+      if (contains(self.commands, commandName) && self[commandName]) {
+        console.log("THE APP CONTAINS THE COMMAND", self[commandName]);
+        if (self[commandName]) self[commandName]();
+        stopFurtherExecution = true;
+        break;
+      } else {
+        let newOptions = { ...commands };
+        newOptions.commands = userPassedCommands;
+        delete newOptions._;
+        let i = newOptions.commands.indexOf("cli");
+        if (i > 0) newOptions.commands.splice(i, 1);
+
+        console.log(
+          chalk.yellow(
+            figlet.textSync("Welcome to ANZII-CLI", {
+              horizontalLayout: "full",
+            })
+          )
+        );
+
+        self.emit({
+          type: userPassedCommands[cmd],
+          data: {
+            commands: newOptions,
+            callback: self.getFeedback.bind(self),
+          },
+        });
+        break;
+      }
+    }
+  } else {
+    console.log("THE LENGTH IS");
+    /*
+	  Show available commands that are expected to be passed if none of them has been passed to the script.
+	  showAvailableCommands() contains a list of valid commands available to the cli program.
+	
+	*/
+    return self.showAvailableCommands();
   }
+
+  if (stopFurtherExecution) return;
 
   // let message = [  {
 
@@ -347,6 +346,12 @@ methods.createAnziiAppCommand = function () {
 	`;
 
   console.log(help);
+};
+
+methods.startCommand = function () {
+  const self = this;
+  const pao = self.pao;
+  const chalk = self.chalk;
 };
 
 module.exports = methods;
