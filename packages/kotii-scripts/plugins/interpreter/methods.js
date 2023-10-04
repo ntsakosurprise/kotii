@@ -106,8 +106,8 @@ methods.handleInterpreterCliInput = function (data) {
 
     for (let cmd = 0; cmd < userPassedCommands.length; ++cmd) {
       let commandName = userPassedCommands[cmd];
-      console.log("COMMAND NAME", commandName);
-      console.log("THE SELF COMMANDS", self.commands);
+      self.logSync("COMMAND NAME", commandName);
+      self.logSync("THE SELF COMMANDS", self.commands);
       if (contains(self.commands, commandName) && self[commandName]) {
         console.log("THE APP CONTAINS THE COMMAND", self[commandName]);
         if (self[commandName]) self[commandName]();
