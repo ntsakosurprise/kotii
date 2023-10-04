@@ -19,7 +19,7 @@
     "bootstrap": "lerna bootstrap",
     "clean": "lerna run --parallel clean",
     "release": "lerna publish",
-    "start": "cd packages/kotii-scripts && node app.js start"
+    "start": "cd packages/kotii-scripts && node app.js create-anzii-app something"
   },
   "license": "ISC",
   "readmeFilename": "README.md",
