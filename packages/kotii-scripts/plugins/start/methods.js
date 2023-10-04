@@ -8,7 +8,15 @@ methods.init = function () {
 };
 
 methods.handleStartScript = function (data) {
-  console.log("THE DATA OF START SCRIPTS", data);
+  console.log("THE DAT OF START SCRIPTS", data);
+  const self = this;
+  self.emit({
+    type: "context-app",
+    data: {
+      myName: "ntsako",
+      callback: () => console.log("WALAH"),
+    },
+  });
   data.callback({ message: "Start plugin successfully called" });
   return;
 };
