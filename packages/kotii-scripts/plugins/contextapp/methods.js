@@ -8,9 +8,22 @@ methods.init = function () {
 };
 
 methods.handleContextApp = function (data) {
-  console.log("THE DATA OF START SCRIPTS", data);
-  data.callback({ message: "Start plugin successfully called" });
+  // console.log("THE DATA OF START SCRIPTS", data);
+  const self = this;
+  self.getContextAppInfo();
+  data.callback({ message: "Context app plugin successfully called" });
   return;
+};
+
+methods.getContextAppInfo = function () {
+  const self = this;
+  const pao = self.pao;
+  const getWorkingFolder = pao.pa_getWorkingFolder;
+  const createFolderContent = pao.pa_createFolderContent;
+  const makeFolderSync = pao.pa_makeFolderSync;
+  const getRootDir = pao.pa_getRootDir;
+  // self.callback = data.callback;
+  console.log("THE WORKING DIR INFORMATION", getWorkingFolder(), getRootDir());
 };
 
 methods.namespace = function (data) {

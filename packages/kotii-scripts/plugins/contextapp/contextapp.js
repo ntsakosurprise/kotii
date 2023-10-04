@@ -8,7 +8,8 @@ class ContextApp {
     this.pao = pao;
 
     this.init = methods.init;
-    this.handleContextApp = methods.ContextApp;
+    this.handleContextApp = methods.handleContextApp;
+    this.getContextAppInfo = methods.getContextAppInfo;
   }
 }
 
