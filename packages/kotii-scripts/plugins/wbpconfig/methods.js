@@ -3,11 +3,11 @@ methods.init = function () {
   // console.log('Bitbucket has been initialised')
   console.log("THE VALUE OF THIS", this);
   this.listens({
-    "dev-server": this.handleDevServer.bind(this),
+    "webpack-config": this.handleWebpackConfig.bind(this),
   });
 };
 
-methods.handleDevServer = function (data) {
+methods.handleWebpackConfig = function (data) {
   console.log("THE DATA OF START SCRIPTS", data);
   data.callback({ message: "Start plugin successfully called" });
   return;

@@ -8,7 +8,7 @@ class WebpackConfig {
     this.pao = pao;
 
     this.init = methods.init;
-    this.handleDevServer = methods.handleDevServer;
+    this.handleWebpackConfig = methods.handleWebpackConfig;
   }
 }
 
