@@ -6,6 +6,11 @@ const Github = require("./github/index");
 const Bitbucket = require("./bitbucket/index");
 const Configstorer = require("./configstore/index");
 const Start = require("./start/index");
+const Config = require("./config");
+const Build = require("./buildsc");
+const Init = require("./init");
+const WebpackConfig = require("./wbpconfig");
+const DevServer = require("./devserver");
 
 module.exports = {
   Interpreter,
@@ -15,4 +20,9 @@ module.exports = {
   Bitbucket,
   Configstorer,
   Start,
+  Config,
+  Build,
+  Init,
+  WebpackConfig,
+  DevServer,
 };
