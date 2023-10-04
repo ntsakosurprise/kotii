@@ -8,7 +8,7 @@ class Start {
     this.pao = pao;
 
     this.init = methods.init;
-    this.handleStartScripts = methods.handleStartScripts;
+    this.handleStartScript = methods.handleStartScript;
   }
 }
 
