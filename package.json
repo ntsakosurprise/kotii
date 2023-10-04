@@ -14,11 +14,12 @@
     ]
   },
   "scripts": {
-    "build": "run-p clean run-s build:api",
     "build:api": "tsc -b ./tsconfig.json",
     "bootstrap": "lerna bootstrap",
     "clean": "lerna run --parallel clean",
-    "release": "lerna publish"
+    "release": "lerna publish",
+    "start": "cd packages/kotii-scripts && node app.js start",
+    "build": "cd packages/kotii-scripts && node app.js build"
   },
   "license": "ISC",
   "readmeFilename": "README.md",
