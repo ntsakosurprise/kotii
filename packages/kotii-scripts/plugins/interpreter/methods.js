@@ -120,18 +120,18 @@ methods.handleInterpreterCliInput = function (data) {
         let i = newOptions.commands.indexOf("cli");
         if (i > 0) newOptions.commands.splice(i, 1);
 
-        console.log(
-          chalk.yellow(
-            figlet.textSync("Welcome to ANZII-CLI", {
-              horizontalLayout: "full",
-            })
-          )
-        );
+        // console.log(
+        //   chalk.yellow(
+        //     figlet.textSync("Welcome to ANZII-CLI", {
+        //       horizontalLayout: "full",
+        //     })
+        //   )
+        // );
 
         self.emit({
           type: userPassedCommands[cmd],
           data: {
-            commands: newOptions,
+            commands: newOptions.commands,
             callback: self.getFeedback.bind(self),
           },
         });
