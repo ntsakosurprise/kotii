@@ -11,6 +11,7 @@ const Build = require("./buildsc");
 const Init = require("./init");
 const WebpackConfig = require("./wbpconfig");
 const DevServer = require("./devserver");
+const ContextApp = require("./contextapp");
 
 module.exports = {
   Interpreter,
@@ -25,4 +26,5 @@ module.exports = {
   Init,
   WebpackConfig,
   DevServer,
+  ContextApp,
 };
