@@ -3,16 +3,14 @@ methods.init = function () {
   // console.log('Bitbucket has been initialised')
   console.log("THE VALUE OF THIS", this);
   this.listens({
-    "start-script": this.handleStartScript.bind(this),
+    start: this.handleStartScript.bind(this),
   });
 };
 
 methods.handleStartScript = function (data) {
   console.log("THE DATA OF START SCRIPTS", data);
+  data.callback({ message: "Start plugin successfully called" });
   return;
-  const self = this;
-  const { bit } = data;
-  self.callback = data.callback;
 };
 
 methods.namespace = function (data) {
