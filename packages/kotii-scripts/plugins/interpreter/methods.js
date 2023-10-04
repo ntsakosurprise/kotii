@@ -29,6 +29,7 @@ methods.handleInterpreterCliInput = function (data) {
    This arg packages take two objects: 1. An object of commands to be checked for availability.
    2. An object of possible arguments passed to the cli script/ program
   */
+
   const commands = arg(
     {
       "--cli": Boolean,
@@ -47,6 +48,7 @@ methods.handleInterpreterCliInput = function (data) {
       "-g": "--git",
       "-y": "--yes",
       "-i": "--install",
+      "-h": "--help",
     },
     {
       argv: pao.PROMPT.slice(2), // Get passed arguments from the third item in the array of passed arguments
@@ -62,42 +64,45 @@ methods.handleInterpreterCliInput = function (data) {
   if (commands._.length > 0 && commands._[0] !== "cli") {
     // Get passed user commands from arg object
     let userPassedCommands = commands._;
-    console.log("userPassedCommands", userPassedCommands);
+    // Get the first item from the commands. This item is considered a command
+    // let firstItemAsCommand = userPassedCommands[0];
+    // console.log("userPassedCommands", userPassedCommands);
+    // console.log("Objects commands", Object.keys(commands));
 
-    if (Object.keys(commands).length <= 1) {
-      let skip = false;
-      if (
-        userPassedCommands[0] === "create-anzii-app" &&
-        userPassedCommands.length > 2
-      )
-        skip = true;
+    // if (Object.keys(commands).length <= 1) {
+    //   let skip = false;
+    //   if (
+    //     firstItemAsCommand === "create-anzii-app" &&
+    //     userPassedCommands.length > 2
+    //   )
+    //     skip = true;
 
-      let com = userPassedCommands[0]; // Get the first expected command
-      /*
-		map the command to any of the keys defined for a given expected command in the app. This was to enable alternative
-		commands to the cli
-	  */
-      if (com === "--help" || com === "-h") com = "help";
-      if (com == "--version" || com === "-v") com = "version";
-      if (com === "create-anzii-app") {
-        com = "createAnziiAppCommand"; // Set this command for create-anzii-app command help
-      } else {
-        com = `${com}Command`; // Append Command string to evey command
-      }
+    //   /*
+    //    Only process commands if they are not create-anzii-app and passed commands are less than or equal to 2.
+    //    These are used for help purposes and end with a 'Command' string
+    //    */
+    //   if (!skip) {
+    //     let com = firstItemAsCommand; // Get the first expected command
+    //     /*
+    // 	map the command to any of the keys defined for a given expected command in the app. This was to enable alternative
+    // 	commands to the cli
+    //   */
+    //     if (com === "--help" || com === "-h") com = "help";
+    //     if (com == "--version" || com === "-v") com = "version";
+    //     if (com === "create-anzii-app") {
+    //       com = "createAnziiAppCommand"; // Set this command for create-anzii-app command help
+    //     } else {
+    //       com = `${com}Command`; // Append Command string to evey command
+    //     }
 
-      /*
-	   Only process commands if they are not create-anzii-app and passed commands are less than or equal to 2.
-	   These are used for help purposes and end with a 'Command' string
-	   */
-      if (!skip) {
-        if (self[com]) {
-          return self[com]();
-        } else {
-          console.log("THE PROCESS IS EXITING WITH ERROR CODE", com);
-          process.exit(1);
-        }
-      }
-    }
+    //     if (self[com]) {
+    //       return self[com]();
+    //     } else {
+    //       console.log("THE PROCESS IS EXITING WITH ERROR CODE", com);
+    //       process.exit(1);
+    //     }
+    //   }
+    // }
 
     for (let cmd = 0; cmd < userPassedCommands.length; ++cmd) {
       let commandName = userPassedCommands[cmd];
