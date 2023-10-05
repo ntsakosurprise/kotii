@@ -29,6 +29,16 @@ methods.setContexts = function (data) {
   self.appRoot = getRootDir();
 };
 
+methods.getAppInContextResources = function () {
+  const self = this;
+  const pao = self.pao;
+  const { appFolder } = self;
+
+  const resources = {
+    appEnv: self.getFilePath(appFolder, ".env"),
+  };
+  console.log("THE RESOURCES OBJECT", resources);
+};
 methods.getContextAppInfo = function () {
   const self = this;
   const pao = self.pao;
@@ -37,7 +47,14 @@ methods.getContextAppInfo = function () {
   const makeFolderSync = pao.pa_makeFolderSync;
 
   // self.callback = data.callback;
+  self.getAppInContextResources();
   console.log("THE WORKING DIR INFORMATION", self.appFolder, self.appRoot);
+};
+
+methods.getFilePath = function (fromDir, to) {
+  const self = this;
+  const path = require("path");
+  return path.resolve(fromDir, to);
 };
 
 methods.namespace = function (data) {
