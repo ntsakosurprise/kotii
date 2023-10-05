@@ -13,6 +13,8 @@ class ContextApp {
     this.handleContextApp = methods.handleContextApp;
     this.getContextAppInfo = methods.getContextAppInfo;
     this.setContexts = methods.setContexts;
+    this.getAppInContextResources = methods.getAppInContextResources;
+    this.getFilePath = methods.getFilePath;
   }
 }
 
