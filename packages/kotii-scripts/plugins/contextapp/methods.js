@@ -11,8 +11,12 @@ methods.init = function () {
 methods.handleContextApp = function (data) {
   // console.log("THE DATA OF START SCRIPTS", data);
   const self = this;
-  self.getContextAppInfo();
-  data.callback({ message: "Context app plugin successfully called" });
+  const resources = self.getContextAppInfo();
+
+  data.callback({
+    message: "Context app plugin successfully called",
+    data: resources,
+  });
   return;
 };
 
@@ -34,7 +38,6 @@ methods.getAppInContextResources = function () {
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
   const { appFolder, getFilePath, checkIfIsFile } = self;
-  checkIfIsFile(getFilePath(appFolder, "package.json"));
 
   const resources = {
     appEnv: getFilePath(appFolder, ".env"),
@@ -44,6 +47,8 @@ methods.getAppInContextResources = function () {
     appTsConfig: getFilePath(appFolder, "tsconfig.ts"),
     appJsConfig: getFilePath(appFolder, "tsconfig.js"),
     appIndexHtml: getFilePath(appFolder, "public/index.html"),
+    appAssetsPublic: getFilePath(appFolder, "public"),
+    appBuildFolder: getFilePath(appFolder, "build"),
     appPublicPath: checkIfIsFile(getFilePath(appFolder, "package.json"))
       ? loadFile(getFilePath(appFolder, "package.json"))?.homePage || "/"
       : "/",
@@ -56,6 +61,7 @@ methods.getAppInContextResources = function () {
   };
 
   console.log("THE RESOURCES OBJECT", resources);
+  return resources;
 };
 methods.getContextAppInfo = function () {
   const self = this;
@@ -65,8 +71,8 @@ methods.getContextAppInfo = function () {
   const makeFolderSync = pao.pa_makeFolderSync;
 
   // self.callback = data.callback;
-  self.getAppInContextResources();
-  console.log("THE WORKING DIR INFORMATION", self.appFolder, self.appRoot);
+  return self.getAppInContextResources();
+  // console.log("THE WORKING DIR INFORMATION", self.appFolder, self.appRoot);
 };
 
 methods.getFilePath = function (fromDir, to) {
