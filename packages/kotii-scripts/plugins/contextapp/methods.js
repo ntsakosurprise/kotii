@@ -33,8 +33,8 @@ methods.getAppInContextResources = function () {
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
-  const { appFolder, getFilePath } = self;
-  self.checkIfIsFile(getFilePath(appFolder, "package.json"));
+  const { appFolder, getFilePath, checkIfIsFile } = self;
+  checkIfIsFile(getFilePath(appFolder, "package.json"));
 
   const resources = {
     appEnv: getFilePath(appFolder, ".env"),
@@ -43,8 +43,18 @@ methods.getAppInContextResources = function () {
     appSrc: getFilePath(appFolder, "src"),
     appTsConfig: getFilePath(appFolder, "tsconfig.ts"),
     appJsConfig: getFilePath(appFolder, "tsconfig.js"),
-    // appPublicPath: loadFile(appFolder, 'package.json') ?
+    appIndexHtml: getFilePath(appFolder, "public/index.html"),
+    appPublicPath: checkIfIsFile(getFilePath(appFolder, "package.json"))
+      ? loadFile(getFilePath(appFolder, "package.json"))?.homePage || "/"
+      : "/",
+    appNodeModules: getFilePath(appFolder, "node_modules"),
+    appCustomWbpConfig: checkIfIsFile(
+      getFilePath(appFolder, "webpack.custom.js")
+    )
+      ? loadFile(getFilePath(appFolder, "webpack.custom.js"))
+      : null,
   };
+
   console.log("THE RESOURCES OBJECT", resources);
 };
 methods.getContextAppInfo = function () {
@@ -68,11 +78,17 @@ methods.getFilePath = function (fromDir, to) {
 methods.checkIfIsFile = function (filePath) {
   const self = this;
   const fs = require("fs");
-  const stats = fs.statSync(filePath);
-  console.log("FILE STATISTICS", stats);
-  const isFile = stats.isFile();
-  console.log("IS FILE", isFile);
-  return isFile;
+  let stats;
+  try {
+    stats = fs.statSync(filePath);
+    // console.log("FILE STATISTICS", stats);
+    const isFile = stats.isFile();
+    // console.log("IS FILE", isFile);
+    return isFile;
+  } catch (error) {
+    // console.log("THE STATS THROWN", error);
+    return false;
+  }
 };
 
 methods.namespace = function (data) {
