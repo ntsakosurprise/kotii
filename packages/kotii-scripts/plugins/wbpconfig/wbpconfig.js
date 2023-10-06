@@ -16,6 +16,7 @@ class WebpackConfig {
     this.configureWebPack = methods.configureWebPack;
     this.giveWebpackFunction = methods.giveWebpackFunction;
     this.setContextEnv = methods.setContextEnv;
+    this.configureDevServer = methods.configureDevServer;
   }
 }
 
