@@ -32,10 +32,18 @@ methods.setContexts = function (data) {
 methods.getAppInContextResources = function () {
   const self = this;
   const pao = self.pao;
-  const { appFolder } = self;
+  const loadFile = pao.pa_loadFile;
+  const { appFolder, getFilePath } = self;
+  self.checkIfIsFile(getFilePath(appFolder, "package.json"));
 
   const resources = {
-    appEnv: self.getFilePath(appFolder, ".env"),
+    appEnv: getFilePath(appFolder, ".env"),
+    appFolder: getFilePath(appFolder, "."),
+    appIndexFile: getFilePath(appFolder, "src/index.js"),
+    appSrc: getFilePath(appFolder, "src"),
+    appTsConfig: getFilePath(appFolder, "tsconfig.ts"),
+    appJsConfig: getFilePath(appFolder, "tsconfig.js"),
+    // appPublicPath: loadFile(appFolder, 'package.json') ?
   };
   console.log("THE RESOURCES OBJECT", resources);
 };
@@ -55,6 +63,16 @@ methods.getFilePath = function (fromDir, to) {
   const self = this;
   const path = require("path");
   return path.resolve(fromDir, to);
+};
+
+methods.checkIfIsFile = function (filePath) {
+  const self = this;
+  const fs = require("fs");
+  const stats = fs.statSync(filePath);
+  console.log("FILE STATISTICS", stats);
+  const isFile = stats.isFile();
+  console.log("IS FILE", isFile);
+  return isFile;
 };
 
 methods.namespace = function (data) {
