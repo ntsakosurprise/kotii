@@ -8,8 +8,8 @@ methods.init = function () {
 };
 
 methods.handleWebpackConfig = function (data) {
-  console.log("THE DATA OF START SCRIPTS", data);
-  data.callback({ message: "Start plugin successfully called" });
+  console.log("THE DATA OF WebPack config SCRIPTS", data);
+  data.callback({ message: "Webpack plugin successfully called" });
   return;
 };
 
