@@ -1,15 +1,17 @@
 const webpack = require("webpack");
 
-module.exports = function (context) {
-  console.log("THE CONTEXT", context);
+module.exports = () => {
+  //   console.log("THE PROCESS", process.env.APPCONTEXT);
+  let env = JSON.parse(process.env.APPCONTEXT);
+  //   console.log("THE APP PARSED", env);
   return {
-    entry: context.appIndexFile,
+    entry: env.appIndexFile,
     output: {
       filename: "[main].bundle.js",
-      path: context.appBuildFolder,
+      path: env.appBuildFolder,
     },
     module: {
-      rule: [
+      rules: [
         {
           test: "/.js$/",
           use: "babel-loader",
