@@ -17,11 +17,16 @@ methods.handleWebpackConfig = function (data) {
 
 methods.configureWebPack = function (data) {
   const self = this;
-  const { webPackConfig } = self;
+  const { webPackConfig, webpack, setContextEnv } = self;
 
-  const madeConfig = webPackConfig(data);
-  console.log("madeConfig", madeConfig);
+  setContextEnv(data);
+  const wbpCompiler = webpack(webPackConfig());
+  console.log("THE WEBPACK COMPILER", wbpCompiler);
   return;
+};
+
+methods.setContextEnv = (mdconfig) => {
+  process.env["APPCONTEXT"] = JSON.stringify(mdconfig);
 };
 
 methods.api = function (data) {
