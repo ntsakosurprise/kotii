@@ -9,16 +9,19 @@ methods.init = function () {
 
 methods.handleWebpackConfig = function (data) {
   console.log("THE DATA OF WebPack config SCRIPTS", data);
+  const self = this;
+  self.configureWebPack(data.payload);
   data.callback({ message: "Webpack plugin successfully called" });
   return;
 };
 
-methods.namespace = function (data) {
+methods.configureWebPack = function (data) {
   const self = this;
+  const { webPackConfig } = self;
 
-  const clientOptions = { auth: data.creds };
-  const bitbucket = new Bitbucket(clientOptions);
-  return bitbucket;
+  const madeConfig = webPackConfig(data);
+  console.log("madeConfig", madeConfig);
+  return;
 };
 
 methods.api = function (data) {
