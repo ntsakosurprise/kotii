@@ -9,8 +9,20 @@ methods.init = function () {
 
 methods.handleDevServer = function (data) {
   console.log("THE DATA OF START SCRIPTS", data);
-  data.callback({ message: "Start plugin successfully called" });
-  return;
+  const self = this;
+  const { webpackDevServer } = self;
+  const { compiler, webpackConfig } = data.payload;
+
+  const devServerOptions = { ...webpackConfig.devServer, open: false };
+  const server = new webpackDevServer(devServerOptions, compiler);
+
+  const runServer = async () => {
+    console.log("Starting DevServer");
+    data.callback({ message: "Webpack dev-server has started running" });
+    await server.start();
+  };
+
+  runServer();
 };
 
 methods.namespace = function (data) {
