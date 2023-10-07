@@ -3,16 +3,15 @@ const HTMLWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = () => {
   //   console.log("THE PROCESS", process.env.APPCONTEXT);
-  let env = JSON.parse(process.env.APPCONTEXT);
-  //   console.log("THE APP PARSED", env);
-  console.log("ENV APP FOLDER");
+  let env = JSON.parse(process.env.APPCONTEXT); // GET the set APPCONTEXT environment variable
+
   return {
     entry: env.appIndexFile, // Entry should be from the provided app's index file from src
     context: env.appFolder, // set webpack context to be the app in context's folder
     mode: "development",
     output: {
       filename: "[main].bundle.js",
-      path: `${env.appBuildFolder}`,
+      path: `${env.appBuildFolder}`, // save emitted bundle to this path or folder
     },
     module: {
       rules: [
@@ -52,13 +51,13 @@ module.exports = () => {
       devMiddleware: {
         writeToDisk: true /*serve in-memory[devserver] as you did before but save to disk as well (changes to file[s] respected) */,
       },
-      // static: {
-      //   directory: env.appAssetsPublic,
-      // },
+      static: {
+        directory: env.appAssetsPublic, // config devserv to server public assets from here
+      },
     },
     plugins: [
       new HTMLWebpackPlugin({
-        template: env.appIndexHtml,
+        template: env.appIndexHtml, // set path to the html template
         filename: "index.html",
       }),
     ],
