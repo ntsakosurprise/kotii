@@ -48,6 +48,7 @@ module.exports = () => {
     },
     devServer: {
       allowedHosts: "auto",
+      port: 9000,
       devMiddleware: {
         writeToDisk: true /*serve in-memory[devserver] as you did before but save to disk as well (changes to file[s] respected) */,
       },
