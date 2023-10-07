@@ -1,7 +1,8 @@
 const methods = {};
 methods.init = function () {
   // console.log('Bitbucket has been initialised')
-  console.log("THE VALUE OF THIS", this);
+  console.log("THE VALUE OF THIS devser");
+
   this.listens({
     "dev-server": this.handleDevServer.bind(this),
   });
@@ -10,7 +11,7 @@ methods.init = function () {
 methods.handleDevServer = async function (data) {
   console.log("THE DATA OF START SCRIPTS", data);
   const self = this;
-  const { webpackDevServer, open } = self;
+  const { webpackDevServer } = self;
   const { compiler, webpackConfig } = data.payload;
 
   const devServerOptions = { ...webpackConfig.devServer, open: false };
@@ -23,7 +24,17 @@ methods.handleDevServer = async function (data) {
   };
 
   runServer();
-  await open("https://sindresorhus.com");
+  const open = (await import("open")).default;
+  console.log("THE OPEN", open);
+  await open("http://localhost:9000");
+};
+
+methods.dynamicImport = async function () {
+  const self = this;
+  console.log("THE DYNAMI GOT A CALL");
+  const open = await import("open");
+  console.log("THE OPEN", open);
+  return open;
 };
 
 // methods.namespace = function (data) {
