@@ -13,7 +13,7 @@ methods.handleDevServer = function (data) {
   const { webpackDevServer } = self;
   const { compiler, webpackConfig } = data.payload;
 
-  const devServerOptions = { ...webpackConfig.devServer, open: false };
+  const devServerOptions = { ...webpackConfig.devServer, open: true };
   const server = new webpackDevServer(devServerOptions, compiler);
 
   const runServer = async () => {
@@ -25,19 +25,19 @@ methods.handleDevServer = function (data) {
   runServer();
 };
 
-methods.namespace = function (data) {
-  const self = this;
+// methods.namespace = function (data) {
+//   const self = this;
 
-  const clientOptions = { auth: data.creds };
-  const bitbucket = new Bitbucket(clientOptions);
-  return bitbucket;
-};
+//   const clientOptions = { auth: data.creds };
+//   const bitbucket = new Bitbucket(clientOptions);
+//   return bitbucket;
+// };
 
-methods.api = function (data) {
-  const self = this;
-  const clientOptions = { auth: data.token };
-  const bitbucket = new Bitbucket(clientOptions);
-  return bitbucket;
-};
+// methods.api = function (data) {
+//   const self = this;
+//   const clientOptions = { auth: data.token };
+//   const bitbucket = new Bitbucket(clientOptions);
+//   return bitbucket;
+// };
 
 module.exports = methods;
