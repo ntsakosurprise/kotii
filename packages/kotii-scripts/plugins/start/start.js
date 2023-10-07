@@ -9,6 +9,7 @@ class Start {
 
     this.init = methods.init;
     this.handleStartScript = methods.handleStartScript;
+    this.getWebPackConfig = methods.getWebPackConfig;
   }
 }
 
