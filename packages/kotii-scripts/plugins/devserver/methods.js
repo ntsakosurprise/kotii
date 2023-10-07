@@ -7,13 +7,13 @@ methods.init = function () {
   });
 };
 
-methods.handleDevServer = function (data) {
+methods.handleDevServer = async function (data) {
   console.log("THE DATA OF START SCRIPTS", data);
   const self = this;
-  const { webpackDevServer } = self;
+  const { webpackDevServer, open } = self;
   const { compiler, webpackConfig } = data.payload;
 
-  const devServerOptions = { ...webpackConfig.devServer, open: true };
+  const devServerOptions = { ...webpackConfig.devServer, open: false };
   const server = new webpackDevServer(devServerOptions, compiler);
 
   const runServer = async () => {
@@ -23,6 +23,7 @@ methods.handleDevServer = function (data) {
   };
 
   runServer();
+  await open("https://sindresorhus.com");
 };
 
 // methods.namespace = function (data) {
