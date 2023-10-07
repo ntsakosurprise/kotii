@@ -37,7 +37,17 @@ methods.getAppInContextResources = function () {
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
-  const { appFolder, getFilePath, checkIfIsFile } = self;
+  const { appFolder: folder, getFilePath, checkIfIsFile } = self;
+  const templateFolder = folder.slice(0, folder.indexOf("/kotii-scripts"));
+  const appPackageJson = loadFile(getFilePath(folder, "package.json"));
+  const isPackageNameKotii =
+    appPackageJson.name === "kotii-scripts" ? true : false;
+  const appFolder = isPackageNameKotii
+    ? `${templateFolder}/kotii-templates/spa`
+    : folder;
+  console.log("THE APP PACKAGE JSON", appPackageJson);
+  console.log("THE APP CONFIG", isPackageNameKotii);
+  console.log("THE TEMPLATE FOLDER", templateFolder);
 
   const resources = {
     appEnv: getFilePath(appFolder, ".env"),
