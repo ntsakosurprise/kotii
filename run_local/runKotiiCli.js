@@ -1,7 +1,16 @@
-//const createTarball = require("./create-tarball");
-const parseScriptArguments = require("./parseScriptArguments");
+const createTarball = require("./createTarball");
+//const parseScriptArguments = require("./parseScriptArguments");
 const path = require("path");
 
-console.log("WORKING DIR", process.cwd());
-console.log("path_dirname", parseScriptArguments);
+const scriptPath = __dirname;
+const contextScriptRoot = path.join(scriptPath, "..");
+//const workingDir = process.cwd();
+const packagesPath = path.join(contextScriptRoot, "packages");
+const kotiiScriptsPath = path.join(packagesPath, "kotii-scripts");
+console.log("Packages PATH", kotiiScriptsPath);
+createTarball(kotiiScriptsPath, "kotii-scripts");
+// console.log("WORKING DIR", process.cwd());
+// console.log("path_dirname", __dirname);
+// console.log("path.join", path.join(__dirname, ".."));
+// console.log("THE REAL PATH ", path.join(process.cwd()));
 //createTarball();
