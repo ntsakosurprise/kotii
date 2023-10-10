@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 let methods = {};
 methods.init = function () {
-  console.log("THE INTEPRETER INITIALIZES");
   this.logSync("Interpreter is initialising");
   this.listens({
     "start-io-operations": this.handleInterpreterCliInput.bind(this),

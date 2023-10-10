@@ -1,7 +1,7 @@
 const methods = {};
 methods.init = function () {
   // console.log('Bitbucket has been initialised')
-  console.log("THE VALUE OF THIS", this);
+  // console.log("THE VALUE OF THIS", this);
   this.listens({
     init: this.handleInitScript.bind(this),
   });
