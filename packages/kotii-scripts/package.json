@@ -97,6 +97,7 @@
   "files": [
     "dist/",
     "templates/",
+    "plugins/",
     "app.js",
     "README.md",
     "CONTRIBUTING.md",
