@@ -1,6 +1,7 @@
 const path = require("path");
 //const webpack = require("webpack");
 const HTMLWebpackPlugin = require("html-webpack-plugin");
+const { env } = require("process");
 
 module.exports = {
   entry: ["./src/index.js"],
@@ -69,7 +70,7 @@ module.exports = {
   },
   plugins: [
     new HTMLWebpackPlugin({
-      template: __dirname + "/public/index.html",
+      template: env.ap,
       filename: "index.html",
     }),
   ],
