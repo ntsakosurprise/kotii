@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "bin": {
-    "kotii-scripts": "./app.js"
+    "create-kotii-app": "./app.js"
   },
   "scripts": {
     "test": "jest",
@@ -18,9 +18,9 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "scripts",
-    "kotii-scripts",
-    "react scripts",
+    "kotii-cli",
+    "create-kotii-app",
+    "react app bootstrap",
     "scaffold"
   ],
   "repository": {
