@@ -9,7 +9,6 @@ methods.init = function () {
 };
 
 methods.handleInterpreterCliInput = async function (data) {
-  console.log("HANDLING INTERPRETER");
   const self = this;
   const pao = self.pao;
   const contains = pao.pa_contains;
@@ -22,10 +21,8 @@ methods.handleInterpreterCliInput = async function (data) {
   const chalk = self.chalk;
   let stopFurtherExecution = false;
 
-  self.info("LOGGING");
   self.logSync("Handling send-output Cli event");
-  self.logSync("About to send output to std");
-  self.logSync("LOGGING");
+
   self.infoSync("ilog");
 
   /*
@@ -65,6 +62,8 @@ methods.handleInterpreterCliInput = async function (data) {
 	 About the cli argument, we menually set this at the beginning of our cli operations to be used for
 	 some internal configurations for cli applications built with kotii framework.
    * */
+  self.infoSync("SET USER COMMANDS");
+  self.infoSync(commands._);
   if (commands._.length > 0 && commands._[0] !== "cli") {
     // Get passed user commands from arg object
     let userPassedCommands = commands._;
@@ -110,8 +109,10 @@ methods.handleInterpreterCliInput = async function (data) {
 
     for (let cmd = 0; cmd < userPassedCommands.length; ++cmd) {
       let commandName = userPassedCommands[cmd];
-      self.logSync("COMMAND NAME", commandName);
-      self.logSync("THE SELF COMMANDS", self.commands);
+      self.logSync("COMMAND NAME");
+      self.logSync(commandName);
+      self.logSync("THE SELF COMMANDS");
+      self.logSync(self.commands);
       if (contains(self.commands, commandName) && self[commandName]) {
         console.log("THE APP CONTAINS THE COMMAND", self[commandName]);
         if (self[commandName]) self[commandName]();
