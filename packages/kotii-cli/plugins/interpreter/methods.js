@@ -9,6 +9,7 @@ methods.init = function () {
 };
 
 methods.handleInterpreterCliInput = async function (data) {
+  console.log("HANDLING INTERPRETER");
   const self = this;
   const pao = self.pao;
   const contains = pao.pa_contains;
@@ -21,8 +22,11 @@ methods.handleInterpreterCliInput = async function (data) {
   const chalk = self.chalk;
   let stopFurtherExecution = false;
 
+  self.info("LOGGING");
   self.logSync("Handling send-output Cli event");
   self.logSync("About to send output to std");
+  self.logSync("LOGGING");
+  self.infoSync("ilog");
 
   /*
    Use arg package to get passed arguments to the cli. 
