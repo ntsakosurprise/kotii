@@ -15,7 +15,7 @@ class Interpreter {
     this.clear = cleya;
     this.inquirer = inquirer;
     this.commands = {
-      ["create-anzii-app"]: "create-anzii-app",
+      ["create-kotii-app"]: "create-kotii-app",
     };
 
     this.init = methods.init;
@@ -26,7 +26,7 @@ class Interpreter {
     this.prompt = methods.prompt;
     this.outPut = methods.outPut;
     this.showAvailableCommands = methods.showAvailableCommands;
-    this.createAnziiAppCommand = methods.createAnziiAppCommand;
+    this.createKotiiAppCommand = methods.createKotiiAppCommand;
     this.helpCommand = methods.helpComand;
     this.versionCommand = methods.versionCommand;
   }

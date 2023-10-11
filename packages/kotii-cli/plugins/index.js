@@ -5,7 +5,7 @@ const Gitauth = require("./gitauth/index");
 const Github = require("./github/index");
 const Bitbucket = require("./bitbucket/index");
 const Configstorer = require("./configstore/index");
-const Config = require("./config");
+// const Config = require("./config");
 const Init = require("./init");
 
 module.exports = {
@@ -15,6 +15,5 @@ module.exports = {
   Github,
   Bitbucket,
   Configstorer,
-  Config,
   Init,
 };

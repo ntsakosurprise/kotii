@@ -8,7 +8,7 @@ methods.init = function () {
   });
 };
 
-methods.handleInterpreterCliInput = function (data) {
+methods.handleInterpreterCliInput = async function (data) {
   const self = this;
   const pao = self.pao;
   const contains = pao.pa_contains;
@@ -59,7 +59,7 @@ methods.handleInterpreterCliInput = function (data) {
    * Passed expected commands will be included in the _ property of the commands object returned by arg
      Below, we check if the _ property contain any items, and if the first item is not 'cli'.
 	 About the cli argument, we menually set this at the beginning of our cli operations to be used for
-	 some internal configurations for cli applications built with anzii framework.
+	 some internal configurations for cli applications built with kotii framework.
    * */
   if (commands._.length > 0 && commands._[0] !== "cli") {
     // Get passed user commands from arg object
@@ -72,13 +72,13 @@ methods.handleInterpreterCliInput = function (data) {
     // if (Object.keys(commands).length <= 1) {
     //   let skip = false;
     //   if (
-    //     firstItemAsCommand === "create-anzii-app" &&
+    //     firstItemAsCommand === "create-kotii-app" &&
     //     userPassedCommands.length > 2
     //   )
     //     skip = true;
 
     //   /*
-    //    Only process commands if they are not create-anzii-app and passed commands are less than or equal to 2.
+    //    Only process commands if they are not create-kotii-app and passed commands are less than or equal to 2.
     //    These are used for help purposes and end with a 'Command' string
     //    */
     //   if (!skip) {
@@ -89,8 +89,8 @@ methods.handleInterpreterCliInput = function (data) {
     //   */
     //     if (com === "--help" || com === "-h") com = "help";
     //     if (com == "--version" || com === "-v") com = "version";
-    //     if (com === "create-anzii-app") {
-    //       com = "createAnziiAppCommand"; // Set this command for create-anzii-app command help
+    //     if (com === "create-kotii-app") {
+    //       com = "createkotiiAppCommand"; // Set this command for create-kotii-app command help
     //     } else {
     //       com = `${com}Command`; // Append Command string to evey command
     //     }
@@ -122,7 +122,7 @@ methods.handleInterpreterCliInput = function (data) {
 
         // console.log(
         //   chalk.yellow(
-        //     figlet.textSync("Welcome to ANZII-CLI", {
+        //     figlet.textSync("Welcome to kotii-CLI", {
         //       horizontalLayout: "full",
         //     })
         //   )
@@ -154,7 +154,7 @@ methods.handleInterpreterCliInput = function (data) {
 
   // 	name: 'apptype',
   // 	type: 'list',
-  // 	message: 'What type of anzii app would you like to create?',
+  // 	message: 'What type of kotii app would you like to create?',
   // 	choices: ['backend/api/web','cli']
 
   // 	 }
@@ -162,7 +162,7 @@ methods.handleInterpreterCliInput = function (data) {
 
   // console.log(
   // 	chalk.yellow(
-  // 	  figlet.textSync('Welcome to ANZII-CLI', { horizontalLayout: 'full' })
+  // 	  figlet.textSync('Welcome to kotii-CLI', { horizontalLayout: 'full' })
   // 	)
   //   );
 
@@ -216,7 +216,7 @@ methods.handleCommands = function (parsedCommands) {
       });
     } else {
       self.logSync(
-        `command: ${parsedCommands} command is not recognised as anzii cli command, please type "anzii --help" to see a list of valid anzii commands.`
+        `command: ${parsedCommands} command is not recognised as kotii cli command, please type "kotii --help" to see a list of valid kotii commands.`
       );
     }
   }
@@ -265,11 +265,11 @@ methods.showAvailableCommands = function () {
   const chalk = self.chalk;
   let mainHelp = `
 
-	${chalk.greenBright("anzii [command] <options>")}
-	  ${chalk.cyan.bold("create-anzii-app")} ................ Creates anzii app
+	${chalk.greenBright("kotii [command] <options>")}
+	  ${chalk.cyan.bold("create-kotii-app")} ................ Creates kotii app
 	  ${chalk.cyan.bold(
       "version"
-    )} ............ show the current version of anzii-cli
+    )} ............ show the current version of kotii-cli
 	  ${chalk.cyan.bold("help")} ............... show help menu for a command
 	`;
 
@@ -282,22 +282,22 @@ methods.helpComand = function () {
   let help = `
 
 	${chalk.greenBright("help <options>")}
-	  ${chalk.cyan.bold("-c | --cli")} ................... Creates anzii cli app
+	  ${chalk.cyan.bold("-c | --cli")} ................... Creates kotii cli app
 	  ${chalk.cyan.bold(
       "-w | --web"
-    )} ................... Creates anzii app suitable for building web pages, apis, and any backend
+    )} ................... Creates kotii app suitable for building web pages, apis, and any backend
 	  ${chalk.cyan.bold(
       "-r | --remote"
-    )} ................ Creates a remote repo and initial commit for you anzii app 
+    )} ................ Creates a remote repo and initial commit for you kotii app 
 	  ${chalk.cyan.bold(
       "-help | --help"
-    )} ............... Shows help menu for create-anzii-app command
+    )} ............... Shows help menu for create-kotii-app command
 	  ${chalk.cyan.bold(
       "-g | --git"
-    )} ................... Initializes git for you anzii app
+    )} ................... Initializes git for your kotii app
 	  ${chalk.cyan.bold(
       "-y | --yes"
-    )} ................... Creates anzii app with default settings
+    )} ................... Creates kotii app with default settings
 	`;
 
   console.log(help);
@@ -312,42 +312,42 @@ methods.versionCommand = function () {
   // let help = `
 
   // ${chalk.greenBright('version <options>')}
-  //   ${chalk.cyan.bold('-c | --cli')} ................ Creates anzii cli app
-  //   ${chalk.cyan.bold('-w | --web')} ............ Creates anzii app suitable for building web pages, apis, and any backend
-  //   ${chalk.cyan.bold('-r | --remote')} ............... Creates a remote repo and initial commit for you anzii app
-  //   ${chalk.cyan.bold('-help | --help')} ............... Shows help menu for create-anzii-app command
-  //   ${chalk.cyan.bold('-g | --git')} ............... Initializes git for you anzii app
-  //   ${chalk.cyan.bold('-y | --yes')} ............... Creates anzii app with default settings
+  //   ${chalk.cyan.bold('-c | --cli')} ................ Creates kotii cli app
+  //   ${chalk.cyan.bold('-w | --web')} ............ Creates kotii app suitable for building web pages, apis, and any backend
+  //   ${chalk.cyan.bold('-r | --remote')} ............... Creates a remote repo and initial commit for you kotii app
+  //   ${chalk.cyan.bold('-help | --help')} ............... Shows help menu for create-kotii-app command
+  //   ${chalk.cyan.bold('-g | --git')} ............... Initializes git for you kotii app
+  //   ${chalk.cyan.bold('-y | --yes')} ............... Creates kotii app with default settings
   // `
 
   // console.log(help)
 };
 
-methods.createAnziiAppCommand = function () {
+methods.createKotiiAppCommand = function () {
   const self = this;
   const chalk = self.chalk;
   let help = `
 
-	${chalk.greenBright("create-anzii-app <options>")}
+	${chalk.greenBright("create-kotii-app <options>")}
 
 	  ${chalk.cyan.bold(
       "-c | --cli"
-    )}    ................... Creates anzii app suitable for building cli apps
+    )}    ................... Creates kotii app suitable for building cli apps
 	  ${chalk.cyan.bold(
       "-w | --web"
-    )}    ................... Creates anzii app suitable for building web pages, apis, and any backend
+    )}    ................... Creates kotii app suitable for building web pages, apis, and any backend
 	  ${chalk.cyan.bold(
       "-r | --remote"
-    )} ................... Creates a remote repo and an initial commit for your anzii app 
+    )} ................... Creates a remote repo and an initial commit for your kotii app 
 	  ${chalk.cyan.bold(
       "-h | --help"
-    )}   ................... Shows help menu for create-anzii-app command
+    )}   ................... Shows help menu for create-kotii-app command
 	  ${chalk.cyan.bold(
       "-g | --git"
-    )}    ................... Initializes git for your anzii app
+    )}    ................... Initializes git for your kotii app
 	  ${chalk.cyan.bold(
       "-y | --yes"
-    )}    ................... Creates anzii app with default settings
+    )}    ................... Creates kotii app with default settings
 	`;
 
   console.log(help);
