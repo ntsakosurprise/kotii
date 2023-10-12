@@ -29,6 +29,10 @@ class Interpreter {
     this.helpCommand = methods.helpComand;
     this.versionCommand = methods.versionCommand;
     this.parseCommands = methods.parseCommands;
+    this.processOptionsAsCommands = methods.processOptionsAsCommands;
+    this.createCommandAlias = methods.createCommandAlias;
+    this.capitalizeFirstLetter = methods.capitalizeFirstLetter;
+    this.createApp = methods.createApp;
   }
 }
 

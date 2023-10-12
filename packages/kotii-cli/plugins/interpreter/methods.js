@@ -25,7 +25,12 @@ methods.handleInterpreterCliInput = async function (data) {
 
   self.infoSync("ilog");
   const commands = self.parseCommands();
+  const filtered = self.processOptionsAsCommands(commands.options);
+  console.log("THE FILTERED", filtered);
   console.log("The cosand Flags", commands);
+  filtered.shouldDoCommand
+    ? self[filtered.commandAlias](filtered, commands.flags)
+    : null;
 
   /*
    Use arg package to get passed arguments to the cli. 
@@ -401,4 +406,41 @@ methods.parseCommands = function () {
   // return commands;
 };
 
+methods.processOptionsAsCommands = function (options) {
+  const self = this;
+  const { pao, commands } = self;
+
+  const entries = Object.keys(commands).map((en, i) => en.toLowerCase());
+  const command = options[0];
+  const commandIndex = entries.indexOf(command);
+  const definedCommand = commandIndex >= 0 ? command : null;
+  return {
+    shouldDoCommand: definedCommand ? true : false,
+    command,
+    commandOptions: [...options.splice(1)],
+    commandAlias: self.createCommandAlias(command),
+  };
+
+  // return commands;
+};
+methods.createCommandAlias = function (command) {
+  const self = this;
+  const { capitalizeFirstLetter } = self;
+  const splitCommandName = command.split("-");
+  let aliasedCommand = "";
+  if (splitCommandName.length <= 1) return command;
+  splitCommandName.forEach((word, i) => {
+    aliasedCommand =
+      i == 0 ? `${word}` : `${aliasedCommand}${capitalizeFirstLetter(word)}`;
+  });
+  return aliasedCommand;
+};
+methods.capitalizeFirstLetter = function (text) {
+  console.log("The text Uppercasing;;;", text);
+  return `${text.slice(0, 1).toUpperCase()}${text.slice(1)}`;
+};
+
+methods.createApp = function (commandData, flags = []) {
+  console.log("COMMAND, OPTIONS, FLAGS", flags);
+};
 module.exports = methods;
