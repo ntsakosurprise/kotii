@@ -24,37 +24,14 @@ methods.handleInterpreterCliInput = async function (data) {
   self.logSync("Handling send-output Cli event");
 
   self.infoSync("ilog");
+  const commands = self.parseCommands();
+  console.log("The cosand Flags", commands);
 
   /*
    Use arg package to get passed arguments to the cli. 
    This arg packages take two objects: 1. An object of commands to be checked for availability.
    2. An object of possible arguments passed to the cli script/ program
   */
-
-  const commands = arg(
-    {
-      "--cli": Boolean,
-      "--web": Boolean,
-      "--remote": Boolean,
-      "--git": Boolean,
-      "--yes": Boolean,
-      "--install": Boolean,
-      "--private": Boolean,
-      "--public": Boolean,
-      "--version": Boolean,
-      "--help": Boolean,
-      "-c": "--cli",
-      "-w": "--web",
-      "-r": "--remote",
-      "-g": "--git",
-      "-y": "--yes",
-      "-i": "--install",
-      "-h": "--help",
-    },
-    {
-      argv: pao.PROMPT.slice(2), // Get passed arguments from the third item in the array of passed arguments
-    }
-  );
 
   /**
    * Passed expected commands will be included in the _ property of the commands object returned by arg
@@ -362,6 +339,60 @@ methods.startCommand = function () {
   const self = this;
   const pao = self.pao;
   const chalk = self.chalk;
+};
+
+methods.parseCommands = function () {
+  const self = this;
+  const { arg, pao, commands } = self;
+  // const commands = arg(
+  //   {
+  //     "--cli": Boolean,
+  //     "--web": Boolean,
+  //     "--remote": Boolean,
+  //     "--git": Boolean,
+  //     "--yes": Boolean,
+  //     "--install": Boolean,
+  //     "--private": Boolean,
+  //     "--public": Boolean,
+  //     "--version": Boolean,
+  //     "--help": Boolean,
+  //     "-c": "--cli",
+  //     "-w": "--web",
+  //     "-r": "--remote",
+  //     "-g": "--git",
+  //     "-y": "--yes",
+  //     "-i": "--install",
+  //     "-h": "--help",
+  //   },
+  //   {
+  //     argv: pao.PROMPT.slice(2), // Get passed arguments from the third item in the array of passed arguments
+  //   }
+  // );
+
+  const cliArgsObject = {};
+  const aliases = {};
+  let combinedOptionsAliases;
+
+  Object.keys(commands).forEach((v, i) => {
+    let commandOptions = commands[v].options;
+
+    commandOptions.forEach((op, oi) => {
+      op?.option
+        ? (cliArgsObject[op.option] = op.type === "boolean" ? Boolean : String)
+        : null;
+      op?.optionAlias ? (aliases[op.optionAlias] = op.option) : null;
+    });
+  });
+
+  combinedOptionsAliases = { ...cliArgsObject, ...aliases };
+  const parsedCommands = arg(combinedOptionsAliases, {
+    argv: pao.PROMPT.slice(2),
+  }); // Get passed arguments from the third item in the array of passed arguments)
+  console.log("COMBINED OPTIONS", combinedOptionsAliases);
+  console.log("PARSED COMMANDS", parsedCommands);
+  return parsedCommands;
+
+  // return commands;
 };
 
 module.exports = methods;
