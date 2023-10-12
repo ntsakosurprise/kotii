@@ -20,7 +20,7 @@
     "release": "lerna publish",
     "start": "cd packages/kotii-scripts && node app.js start",
     "build": "cd packages/kotii-scripts && node app.js build",
-    "create-kotii-app": "node run_local/runKotiiCli.js --help"
+    "kotii": "node run_local/runKotiiCli.js"
   },
   "license": "ISC",
   "readmeFilename": "README.md",
