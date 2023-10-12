@@ -1,4 +1,5 @@
 const methods = require("./methods");
+const commands = require("./commands");
 
 const arg = require("arg");
 const chalk = require("chalk");
@@ -14,45 +15,7 @@ class Interpreter {
     this.figlet = figlet;
     this.clear = cleya;
     this.inquirer = inquirer;
-    this.commands = {
-      ["create-app"]: {
-        options: [
-          {
-            option: "--help",
-            optionAlias: "-h",
-            type: "boolean",
-            description:
-              "Displays help information for kotii create-app command",
-          },
-          {
-            option: "--type",
-            optionAlias: "-t",
-            type: "string",
-            description: "Sets the type of app for kotii framework",
-            validValues: ["spa", "mua", "ssr"],
-            validValuesAliases: ["s", "m", "sr"],
-          },
-
-          {
-            option: "--template",
-            optionAlias: "-temp",
-            description: "Sets the template for kotii framework",
-            validValues: ["typescript", "javascript"],
-            validValuesAliases: ["ts", "js"],
-          },
-        ],
-      },
-      help: {
-        options: [
-          {
-            option: "--help",
-            type: "boolean",
-            optionAlias: "-h",
-            description: "Displays help information for kotii help command",
-          },
-        ],
-      },
-    };
+    this.commands = commands;
 
     this.init = methods.init;
     this.handleInterpreterCliInput = methods.handleInterpreterCliInput;
