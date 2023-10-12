@@ -387,11 +387,17 @@ methods.parseCommands = function () {
   combinedOptionsAliases = { ...cliArgsObject, ...aliases };
   const parsedCommands = arg(combinedOptionsAliases, {
     argv: pao.PROMPT.slice(2),
+    permissive: true,
   }); // Get passed arguments from the third item in the array of passed arguments)
   console.log("COMBINED OPTIONS", combinedOptionsAliases);
   console.log("PARSED COMMANDS", parsedCommands);
-  return parsedCommands;
+  let modified = { ...parsedCommands };
+  let optionsLen = modified._.indexOf("cli");
+  // modified._.slice(optionsLen);
+  let options = [...modified._.slice(0, optionsLen)];
+  delete modified._;
 
+  return { options, flags: { ...modified }, parsedCommands };
   // return commands;
 };
 
