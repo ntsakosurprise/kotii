@@ -353,8 +353,7 @@ methods.validateStringFlags = function (flags, players) {
     if (flags[pItem]) {
       let flagItemValue = flags[pItem];
       let validKeys = validations[pItem].validKeys;
-      console.log("valid keys", validKeys);
-      console.log("item", flagItemValue);
+
       if (!contains(validKeys, flagItemValue)) {
         self.commandOptionMissing(validations[pItem].invalidOption);
         return { valid: false };
@@ -365,16 +364,10 @@ methods.validateStringFlags = function (flags, players) {
   return { valid: true };
 };
 
-methods.getStringFlagMessage = function () {
-  //const
-};
-
 methods.getFlagsAsTasks = function (flags, command) {
   const self = this;
   let flagsKeys = Object.keys(flags);
   const commandTodoList = {};
-  console.log("Flags Keys", flagsKeys);
-
   flagsKeys.map((key, i) => {
     flags[key]
       ? (commandTodoList[`${key.replace(/--/g, "").trim()}`] = flags[key])
