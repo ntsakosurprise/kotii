@@ -1,5 +1,5 @@
 const methods = require("./methods");
-const commands = require("./commands");
+const { commands, stringFlagsMessages } = require("./commands");
 
 const arg = require("arg");
 const chalk = require("chalk");
@@ -16,6 +16,7 @@ class Interpreter {
     this.clear = cleya;
     this.inquirer = inquirer;
     this.commands = commands;
+    this.messages = stringFlagsMessages;
 
     this.init = methods.init;
     this.handleInterpreterCliInput = methods.handleInterpreterCliInput;
