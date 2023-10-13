@@ -33,6 +33,7 @@ class Interpreter {
     this.createCommandAlias = methods.createCommandAlias;
     this.capitalizeFirstLetter = methods.capitalizeFirstLetter;
     this.createApp = methods.createApp;
+    this.commandOptionMissing = methods.commandOptionMissing;
   }
 }
 
