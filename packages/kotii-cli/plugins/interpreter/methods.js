@@ -373,10 +373,11 @@ methods.getFlagsAsTasks = function (flags, command) {
   const self = this;
   let flagsKeys = Object.keys(flags);
   const commandTodoList = {};
+  console.log("Flags Keys", flagsKeys);
 
   flagsKeys.map((key, i) => {
     flags[key]
-      ? (commandTodoList[`${key.replace(/--/g, "").trim()}`] = flags["--type"])
+      ? (commandTodoList[`${key.replace(/--/g, "").trim()}`] = flags[key])
       : null;
   });
   return Object.keys(commandTodoList).length > 0 ? commandTodoList : null;
