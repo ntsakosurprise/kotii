@@ -1,4 +1,4 @@
-module.exports = {
+const commands = {
   ["create-app"]: {
     options: [
       {
@@ -65,3 +65,20 @@ module.exports = {
     ],
   },
 };
+const stringFlagsMessages = {
+  ["--type"]: {
+    invalidOption:
+      "Provided app type for option --type, is not a valid kotii app name type, please use spa, mua , or ssr",
+    validKeys: ["spa", "mua", "ssr"],
+  },
+  ["--packager"]: {
+    invalidOption: `Provided packager for option --packager, is not a valid package manager, please use yarn, npm , or pnp`,
+    validKeys: ["npm", "pnp", "yarn"],
+  },
+  ["--template"]: {
+    invalidOption: `Provided template for option --template, is not a valid kotii app template, please use js or ts`,
+    validKeys: ["js", "ts"],
+  },
+};
+
+export { commands, stringFlagsMessages };
