@@ -316,6 +316,8 @@ methods.createApp = function (commandData, flags = []) {
   validations = self.validateStringFlags(flags, stringFlags);
   if (!validations.valid) return;
   tasks = self.getFlagsAsTasks(flags);
+  self.infoSync("tasks");
+  self.infoSync(tasks);
 
   const { commandOptions, command } = commandData;
   if (commandOptions.length === 0) {
@@ -349,8 +351,11 @@ methods.validateStringFlags = function (flags, players) {
     let pItem = players[p];
 
     if (flags[pItem]) {
+      let flagItemValue = flags[pItem];
       let validKeys = validations[pItem].validKeys;
-      if (!contains(validKeys, pItem)) {
+      console.log("valid keys", validKeys);
+      console.log("item", flagItemValue);
+      if (!contains(validKeys, flagItemValue)) {
         self.commandOptionMissing(validations[pItem].invalidOption);
         return { valid: false };
       }
