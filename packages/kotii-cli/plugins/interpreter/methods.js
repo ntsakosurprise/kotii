@@ -310,24 +310,17 @@ methods.createApp = function (commandData, flags = []) {
   console.log("COMMAND, OPTIONS, FLAGS", flags);
   console.log("COMMAND OPTIONS", commandData);
   const self = this;
+  const stringFlags = ["--type", "--template", "--packager"];
+  let validations = null;
+  let tasks = null;
+  validations = self.validateStringFlags(flags, stringFlags);
+  if (!validations.valid) return;
+  tasks = self.getFlagsAsTasks(flags);
+
   const { commandOptions, command } = commandData;
-  const help = flags["--help"] ? true : false;
-  const commandTodoList = {};
-
-  flags["--type"] ? (commandTodoList["type"] = flags["--type"]) : null;
-  flags["--template"]
-    ? (commandTodoList["template"] = flags["--template"])
-    : null;
-  flags["--remote"] ? (commandTodoList["remote"] = flags["--remote"]) : null;
-  flags["--git"] ? (commandTodoList["git"] = flags["--git"]) : null;
-  flags["--private"] ? (commandTodoList["private"] = flags["--private"]) : null;
-  flags["--public"] ? (commandTodoList["public"] = flags["--public"]) : null;
-  flags["--remote"] ? (commandTodoList["remote"] = flags["--remote"]) : null;
-
-  if (help) return self.createKotiiAppCommand();
   if (commandOptions.length === 0) {
     let message = `Command: ${command}, requires app name, please specify the name of your app`;
-    self.commandOptionMissing(message);
+    return self.commandOptionMissing(message);
   }
   let appName = commandOptions[0];
   self.emit({
@@ -336,11 +329,52 @@ methods.createApp = function (commandData, flags = []) {
       command: {
         appName,
         commandName: command,
-        tasks: Object.keys(commandTodoList).length > 0 ? commandTodoList : null,
+        tasks,
       },
       callback: self.getFeedback.bind(self),
     },
   });
+};
+
+methods.validateStringFlags = function (flags, players) {
+  const self = this;
+  const contains = self.pao.pa_contains;
+  const validations = self.stringValidations;
+  // const help = flags["--help"] ? true : false;
+
+  // if (help) return self.createKotiiAppCommand();
+  let pLen = players.length;
+
+  for (let p = 0; p < pLen; p++) {
+    let pItem = players[p];
+
+    if (flags[pItem]) {
+      let validKeys = validations[pItem].validKeys;
+      if (!contains(validKeys, pItem)) {
+        self.commandOptionMissing(validations[pItem].invalidOption);
+        return { valid: false };
+      }
+    }
+  }
+
+  return { valid: true };
+};
+
+methods.getStringFlagMessage = function () {
+  //const
+};
+
+methods.getFlagsAsTasks = function (flags, command) {
+  const self = this;
+  let flagsKeys = Object.keys(flags);
+  const commandTodoList = {};
+
+  flagsKeys.map((key, i) => {
+    flags[key]
+      ? (commandTodoList[`${key.replace(/--/g, "").trim()}`] = flags["--type"])
+      : null;
+  });
+  return Object.keys(commandTodoList).length > 0 ? commandTodoList : null;
 };
 
 methods.commandOptionMissing = function (message) {
