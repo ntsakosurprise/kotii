@@ -312,6 +312,17 @@ methods.createApp = function (commandData, flags = []) {
   const self = this;
   const { commandOptions, command } = commandData;
   const help = flags["--help"] ? true : false;
+  const commandTodoList = {};
+
+  flags["--type"] ? (commandTodoList["type"] = flags["--type"]) : null;
+  flags["--template"]
+    ? (commandTodoList["template"] = flags["--template"])
+    : null;
+  flags["--remote"] ? (commandTodoList["remote"] = flags["--remote"]) : null;
+  flags["--git"] ? (commandTodoList["git"] = flags["--git"]) : null;
+  flags["--private"] ? (commandTodoList["private"] = flags["--private"]) : null;
+  flags["--public"] ? (commandTodoList["public"] = flags["--public"]) : null;
+  flags["--remote"] ? (commandTodoList["remote"] = flags["--remote"]) : null;
 
   if (help) return self.createKotiiAppCommand();
   if (commandOptions.length === 0) {
@@ -322,7 +333,11 @@ methods.createApp = function (commandData, flags = []) {
   self.emit({
     type: "scaffold-app",
     data: {
-      command: { appName, commandName: command },
+      command: {
+        appName,
+        commandName: command,
+        tasks: Object.keys(commandTodoList).length > 0 ? commandTodoList : null,
+      },
       callback: self.getFeedback.bind(self),
     },
   });
