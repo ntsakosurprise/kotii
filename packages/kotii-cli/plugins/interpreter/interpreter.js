@@ -35,6 +35,8 @@ class Interpreter {
     this.capitalizeFirstLetter = methods.capitalizeFirstLetter;
     this.createApp = methods.createApp;
     this.commandOptionMissing = methods.commandOptionMissing;
+    this.validateStringFlags = methods.validateStringFlags;
+    this.getFlagsAsTasks = methods.getFlagsAsTasks;
   }
 }
 

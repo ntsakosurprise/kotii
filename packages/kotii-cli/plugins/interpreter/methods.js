@@ -339,7 +339,7 @@ methods.createApp = function (commandData, flags = []) {
 methods.validateStringFlags = function (flags, players) {
   const self = this;
   const contains = self.pao.pa_contains;
-  const validations = self.stringValidations;
+  const validations = self.messages;
   // const help = flags["--help"] ? true : false;
 
   // if (help) return self.createKotiiAppCommand();

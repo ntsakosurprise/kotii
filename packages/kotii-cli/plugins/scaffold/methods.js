@@ -38,7 +38,7 @@ methods.handleScaffoldApp = function (data) {
 
   self.infoSync("WORKING DIR");
   self.infoSync(getWorkingFolder());
-  self.infoSync(getRootDir());
+  self.infoSync(data);
 
   //   let commandsLen = Object.keys(data.commands).length;
   let repoName = "";
