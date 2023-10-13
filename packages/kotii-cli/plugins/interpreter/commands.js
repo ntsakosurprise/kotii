@@ -81,4 +81,4 @@ const stringFlagsMessages = {
   },
 };
 
-export { commands, stringFlagsMessages };
+module.exports = { commands, stringFlagsMessages };
