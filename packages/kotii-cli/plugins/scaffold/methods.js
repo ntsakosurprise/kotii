@@ -34,7 +34,14 @@ methods.handleScaffoldApp = function (data) {
   const getRootDir = pao.pa_getRootDir;
   self.callback = data.callback;
   const command = data.command;
-  const { appName, commandName = null } = command;
+  const { appName, commandName = null, tasks = {} } = command;
+
+  const {
+    git = false,
+    remote = false,
+    public = false,
+    private = false,
+  } = tasks;
 
   self.infoSync("WORKING DIR");
   self.infoSync(getWorkingFolder());
@@ -55,6 +62,8 @@ methods.handleScaffoldApp = function (data) {
       .then((answers) => {
         // console.log('Questionaire answers')
         // console.log(answers)
+        self.infoSync("General Answers");
+        self.infoSync(answers);
         if (answers.remote && answers.remote.toLowerCase().trim() === "yes") {
           if (!self.isInternetConnected)
             return self.callback({
@@ -785,6 +794,33 @@ methods.getMoData = async function (resolve, reject, result) {
   } else {
     return resolve(result);
   }
+};
+
+methods.mergeQuestions = function (qsGroup, merge) {
+  const self = this;
+  const contains = self.pao;
+  const questions = self.questions;
+  const groupQuestions = Object.keys(questions[qsGroup]);
+  let initialAnswers = {};
+  if (!merge) return { [qsGroup]: [...groupQuestions] };
+
+  Object.entries(merge).forEach((ma, i) => {
+    if (ma === "public" || ma === "private") {
+      initialAnswers["repotype"] = merge[ma];
+      groupQuestions.splice(groupQuestions.indexOf("repotype"), 1);
+    }
+    if (ma === "type") {
+      initialAnswers["apptype"] = merge[ma];
+      groupQuestions.splice(groupQuestions.indexOf("apptype"), 1);
+    }
+    if (ma === "packager") {
+      initialAnswers["packager"] = merge[ma];
+      groupQuestions.splice(groupQuestions.indexOf("packager"), 1);
+    }
+
+    initialAnswers[ma] = "yes";
+    groupQuestions.splice(groupQuestions.indexOf(ma), 1);
+  });
 };
 
 module.exports = methods;
