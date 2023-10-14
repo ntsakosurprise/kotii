@@ -93,9 +93,11 @@ methods.prompt = function (data) {
     inquirer
       .prompt(message)
       .then((input) => {
+        console.log("Inquirer input", input);
         resolve(input);
       })
       .catch((e) => {
+        console.log("Inquiere error", e);
         reject(e);
       });
   });

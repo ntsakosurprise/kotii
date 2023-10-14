@@ -80,18 +80,23 @@ methods.handleScaffoldApp = function (data) {
           self
             .startQuestionnaire({ remote: ["provider"] })
             .then((versionProvider) => {
+              answers = { ...answers, ...versionProvider };
+              console.log("THE VERSION PROVIDER", versionProvider);
               self
-                .getStoredUserToken({ version: versionProvider.provider })
+                .getStoredUserToken({
+                  version: versionProvider.provider.toLowerCase(),
+                })
                 .then((token) => {
-                  // console.log('THE TOKEN RETURNED FROM GETSTOREDuSERTOKEN')
-                  // console.log(token)
+                  console.log("THE TOKEN RETURNED FROM GETSTOREDuSERTOKEN");
+                  console.log(token);
 
                   if (token.isNotFound) {
                     self
                       .startQuestionnaire({ remote: ["username", "password"] })
                       .then((credentials) => {
-                        // console.log('THE USER CREDENTIALS')
-                        // console.log(credentials)
+                        console.log("THE USER CREDENTIALS");
+                        console.log(credentials);
+                        console.log("answers", answers);
 
                         self
                           .getRemoteUserToken({
@@ -412,7 +417,7 @@ methods.getStoredUserToken = function (vendor) {
         type: "get-from-config",
         data: {
           callback: self.getStoredUserTokenFeedback.bind(this, resolve, reject),
-          key: vendor.version.toLowerCase(),
+          key: vendor.version,
         },
       });
     } else {
@@ -450,8 +455,8 @@ methods.getStoredUserTokenFeedback = function (resolve, reject, result) {
             self
               .startQuestionnaire({ remote: ["username", "password"] })
               .then((answers) => {
-                // console.log('Answers in getStoredConfig')
-                // console.log(answers)
+                console.log("Answers in getStoredConfig");
+                console.log(answers);
                 return resolve({ creds: answers });
               })
               .catch((e) => {
@@ -506,11 +511,11 @@ methods.getRemoteUserToken = function (data) {
     const { username, password, remote } = data;
     const scopes = {
       scopes: ["user", "repo", "gist"],
-      note: "Anzii-cli remote repository creation",
+      note: "Kotii-cli remote repository creation",
     };
 
-    //   console.log('THE REMOTE')
-    //   console.log(data)
+    console.log("THE REMOTE");
+    console.log(data);
 
     if (remote.toLowerCase() === "github") {
       self.emit({
@@ -810,13 +815,13 @@ methods.getMoData = async function (resolve, reject, result) {
 
 methods.mergeQuestions = function (qsGroup, merge) {
   const self = this;
-  const contains = self.pao.pa_contains;
   const questions = self.questions;
   const groupQuestions = questions[qsGroup].map((qs) => qs.name);
+
+  console.log("groupMap", JSON.stringify(groupQuestions));
   let initialAnswers = {};
   if (!merge) return { [qsGroup]: [...groupQuestions] };
-  console.log("Questions", JSON.stringify(questions[qsGroup]));
-  console.log("groupMap", JSON.stringify(groupQuestions));
+
   Object.keys(merge).forEach((ma) => {
     let skip = false;
     if (ma === "public" || ma === "private") {

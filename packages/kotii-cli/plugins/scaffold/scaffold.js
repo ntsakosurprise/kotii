@@ -102,7 +102,7 @@ class Scaffold {
         {
           name: "apptype",
           type: "list",
-          key: "type",
+          key: "apptype",
           message: "What type of app would you like to create?",
           choices: [
             "spa(single page application)",
