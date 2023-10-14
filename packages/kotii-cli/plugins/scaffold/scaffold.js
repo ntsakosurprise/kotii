@@ -4,6 +4,7 @@ const execa = require("execa");
 const Listr = require("listr");
 const simpleGit = require("simple-git");
 const pkgInstall = require("pkg-install");
+const path = require("path");
 
 const Configstore = require("configstore");
 const Octokit = require("@octokit/rest");
@@ -36,6 +37,7 @@ class Scaffold {
     this.github = github;
     this.projectInstall = projectInstall;
     this.isOnline = isOnline;
+    this.path = path;
     //  this.Bitbucket = Bitbucket
     //  this.octokit = new Octokit()
     this.createBasicAuth = createBasicAuth;

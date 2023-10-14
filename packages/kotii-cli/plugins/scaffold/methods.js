@@ -275,21 +275,27 @@ methods.startQuestionnaire = function (queries) {
   });
 };
 
-methods.createProjectBase = function (appType = "web", folderName, repoUrl) {
+methods.createProjectBase = function (options, folderName, repoUrl) {
   const self = this;
   const pao = self.pao;
+  const path = self.path;
+  const sep = path.sep;
+
   const getWorkingFolder = pao.pa_getWorkingFolder;
-  const createFolderContent = pao.pa_createFolderContent;
-  const makeFolderSync = pao.pa_makeFolderSync;
+  //   const createFolderContent = pao.pa_createFolderContent;
+  //   const makeFolderSync = pao.pa_makeFolderSync;
   const getRootDir = pao.pa_getRootDir;
+  const { apptype, template } = options;
 
-  if (appType === "backend/api/web") appType = "web";
+  //   if (appType === "backend/api/web") appType = "web";
 
-  let templatePath = `${getRootDir()}/templates/${appType}`;
+  //   let templatePath = `${getRootDir()}/${template}/${apptype}`;
+  let templatePath = `${getWorkingFolder()}${sep}packages${sep}kotii-templates${sep}${template}${sep}${apptype}`;
+  console.log("THE TEMPLATE PATH", templatePath);
   //let dir = {templatePath,folderName: data.commands.commands[1]}
   let newFolder = `${getWorkingFolder()}/${folderName}`;
 
-  return { newFolder, templatePath, folderName, newFolder, repoUrl };
+  return { newFolder, templatePath, folderName, repoUrl };
 };
 
 methods.buildTaskList = async function (answers, options) {
@@ -360,7 +366,7 @@ methods.startProjectCreation = async function (
   const self = this;
 
   let rName = repoName;
-  let options = self.createProjectBase(answers.apptype, rName, repoUrl);
+  let options = self.createProjectBase(answers, rName, repoUrl);
 
   self
     .runTasks(await self.buildTaskList(answers, options))
