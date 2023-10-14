@@ -111,6 +111,27 @@ class Scaffold {
           ],
         },
         {
+          name: "template",
+          type: "list",
+          message: "Which template do you want to use?",
+          key: "template",
+          choices: ["javascript", "typescript"],
+        },
+        // {
+        //   name: "init",
+        //   type: "list",
+        //   message: "Should we initialize the project for you?",
+        //   key: "init",
+        //   choices: ["Yes", "No"],
+        // },
+        {
+          name: "packager",
+          type: "list",
+          key: "packager",
+          message: "Which packager do you prefer?",
+          choices: ["yarn", "npm", "pnp"],
+        },
+        {
           name: "description",
           type: "input",
           key: "description",
@@ -131,13 +152,7 @@ class Scaffold {
           key: "git",
           choices: ["Yes", "No"],
         },
-        {
-          name: "init",
-          type: "list",
-          message: "Should we initialize npm for you?",
-          key: "init",
-          choices: ["Yes", "No"],
-        },
+
         {
           name: "repotype",
           type: "list",
@@ -178,6 +193,8 @@ class Scaffold {
     this.isExistingDir = methods.isExistingDir;
     this.isInternetConnected = methods.isInternetConnected;
     this.startPostAuthenticationTasks = methods.startPostAuthenticationTasks;
+    this.mergeQuestions = methods.mergeQuestions;
+    this.deleteMatchedQuestion = methods.deleteMatchedQuestion;
   }
 }
 
