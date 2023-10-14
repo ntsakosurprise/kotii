@@ -71,6 +71,9 @@ methods.handleScaffoldApp = function (data) {
           : { ...provideAnswers, ...mergeAnswers };
         console.log("THE PROVIDED ANSWERS", answers);
         self.infoSync(answers);
+        answers["remote"] = null;
+        self.infoSync("PROVIDED ANSWERS AFTER DELETION");
+        self.infoSync(answers);
 
         if (answers.remote && answers.remote.toLowerCase().trim() === "yes") {
           if (!self.isInternetConnected)
@@ -208,7 +211,7 @@ methods.handleScaffoldApp = function (data) {
 
           //console.log(templatePath)
 
-          self.startProjectCreation(answers, data.commands.commands[1]);
+          self.startProjectCreation(answers, appName);
         }
       })
       .catch((e) => {
