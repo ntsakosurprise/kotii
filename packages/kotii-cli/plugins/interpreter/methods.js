@@ -311,10 +311,10 @@ methods.createApp = function (commandData, flags = []) {
   console.log("COMMAND OPTIONS", commandData);
   const self = this;
   const stringFlags = ["--type", "--template", "--packager"];
-  let validations = null;
+  const help = flags["--help"] ? true : false;
   let tasks = null;
-  validations = self.validateStringFlags(flags, stringFlags);
-  if (!validations.valid) return;
+  if (help) return self.createKotiiAppCommand();
+  if (!self.validateStringFlags(flags, stringFlags)) return;
   tasks = self.getFlagsAsTasks(flags);
   self.infoSync("tasks");
   self.infoSync(tasks);
