@@ -9,6 +9,8 @@
  
  */
 
+const { flag } = require("arg");
+
 /**
  * The methods container file for Scaffold plugin. Methods files in anzii
  * ecosystem's plugins are usually created to prevent clutter in the plugin's
@@ -36,12 +38,12 @@ methods.handleScaffoldApp = function (data) {
   const command = data.command;
   const { appName, commandName = null, tasks = {} } = command;
 
-  const {
-    git = false,
-    remote = false,
-    public = false,
-    private = false,
-  } = tasks;
+  //   const {
+  //     git = false,
+  //     remote = false,
+  //     public = false,
+  //     private = false,
+  //   } = tasks;
 
   self.infoSync("WORKING DIR");
   self.infoSync(getWorkingFolder());
@@ -56,14 +58,20 @@ methods.handleScaffoldApp = function (data) {
       return self.callback({ message: "The set app name has been taken" });
 
     self
-      .startQuestionnaire({
-        general: ["type", "description", "git", "init", "repotype", "remote"],
-      })
-      .then((answers) => {
+      .startQuestionnaire(self.mergeQuestions("general", tasks))
+      .then((provideAnswers) => {
         // console.log('Questionaire answers')
         // console.log(answers)
         self.infoSync("General Answers");
+
+        let answers = {};
+        let mergeAnswers = self?.answers ? { ...self.answers } : {};
+        answers = provideAnswers.truthy
+          ? { ...mergeAnswers }
+          : { ...provideAnswers, ...mergeAnswers };
+        console.log("THE PROVIDED ANSWERS", answers);
         self.infoSync(answers);
+
         if (answers.remote && answers.remote.toLowerCase().trim() === "yes") {
           if (!self.isInternetConnected)
             return self.callback({
@@ -211,10 +219,14 @@ methods.handleScaffoldApp = function (data) {
 methods.startQuestionnaire = function (queries) {
   // console.log('QUERIES FOR QUESTIONAIRRE')
   // console.log(queries)
+  const self = this;
+  const pao = self.pao;
+  const contains = pao.pa_contains;
+  //   const isA = isArray(queries);
   return new Promise((resolve, reject) => {
-    const self = this;
-    const pao = self.pao;
-    const contains = pao.pa_contains;
+    if (contains(queries[Object.keys(queries)], "truthy"))
+      return resolve({ truthy: true });
+
     const questions = self.questions;
     let setToAsk = queries;
     let toAsk = [];
@@ -798,29 +810,60 @@ methods.getMoData = async function (resolve, reject, result) {
 
 methods.mergeQuestions = function (qsGroup, merge) {
   const self = this;
-  const contains = self.pao;
+  const contains = self.pao.pa_contains;
   const questions = self.questions;
-  const groupQuestions = Object.keys(questions[qsGroup]);
+  const groupQuestions = questions[qsGroup].map((qs) => qs.name);
   let initialAnswers = {};
   if (!merge) return { [qsGroup]: [...groupQuestions] };
-
-  Object.entries(merge).forEach((ma, i) => {
+  console.log("Questions", JSON.stringify(questions[qsGroup]));
+  console.log("groupMap", JSON.stringify(groupQuestions));
+  Object.keys(merge).forEach((ma) => {
+    let skip = false;
     if (ma === "public" || ma === "private") {
-      initialAnswers["repotype"] = merge[ma];
-      groupQuestions.splice(groupQuestions.indexOf("repotype"), 1);
+      initialAnswers["repotype"] = ma;
+      self.deleteMatchedQuestion("repotype", groupQuestions);
+      skip = true;
+    }
+    if (ma === "template") {
+      initialAnswers["template"] = merge[ma];
+      self.deleteMatchedQuestion("template", groupQuestions);
+      skip = true;
     }
     if (ma === "type") {
       initialAnswers["apptype"] = merge[ma];
-      groupQuestions.splice(groupQuestions.indexOf("apptype"), 1);
+      self.deleteMatchedQuestion("apptype", groupQuestions);
+      skip = true;
     }
     if (ma === "packager") {
       initialAnswers["packager"] = merge[ma];
-      groupQuestions.splice(groupQuestions.indexOf("packager"), 1);
+      self.deleteMatchedQuestion("packager", groupQuestions);
+      skip = true;
     }
 
-    initialAnswers[ma] = "yes";
-    groupQuestions.splice(groupQuestions.indexOf(ma), 1);
+    if (!skip) initialAnswers[ma] = "yes";
+    self.deleteMatchedQuestion(ma, groupQuestions);
   });
+
+  console.log("FOUND ANSWERS", initialAnswers);
+  console.log("FOUND QUESTIONS", groupQuestions);
+  console.log("Merge", merge);
+  console.log("isREMOTE", initialAnswers?.remote);
+  console.log("Is git", initialAnswers?.remote && !initialAnswers?.git);
+  initialAnswers?.remote && !initialAnswers?.git
+    ? ((initialAnswers["git"] = "yes"),
+      self.deleteMatchedQuestion("git", groupQuestions))
+    : null;
+
+  if (initialAnswers) self.answers = initialAnswers;
+  if (groupQuestions.length === 0) return { [qsGroup]: ["truthy"] };
+  return { [qsGroup]: [...groupQuestions] };
 };
 
+methods.deleteMatchedQuestion = function (toDelte, groupQuestions) {
+  const self = this;
+  const contains = self.pao.pa_contains;
+  contains(groupQuestions, toDelte)
+    ? groupQuestions.splice(groupQuestions.indexOf(toDelte), 1)
+    : "";
+};
 module.exports = methods;
