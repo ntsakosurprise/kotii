@@ -197,6 +197,7 @@ class Scaffold {
     this.startPostAuthenticationTasks = methods.startPostAuthenticationTasks;
     this.mergeQuestions = methods.mergeQuestions;
     this.deleteMatchedQuestion = methods.deleteMatchedQuestion;
+    this.doPackageJson = methods.doPackageJson;
   }
 }
 

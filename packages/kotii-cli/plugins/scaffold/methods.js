@@ -308,12 +308,25 @@ methods.buildTaskList = async function (answers, options) {
       title: "Create project folder",
       task: () => self.makeFolder(options.newFolder),
     },
+    // {
+    //   title: "Modify package content",
+    //   task: () => self.doPackageJson(answers),
+    // },
     {
       title: "Copy project files",
       task: () =>
         self.pao.pa_createFolderContent(
           options.templatePath,
-          options.folderName
+          options.folderName,
+          [
+            "node_modules",
+            "package.json",
+            "build",
+            "dist",
+            "webpack.config.js",
+            ".babelrc",
+            "yarn.lock",
+          ]
         ),
     },
   ];
@@ -792,6 +805,17 @@ methods.packagesInstall = function (packagesFolder) {
 };
 
 methods.makeFolder = function (filepath) {
+  const self = this;
+  const pao = self.pao;
+  const getWorkingFolder = pao.pa_getWorkingFolder;
+  const createFolderContent = pao.pa_createFolderContent;
+  const makeFolderSync = pao.pa_makeFolderSync;
+  const getRootDir = pao.pa_getRootDir;
+
+  return makeFolderSync(filepath);
+};
+
+methods.doPackageJson = function (filepath) {
   const self = this;
   const pao = self.pao;
   const getWorkingFolder = pao.pa_getWorkingFolder;
