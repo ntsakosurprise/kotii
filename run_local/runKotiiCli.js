@@ -12,11 +12,13 @@ const kotiiScriptsPath = path.join(packagesPath, "kotii-scripts");
 console.log("Packages PATH", kotiiScriptsPath);
 const madeTarball = createTarball(kotiiScriptsPath, "kotii-scripts");
 const nodeScriptPath = path.join(packagesPath, "kotii-cli");
-runNodeScript(nodeScriptPath, "app.js", contextScriptRoot, [
-  parseScriptArguments(),
-  madeTarball,
-  parseContextArguments(),
-]);
+runNodeScript(
+  nodeScriptPath,
+  "app.js",
+  contextScriptRoot,
+  [parseScriptArguments(), madeTarball, parseContextArguments()],
+  path.join(kotiiScriptsPath, madeTarball)
+);
 // console.log("Made TARBALL", madeTarball);
 // console.log("CONTEXT ARGUMENTS", parseContextArguments());
 // console.log("WORKING DIR", process.cwd());
