@@ -284,7 +284,7 @@ methods.createProjectBase = function (options, folderName, repoUrl) {
   const getWorkingFolder = pao.pa_getWorkingFolder;
   //   const createFolderContent = pao.pa_createFolderContent;
   //   const makeFolderSync = pao.pa_makeFolderSync;
-  const getRootDir = pao.pa_getRootDir;
+  //   const getRootDir = pao.pa_getRootDir;
   const { apptype, template } = options;
 
   //   if (appType === "backend/api/web") appType = "web";
