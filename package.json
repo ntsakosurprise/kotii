@@ -19,7 +19,8 @@
     "clean": "lerna run --parallel clean",
     "release": "lerna publish",
     "start": "cd packages/kotii-scripts && node app.js start",
-    "build": "cd packages/kotii-scripts && node app.js build"
+    "build": "cd packages/kotii-scripts && node app.js build",
+    "kotii": "node run_local/runKotiiCli.js"
   },
   "license": "ISC",
   "readmeFilename": "README.md",
@@ -39,6 +40,7 @@
     "@types/jsdom": "20",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "cross-spawn": "^7.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "styled-components": "^5.3.5"
