@@ -72,6 +72,7 @@ methods.handleScaffoldApp = function (data) {
         console.log("THE PROVIDED ANSWERS", answers);
         self.infoSync(answers);
         answers["remote"] = null;
+        answers["init"] = "yes";
         self.infoSync("PROVIDED ANSWERS AFTER DELETION");
         self.infoSync(answers);
 
@@ -308,10 +309,10 @@ methods.buildTaskList = async function (answers, options) {
       title: "Create project folder",
       task: () => self.makeFolder(options.newFolder),
     },
-    // {
-    //   title: "Modify package content",
-    //   task: () => self.doPackageJson(answers),
-    // },
+    {
+      title: "Modify package content",
+      task: () => self.doPackageJson(answers, options),
+    },
     {
       title: "Copy project files",
       task: () =>
@@ -352,7 +353,10 @@ methods.buildTaskList = async function (answers, options) {
       : tasks.push({
           title: "Install dependent packages",
           task: async () => {
-            let output = await self.packagesInstall(options.newFolder);
+            let output = await self.packagesInstall(
+              options.newFolder,
+              answers.packager
+            );
             console.log("Done Installing Packages");
             console.log(output);
           },
@@ -774,7 +778,7 @@ methods.gitInit = function (initFolder, remoteUrl = null) {
   });
 };
 
-methods.packagesInstall = function (packagesFolder) {
+methods.packagesInstall = function (packagesFolder, packager = null) {
   return new Promise(async (resolve, reject) => {
     const self = this;
     //    console.log(self)
@@ -794,7 +798,7 @@ methods.packagesInstall = function (packagesFolder) {
     // 	}),
 
     const { stdout } = await projectInstall({
-      prefer: "npm",
+      prefer: packager ? packager : "npm",
       cwd: packagesFolder,
     });
 
@@ -815,15 +819,28 @@ methods.makeFolder = function (filepath) {
   return makeFolderSync(filepath);
 };
 
-methods.doPackageJson = function (filepath) {
+methods.doPackageJson = function (answers, options) {
   const self = this;
   const pao = self.pao;
-  const getWorkingFolder = pao.pa_getWorkingFolder;
-  const createFolderContent = pao.pa_createFolderContent;
-  const makeFolderSync = pao.pa_makeFolderSync;
-  const getRootDir = pao.pa_getRootDir;
+  const path = self.path;
+  const loadFile = pao.pa_loadFile;
+  const saveToFile = pao.pa_saveToFile;
+  const packageJson = loadFile(path.join(options.templatePath, "package.json"));
 
-  return makeFolderSync(filepath);
+  packageJson["name"] = options.folderName;
+  packageJson["description"] = answers?.description ? answers.description : "";
+  packageJson.dependencies["kotii-scripts"] = answers["local-scripts"];
+  packageJson["scripts"] = {
+    start: "kotii-scripts start",
+  };
+  saveToFile(
+    path.join(options.newFolder, "package.json"),
+    JSON.stringify(packageJson, null, 2)
+  );
+
+  console.log("THE LOADED FILE", packageJson);
+
+  //   return makeFolderSync(filepath);
 };
 
 methods.runTasks = async function (toRun, dir) {
