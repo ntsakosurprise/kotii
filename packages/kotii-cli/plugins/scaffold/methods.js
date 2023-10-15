@@ -854,7 +854,9 @@ methods.mergeQuestions = function (qsGroup, merge) {
       skip = true;
     }
 
-    if (!skip) initialAnswers[ma] = "yes";
+    !skip && typeof merge[ma] != "string"
+      ? (initialAnswers[ma] = "yes")
+      : (initialAnswers[ma] = merge[ma]);
     self.deleteMatchedQuestion(ma, groupQuestions);
   });
 
