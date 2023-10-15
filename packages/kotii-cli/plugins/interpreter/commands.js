@@ -52,6 +52,12 @@ const commands = {
         type: "boolean",
         description: "Determines if there should be a remote repo",
       },
+      {
+        option: "--local-scripts",
+        optionAlias: "-l",
+        type: "string",
+        description: "Sets a path to a local copy of kotii-scripts",
+      },
     ],
   },
   help: {
