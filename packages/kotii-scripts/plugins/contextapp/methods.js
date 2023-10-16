@@ -69,6 +69,7 @@ methods.getAppInContextResources = function () {
     )
       ? loadFile(getFilePath(appFolder, "webpack.custom.js"))
       : null,
+    appKotiiJson: getFilePath(appFolder, "kotii.json"),
   };
 
   console.log("THE RESOURCES OBJECT", resources);
