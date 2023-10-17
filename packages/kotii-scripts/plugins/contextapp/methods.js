@@ -44,7 +44,7 @@ methods.getAppInContextResources = function () {
   const isPackageNameKotii =
     appPackageJson.name === "kotii-scripts" ? true : false;
   const appFolder = isPackageNameKotii
-    ? `${templateFolder}/kotii-templates/spa`
+    ? `${templateFolder}/kotii-templates/javascript/spa`
     : folder;
   console.log("THE APP PACKAGE JSON", appPackageJson);
   console.log("THE APP CONFIG", isPackageNameKotii);
@@ -69,7 +69,7 @@ methods.getAppInContextResources = function () {
     )
       ? loadFile(getFilePath(appFolder, "webpack.custom.js"))
       : null,
-    appKotiiJson: checkIfIsFile(getFilePath(appFolder, "kotii.json"))
+    appKotiiJson: checkIfIsFile(getFilePath(appFolder, "kotii.js"))
       ? loadFile(getFilePath(appFolder, "kotii.json"))
       : null,
   };
