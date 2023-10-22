@@ -1,14 +1,18 @@
+const { glob, globSync, globStream, globStreamSync, Glob } = require("glob");
+
 const filesMap = {};
 const pathMatchPattern = /^\.|index|\.[t|j][sx|s]$/g;
 const importAllPages = (r) => {
   r.keys().forEach((key) => (filesMap[key] = r(key)));
 };
 
-const getPages = (source = "/src/pages/") => {
-  const files = require.context(`${source}`, true, /.js$/);
-  importAllPages(files);
-  console.log("THE PAGES OBJECT", filesMap);
-  return filesMap;
+const getPages = (filesToGet) => {
+  const workDir = __dirname;
+  console.log("THE WORK DIR", workDir);
+  const files = globSync(filesToGet, { ignore: "node_modules/**" });
+  // importAllPages(files);
+  // console.log("THE PAGES OBJECT", files);
+  return files;
   //   console.log("Context object", files);
   //   console.log("Context keys", files.keys);
   //   console.log("Context keys");
@@ -19,9 +23,10 @@ const getPages = (source = "/src/pages/") => {
 };
 
 const createRouterComponents = (maps) => {
-  let compsMaps = Object.keys(maps).map((contextModule) => {
+  let compsMaps = maps.map((contextModule) => {
     return getItemPathAndFile(contextModule);
   });
+
   return compsMaps;
 };
 
@@ -38,11 +43,20 @@ const getItemPathAndFile = (item) => {
   }
 
   console.log("THE PAGES matched", patternMatch);
+  console.log("THE ITEM", item);
 
   return {
     path: patternMatch,
-    component: filesMap[item].default,
+    component: dynamicImport(item),
   };
 };
 
-export { getPages, createRouterComponents };
+const dynamicImport = async function (module) {
+  const self = this;
+  console.log("THE DYNAMI GOT A CALL");
+  const open = await import(module);
+  console.log("THE OPEN", open);
+  return open;
+};
+
+module.exports = { getPages, createRouterComponents };
