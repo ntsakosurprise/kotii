@@ -14,7 +14,11 @@ methods.handleDevServer = async function (data) {
   const { webpackDevServer } = self;
   const { compiler, webpackConfig } = data.payload;
 
-  const devServerOptions = { ...webpackConfig.devServer, open: false };
+  const devServerOptions = {
+    ...webpackConfig.devServer,
+    open: false,
+  };
+  const hookStatus = self.hookIntoWebpackCompilation(compiler);
   const server = new webpackDevServer(devServerOptions, compiler);
 
   const runServer = async () => {
@@ -35,6 +39,22 @@ methods.dynamicImport = async function () {
   const open = await import("open");
   console.log("THE OPEN", open);
   return open;
+};
+
+methods.hookIntoWebpackCompilation = async function (compiler, configWp) {
+  const self = this;
+
+  compiler.hooks.invalid.tap("invalid", () => {
+    console.log("wEBPACK is compiling....");
+  });
+
+  compiler.hooks.invalid.tap("done", (stats) => {
+    self.infoSync("WEBPACK IS DONE COMPILING");
+
+    self.infoSync(stats);
+  });
+
+  return true;
 };
 
 // methods.namespace = function (data) {

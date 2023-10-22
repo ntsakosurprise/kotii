@@ -16,6 +16,7 @@ class DevServer {
     this.init = methods.init;
     this.handleDevServer = methods.handleDevServer;
     this.dynamicImport = methods.dynamicImport;
+    this.hookIntoWebpackCompilation = methods.hookIntoWebpackCompilation;
   }
 }
 
