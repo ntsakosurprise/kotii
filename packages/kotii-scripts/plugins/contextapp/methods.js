@@ -39,6 +39,8 @@ methods.getAppInContextResources = function () {
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
   const { appFolder: folder, getFilePath, checkIfIsFile } = self;
+  console.log("AAPP FOLDER", folder);
+  console.log("AAAP ROOT", self.appRoot);
   const templateFolder = folder.slice(0, folder.indexOf("/kotii-scripts"));
   const appPackageJson = loadFile(getFilePath(folder, "package.json"));
   const isPackageNameKotii =
@@ -54,6 +56,7 @@ methods.getAppInContextResources = function () {
     appEnv: getFilePath(appFolder, ".env"),
     appFolder: getFilePath(appFolder, "."),
     appIndexFile: getFilePath(appFolder, "src/index.js"),
+    appPagesFolder: getFilePath(appFolder, "src/components/pages"),
     appSrc: getFilePath(appFolder, "src"),
     appTsConfig: getFilePath(appFolder, "tsconfig.ts"),
     appJsConfig: getFilePath(appFolder, "tsconfig.js"),
@@ -73,8 +76,8 @@ methods.getAppInContextResources = function () {
       ? loadFile(getFilePath(appFolder, "kotii.json"))
       : null,
   };
+  self.doRoutes(resources);
 
-  console.log("THE RESOURCES OBJECT", resources);
   return resources;
 };
 methods.getContextAppInfo = function () {
@@ -109,6 +112,19 @@ methods.checkIfIsFile = function (filePath) {
     // console.log("THE STATS THROWN", error);
     return false;
   }
+};
+
+methods.doRoutes = function (path) {
+  const self = this;
+  self.emit({
+    type: "create-file-routes",
+    data: {
+      payload: { path: path },
+      callback: (data) => {
+        console.log("FILE ROUTES PROCESSED", data.message);
+      },
+    },
+  });
 };
 
 module.exports = methods;

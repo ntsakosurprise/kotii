@@ -1,6 +1,8 @@
 /**
  * @type Class
  */
+const kotiiRouter = require("kotii-router");
+
 const methods = require("./methods");
 
 class ContextApp {
@@ -8,6 +10,7 @@ class ContextApp {
     this.pao = pao;
     this.appFolder = null;
     this.appRoot = null;
+    this.router = kotiiRouter;
 
     this.init = methods.init;
     this.handleContextApp = methods.handleContextApp;
@@ -16,6 +19,7 @@ class ContextApp {
     this.getAppInContextResources = methods.getAppInContextResources;
     this.getFilePath = methods.getFilePath;
     this.checkIfIsFile = methods.checkIfIsFile;
+    this.doRoutes = methods.doRoutes;
   }
 }
 
