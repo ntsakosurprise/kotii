@@ -25,8 +25,14 @@ methods.configureWebPack = function (data) {
   setContextEnv(data);
   const webpackConfigObject = webPackConfig();
   console.log("THE WEBPACK CONFIG", webpackConfigObject);
+  let wbpCompiler = null;
 
-  const wbpCompiler = webpack(webpackConfigObject);
+  try {
+    wbpCompiler = webpack(webpackConfigObject);
+  } catch (err) {
+    console.log("Webpack config error", err);
+    process.exit(1);
+  }
   self.configureDevServer({
     compiler: wbpCompiler,
     webpackConfig: webpackConfigObject,
