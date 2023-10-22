@@ -12,6 +12,7 @@ const Init = require("./init");
 const WebpackConfig = require("./wbpconfig");
 const DevServer = require("./devserver");
 const ContextApp = require("./contextapp");
+const FileRouter = require("./filerouter");
 
 module.exports = {
   Interpreter,
@@ -27,4 +28,5 @@ module.exports = {
   WebpackConfig,
   DevServer,
   ContextApp,
+  FileRouter,
 };
