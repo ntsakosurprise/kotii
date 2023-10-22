@@ -10,6 +10,12 @@
     "type": "git",
     "url": "git+https://github.com/MTN-Group/mymtn-nextgen-docs.git"
   },
+  "browser": {
+    "fs": false,
+    "path": false,
+    "glob": false,
+    "os": false
+  },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "start": "webpack-dev-server --open --hot --mode development",
@@ -31,13 +37,14 @@
     "color": "^4.2.3",
     "debounce": "^1.2.1",
     "escodegen": "^2.0.0",
+    "glob": "^10.3.10",
     "history": "^5.0.0",
     "i18next": "^21.6.14",
     "kotii-languages": "*",
+    "kotii-logger": "*",
     "kotii-markdown": "*",
     "kotii-theme": "*",
     "kotii-ui": "*",
-    "kotii-logger": "*",
     "lodash": "^4.17.21",
     "object-path": "^0.11.8",
     "prop-types": "^15.7.2",
