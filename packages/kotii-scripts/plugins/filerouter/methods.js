@@ -1,8 +1,8 @@
 const methods = {};
 const pathMatchPattern = /^\.|index|\.[t|j][sx|s]$/g;
 methods.init = function () {
-  // console.log('Bitbucket has been initialised')
-  console.log("THE VALUE OF THIS devser");
+  console.log("Filerouter has been initialised");
+
   this.listens({
     "create-file-routes": this.handleFileRoutes.bind(this),
   });

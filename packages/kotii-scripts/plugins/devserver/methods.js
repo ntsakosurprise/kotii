@@ -1,7 +1,6 @@
 const methods = {};
 methods.init = function () {
-  // console.log('Bitbucket has been initialised')
-  console.log("THE VALUE OF THIS devser");
+  console.log("DevServer has been initialised");
   this.listens({
     "dev-server": this.handleDevServer.bind(this),
   });
