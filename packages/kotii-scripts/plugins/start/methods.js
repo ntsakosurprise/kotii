@@ -1,12 +1,11 @@
 const methods = {};
 methods.init = function () {
   // console.log('Bitbucket has been initialised')
-  console.log("THE VALUE OF THIS", this);
+  console.log("");
   this.listens({
     start: this.handleStartScript.bind(this),
   });
 };
-
 methods.handleStartScript = function (data) {
   console.log("THE DAT OF START SCRIPTS", data);
   const self = this;
@@ -23,10 +22,8 @@ methods.handleStartScript = function (data) {
       },
     },
   });
-
   return;
 };
-
 methods.getWebPackConfig = function (dataToConfig, setCall) {
   const self = this;
   self.emit({
@@ -40,20 +37,16 @@ methods.getWebPackConfig = function (dataToConfig, setCall) {
     },
   });
 };
-
 methods.namespace = function (data) {
   const self = this;
-
   const clientOptions = { auth: data.creds };
   const bitbucket = new Bitbucket(clientOptions);
   return bitbucket;
 };
-
 methods.api = function (data) {
   const self = this;
   const clientOptions = { auth: data.token };
   const bitbucket = new Bitbucket(clientOptions);
   return bitbucket;
 };
-
-module.exports = methods;
+export default methods;

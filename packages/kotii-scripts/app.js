@@ -1,8 +1,11 @@
 #!/usr/bin/env node
-process.argv.push("cli");
+// import babelRigister from "babel-register";
+// console.log("THE BABEL REGISTER", babelRigister);
+// babelRigister({
+//   presets: ["es2015", "react"],
+// });
 
-const plugins = require("./plugins/index");
-import an from "../../../Development/frameworks/anzii/lib/index";
+import an from "../../../Development/frameworks/anzii/lib/start.js";
+import plugins from "./plugins/index.js";
+process.argv.push("cli");
 an(plugins);
-// require("anzii")(plugins);
-// console.log(anzii)

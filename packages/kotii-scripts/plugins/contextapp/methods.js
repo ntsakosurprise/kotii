@@ -2,25 +2,22 @@
 const methods = {};
 methods.init = function () {
   // console.log('Bitbucket has been initialised')
-  console.log("THE VALUE OF THIS", this);
+  // console.log("THE VALUE OF THIS", this);
   this.setContexts();
   this.listens({
     "context-app": this.handleContextApp.bind(this),
   });
 };
-
 methods.handleContextApp = function (data) {
   // console.log("THE DATA OF START SCRIPTS", data);
   const self = this;
   const resources = self.getContextAppInfo();
-
   data.callback({
     message: "Context app plugin successfully called",
     data: resources,
   });
   return;
 };
-
 methods.setContexts = function (data) {
   // console.log("THE DATA OF START SCRIPTS", data);
   const self = this;
@@ -29,20 +26,27 @@ methods.setContexts = function (data) {
   const createFolderContent = pao.pa_createFolderContent;
   const makeFolderSync = pao.pa_makeFolderSync;
   const getRootDir = pao.pa_getRootDir;
-
   self.appFolder = getWorkingFolder();
   self.appRoot = getRootDir();
 };
-
 methods.getAppInContextResources = function () {
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
+  const fs = self.fs;
   const { appFolder: folder, getFilePath, checkIfIsFile } = self;
   console.log("AAPP FOLDER", folder);
   console.log("AAAP ROOT", self.appRoot);
+  console.log("");
+
   const templateFolder = folder.slice(0, folder.indexOf("/kotii-scripts"));
-  const appPackageJson = loadFile(getFilePath(folder, "package.json"));
+  const appPackageJson = JSON.parse(
+    fs.readFileSync(`${folder}/package.json`, {
+      encoding: "utf8",
+    })
+  );
+
+  console.log("THE APPPACKAGEJSON", appPackageJson);
   const isPackageNameKotii =
     appPackageJson.name === "kotii-scripts" ? true : false;
   const appFolder = isPackageNameKotii
@@ -51,56 +55,56 @@ methods.getAppInContextResources = function () {
   console.log("THE APP PACKAGE JSON", appPackageJson);
   console.log("THE APP CONFIG", isPackageNameKotii);
   console.log("THE TEMPLATE FOLDER", templateFolder);
-
   const resources = {
-    appEnv: getFilePath(appFolder, ".env"),
-    appFolder: getFilePath(appFolder, "."),
-    appIndexFile: getFilePath(appFolder, "src/index.js"),
-    appPagesFolder: getFilePath(appFolder, "src/components/pages"),
-    appSrc: getFilePath(appFolder, "src"),
-    appTsConfig: getFilePath(appFolder, "tsconfig.ts"),
-    appJsConfig: getFilePath(appFolder, "tsconfig.js"),
-    appIndexHtml: getFilePath(appFolder, "public/index.html"),
-    appAssetsPublic: getFilePath(appFolder, "public"),
-    appBuildFolder: getFilePath(appFolder, "build"),
-    appPublicPath: checkIfIsFile(getFilePath(appFolder, "package.json"))
-      ? loadFile(getFilePath(appFolder, "package.json"))?.homePage || "/"
-      : "/",
-    appNodeModules: getFilePath(appFolder, "node_modules"),
-    appCustomWbpConfig: checkIfIsFile(
-      getFilePath(appFolder, "webpack.custom.js")
+    appEnv: self.getFilePath(appFolder, ".env"),
+    appFolder: self.getFilePath(appFolder, "."),
+    appIndexFile: self.getFilePath(appFolder, "src/index.js"),
+    appPagesFolder: self.getFilePath(appFolder, "src/components/pages"),
+    appSrc: self.getFilePath(appFolder, "src"),
+    appTsConfig: self.getFilePath(appFolder, "tsconfig.ts"),
+    appJsConfig: self.getFilePath(appFolder, "tsconfig.js"),
+    appIndexHtml: self.getFilePath(appFolder, "public/index.html"),
+    appAssetsPublic: self.getFilePath(appFolder, "public"),
+    appBuildFolder: self.getFilePath(appFolder, "build"),
+    appPublicPath: self.checkIfIsFile(
+      self.getFilePath(appFolder, "package.json")
     )
-      ? loadFile(getFilePath(appFolder, "webpack.custom.js"))
+      ? loadFile(self.getFilePath(appFolder, "package.json"))?.homePage || "/"
+      : "/",
+    appNodeModules: self.getFilePath(appFolder, "node_modules"),
+    appCustomWbpConfig: self.checkIfIsFile(
+      self.getFilePath(appFolder, "webpack.custom.js")
+    )
+      ? loadFile(self.getFilePath(appFolder, "webpack.custom.js"))
       : null,
-    appKotiiJson: checkIfIsFile(getFilePath(appFolder, "kotii.js"))
-      ? loadFile(getFilePath(appFolder, "kotii.json"))
+    appKotiiJson: self.checkIfIsFile(self.getFilePath(appFolder, "kotii.js"))
+      ? loadFile(self.getFilePath(appFolder, "kotii.json"))
       : null,
   };
-  self.doRoutes(resources);
-
+  console.log("THE RESOURCES", resources);
+  //self.doRoutes(resources);
   return resources;
 };
 methods.getContextAppInfo = function () {
   const self = this;
   const pao = self.pao;
-
   const createFolderContent = pao.pa_createFolderContent;
   const makeFolderSync = pao.pa_makeFolderSync;
-
   // self.callback = data.callback;
   return self.getAppInContextResources();
   // console.log("THE WORKING DIR INFORMATION", self.appFolder, self.appRoot);
 };
-
 methods.getFilePath = function (fromDir, to) {
   const self = this;
-  const path = require("path");
+
+  const { path } = self;
+  console.log("THE PATH RESOLVE", path.resolve(fromDir, to));
+
   return path.resolve(fromDir, to);
 };
-
 methods.checkIfIsFile = function (filePath) {
   const self = this;
-  const fs = require("fs");
+  const { fs } = self;
   let stats;
   try {
     stats = fs.statSync(filePath);
@@ -113,7 +117,6 @@ methods.checkIfIsFile = function (filePath) {
     return false;
   }
 };
-
 methods.doRoutes = function (path) {
   const self = this;
   self.emit({
@@ -126,5 +129,4 @@ methods.doRoutes = function (path) {
     },
   });
 };
-
-module.exports = methods;
+export default methods;

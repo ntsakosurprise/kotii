@@ -1,17 +1,13 @@
-/**
- * @type Class
- */
-const kotiiRouter = require("kotii-router");
-
-const methods = require("./methods");
-
+import fs from "fs";
+import path from "path";
+import methods from "./methods.js";
 class ContextApp {
   constructor(pao) {
     this.pao = pao;
     this.appFolder = null;
     this.appRoot = null;
-    this.router = kotiiRouter;
-
+    this.path = path;
+    this.fs = fs;
     this.init = methods.init;
     this.handleContextApp = methods.handleContextApp;
     this.getContextAppInfo = methods.getContextAppInfo;
@@ -22,5 +18,4 @@ class ContextApp {
     this.doRoutes = methods.doRoutes;
   }
 }
-
-module.exports = ContextApp;
+export default ContextApp;

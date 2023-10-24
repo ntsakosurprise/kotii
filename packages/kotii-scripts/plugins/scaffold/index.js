@@ -1,3 +1,2 @@
-
-const Scaffold =  require("./scaffold");
-module.exports = Scaffold
+import Scaffold from "./scaffold.js";
+export default Scaffold;

@@ -1,4 +1,3 @@
 {
-  "presets": ["@babel/preset-react", "@babel/preset-env"],
-  "compact": "auto"
+  "presets": ["@babel/preset-react", "@babel/preset-env"]
 }

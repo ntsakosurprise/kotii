@@ -1,3 +1,2 @@
-// const { default: Bitbucket } = require("./bitbucket");
-const FileRouter = require("./filerouter");
-module.exports = FileRouter;
+import FileRouter from "./filerouter.js";
+export default FileRouter;

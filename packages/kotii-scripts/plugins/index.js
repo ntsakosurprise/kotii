@@ -1,32 +1,44 @@
-const Interpreter = require("./interpreter/index");
-const Scaffold = require("./scaffold/index");
-const Gitauth = require("./gitauth/index");
-// const Bitauth = require('./bitauth/index')
-const Github = require("./github/index");
-const Bitbucket = require("./bitbucket/index");
-const Configstorer = require("./configstore/index");
-const Start = require("./start/index");
-const Config = require("./config");
-const Build = require("./buildsc");
-const Init = require("./init");
-const WebpackConfig = require("./wbpconfig");
-const DevServer = require("./devserver");
-const ContextApp = require("./contextapp");
-const FileRouter = require("./filerouter");
-
-module.exports = {
-  Interpreter,
-  Scaffold,
-  Gitauth,
-  Github,
-  Bitbucket,
-  Configstorer,
-  Start,
-  Config,
-  Build,
-  Init,
-  WebpackConfig,
-  DevServer,
-  ContextApp,
-  FileRouter,
+import Interpreter from "./interpreter/index.js";
+import Scaffold from "./scaffold/index.js";
+import Gitauth from "./gitauth/index.js";
+import Github from "./github/index.js";
+import Bitbucket from "./bitbucket/index.js";
+import Configstorer from "./configstore/index.js";
+import Start from "./start/index.js";
+import Config from "./config/index.js";
+import Build from "./buildsc/index.js";
+import Init from "./init/index.js";
+import WebpackConfig from "./wbpconfig/index.js";
+import DevServer from "./devserver/index.js";
+import ContextApp from "./contextapp/index.js";
+import FileRouter from "./filerouter/index.js";
+export { Interpreter };
+export { Scaffold };
+export { Gitauth };
+export { Github };
+export { Bitbucket };
+export { Configstorer };
+export { Start };
+export { Config };
+export { Build };
+export { Init };
+export { WebpackConfig };
+export { DevServer };
+export { ContextApp };
+export { FileRouter };
+export default {
+    Interpreter,
+    Scaffold,
+    Gitauth,
+    Github,
+    Bitbucket,
+    Configstorer,
+    Start,
+    Config,
+    Build,
+    Init,
+    WebpackConfig,
+    DevServer,
+    ContextApp,
+    FileRouter
 };

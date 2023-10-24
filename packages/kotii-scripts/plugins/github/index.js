@@ -1,4 +1,2 @@
-
-const Github =  require("./github");
-
-module.exports = Github
+import Github from "./github.js";
+export default Github;

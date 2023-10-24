@@ -1,15 +1,9 @@
-/**
- * @type Class
- */
-const methods = require("./methods");
-
+import methods from "./methods.js";
 class Config {
-  constructor(pao) {
-    this.pao = pao;
-
-    this.init = methods.init;
-    this.handleDevConfig = methods.handleDevConfig;
-  }
+    constructor(pao) {
+        this.pao = pao;
+        this.init = methods.init;
+        this.handleDevConfig = methods.handleDevConfig;
+    }
 }
-
-module.exports = Config;
+export default Config;
