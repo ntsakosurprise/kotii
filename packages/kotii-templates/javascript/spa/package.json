@@ -4,6 +4,7 @@
   "description": "",
   "license": "ISC",
   "main": "index.js",
+  "type": "module",
   "repository": {
     "type": "git"
   },
@@ -15,6 +16,6 @@
     "react-icons": "^4.2.0",
     "react-markdown": "^8.0.0",
     "react-router-dom": "^5.2.0",
-    "kotii-scripts": "1.0.0"
+    "kotii-scripts": "*"
   }
 }
