@@ -81,7 +81,7 @@ methods.getAppInContextResources = function () {
       : null,
   };
   console.log("THE RESOURCES", resources);
-  self.doRoutes(resources);
+  //self.doRoutes(resources);
   return resources;
 };
 methods.getContextAppInfo = function () {
