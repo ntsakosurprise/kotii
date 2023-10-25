@@ -1,4 +1,3 @@
-import testJSX from "./../testjsx.jsx";
 import Bitbucket from "./bitbucket/index.js";
 import Build from "./buildsc/index.js";
 import Config from "./config/index.js";
@@ -42,5 +41,4 @@ export default {
   DevServer,
   ContextApp,
   FileRouter,
-  testJSX,
 };
