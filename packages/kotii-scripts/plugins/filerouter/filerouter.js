@@ -20,6 +20,7 @@ class FileRouter {
     this.getPages = methods.getPages;
     this.getItemPathAndFile = methods.getItemPathAndFile;
     this.buildFile = methods.buildFile;
+    this.buildStringCode = methods.buildStringCode;
   }
 }
 export default FileRouter;

@@ -1,8 +1,8 @@
 import React from "react";
-// import mapis from "./system/maps";
+import { mapsOfFiles } from "./system/maps.js";
 
 const Home = () => {
-  // console.log("MAPIS", mapis);
+  console.log("MAPIS", mapsOfFiles);
   return (
     <div>
       <p>I AM THE HOME ssrBased COMPONENT</p>

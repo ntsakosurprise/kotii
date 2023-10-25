@@ -15,8 +15,8 @@ methods.handleStartScript = function (data) {
     data: {
       myName: "ntsako",
       callback: (data) => {
-        console.log("THIS DATA");
-        console.log(self.pao);
+        // console.log("THIS DATA");
+        // console.log(self.pao);
         console.log("WALAH", data);
         self.getWebPackConfig(data.data, setCall);
       },

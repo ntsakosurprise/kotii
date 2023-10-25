@@ -46,12 +46,23 @@ methods.createRouterComponents = function (maps, pathy) {
     return self.getItemPathAndFile(contextModule);
   });
 
-  if (!isExistingDir(`${dirPath}/maps.js`))
-    saveToFile(`${dirPath}/maps.js`, `export const default = ${compsMaps}`);
+  // if (!isExistingDir(`${dirPath}/maps.js`))
+  console.log("MAPS OF FILES", compsMaps);
+  console.log("Maps of files stringified", JSON.stringify(compsMaps));
+  console.log("THE UTIL");
+  // compsMaps.map((co, i) => {
+  //   console.log("COMPONENTS INSPECTED", util.inspect(co.component));
+  // });
+  // console.log("COMPONENTS INSPECTED");
+  // console.log("THE COMPS", `${compsMaps}`);
+  // let builtCode = self.buildStringCode(compsMaps);
+  // console.log("ABOUT TO SAVE THE FILE", builtCode.code);
+
+  // saveToFile(`${dirPath}/maps.js`, builtCode.code);
 
   return compsMaps;
 };
-methods.getItemPathAndFile = function (item) {
+methods.getItemPathAndFile = async function (item) {
   console.log("THE PAGES MAPS ITEM", item);
   const self = this;
   const pao = self.pao;
@@ -79,7 +90,7 @@ methods.getItemPathAndFile = function (item) {
 
   return {
     path: patternMatch,
-    component: async () => await loadFile(item),
+    component: await import(module),
   };
 };
 methods.dynamicImport = async function (module) {
@@ -97,7 +108,7 @@ methods.buildFile = function (filename, destination, babelOptions = {}) {
   const options = Object.assign({}, babelOptions);
   const content = fs.readFileSync(filename, { encoding: "utf8" });
   const ext = path.extname(filename);
-  // const outputPath = path.join(destination, path.basename(filename));
+
   // console.log("babel", babel);
 
   // Ignore non-JS files and test scripts
@@ -122,5 +133,29 @@ methods.buildFile = function (filename, destination, babelOptions = {}) {
   }
 
   return false;
+};
+
+methods.buildStringCode = function (code, destination, babelOptions = {}) {
+  const self = this;
+  const path = self.path;
+  const fs = self.fs;
+  const babel = self.babel;
+  const options = Object.assign({}, babelOptions);
+
+  // const outputPath = path.join(destination, path.basename(filename));
+  // console.log("babel", babel);
+
+  // Ignore non-JS files and test scripts
+
+  options.presets = ["@babel/preset-react", "@babel/preset-env"];
+  // options.output = destination
+
+  console.log("THE FILE NAME", options);
+  const result = babel.transformSync(code, options);
+  console.log("BABEL TRANSFORMED", result);
+
+  // const outputPath = path.join(destination, path.basename(filename));
+
+  return result;
 };
 export default methods;

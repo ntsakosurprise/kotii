@@ -18,7 +18,7 @@
     "bootstrap": "lerna bootstrap",
     "clean": "lerna run --parallel clean",
     "release": "lerna publish",
-    "start": "cd packages/kotii-scripts && node app.js start",
+    "start": "cd packages/kotii-scripts && npx swc app.js --config-file .swcrc -o ./_app.js && node _app.js start",
     "build": "cd packages/kotii-scripts && node app.js build",
     "kotii": "node run_local/runKotiiCli.js"
   },

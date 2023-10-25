@@ -47,6 +47,7 @@
     "webpack-dev-server": "^4.7.4"
   },
   "dependencies": {
+    "@node-loader/babel": "^2.0.1",
     "debug": "^4.3.4",
     "grommet": "^2.33.1",
     "kotii-utils": "*",

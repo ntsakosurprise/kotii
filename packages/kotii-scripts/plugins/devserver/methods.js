@@ -22,9 +22,9 @@ methods.handleDevServer = async function (data) {
     await server.start();
   };
   runServer();
-  // const open = (await import("open")).default;
-  // console.log("THE OPEN", open);
-  // await open("http://localhost:8000");
+  const open = (await import("open")).default;
+  console.log("THE OPEN", open);
+  await open("http://localhost:8000");
 };
 methods.dynamicImport = async function () {
   const self = this;
