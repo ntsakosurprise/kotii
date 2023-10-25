@@ -9,7 +9,3 @@ import an from "../../../Development/frameworks/anzii/lib/start.js";
 import plugins from "./plugins/index.js";
 process.argv.push("cli");
 an(plugins);
-// console.log("processENv", process.env);
-// import jestJSX from "./testjsx.jsx";
-// console.log("JSX IN NODEJS", jestJSX);
-// jestJSX();
