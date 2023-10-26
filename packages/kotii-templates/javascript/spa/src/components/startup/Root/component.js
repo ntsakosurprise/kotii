@@ -1,10 +1,9 @@
-import React, { Component } from "react";
+import React from "react";
 import Routes from "../Routes/component.js";
 
-class Root extends Component {
-  render() {
-    return <Routes />;
-  }
-}
+const Root = () => {
+  // console.log("The pages", getPages());
+  return <Routes />;
+};
 
 export default Root;

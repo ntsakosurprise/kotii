@@ -1,14 +1,13 @@
 const filesMap = {};
 const pathMatchPattern = /^\.|index|\.[t|j][sx|s]$/g;
-import { globSync } from "glob";
 const importAllPages = (r) => {
   r.keys().forEach((key) => (filesMap[key] = r(key)));
 };
 
 const getPages = () => {
-  const files = globSync(`../components/pages/**/*/.jsx`);
-  // importAllPages(files);
-  console.log("THE PAGES OBJECT", files);
+  const files = require.context("../pages/", true, /.js$/);
+  importAllPages(files);
+  console.log("THE PAGES OBJECT", filesMap);
   return filesMap;
   //   console.log("Context object", files);
   //   console.log("Context keys", files.keys);
