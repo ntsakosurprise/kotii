@@ -37,6 +37,18 @@ export default () => {
         Assets: "/src/assets/",
         AppGlobals: "/src/globals/index",
       }, // Alias references to files and folders inorder to use absolute paths in your file imports
+      fallback: {
+        fs: false,
+        path: false,
+        // "tls": false,
+        // "net": false,
+        // "path": false,
+        // "zlib": false,
+        // "http": false,
+        // "https": false,
+        // "stream": false,
+        // "crypto": false,
+      }, // Add these as polyfills for use in the browser, webpack no longer auto-polyfills them
     },
     module: {
       rules: [
