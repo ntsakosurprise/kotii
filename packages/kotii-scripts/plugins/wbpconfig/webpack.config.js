@@ -13,6 +13,31 @@ export default () => {
       filename: "[main].bundle.js",
       path: `${env.appBuildFolder}`, // save emitted bundle to this path or folder
     },
+    resolve: {
+      extensions: [".js", ".jsx", ".png", ".jpg"], // tell webpack to use these extenstions to resolve imported files[for importing without specifying the extension name]
+      alias: {
+        Layouts: "/src/components/layout/index",
+        Pages: "/src/components/pages/index",
+        Docs: "/src/components/docs/index",
+        Markdowns: "/src/mds/",
+        Modules: "/src/modules/",
+        Startup: "/src/components/startup/index",
+        UI: "/src/components/ui/index",
+        Config: "/src/config/",
+        HOC: "/src/hoc/",
+        Hooks: "/src/hooks/index",
+        Context: "/src/context/",
+        Language: "/src/language/index",
+        AppRoutes: "/src/routes/",
+        AppModules: "/src/modules/",
+        Store: "/src/store/",
+        Utilities: "/src/utils/index",
+        Services: "/src/services/",
+        Constants: "/src/constants/",
+        Assets: "/src/assets/",
+        AppGlobals: "/src/globals/index",
+      }, // Alias references to files and folders inorder to use absolute paths in your file imports
+    },
     module: {
       rules: [
         {
