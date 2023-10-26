@@ -13,9 +13,9 @@
     "react-dom": "^18.2.0"
   },
   "dependencies": {
+    "glob": "^10.3.10",
     "react-icons": "^4.2.0",
     "react-markdown": "^8.0.0",
-    "react-router-dom": "^5.2.0",
-    "kotii-scripts": "*"
+    "react-router-dom": "^5.2.0"
   }
 }

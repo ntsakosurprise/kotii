@@ -1,7 +1,8 @@
 import React from "react";
 import { Switch } from "react-router-dom";
-import { createRouterComponents, getPages } from "../../../config";
-import Public from "../Public/component";
+import Public from "../Public/component.js";
+// import { publicRoutes, privateRoutes } from "AppRoutes";
+import { createRouterComponents, getPages } from "Config";
 
 const Routes = (props) => {
   let mapsOfComps = createRouterComponents(getPages());

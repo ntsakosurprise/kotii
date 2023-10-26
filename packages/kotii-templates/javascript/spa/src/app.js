@@ -1,3 +1,12 @@
-import Home from "./components/home.js";
+import React from "react";
+import { Root } from "Startup";
+console.log("ROOT", Root);
+// export { Root };
 
-export { Home };
+export const App = () => {
+  return (
+    <div>
+      <Root />
+    </div>
+  );
+};
