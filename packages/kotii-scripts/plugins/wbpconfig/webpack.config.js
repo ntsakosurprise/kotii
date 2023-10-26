@@ -40,13 +40,13 @@ export default () => {
       fallback: {
         fs: false,
         path: false,
-        // "tls": false,
-        // "net": false,
-        // "path": false,
-        // "zlib": false,
-        // "http": false,
-        // "https": false,
-        // "stream": false,
+        url: false,
+        tls: false,
+        net: false,
+        zlib: false,
+        http: false,
+        https: false,
+        stream: false,
         // "crypto": false,
       }, // Add these as polyfills for use in the browser, webpack no longer auto-polyfills them
     },
@@ -72,6 +72,10 @@ export default () => {
         {
           test: /\.css$/,
           use: ["style-loader", "css-loader"],
+        },
+        {
+          test: /\.js/,
+          loader: "import-glob",
         },
         {
           test: /\.(png|jpg|gif|svg)$/i,

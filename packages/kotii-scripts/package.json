@@ -58,6 +58,7 @@
     "execa": "^4.0.3",
     "figlet": "^1.5.0",
     "glob": "^10.3.10",
+    "import-glob": "^1.5.0",
     "import-jsx": "^5.0.0",
     "inquirer": "^7.3.3",
     "is-online": "^8.5.1",
