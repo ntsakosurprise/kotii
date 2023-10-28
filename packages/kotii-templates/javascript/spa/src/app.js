@@ -1,3 +1,4 @@
+import { GlobalStyle } from "AppGlobals";
 import React from "react";
 import { Root } from "Startup";
 console.log("ROOT", Root);
@@ -5,8 +6,9 @@ console.log("ROOT", Root);
 
 export const App = () => {
   return (
-    <div>
+    <>
+      <GlobalStyle />
       <Root />
-    </div>
+    </>
   );
 };
