@@ -39,8 +39,8 @@ methods.hookIntoWebpackCompilation = async function (compiler, configWp) {
     console.log("wEBPACK is compiling....");
   });
   compiler.hooks.invalid.tap("done", (stats) => {
-    self.infoSync("WEBPACK IS DONE COMPILING");
-    self.infoSync(stats);
+    console.log("Compiler is done compiling");
+    console.log(stats);
   });
   return true;
 };

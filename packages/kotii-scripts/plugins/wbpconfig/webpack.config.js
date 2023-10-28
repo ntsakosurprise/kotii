@@ -34,7 +34,7 @@ export default () => {
         Utilities: "/src/utils/index",
         Services: "/src/services/",
         Constants: "/src/constants/",
-        Assets: "/src/assets/",
+        Assets: "/src/assets/index",
         AppGlobals: "/src/globals/index",
       }, // Alias references to files and folders inorder to use absolute paths in your file imports
       fallback: {
@@ -53,7 +53,7 @@ export default () => {
     module: {
       rules: [
         {
-          test: /\.(?:js|mjs|cjs)$/,
+          test: /\.(?:js|mjs|cjs|jsx)$/,
           exclude: /node_modules/,
           use: {
             loader: "babel-loader",
@@ -72,10 +72,6 @@ export default () => {
         {
           test: /\.css$/,
           use: ["style-loader", "css-loader"],
-        },
-        {
-          test: /\.js/,
-          loader: "import-glob",
         },
         {
           test: /\.(png|jpg|gif|svg)$/i,
