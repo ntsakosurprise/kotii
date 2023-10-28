@@ -2,7 +2,7 @@ import { PropTypes } from "prop-types";
 import React from "react";
 import { Route } from "react-router-dom";
 
-import { Fero, Footer, Header, Hero } from "Layouts";
+import { Footer, Header } from "Layouts";
 
 const Public = ({ component: Component, ...rest }) => {
   console.log("testHEADER");
@@ -11,14 +11,14 @@ const Public = ({ component: Component, ...rest }) => {
   return (
     <>
       <Header />
-      <Hero />
+      {/* <Hero /> */}
       <Route
         {...rest}
         render={(props) => {
           return <Component {...props} />;
         }}
       />
-      <Fero />
+      {/* <Fero /> */}
       <Footer />
     </>
   );

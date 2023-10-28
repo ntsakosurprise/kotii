@@ -1,9 +1,30 @@
+/* eslint-disable react/prop-types */
+import React from "react";
+import styled from "styled-components";
+const GoogleFonts = styled.div`
+  @import url("https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap");
+  @import url("https://fonts.googleapis.com/css2?family=Pangolin&display=swap");
+`;
+
 const filesMap = {};
 const pathMatchPattern = /^\.|index|\.[t|j][sx|s]$/g;
 const importAllPages = (r) => {
   r.keys().forEach((key) => (filesMap[key] = r(key)));
 };
-
+const Wrapper = (props) => {
+  const Component = props.component;
+  return (
+    <div
+      style={{
+        paddingLeft: "2%",
+        paddingTop: "2vh",
+        fontFamily: '"Roboto", sans-serif',
+      }}
+    >
+      <Component />
+    </div>
+  );
+};
 const getPages = () => {
   const files = require.context("../pages/", true, /.js$/);
   importAllPages(files);
@@ -41,7 +62,11 @@ const getItemPathAndFile = (item) => {
 
   return {
     path: patternMatch,
-    component: filesMap[item].default,
+    component: () => (
+      <GoogleFonts>
+        <Wrapper component={filesMap[item].default} />
+      </GoogleFonts>
+    ),
   };
 };
 
