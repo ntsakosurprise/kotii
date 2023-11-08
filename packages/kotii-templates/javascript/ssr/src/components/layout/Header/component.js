@@ -25,7 +25,11 @@ const AppHeader = () => {
     <StyledHeader>
       <Brand />
       <HeaderActions>
-        <Link to="https://github.com/ntsakosurprise/kotii" target={"_blank"}>
+        {/* <Link to="https://github.com/ntsakosurprise/kotii" target={"_blank"}>
+          <TfiGithub style={{ color: "#00BFA5", fontSize: "25px" }} />
+        </Link> */}
+
+        <Link to="/privacy">
           <TfiGithub style={{ color: "#00BFA5", fontSize: "25px" }} />
         </Link>
       </HeaderActions>
