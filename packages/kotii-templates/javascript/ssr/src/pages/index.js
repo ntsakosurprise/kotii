@@ -10,9 +10,9 @@ const Main = styled("div")({
   marginTop: "35px",
   justifyContent: "space-between",
   position: "relative",
-  @media only screen and (max-width: 450px)": {
-    flexDirection: "column",
-  },
+  // @media only screen and (max-width: 450px)": {
+  //   flexDirection: "column",
+  // },
 });
 const Hero = styled("div")(() => {
   return {
