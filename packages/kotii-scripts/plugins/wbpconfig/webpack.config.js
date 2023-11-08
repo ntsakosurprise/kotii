@@ -88,7 +88,7 @@ export default () => {
       client: {
         overlay: { warnings: false, errors: false, runtimeErrors: false },
       },
-      port: 8000,
+      port: 9000,
       devMiddleware: {
         writeToDisk: true /*serve in-memory[devserver] as you did before but save to disk as well (changes to file[s] respected) */,
       },
