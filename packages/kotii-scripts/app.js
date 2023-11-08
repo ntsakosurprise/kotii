@@ -8,4 +8,5 @@
 import an from "../../../Development/frameworks/anzii/lib/start.js";
 import plugins from "./plugins/index.js";
 process.argv.push("cli");
+process.env.ANZII_CLI_WITH_SERVER = "true";
 an(plugins);
