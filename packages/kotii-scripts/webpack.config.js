@@ -9,9 +9,21 @@ console.log("Webpack dir name", __dirname);
 console.log("webpack path", path.resolve(__dirname, "node_modules"));
 // const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const rootPath = path.resolve(__dirname);
-var anziiCli = {
-  entry: "./app.js",
-  target: "node",
+var front = {
+  entry: "./build.js",
+  target: "web",
+  mode: "development",
+  experiments: {
+    outputModule: true,
+  },
+  //devtool: "inline-source-map",
+  output: {
+    path: path.join(__dirname),
+    filename: "index.js",
+    library: {
+      type: "module",
+    },
+  },
   externals: [
     nodeExternals({
       modulesDir: path.resolve(__dirname, "node_modules"),
@@ -24,23 +36,25 @@ var anziiCli = {
       modulesDir: "/Users/surprisemashele/Documents/kotii/node_modules",
     }),
   ],
-  externalsPresets: {
-    node: true, // in order to ignore built-in modules like path, fs, etc.
+  resolve: {
+    extensions: [".js", ".jsx"],
+    // alias: {
+    //   Config: "/src/config/",
+    //   Components: "/src/components/",
+    //   HOC: "/src/hoc/",
+    //   Hooks: "/src/hooks/index",
+    //   Context: "/src/context/",
+    //   Utilities: "/src/utils/index",
+    //   Constants: "/src/constants/",
+    //   Assets: "/src/assets/",
+    //   AppGlobals: "/src/globals/index",
+    // },
   },
-  output: {
-    path: path.resolve(__dirname),
-    filename: "bundle.js",
-    chunkFormat: "module",
-  },
-  experiments: {
-    outputModule: true,
-  },
-
   module: {
-    // https://webpack.js.org/loaders/babel-loader/#root
     rules: [
       {
-        test: /\.(ts|js)$/,
+        test: /\.(js|jsx)$/,
+        // exclude: /node_modules/,
         exclude: [
           path.resolve(__dirname, "node_modules"),
           "/Users/surprisemashele/Documents/Development/frameworks/anzii/node_modules",
@@ -60,35 +74,32 @@ var anziiCli = {
           //   ),
           // ]
         ],
-        use: [
-          {
-            loader: "babel-loader",
-            options: { presets: ["@babel/env", "@babel/preset-react"] },
-          },
-        ],
+        use: ["babel-loader"],
       },
+      // {
+      //   test: /\.html$/,
+      //   use: "html-loader",
+      // },
+      /*Choose only one of the following two: if you're using 
+        plain CSS, use the first one, and if you're using a
+        preprocessor, in this case SASS, use the second one*/
+      //   {
+      //     test: /\.css$/,
+      //     use: ["style-loader", "css-loader"],
+      //   },
+      // {
+      //   test: /\.scss$/,
+      //   use: ["style-loader", "css-loader", "sass-loader"],
+      // },
     ],
   },
 
   // plugins: [
-  //   new webpack.DefinePlugin({
-  //     __isBrowser__: "false",
+  //   new HTMLWebpackPlugin({
+  //     template: __dirname + "/public/index.html",
+  //     filename: "index.html",
+  //     inject: "body",
   //   }),
   // ],
-  // resolve: {
-  //   roots: [root],
-  // },
-  // optimization: {
-  //   minimizer: [
-  //     new UglifyJsPlugin({
-  //       uglifyOptions: {
-  //         keep_classnames: false,
-  //         keep_fnames: false,
-  //         mangle: true,
-  //       },
-  //     }),
-  //   ],
-  // },
-  // devtool: "source-map"
 };
-export default [anziiCli];
+export default front;
