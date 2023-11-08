@@ -4,6 +4,13 @@
   "description": "",
   "main": "app.js",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js",
+      "default": "./index.js"
+    }
+  },
   "bin": {
     "kotii-scripts": "./app.js"
   },
