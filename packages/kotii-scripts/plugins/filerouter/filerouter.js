@@ -33,6 +33,7 @@ class FileRouter {
     this.buildStringCode = methods.buildStringCode;
     this.parseJsxToReact = methods.parseJsxToReact;
     this.getSourceCodes = methods.getSourceCodes;
+    this.enableBabelRegister = methods.enableBabelRegister;
   }
 }
 export default FileRouter;
