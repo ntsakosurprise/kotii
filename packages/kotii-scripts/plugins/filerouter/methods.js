@@ -91,6 +91,7 @@ methods.getItemPathAndFile = async function (item) {
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
+  const loadFileSync = pao.pa_loadFileSync;
 
   let gotEndpoint =
     item.indexOf("pages") > 0
@@ -114,7 +115,7 @@ methods.getItemPathAndFile = async function (item) {
 
   return {
     path: patternMatch,
-    component: await import(module),
+    component: loadFileSync(appFilePath),
   };
 };
 methods.dynamicImport = async function (module) {
