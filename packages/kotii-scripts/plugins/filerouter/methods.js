@@ -15,6 +15,7 @@ methods.handleFileRoutes = async function (data) {
   console.log("FILE PATHS", filePaths);
   self.enableBabelRegister(filePaths.appSrc);
   const pagesPaths = self.getPages(`${filePaths.appPagesFolder}/**/*.jsx`);
+  self.createRouterComponents(pagesPaths, filePaths.appSrc);
   // const sourceCodes = self.getSourceCodes(pagesPaths);
   // self.parseJsxToReact(sourceCodes);
   console.log("PAGES PATHS", pagesPaths);
@@ -57,6 +58,7 @@ methods.createRouterComponents = function (maps, pathy) {
   const makeFolderSync = pao.pa_makeFolderSync;
   const isExistingDir = pao.pa_isExistingDir;
   console.log("pages paths", maps);
+  // const dirPath = `${pathy}/components/system`;
   const dirPath = `${pathy}/components/system`;
   if (!isExistingDir(dirPath)) makeFolderSync(dirPath);
   let compsMaps = maps.map((contextModule) => {
