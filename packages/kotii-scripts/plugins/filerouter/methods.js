@@ -92,6 +92,7 @@ methods.getItemPathAndFile = function (item) {
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
   const loadFileSync = pao.pa_loadFileSync;
+  let fileAsComp = null;
 
   let gotEndpoint =
     item.indexOf("pages") > 0
@@ -110,12 +111,12 @@ methods.getItemPathAndFile = function (item) {
   }
   console.log("THE PAGES matched", patternMatch);
   console.log("THE ITEM", item);
-  // fileAsComp = null;
+  fileAsComp = loadFileSync(item);
   // await loadFile(item);
 
   return {
     path: patternMatch,
-    component: loadFileSync(item),
+    component: fileAsComp?.default ? fileAsComp.default : fileAsComp,
   };
 };
 methods.dynamicImport = async function (module) {
