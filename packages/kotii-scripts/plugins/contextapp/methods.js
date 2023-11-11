@@ -33,18 +33,16 @@ methods.getAppInContextResources = function () {
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
+  const readFileSync = pao.pa_readFileSync;
+  const loadFileSync = pao.pa_loadFileSync;
   const fs = self.fs;
   const { appFolder: folder, getFilePath, checkIfIsFile } = self;
   console.log("AAPP FOLDER", folder);
   console.log("AAAP ROOT", self.appRoot);
-  console.log("");
+  //console.log(pao);
 
   const templateFolder = folder.slice(0, folder.indexOf("/kotii-scripts"));
-  const appPackageJson = JSON.parse(
-    fs.readFileSync(`${folder}/package.json`, {
-      encoding: "utf8",
-    })
-  );
+  const appPackageJson = JSON.parse(readFileSync(`${folder}/package.json`));
 
   const isPackageNameKotii =
     appPackageJson.name === "kotii-scripts" ? true : false;
@@ -82,6 +80,22 @@ methods.getAppInContextResources = function () {
       : null,
   };
   console.log("THE RESOURCES", resources);
+  // let appFileSavePath = `${resources.appSrc}/about_.js`;
+  let appFilePath = `${resources.appSrc}/about.jsx`;
+  loadFileSync("@babel/register").default({
+    cwd: resources.appSrc,
+    presets: ["@babel/preset-env"],
+  });
+  // console.log("BABEL-REGISTER", babelRegister);
+  // let anonyMouse = babelRegister().default;
+  // console.log("ANONYMOUSE", anonyMouse);
+  // console.log("THE BABEL", babelRegister);
+  // let jsx = loadFileSync(appFilePath);
+  let jsx = loadFileSync(appFilePath);
+  console.log("LOADED JSX", jsx);
+  jsx.default();
+  // let jsxCode = readFileSync(appFilePath);
+  // self.parseJsxToReact(jsxCode, appFileSavePath);
   //self.doRoutes(resources);
   return resources;
 };
@@ -125,6 +139,54 @@ methods.doRoutes = function (path) {
       payload: { path: path },
       callback: (data) => {
         console.log("FILE ROUTES PROCESSED", data.message);
+      },
+    },
+  });
+};
+
+methods.parseJsxToReact = function (userCode, fileToSaveTo) {
+  const self = this;
+  const pao = self.pao;
+  const saveToFile = pao.pa_saveToFile;
+  const loadFile = pao.pa_loadFile;
+  self.emit({
+    type: "convert-jsx-to-react",
+    data: {
+      payload: { code: userCode },
+      callback: (data) => {
+        console.log("CODE CONVERTED TO REACT", data);
+        const { code } = data;
+        const codeToSave = code.code;
+        saveToFile(fileToSaveTo, codeToSave);
+        loadFile(fileToSaveTo)
+          .then((loadedFile) => {
+            console.log("THE LOADED FILE", loadedFile);
+            console.log("THE CODE TO SAVE", userCode);
+            saveToFile(fileToSaveTo, userCode);
+
+            // const { code: lebabTransformed, warnings } = self.lebabTransform(
+            //   code.code, // code to transform
+            //   [
+            //     "let",
+            //     "arrow",
+            //     "arrow-return",
+            //     "includes",
+            //     "destruct-param",
+            //     "arg-spread",
+            //     "template",
+            //     "obj-shorthand",
+            //     "class",
+            //     "commonjs",
+            //     "obj-method",
+            //     "default-param",
+            //   ] // transforms to apply
+            // );
+
+            //console.log("LEBAB ES6", lebabTransformed);
+          })
+          .catch((err) => {
+            console.log("THERE WAS AN ERROR LOADING REACT FILE", err);
+          });
       },
     },
   });

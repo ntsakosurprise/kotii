@@ -1,4 +1,5 @@
 import fs from "fs";
+import { transform } from "lebab";
 import path from "path";
 import methods from "./methods.js";
 class ContextApp {
@@ -6,6 +7,7 @@ class ContextApp {
     this.pao = pao;
     this.appFolder = null;
     this.appRoot = null;
+    this.lebabTransform = transform;
     this.path = path;
     this.fs = fs;
     this.init = methods.init;
@@ -16,6 +18,7 @@ class ContextApp {
     this.getFilePath = methods.getFilePath;
     this.checkIfIsFile = methods.checkIfIsFile;
     this.doRoutes = methods.doRoutes;
+    this.parseJsxToReact = methods.parseJsxToReact;
   }
 }
 export default ContextApp;
