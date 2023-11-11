@@ -81,19 +81,19 @@ methods.getAppInContextResources = function () {
   };
   console.log("THE RESOURCES", resources);
   // let appFileSavePath = `${resources.appSrc}/about_.js`;
-  let appFilePath = `${resources.appSrc}/about.jsx`;
-  loadFileSync("@babel/register").default({
-    cwd: resources.appSrc,
-    presets: ["@babel/preset-env"],
-  });
+  // let appFilePath = `${resources.appSrc}/about.jsx`;
+  // loadFileSync("@babel/register").default({
+  //   cwd: resources.appSrc,
+  //   presets: ["@babel/preset-env"],
+  // });
   // console.log("BABEL-REGISTER", babelRegister);
   // let anonyMouse = babelRegister().default;
   // console.log("ANONYMOUSE", anonyMouse);
   // console.log("THE BABEL", babelRegister);
   // let jsx = loadFileSync(appFilePath);
-  let jsx = loadFileSync(appFilePath);
-  console.log("LOADED JSX", jsx);
-  jsx.default();
+  // let jsx = loadFileSync(appFilePath);
+  // console.log("LOADED JSX", jsx);
+  // jsx.default();
   // let jsxCode = readFileSync(appFilePath);
   // self.parseJsxToReact(jsxCode, appFileSavePath);
   //self.doRoutes(resources);
