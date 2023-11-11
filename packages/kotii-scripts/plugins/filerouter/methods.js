@@ -13,6 +13,7 @@ methods.handleFileRoutes = async function (data) {
   const { payload } = data;
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
+  self.enableBabelRegister(filePaths.appSrc);
   const pagesPaths = self.getPages(`${filePaths.appPagesFolder}/**/*.jsx`);
   // const sourceCodes = self.getSourceCodes(pagesPaths);
   // self.parseJsxToReact(sourceCodes);
@@ -246,6 +247,16 @@ methods.parseJsxToReact = function (sourceCodes) {
         //   });
       },
     },
+  });
+};
+methods.enableBabelRegister = function (babelCWD) {
+  const self = this;
+  const pao = self.pao;
+  const loadFileSync = pao.pa_loadFileSync;
+
+  loadFileSync("@babel/register").default({
+    cwd: babelCWD,
+    presets: ["@babel/preset-env"],
   });
 };
 export default methods;
