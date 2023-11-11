@@ -59,8 +59,8 @@ methods.createRouterComponents = function (maps, pathy) {
   const isExistingDir = pao.pa_isExistingDir;
   console.log("pages paths", maps);
   // const dirPath = `${pathy}/components/system`;
-  const dirPath = `${pathy}/components/system`;
-  if (!isExistingDir(dirPath)) makeFolderSync(dirPath);
+  //const dirPath = `${pathy}/components/system`;
+  //if (!isExistingDir(dirPath)) makeFolderSync(dirPath);
   let compsMaps = maps.map((contextModule) => {
     // const readFile = loadFile(contextModule);
     // console.log("COntext Module", contextModule);
