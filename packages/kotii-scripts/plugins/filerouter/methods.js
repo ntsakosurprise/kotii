@@ -14,8 +14,8 @@ methods.handleFileRoutes = async function (data) {
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
   const pagesPaths = self.getPages(`${filePaths.appPagesFolder}/**/*.jsx`);
-  const sourceCodes = self.getSourceCodes(pagesPaths);
-  self.parseJsxToReact(sourceCodes);
+  // const sourceCodes = self.getSourceCodes(pagesPaths);
+  // self.parseJsxToReact(sourceCodes);
   console.log("PAGES PATHS", pagesPaths);
 
   // console.log(
