@@ -96,7 +96,7 @@ methods.getAppInContextResources = function () {
   // jsx.default();
   // let jsxCode = readFileSync(appFilePath);
   // self.parseJsxToReact(jsxCode, appFileSavePath);
-  //self.doRoutes(resources);
+  self.doRoutes(resources);
   return resources;
 };
 methods.getContextAppInfo = function () {
