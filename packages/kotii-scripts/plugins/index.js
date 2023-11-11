@@ -9,6 +9,8 @@ import Gitauth from "./gitauth/index.js";
 import Github from "./github/index.js";
 import Init from "./init/index.js";
 import Interpreter from "./interpreter/index.js";
+import JsxToReact from "./jsxtoreact/index.js";
+import ReactToJsx from "./reacttojsx/index.js";
 import Scaffold from "./scaffold/index.js";
 import Start from "./start/index.js";
 import WebpackConfig from "./wbpconfig/index.js";
@@ -41,4 +43,6 @@ export default {
   DevServer,
   ContextApp,
   FileRouter,
+  ReactToJsx,
+  JsxToReact,
 };
