@@ -1,16 +1,26 @@
 import babel from "@babel/core";
 import fs from "fs";
 import { globSync } from "glob";
+import { createRequire } from "module";
 import path from "path";
+import React from "react";
+import routerDom from "react-router-dom";
 import methods from "./methods.js";
+const require = createRequire(import.meta.url);
+const { BrowserRouter, Switch } = routerDom;
+// import Public from "../Public/component.js";
 
 class FileRouter {
   constructor(pao) {
     this.pao = pao;
     this.globSync = globSync;
     this.babel = babel;
+    this.React = React;
+    this.BrowserRouter = BrowserRouter;
+    this.Switch = Switch;
     this.fs = fs;
     this.path = path;
+    this.require = require;
     // this.openApp = openApp;
     // this.apps = apps;
     this.init = methods.init;
@@ -21,6 +31,8 @@ class FileRouter {
     this.getItemPathAndFile = methods.getItemPathAndFile;
     this.buildFile = methods.buildFile;
     this.buildStringCode = methods.buildStringCode;
+    this.parseJsxToReact = methods.parseJsxToReact;
+    this.getSourceCodes = methods.getSourceCodes;
   }
 }
 export default FileRouter;

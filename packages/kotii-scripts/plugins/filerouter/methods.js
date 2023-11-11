@@ -14,11 +14,14 @@ methods.handleFileRoutes = async function (data) {
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
   const pagesPaths = self.getPages(`${filePaths.appPagesFolder}/**/*.jsx`);
+  const sourceCodes = self.getSourceCodes(pagesPaths);
+  self.parseJsxToReact(sourceCodes);
   console.log("PAGES PATHS", pagesPaths);
-  console.log(
-    "PROCESSED",
-    self.createRouterComponents(pagesPaths, data.payload.path.appSrc)
-  );
+
+  // console.log(
+  //   "PROCESSED",
+  //   self.createRouterComponents(pagesPaths, data.payload.path.appSrc)
+  // );
 };
 methods.getPages = function (filesToGet) {
   const self = this;
@@ -26,6 +29,24 @@ methods.getPages = function (filesToGet) {
   console.log("GLOBSYNC", self.globSync);
   const files = self.globSync(filesToGet);
   return files;
+};
+methods.getSourceCodes = function (codesSource) {
+  const self = this;
+  const pao = self.pao;
+  const loadFile = pao.pa_loadFile;
+  const readFileSync = pao.pa_readFileSync;
+  // let appFileSavePath = `${resources.appSrc}/about_.js`;
+  // let appFilePath = `${resources.appSrc}/about.jsx`;
+  // let jsxCode = readFileSync(appFilePath);
+  let sourcesCodesList = [];
+
+  sourcesCodesList = codesSource.map((source, i) => {
+    return { path: source, originalCode: readFileSync(source) };
+  });
+
+  return sourcesCodesList;
+
+  //console.log("SOURCES AND THEIR CODES", sourcesCodesList);
 };
 methods.createRouterComponents = function (maps, pathy) {
   const self = this;
@@ -157,5 +178,74 @@ methods.buildStringCode = function (code, destination, babelOptions = {}) {
   // const outputPath = path.join(destination, path.basename(filename));
 
   return result;
+};
+
+methods.parseJsxToReact = function (sourceCodes) {
+  const self = this;
+  const pao = self.pao;
+  const saveToFile = pao.pa_saveToFile;
+  const loadFile = pao.pa_loadFile;
+  const getRootDir = pao.pa_getRootDir;
+  const getWorkingFolder = pao.pa_getWorkingFolder;
+  const loadFileSync = pao.pa_loadFileSync;
+  const readFileSync = pao.pa_readFileSync;
+  self.emit({
+    type: "convert-jsx-to-react",
+    data: {
+      payload: { code: sourceCodes },
+      callback: (data) => {
+        console.log("CODE CONVERTED TO REACT", data.message);
+        const { convertedCode } = data;
+        // const codeToSave = code.code;
+        const updatedSource = convertedCode.map((cCode, i) => {
+          const altPath = cCode.path.replace(".jsx", ".js");
+          saveToFile(altPath, cCode.modifiedCode);
+          return { ...cCode, altPath, loadedFile: loadFileSync(altPath) };
+        });
+
+        let readFileContent = readFileSync(`${getWorkingFolder()}/build.js`);
+        readFileContent =
+          readFileContent + `const mapsOfComps = ${updatedSource}`;
+        const bundleCode = self.babel.transformSync(readFileContent, {});
+        console.log("BUNDLE CODE", bundleCode);
+        // saveToFile(
+        //   `${getWorkingFolder()}/bundle.js`,
+        //   `const toSave = ${updatedSource}`
+        // );
+
+        // console.log("UPDATED source", updatedSource);
+        // console.log("THE ROOT DIR", getWorkingFolder());
+        // loadFile(fileToSaveTo)
+        //   .then((loadedFile) => {
+        //     console.log("THE LOADED FILE", loadedFile);
+        //     console.log("THE CODE TO SAVE", userCode);
+        //     saveToFile(fileToSaveTo, userCode);
+
+        //     // const { code: lebabTransformed, warnings } = self.lebabTransform(
+        //     //   code.code, // code to transform
+        //     //   [
+        //     //     "let",
+        //     //     "arrow",
+        //     //     "arrow-return",
+        //     //     "includes",
+        //     //     "destruct-param",
+        //     //     "arg-spread",
+        //     //     "template",
+        //     //     "obj-shorthand",
+        //     //     "class",
+        //     //     "commonjs",
+        //     //     "obj-method",
+        //     //     "default-param",
+        //     //   ] // transforms to apply
+        //     // );
+
+        //     //console.log("LEBAB ES6", lebabTransformed);
+        //   })
+        //   .catch((err) => {
+        //     console.log("THERE WAS AN ERROR LOADING REACT FILE", err);
+        //   });
+      },
+    },
+  });
 };
 export default methods;
