@@ -1,5 +1,5 @@
 const methods = {};
-const pathMatchPattern = /^\.|index|\.[t|j][sx|s]$/g;
+
 methods.init = function () {
   console.log("Filerouter has been initialised");
 
@@ -92,6 +92,7 @@ methods.getItemPathAndFile = function (item) {
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
   const loadFileSync = pao.pa_loadFileSync;
+  const extMatchPattern = /\.jsx|tsx$/g;
   let fileAsComp = null;
 
   let gotEndpoint =
@@ -99,14 +100,16 @@ methods.getItemPathAndFile = function (item) {
       ? item.slice(item.indexOf("pages"), item.length)
       : "";
   console.log("Got endpoint", gotEndpoint);
+  console.log("GOT ENDPOINT PAGES REMOVED", gotEndpoint.replace("pages", ""));
   let patternMatch = gotEndpoint
     .replace("pages", "")
-    .replace(pathMatchPattern, "")
+    .replace(extMatchPattern, "")
+    .replace(/index/g, "")
     .replace(/\[(.+)\]/g, ":$1")
     .replace(/\[\.{3}.+\]/, "*");
   // .replace(/\/$/, "");
   if (!/^\/$/.test(patternMatch)) {
-    console.log("THE PAGES slash only");
+    console.log("§  ");
     patternMatch = patternMatch.replace(/\/$/, "");
   }
   console.log("THE PAGES matched", patternMatch);
