@@ -4234,6 +4234,11 @@
   resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.11.8.tgz"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
+"@remix-run/router@1.11.0":
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.11.0.tgz#e0e45ac3fff9d8a126916f166809825537e9f955"
+  integrity sha512-BHdhcWgeiudl91HvVa2wxqZjSHbheSgIiDvxrF1VjFzBzpTtuDPkOdOi3Iqvc08kXtFkLjhbS+ML9aM8mJS+wQ==
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.1.tgz#a21117b19ee9be70c379ec1877537ef2e1c63301"
@@ -7724,6 +7729,11 @@ commander@^10.0.1:
   resolved "https://registry.yarnpkg.com/commander/-/commander-10.0.1.tgz#881ee46b4f77d1c1dccc5823433aa39b022cbe06"
   integrity sha512-y4Mg2tXshplEbSGzx7amzPwKKOCGuoSRP/CjEdwwk0FOGlUbq6lKuoyDZTNZkmxHdJtp54hdfY/JUrdL7Xfdug==
 
+commander@^11.0.0:
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-11.1.0.tgz#62fdce76006a68e5c1ab3314dc92e800eb83d906"
+  integrity sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==
+
 commander@^2.11.0, commander@^2.18.0, commander@^2.20.0, commander@^2.9.0:
   version "2.20.3"
   resolved "https://registry.npmjs.org/commander/-/commander-2.20.3.tgz"
@@ -9365,6 +9375,14 @@ escodegen@^2.0.0:
   optionalDependencies:
     source-map "~0.6.1"
 
+escope@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/escope/-/escope-4.0.0.tgz#1c6f65a37a15396326195615b5124f673c86bd1a"
+  integrity sha512-E36qlD/r6RJHVpPKArgMoMlNJzoRJFH8z/cAZlI9lbc45zB3+S7i9k6e/MNb+7bZQzNEa6r8WKN3BovpeIBwgA==
+  dependencies:
+    esrecurse "^4.1.0"
+    estraverse "^4.1.1"
+
 eslint-plugin-jest@^27.2.1:
   version "27.2.3"
   resolved "https://registry.npmjs.org/eslint-plugin-jest/-/eslint-plugin-jest-27.2.3.tgz"
@@ -9534,7 +9552,7 @@ espree@^7.3.0, espree@^7.3.1:
     acorn-jsx "^5.3.1"
     eslint-visitor-keys "^1.3.0"
 
-espree@^9.6.0:
+espree@^9.6.0, espree@^9.6.1:
   version "9.6.1"
   resolved "https://registry.npmjs.org/espree/-/espree-9.6.1.tgz"
   integrity sha512-oruZaFkjorTpF32kDSI5/75ViwGeZginGGy2NoOSg3Q9bnwlnmDm4HLnkl0RE3n+njDXR037aY1+x58Z/zFdwQ==
@@ -9555,7 +9573,7 @@ esquery@^1.4.0, esquery@^1.4.2:
   dependencies:
     estraverse "^5.1.0"
 
-esrecurse@^4.3.0:
+esrecurse@^4.1.0, esrecurse@^4.3.0:
   version "4.3.0"
   resolved "https://registry.npmjs.org/esrecurse/-/esrecurse-4.3.0.tgz"
   integrity sha512-KmfKL3b6G+RXvP8N1vr3Tq1kL/oCFgn2NYXEtqP8/L3pKapUA4G8cFVaoF3SU323CD4XypR/ffioHmkti6/Tag==
@@ -9873,6 +9891,13 @@ extsprintf@^1.2.0:
   version "1.4.1"
   resolved "https://registry.npmjs.org/extsprintf/-/extsprintf-1.4.1.tgz"
   integrity sha512-Wrk35e8ydCKDj/ArClo1VrPVmN8zph5V4AtHwIuHhvMXsKf73UT3BOD+azBIW+3wOJ4FhEH7zyaJCFvChjYvMA==
+
+f-matches@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/f-matches/-/f-matches-1.1.0.tgz#18e98545000bf381007b7a9f99a69eed0d304336"
+  integrity sha512-8NALQS5oB1+9hkEwiRjsRroTAQ7zKmXjxe0ZcMHDRrFIR54PhSJp7Rm+Q5+tgJ7eO5ejCgbUPNXeiflX18Rt0Q==
+  dependencies:
+    lodash "^4.17.5"
 
 fakeredis@^2.0.0:
   version "2.0.0"
@@ -10812,7 +10837,7 @@ glob@^10.0.0, glob@^10.2.2:
     minipass "^5.0.0 || ^6.0.2 || ^7.0.0"
     path-scurry "^1.10.1"
 
-glob@^10.3.10:
+glob@^10.3.10, glob@^10.3.3:
   version "10.3.10"
   resolved "https://registry.yarnpkg.com/glob/-/glob-10.3.10.tgz#0351ebb809fd187fe421ab96af83d3a70715df4b"
   integrity sha512-fa46+tv1Ak0UPK1TOy/pZrIybNNt4HCv7SDzwyfiOZkvZLEbjsZkJBPtDHVshZjbecAoAGSC20MjLDG/qr679g==
@@ -13215,6 +13240,20 @@ lazystream@^1.0.0:
   dependencies:
     readable-stream "^2.0.5"
 
+lebab@^3.2.3:
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/lebab/-/lebab-3.2.3.tgz#366653d28cd22e547d1265b3b76e856168c918a2"
+  integrity sha512-mwS5d96W+KlfChffQcbd8TT/93qpshhreHtx30bwSHFejZ/271pNCcpfiRydNMg+Dx2jIz54OK8GM6krBFxO1Q==
+  dependencies:
+    commander "^11.0.0"
+    escope "^4.0.0"
+    espree "^9.6.1"
+    estraverse "^5.3.0"
+    f-matches "^1.1.0"
+    glob "^10.3.3"
+    lodash "^4.17.21"
+    recast "^0.23.4"
+
 lerna@^5.1.8:
   version "5.6.2"
   resolved "https://registry.npmjs.org/lerna/-/lerna-5.6.2.tgz"
@@ -13509,7 +13548,7 @@ lodash.upperfirst@^4.3.1:
   resolved "https://registry.npmjs.org/lodash.upperfirst/-/lodash.upperfirst-4.3.1.tgz"
   integrity sha512-sReKOYJIJf74dhJONhU4e0/shzi1trVbSWDOhKYE5XV2O+H7Sb2Dihwuc7xWxVl+DgFPyTqIN3zMfT9cq5iWDg==
 
-lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.17.4:
+lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.17.4, lodash@^4.17.5:
   version "4.17.21"
   resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -16753,6 +16792,14 @@ react-router-dom@^5.2.0:
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
 
+react-router-dom@^6.18.0:
+  version "6.18.0"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.18.0.tgz#0a50c167209d6e7bd2ed9de200a6579ea4fb1dca"
+  integrity sha512-Ubrue4+Ercc/BoDkFQfc6og5zRQ4A8YxSO3Knsne+eRbZ+IepAsK249XBH/XaFuOYOYr3L3r13CXTLvYt5JDjw==
+  dependencies:
+    "@remix-run/router" "1.11.0"
+    react-router "6.18.0"
+
 react-router@5.3.4:
   version "5.3.4"
   resolved "https://registry.npmjs.org/react-router/-/react-router-5.3.4.tgz"
@@ -16767,6 +16814,13 @@ react-router@5.3.4:
     react-is "^16.6.0"
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
+
+react-router@6.18.0:
+  version "6.18.0"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-6.18.0.tgz#32e2bedc318e095a48763b5ed7758e54034cd36a"
+  integrity sha512-vk2y7Dsy8wI02eRRaRmOs9g2o+aE72YCx5q9VasT1N9v+lrdB79tIqrjMfByHiY5+6aYkH2rUa5X839nwWGPDg==
+  dependencies:
+    "@remix-run/router" "1.11.0"
 
 react-runner@^1.0.3:
   version "1.0.3"
@@ -17022,6 +17076,17 @@ recast@^0.23.1:
   version "0.23.3"
   resolved "https://registry.npmjs.org/recast/-/recast-0.23.3.tgz"
   integrity sha512-HbCVFh2ANP6a09nzD4lx7XthsxMOJWKX5pIcUwtLrmeEIl3I0DwjCoVXDE0Aobk+7k/mS3H50FK4iuYArpcT6Q==
+  dependencies:
+    assert "^2.0.0"
+    ast-types "^0.16.1"
+    esprima "~4.0.0"
+    source-map "~0.6.1"
+    tslib "^2.0.1"
+
+recast@^0.23.4:
+  version "0.23.4"
+  resolved "https://registry.yarnpkg.com/recast/-/recast-0.23.4.tgz#ca1bac7bfd3011ea5a28dfecb5df678559fb1ddf"
+  integrity sha512-qtEDqIZGVcSZCHniWwZWbRy79Dc6Wp3kT/UmDA2RJKBPg7+7k51aQBZirHmUGn5uvHf2rg8DkjizrN26k61ATw==
   dependencies:
     assert "^2.0.0"
     ast-types "^0.16.1"
