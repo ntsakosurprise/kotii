@@ -86,7 +86,7 @@ methods.createRouterComponents = function (maps, pathy) {
 
   return compsMaps;
 };
-methods.getItemPathAndFile = async function (item) {
+methods.getItemPathAndFile = function (item) {
   console.log("THE PAGES MAPS ITEM", item);
   const self = this;
   const pao = self.pao;
@@ -115,7 +115,7 @@ methods.getItemPathAndFile = async function (item) {
 
   return {
     path: patternMatch,
-    component: loadFileSync(appFilePath),
+    component: loadFileSync(item),
   };
 };
 methods.dynamicImport = async function (module) {
