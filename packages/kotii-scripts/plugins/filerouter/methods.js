@@ -409,6 +409,15 @@ methods.funcAstToJsx = function (ast, t, traverse) {
         t.isIdentifier(path.node.callee.object, { name: "React" }) &&
         t.isIdentifier(path.node.callee.property, { name: "createElement" })
       ) {
+        const [type, props, ...childProcess] = path.node.arguments;
+        let attributes = [];
+        if (t.isObjectExpression(props)) {
+          props.properties.forEach((prop) => {
+            attributes.push(
+              t.jsxAttributes(t.jsxIdentifier(prop.key.name), prop.value)
+            );
+          });
+        }
       }
     },
   });
