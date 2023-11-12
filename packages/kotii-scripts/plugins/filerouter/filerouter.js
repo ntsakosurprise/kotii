@@ -3,6 +3,7 @@ import generate from "@babel/generator";
 import parser from "@babel/parser";
 import traverse from "@babel/traverse";
 import * as t from "@babel/types";
+import execSync from "child_process";
 import fs from "fs";
 import { globSync } from "glob";
 import { createRequire } from "module";
@@ -12,6 +13,7 @@ import routerDom from "react-router-dom";
 import methods from "./methods.js";
 const require = createRequire(import.meta.url);
 const { BrowserRouter, Switch } = routerDom;
+// exec('npm run dev')
 // import Public from "../Public/component.js";
 
 class FileRouter {
@@ -29,6 +31,7 @@ class FileRouter {
     this.traverse = traverse.default;
     this.t = t;
     this.generate = generate.default;
+    this.execSync = execSync.spawn;
 
     // this.openApp = openApp;
     // this.apps = apps;
