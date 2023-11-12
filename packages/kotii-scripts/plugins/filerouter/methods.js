@@ -120,7 +120,7 @@ methods.getItemPathAndFile = function (item) {
   }
   console.log("THE PAGES matched", patternMatch);
   console.log("THE ITEM", item);
-  fileAsComp = loadFileSync(item);
+  fileAsComp = readFileSync(item);
   // await loadFile(item);
 
   return {
