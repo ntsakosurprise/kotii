@@ -97,7 +97,7 @@ methods.getItemPathAndFile = function (item) {
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
   const loadFileSync = pao.pa_loadFileSync;
-  const readFileSync = pao.readFileSync;
+  const readFileSync = pao.pa_readFileSync;
   const extMatchPattern = /\.jsx|tsx$/g;
   let fileAsComp = null;
 
@@ -306,11 +306,23 @@ methods.addToAST = function (objectToAdd) {
         path.node.type === "ImportDeclaration"
       );
       if (path.node.type === "ImportDeclaration") return;
-      console.log(
-        "Identifier matched::",
-        path.container[3].declarations[0].id.name
-      );
-      let firstVariableName = path.container[3].declarations[0].id.name;
+      const mapsNode = path.container.filter((nd, i) => {
+        // console.log("ND IN MAP", nd);
+
+        if (nd.type !== "VariableDeclaration") return false;
+        // console.log("nd.TYPE", nd.type);
+        // console.log("nd.Declarations", nd.declarations[0].id.name);
+        let nodeIDName = nd.declarations[0].id.name;
+        if (nodeIDName === "mapsOfFiles" || nodeIDName === "surname") return nd;
+      });
+      console.log("MAPS OF NODE", mapsNode);
+      const nd = mapsNode[0];
+      const targetDeclaration = nd.declarations[0];
+      const targetDeclarationName = targetDeclaration.id.name;
+      // console.log("THE NODE DECLARATIONS", nd.declarations);
+      // console.log("Identifier matched::", nd.id.name);
+      let firstVariableName = targetDeclarationName;
+      console.log("FIRST VARIABLE NAME", firstVariableName);
 
       if (firstVariableName === "mapsOfFiles") {
         self.variableCreation(path, t, objectToAdd, parser, true);
@@ -382,11 +394,15 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
             // });
             let funcAst = parser.parse(en.component, {
               sourceType: "module",
+              plugins: ["jsx"],
             });
-            //self.funcToJsx(funcAst);
+            console.log("FUNC AST", funcAst);
+            console.log("FUNCK FIRST NODE");
+            self.reactJsx(funcAst,en.path);
             let functionInContext = funcAst.program.body[0];
-            let funcName = functionInContext.id.name;
-            let funcBody = functionInContext.body;
+            console.log("FUNCK FIRST NODE", functionInContext);
+            // let funcName = functionInContext.id.name;
+            // let funcBody = functionInContext.body;
             console.log("AST for func", funcAst.program.body);
             console.log("AST FUNCTION PARTS", funcName, funcBody);
 
@@ -414,7 +430,7 @@ methods.funcToJsx = function (ast) {
     CallExpression(path) {
       if (
         t.isMemberExpression(path.node.callee) &&
-        t.isIdentifier(path.node.callee.object, { name: "_react" }) &&
+        t.isIdentifier(path.node.callee.object, { name: "React" }) &&
         t.isIdentifier(path.node.callee.property, { name: "createElement" })
       ) {
         const [type, props, ...childProcess] = path.node.arguments;
@@ -451,6 +467,18 @@ methods.funcToJsx = function (ast) {
         );
         path.replaceWith(jsxElement);
       }
+    },
+  });
+};
+methods.reactJsx = function (ast,moduleName) {
+  const self = this;
+  const modModuleName = moduleName === "/" ? "index" : moduleName.replace()
+
+  const traverse = self.traverse;
+  const t = self.t;
+  traverse(ast, {
+    VariableDeclaration(path) {
+      if(path.declarations[0].id)
     },
   });
 };

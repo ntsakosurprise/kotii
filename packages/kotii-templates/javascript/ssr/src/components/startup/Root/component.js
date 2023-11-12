@@ -3,7 +3,15 @@ import Routes from "../Routes/component.js";
 
 const Root = () => {
   // console.log("The pages", getPages());
-  return <Routes />;
+  console.log("THE PAGES ROUTES", Routes);
+  return (
+    <div>
+      <p>THE footer Comp</p>
+
+      <Routes />
+      <p>TEH HEADER IN FOOTER</p>
+    </div>
+  );
 };
 
 export default Root;
