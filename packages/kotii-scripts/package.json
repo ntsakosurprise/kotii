@@ -49,7 +49,11 @@
   "homepage": "https://github.com/ntsakosurprise/anzi-clii#readme",
   "license": "MIT",
   "dependencies": {
+    "@babel/generator": "^7.23.3",
     "@babel/node": "^7.22.19",
+    "@babel/parser": "^7.23.3",
+    "@babel/traverse": "^7.23.3",
+    "@babel/types": "^7.23.3",
     "@octokit/auth-basic": "^1.4.6",
     "@octokit/rest": "^18.0.6",
     "@swc/cli": "^0.1.62",
