@@ -377,10 +377,13 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
         t.identifier("mapsOfFiles"),
         t.arrayExpression([
           ...files.map((en, i) => {
-            let funcAst = parser.parse(en.component.toString(), {
+            // let funcAst = parser.parse(en.component.toString(), {
+            //   sourceType: "module",
+            // });
+            let funcAst = parser.parse(en.component, {
               sourceType: "module",
             });
-            self.funcToJsx(funcAst);
+            //self.funcToJsx(funcAst);
             let functionInContext = funcAst.program.body[0];
             let funcName = functionInContext.id.name;
             let funcBody = functionInContext.body;
