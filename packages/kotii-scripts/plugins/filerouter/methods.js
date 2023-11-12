@@ -19,7 +19,7 @@ methods.handleFileRoutes = async function (data) {
     pagesPaths,
     filePaths.appSrc
   );
-  //self.addToAST(routesObject);
+  self.addToAST(routesObject);
   // const sourceCodes = self.getSourceCodes(pagesPaths);
   // self.parseJsxToReact(sourceCodes);
   console.log("PAGES PATHS", pagesPaths);
@@ -379,6 +379,7 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
             let funcAst = parser.parse(en.component.toString(), {
               sourceType: "module",
             });
+            self.jsxTo;
             let functionInContext = funcAst.program.body[0];
             let funcName = functionInContext.id.name;
             let funcBody = functionInContext.body;
@@ -400,4 +401,16 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
   path.stop();
 };
 
+methods.funcAstToJsx = function (ast, t, traverse) {
+  traverse(ast, {
+    CallExpression(path) {
+      if (
+        t.isMemberExpression(path.node.callee) &&
+        t.isIdentifier(path.node.callee.object, { name: "React" }) &&
+        t.isIdentifier(path.node.callee.property, { name: "createElement" })
+      ) {
+      }
+    },
+  });
+};
 export default methods;
