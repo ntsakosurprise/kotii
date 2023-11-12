@@ -279,12 +279,14 @@ methods.addToAST = function (objectToAdd) {
   const generate = self.generate;
   const parser = self.parser;
   const t = self.t;
+  const execSync = self.execSync;
   const loadFileSync = pao.pa_loadFileSync;
   const loadFile = pao.pa_loadFile;
   const readFileSync = pao.pa_readFileSync;
   const saveToFile = pao.pa_saveToFile;
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const cwd = getWorkingFolder();
+  //console.log("EXECSYNC", execSync);
   //self.enableBabelRegister(cwd);
   const filePath = `${cwd}/build.js`;
   const jsFile = readFileSync(filePath).replace(/;/g, "");
@@ -323,6 +325,24 @@ methods.addToAST = function (objectToAdd) {
   console.log("New AST genCode", genCode);
   console.log("Modiefied code", modifiedCode);
   saveToFile(filePath, modifiedCode);
+  let commandToRun = "build:dev";
+  let bat = execSync("yarn", ["run", `${commandToRun}`], { cwd: cwd });
+  //console.log("BUILD SPAWN", buildSpawn);
+  bat.stdout.on("data", (data) => {
+    console.log(data.toString());
+  });
+
+  bat.stderr.on("data", (data) => {
+    console.error(data.toString());
+  });
+
+  bat.on("exit", (code) => {
+    console.log(`Child exited with code ${code}`);
+  });
+  // buildSpawn.on("data", (data) => {
+  //   console.log("SPAWN DATA", data);
+  // });
+  //execSync("yarn build:dev");
 
   //console.log("file source code", fileCode);
 
@@ -349,7 +369,7 @@ methods.variableCreation = function (path, t, replace = false) {
         t.objectExpression([
           t.objectProperty(
             t.identifier("name"),
-            t.stringLiteral("theVeryBest")
+            t.stringLiteral("weWillPrevail")
           ),
         ])
       ),
