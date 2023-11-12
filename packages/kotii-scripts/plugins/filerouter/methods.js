@@ -23,7 +23,7 @@ methods.handleFileRoutes = async function (data) {
   // const sourceCodes = self.getSourceCodes(pagesPaths);
   // self.parseJsxToReact(sourceCodes);
   console.log("PAGES PATHS", pagesPaths);
-  console.log("Routes OBject", routesObject);
+  //console.log("Routes OBject", routesObject);
 
   // console.log(
   //   "PROCESSED",
@@ -97,6 +97,7 @@ methods.getItemPathAndFile = function (item) {
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
   const loadFileSync = pao.pa_loadFileSync;
+  const readFileSync = pao.readFileSync;
   const extMatchPattern = /\.jsx|tsx$/g;
   let fileAsComp = null;
 
