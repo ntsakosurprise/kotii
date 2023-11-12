@@ -125,7 +125,7 @@ methods.getItemPathAndFile = function (item) {
 
   return {
     path: patternMatch,
-    component: fileAsComp?.default ? fileAsComp.default : fileAsComp,
+    component: fileAsComp,
   };
 };
 methods.dynamicImport = async function (module) {
