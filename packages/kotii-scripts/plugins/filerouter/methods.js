@@ -292,27 +292,24 @@ methods.addToAST = function (objectToAdd) {
   // console.log("jsFile replaced", jsFile);
   //console.log("THE VALUE OF TRAVERSE", traverse);
   traverse(ast, {
-    enter(path) {
-      console.log("TRAVERSE ENTERS", path.node);
-      if (!t.isIdentifier(path.node)) return;
-      console.log("PATH AFTER CHECK", path.node.type);
-      if (t.isIdentifier(path.node, { name: "surname" })) {
-        console.log("Identifier matched", path.parentPath);
-        path.parentPath.container.push(
-          t.variableDeclaration("const", [
-            t.variableDeclarator(
-              t.identifier("mapsOfFiles"),
-              t.objectExpression([
-                t.objectProperty(
-                  t.identifier("name"),
-                  t.stringLiteral("frank")
-                ),
-              ])
-            ),
-          ])
-        );
-        path.stop();
-      }
+    VariableDeclaration(path) {
+      console.log("TRAVERSE ENTERS", path.container);
+      // if (!t.isIdentifier(path.node)) return;
+      //console.log("PATH AFTER CHECK", path.node.type);
+      // if (t.isIdentifier(path.node, { name: "surname" })) {
+      console.log("Identifier matched::", path.key);
+      path.container.push(
+        t.variableDeclaration("const", [
+          t.variableDeclarator(
+            t.identifier("mapsOfFiles"),
+            t.objectExpression([
+              t.objectProperty(t.identifier("name"), t.stringLiteral("frank")),
+            ])
+          ),
+        ])
+      );
+      path.stop();
+      //}
 
       // if (t.isImportDeclaration(path.node)) {
       //   path.node.name = "x";
