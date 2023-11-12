@@ -418,6 +418,15 @@ methods.funcAstToJsx = function (ast, t, traverse) {
             );
           });
         }
+
+        let jsxChildren = [];
+        children.forEach((child, i) => {
+          if (t.isStringLiteral(child)) {
+            jsxChildren.push(t.jsxText(child.value));
+          } else if (t.isCallExpression(child)) {
+            jsxChildren.push(t.jsxExpressionContainer(child));
+          }
+        });
       }
     },
   });
