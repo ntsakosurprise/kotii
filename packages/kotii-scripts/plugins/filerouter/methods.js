@@ -19,7 +19,7 @@ methods.handleFileRoutes = async function (data) {
     pagesPaths,
     filePaths.appSrc
   );
-  self.addToAST(routesObject);
+  //self.addToAST(routesObject);
   // const sourceCodes = self.getSourceCodes(pagesPaths);
   // self.parseJsxToReact(sourceCodes);
   console.log("PAGES PATHS", pagesPaths);
@@ -307,9 +307,9 @@ methods.addToAST = function (objectToAdd) {
       if (path.node.type === "ImportDeclaration") return;
       console.log(
         "Identifier matched::",
-        path.container[3].declarations[0].id.name
+        path.container[2].declarations[0].id.name
       );
-      let firstVariableName = path.container[3].declarations[0].id.name;
+      let firstVariableName = path.container[2].declarations[0].id.name;
 
       if (firstVariableName === "mapsOfFiles") {
         self.variableCreation(path, t, objectToAdd, parser, true);
@@ -331,20 +331,20 @@ methods.addToAST = function (objectToAdd) {
   console.log("New AST genCode", genCode);
   console.log("Modiefied code", modifiedCode);
   saveToFile(filePath, modifiedCode);
-  let commandToRun = "build:dev";
-  let bat = execSync("yarn", ["run", `${commandToRun}`], { cwd: cwd });
-  //console.log("BUILD SPAWN", buildSpawn);
-  bat.stdout.on("data", (data) => {
-    console.log(data.toString());
-  });
+  // let commandToRun = "build:dev";
+  // let bat = execSync("yarn", ["run", `${commandToRun}`], { cwd: cwd });
+  // //console.log("BUILD SPAWN", buildSpawn);
+  // bat.stdout.on("data", (data) => {
+  //   console.log(data.toString());
+  // });
 
-  bat.stderr.on("data", (data) => {
-    console.error(data.toString());
-  });
+  // bat.stderr.on("data", (data) => {
+  //   console.error(data.toString());
+  // });
 
-  bat.on("exit", (code) => {
-    console.log(`Child exited with code ${code}`);
-  });
+  // bat.on("exit", (code) => {
+  //   console.log(`Child exited with code ${code}`);
+  // });
   // buildSpawn.on("data", (data) => {
   //   console.log("SPAWN DATA", data);
   // });
