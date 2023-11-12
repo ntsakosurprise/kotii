@@ -1,3 +1,2 @@
-// const { default: Bitbucket } = require("./bitbucket");
-const WebpackConfig = require("./wbpconfig");
-module.exports = WebpackConfig;
+import WebpackConfig from "./wbpconfig.js";
+export default WebpackConfig;

@@ -1,58 +1,105 @@
-var path = require("path");
-var webpack = require("webpack");
-var nodeExternals = require("webpack-node-externals");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+import path from "path";
+import { fileURLToPath } from "url";
+import nodeExternals from "webpack-node-externals";
 
-const root = path.resolve(__dirname);
+const __filename = fileURLToPath(import.meta.url);
 
-var anziiCli = {
-  entry: ["@babel/polyfill", "./app.js"],
-  target: "node",
+const __dirname = path.dirname(__filename);
+console.log("Webpack dir name", __dirname);
+console.log("webpack path", path.resolve(__dirname, "node_modules"));
+// const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const rootPath = path.resolve(__dirname);
+var front = {
+  entry: "./build.js",
+  target: "web",
+  mode: "development",
+  experiments: {
+    outputModule: true,
+  },
+  //devtool: "inline-source-map",
+  output: {
+    path: path.join(__dirname),
+    filename: "index.js",
+    library: {
+      type: "module",
+    },
+  },
   externals: [
-    { express: "commonjs express" },
     nodeExternals({
-      modulesDir: path.resolve(__dirname, "./node_modules"),
-      allowlist: ["webpack/hot/poll?1000"],
+      modulesDir: path.resolve(__dirname, "node_modules"),
     }),
     nodeExternals({
-      modulesDir: path.resolve(__dirname, "./node_modules"),
-      allowlist: ["webpack/hot/poll?1000"],
+      modulesDir:
+        "/Users/surprisemashele/Documents/Development/frameworks/anzii/node_modules",
+    }),
+    nodeExternals({
+      modulesDir: "/Users/surprisemashele/Documents/kotii/node_modules",
     }),
   ],
-  output: {
-    path: path.resolve("dist"),
-    filename: "index.js",
-    libraryTarget: "commonjs2",
+  resolve: {
+    extensions: [".js", ".jsx"],
+    // alias: {
+    //   Config: "/src/config/",
+    //   Components: "/src/components/",
+    //   HOC: "/src/hoc/",
+    //   Hooks: "/src/hooks/index",
+    //   Context: "/src/context/",
+    //   Utilities: "/src/utils/index",
+    //   Constants: "/src/constants/",
+    //   Assets: "/src/assets/",
+    //   AppGlobals: "/src/globals/index",
+    // },
   },
   module: {
     rules: [
       {
-        test: /\.(js)$/,
-        use: "babel-loader",
+        test: /\.(js|jsx)$/,
+        // exclude: /node_modules/,
+        exclude: [
+          path.resolve(__dirname, "node_modules"),
+          "/Users/surprisemashele/Documents/Development/frameworks/anzii/node_modules",
+          "/Users/surprisemashele/Documents/Development/frameworks/anzii/lib/pillar/pillar.js",
+          "/Users/surprisemashele/Documents/kotii/node_modules",
+
+          // exception: include these node_modules
+          // not: [
+          //   // add any node_modules that should be run through babel here
+          //   path.resolve(
+          //     rootPath,
+          //     "node_modules/@MY_ORG/MY_PACKAGE1"
+          //   ),
+          //   path.resolve(
+          //       rootPath,
+          //       "node_modules/@MY_ORG/MY_PACKAGE2"
+          //   ),
+          // ]
+        ],
+        use: ["babel-loader"],
       },
+      // {
+      //   test: /\.html$/,
+      //   use: "html-loader",
+      // },
+      /*Choose only one of the following two: if you're using 
+        plain CSS, use the first one, and if you're using a
+        preprocessor, in this case SASS, use the second one*/
+      //   {
+      //     test: /\.css$/,
+      //     use: ["style-loader", "css-loader"],
+      //   },
+      // {
+      //   test: /\.scss$/,
+      //   use: ["style-loader", "css-loader", "sass-loader"],
+      // },
     ],
   },
 
-  plugins: [
-    new webpack.DefinePlugin({
-      __isBrowser__: "false",
-    }),
-  ],
-  resolve: {
-    roots: [root],
-  },
-  optimization: {
-    minimizer: [
-      new UglifyJsPlugin({
-        uglifyOptions: {
-          keep_classnames: false,
-          keep_fnames: false,
-          mangle: true,
-        },
-      }),
-    ],
-  },
-  // devtool: "source-map"
+  // plugins: [
+  //   new HTMLWebpackPlugin({
+  //     template: __dirname + "/public/index.html",
+  //     filename: "index.html",
+  //     inject: "body",
+  //   }),
+  // ],
 };
-
-module.exports = [anziiCli];
+export default front;

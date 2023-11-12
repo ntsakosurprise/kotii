@@ -42,6 +42,7 @@
   "license": "MIT",
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
+    "@node-loader/babel": "^2.0.1",
     "@octokit/auth-basic": "^1.4.6",
     "@octokit/rest": "^18.0.6",
     "anzii": "^6.1.0",

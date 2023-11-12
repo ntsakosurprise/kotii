@@ -1,15 +1,9 @@
-/**
- * @type Class
- */
-const methods = require("./methods");
-
+import methods from "./methods.js";
 class Init {
-  constructor(pao) {
-    this.pao = pao;
-
-    this.init = methods.init;
-    this.handleInitScript = methods.handleInitScript;
-  }
+    constructor(pao) {
+        this.pao = pao;
+        this.init = methods.init;
+        this.handleInitScript = methods.handleInitScript;
+    }
 }
-
-module.exports = Init;
+export default Init;

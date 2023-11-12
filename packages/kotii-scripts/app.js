@@ -1,7 +1,18 @@
 #!/usr/bin/env node
+// import babelRigister from "babel-register";
+// console.log("THE BABEL REGISTER", babelRigister);
+// babelRigister({
+//   presets: ["es2015", "react"],
+// });
+
+import an from "../../../Development/frameworks/anzii/lib/start.js";
+import plugins from "./plugins/index.js";
 process.argv.push("cli");
-const plugins = require("./plugins/index");
-// const an = require("../../../Development/frameworks/anzii/lib/index");
-// an(plugins);
-require("anzii")(plugins);
-// console.log(anzii)
+process.env.ANZII_CLI_WITH_SERVER = "true";
+process.on("beforeExit", () => {
+  console.log("THE PROCESS IS ABOUT TO EXIST");
+});
+process.on("exit", () => {
+  console.log("THE PROCESS HAS EXITED");
+});
+an(plugins);

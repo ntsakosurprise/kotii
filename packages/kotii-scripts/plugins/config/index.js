@@ -1,3 +1,2 @@
-// const { default: Bitbucket } = require("./bitbucket");
-const Config = require("./config");
-module.exports = Config;
+import Config from "./config.js";
+export default Config;

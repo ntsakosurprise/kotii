@@ -1,16 +1,15 @@
-/**
- * @type Class
- */
-const methods = require("./methods");
-const webPackConfig = require("./webpack.config");
-const webpack = require("webpack");
-
+import webpack from "webpack";
+import webpackDevMiddleware from "webpack-dev-middleware";
+import webpackHotMiddleware from "webpack-hot-middleware";
+import methods from "./methods.js";
+import webPackConfig from "./webpack.config.js";
 class WebpackConfig {
   constructor(pao) {
     this.pao = pao;
     this.webPackConfig = webPackConfig;
     this.webpack = webpack;
-
+    this.webpackDevMiddleware = webpackDevMiddleware;
+    this.webpackHotMiddleware = webpackHotMiddleware;
     this.init = methods.init;
     this.handleWebpackConfig = methods.handleWebpackConfig;
     this.configureWebPack = methods.configureWebPack;
@@ -19,5 +18,4 @@ class WebpackConfig {
     this.configureDevServer = methods.configureDevServer;
   }
 }
-
-module.exports = WebpackConfig;
+export default WebpackConfig;

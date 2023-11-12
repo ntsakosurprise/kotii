@@ -1,14 +1,15 @@
-/**
- * @type Class
- */
-const methods = require("./methods");
-
+import fs from "fs";
+import { transform } from "lebab";
+import path from "path";
+import methods from "./methods.js";
 class ContextApp {
   constructor(pao) {
     this.pao = pao;
     this.appFolder = null;
     this.appRoot = null;
-
+    this.lebabTransform = transform;
+    this.path = path;
+    this.fs = fs;
     this.init = methods.init;
     this.handleContextApp = methods.handleContextApp;
     this.getContextAppInfo = methods.getContextAppInfo;
@@ -16,7 +17,8 @@ class ContextApp {
     this.getAppInContextResources = methods.getAppInContextResources;
     this.getFilePath = methods.getFilePath;
     this.checkIfIsFile = methods.checkIfIsFile;
+    this.doRoutes = methods.doRoutes;
+    this.parseJsxToReact = methods.parseJsxToReact;
   }
 }
-
-module.exports = ContextApp;
+export default ContextApp;

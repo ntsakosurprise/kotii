@@ -1,3 +1,2 @@
-
-const Configstorer =  require("./configstore");
-module.exports = Configstorer
+import Configstorer from "./configstore.js";
+export default Configstorer;

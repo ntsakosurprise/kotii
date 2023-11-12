@@ -18,5 +18,5 @@
     "sourceType": "module"
   },
   "plugins": ["react", "jest"],
-  "rules": { "no-unreachable": "off" }
+  "rules": { "no-unreachable": "off", "sort-imports": "off" }
 }

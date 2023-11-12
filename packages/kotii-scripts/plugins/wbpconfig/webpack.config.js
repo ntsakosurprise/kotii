@@ -1,22 +1,59 @@
-// const webpack = require("webpack");
-const HTMLWebpackPlugin = require("html-webpack-plugin");
-
-module.exports = () => {
+import HTMLWebpackPlugin from "html-webpack-plugin";
+import webpack from "webpack";
+export default () => {
   //   console.log("THE PROCESS", process.env.APPCONTEXT);
   let env = JSON.parse(process.env.APPCONTEXT); // GET the set APPCONTEXT environment variable
-
   return {
-    entry: env.appIndexFile, // Entry should be from the provided app's index file from src
-    context: env.appFolder, // set webpack context to be the app in context's folder
+    entry: ["webpack-hot-middleware/client", env.appIndexFile],
+    context: env.appFolder,
     mode: "development",
+    infrastructureLogging: { level: "none" },
+    stats: "none",
     output: {
       filename: "[main].bundle.js",
       path: `${env.appBuildFolder}`, // save emitted bundle to this path or folder
     },
+    resolve: {
+      extensions: [".js", ".jsx", ".png", ".jpg"], // tell webpack to use these extenstions to resolve imported files[for importing without specifying the extension name]
+      alias: {
+        Layouts: "/src/components/layout/index",
+        Pages: "/src/components/pages/index",
+        Docs: "/src/components/docs/index",
+        Markdowns: "/src/mds/",
+        Modules: "/src/modules/",
+        Startup: "/src/components/startup/index",
+        UI: "/src/components/ui/index",
+        Config: "/src/config/",
+        HOC: "/src/hoc/",
+        Hooks: "/src/hooks/index",
+        Context: "/src/context/",
+        Language: "/src/language/index",
+        AppRoutes: "/src/routes/",
+        AppModules: "/src/modules/",
+        Store: "/src/store/",
+        Utilities: "/src/utils/index",
+        Services: "/src/services/",
+        Constants: "/src/constants/",
+        Assets: "/src/assets/index",
+        AppGlobals: "/src/globals/index",
+      }, // Alias references to files and folders inorder to use absolute paths in your file imports
+      fallback: {
+        fs: false,
+        path: false,
+        url: false,
+        tls: false,
+        net: false,
+        zlib: false,
+        http: false,
+        https: false,
+        stream: false,
+        // "crypto": false,
+      }, // Add these as polyfills for use in the browser, webpack no longer auto-polyfills them
+    },
     module: {
       rules: [
         {
-          test: /\.(?:js|mjs|cjs)$/,
+          test: /\.(?:js|mjs|cjs|jsx)$/,
           exclude: /node_modules/,
           use: {
             loader: "babel-loader",
@@ -29,9 +66,9 @@ module.exports = () => {
           test: /\.html$/,
           use: "html-loader",
         },
-        /*Choose only one of the following two: if you're using 
-          plain CSS, use the first one, and if you're using a
-          preprocessor, in this case SASS, use the second one*/
+        /*Choose only one of the following two: if you're using
+                  plain CSS, use the first one, and if you're using a
+                  preprocessor, in this case SASS, use the second one*/
         {
           test: /\.css$/,
           use: ["style-loader", "css-loader"],
@@ -48,6 +85,9 @@ module.exports = () => {
     },
     devServer: {
       allowedHosts: "auto",
+      client: {
+        overlay: { warnings: false, errors: false, runtimeErrors: false },
+      },
       port: 9000,
       devMiddleware: {
         writeToDisk: true /*serve in-memory[devserver] as you did before but save to disk as well (changes to file[s] respected) */,
@@ -58,9 +98,10 @@ module.exports = () => {
     },
     plugins: [
       new HTMLWebpackPlugin({
-        template: env.appIndexHtml, // set path to the html template
+        template: env.appIndexHtml,
         filename: "index.html",
       }),
+      new webpack.HotModuleReplacementPlugin(),
     ],
   };
 };

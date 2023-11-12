@@ -10,6 +10,7 @@
     "buildDev": "webpack --mode development"
   },
   "dependencies": {
+    "@node-loader/babel": "^2.0.1",
     "i18next": "^21.8.14",
     "kotii-utils": "*",
     "react-i18next": "^11.18.1",

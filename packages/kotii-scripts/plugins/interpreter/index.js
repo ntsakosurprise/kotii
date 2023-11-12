@@ -1,4 +1,2 @@
-
-const Interpreter =  require("./interpreter");
-
-module.exports = Interpreter
+import Interpreter from "./interpreter.js";
+export default Interpreter;

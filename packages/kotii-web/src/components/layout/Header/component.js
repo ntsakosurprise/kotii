@@ -1,10 +1,10 @@
 import React from "react";
 // import { Link } from "react-router-dom";
 import { LanguageSwitcher } from "kotii-languages";
-import { Box, Header, Square, SVG, Text, ThemeSwitcher } from "kotii-ui";
+import { Box, Header, Square, Text, ThemeSwitcher } from "kotii-ui";
 import { AiFillGithub, AiFillSetting } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import KotiiSvg from "../../../../public/kotii.svg";
+import kotiiSvg from "../../../../public/kotii.svg";
 
 const AppHeader = () => {
   React.useEffect(() => {
@@ -38,13 +38,13 @@ const AppHeader = () => {
               alignItems: "center",
             }}
           >
-            <SVG
+            {/* <SVG
               asComponent={KotiiSvg}
               inline={true}
               alt="kotii logo"
               width="40px"
-            />
-            {/* <img src={kotiiSvg} alt="Kotii Logo" width={"40px"} /> */}
+            /> */}
+            <img src={kotiiSvg} alt="Kotii Logo" width={"40px"} />
             <Text size="18px" color={"black"}>
               Kotii
             </Text>

@@ -1,4 +1,2 @@
-
-const Gitauth =  require("./gitauth");
-
-module.exports = Gitauth
+import Gitauth from "./gitauth.js";
+export default Gitauth;

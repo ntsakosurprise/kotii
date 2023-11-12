@@ -1,13 +1,11 @@
-const methods = require("./methods");
-const octonode = require("octonode");
-
+import methods from "./methods.js";
+import * as octonode from "octonode";
 class Github {
-  constructor(pao) {
-    this.pao = pao;
-    this.github = octonode;
-
-    this.init = methods.init;
-    this.handleGitAuth = methods.handleGitAuth;
-  }
+    constructor(pao) {
+        this.pao = pao;
+        this.github = octonode;
+        this.init = methods.init;
+        this.handleGitAuth = methods.handleGitAuth;
+    }
 }
-module.exports = Github;
+export default Github;
