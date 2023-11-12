@@ -290,20 +290,26 @@ methods.addToAST = function (objectToAdd) {
   //self.enableBabelRegister(cwd);
   const filePath = `${cwd}/build.js`;
   const jsFile = readFileSync(filePath).replace(/;/g, "");
-  let ast = parser.parse(jsFile, { sourceType: "module" });
+  let ast = parser.parse(jsFile, { sourceType: "module", plugins: ["jsx"] });
   // console.log("jsFile replaced", jsFile);
-  //console.log("THE VALUE OF TRAVERSE", traverse);
+  console.log("THE VALUE OF TRAVERSE", traverse);
   traverse(ast, {
     VariableDeclaration(path) {
       console.log("TRAVERSE ENTERS", path.container);
       // if (!t.isIdentifier(path.node)) return;
       //console.log("PATH AFTER CHECK", path.node.type);
       // if (t.isIdentifier(path.node, { name: "surname" })) {
+      console.log("THE NODE TYPE", path.node.type);
+      console.log(
+        "THE NODE TYPE IS IMPORT",
+        path.node.type === "ImportDeclaration"
+      );
+      if (path.node.type === "ImportDeclaration") return;
       console.log(
         "Identifier matched::",
-        path.container[0].declarations[0].id.name
+        path.container[3].declarations[0].id.name
       );
-      let firstVariableName = path.container[0].declarations[0].id.name;
+      let firstVariableName = path.container[3].declarations[0].id.name;
 
       if (firstVariableName === "mapsOfFiles") {
         self.variableCreation(path, t, objectToAdd, parser, true);
