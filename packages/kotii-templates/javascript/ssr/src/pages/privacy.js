@@ -1,6 +1,6 @@
-import doingTheMost from "kotii-scripts";
+import { mapsOfFiles, name } from "kotii-scripts";
 const Test = function () {
-  console.log(doingTheMost);
+  console.log("KOTTI IMPORTS ", name, mapsOfFiles);
   //console.log(doingTheMost());
   return console.log("I AM KOTII TEST FUNCTION");
 };
