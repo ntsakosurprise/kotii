@@ -297,18 +297,18 @@ methods.addToAST = function (objectToAdd) {
       // if (!t.isIdentifier(path.node)) return;
       //console.log("PATH AFTER CHECK", path.node.type);
       // if (t.isIdentifier(path.node, { name: "surname" })) {
-      console.log("Identifier matched::", path.key);
-      path.container.push(
-        t.variableDeclaration("const", [
-          t.variableDeclarator(
-            t.identifier("mapsOfFiles"),
-            t.objectExpression([
-              t.objectProperty(t.identifier("name"), t.stringLiteral("frank")),
-            ])
-          ),
-        ])
+      console.log(
+        "Identifier matched::",
+        path.container[0].declarations[0].id.name
       );
-      path.stop();
+      let firstVariableName = path.container[0].declarations[0].id.name;
+
+      if (firstVariableName === "mapsOfFiles") {
+        self.variableCreation(path, t, true);
+      } else {
+        self.variableCreation(path, t);
+      }
+
       //}
 
       // if (t.isImportDeclaration(path.node)) {
@@ -334,5 +334,27 @@ methods.addToAST = function (objectToAdd) {
   //     console.log("THE ERR", err);
   //   });
   // console.log("THE FILE PATH", jsFile);
+};
+
+methods.variableCreation = function (path, t, replace = false) {
+  let creationMethod = replace
+    ? path.replaceWith.bind(path)
+    : path.container.unshift.bind(path.container);
+  // console.log("THE CREATING METHOD", creationMethod);
+  // if(replace)
+  creationMethod(
+    t.variableDeclaration("const", [
+      t.variableDeclarator(
+        t.identifier("mapsOfFiles"),
+        t.objectExpression([
+          t.objectProperty(
+            t.identifier("name"),
+            t.stringLiteral("theVeryBest")
+          ),
+        ])
+      ),
+    ])
+  );
+  path.stop();
 };
 export default methods;
