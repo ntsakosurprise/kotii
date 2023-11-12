@@ -306,9 +306,9 @@ methods.addToAST = function (objectToAdd) {
       let firstVariableName = path.container[0].declarations[0].id.name;
 
       if (firstVariableName === "mapsOfFiles") {
-        self.variableCreation(path, t, true);
+        self.variableCreation(path, t, objectToAdd, parser, true);
       } else {
-        self.variableCreation(path, t);
+        self.variableCreation(path, t, objectToAdd, parser);
       }
 
       //}
@@ -320,7 +320,7 @@ methods.addToAST = function (objectToAdd) {
   });
   console.log("New AST", ast);
   const { code: genCode } = generate(ast);
-  const modifiedCode = genCode.replace(/",/g, '";').replace(/};;/, "};");
+  const modifiedCode = genCode;
 
   console.log("New AST genCode", genCode);
   console.log("Modiefied code", modifiedCode);
@@ -356,25 +356,42 @@ methods.addToAST = function (objectToAdd) {
   // console.log("THE FILE PATH", jsFile);
 };
 
-methods.variableCreation = function (path, t, replace = false) {
+methods.variableCreation = function (path, t, files, parser, replace = false) {
+  const self = this;
   let creationMethod = replace
     ? path.replaceWith.bind(path)
     : path.container.unshift.bind(path.container);
+  //const files = [{ path: "mypath", component: "myComponent" }];
   // console.log("THE CREATING METHOD", creationMethod);
   // if(replace)
   creationMethod(
     t.variableDeclaration("const", [
       t.variableDeclarator(
         t.identifier("mapsOfFiles"),
-        t.objectExpression([
-          t.objectProperty(
-            t.identifier("name"),
-            t.stringLiteral("weWillPrevail")
-          ),
+        t.arrayExpression([
+          ...files.map((en, i) => {
+            let funcAst = parser.parse(en.component.toString(), {
+              sourceType: "module",
+            });
+            let functionInContext = funcAst.program.body[0];
+            let funcName = functionInContext.id.name;
+            let funcBody = functionInContext.body;
+            console.log("AST for func", funcAst.program.body);
+            console.log("AST FUNCTION PARTS", funcName, funcBody);
+
+            return t.objectExpression([
+              t.objectProperty(t.identifier("path"), t.stringLiteral(en.path)),
+              t.objectProperty(
+                t.identifier("component"),
+                t.functionExpression(t.identifier(funcName), [], funcBody)
+              ),
+            ]);
+          }),
         ])
       ),
     ])
   );
   path.stop();
 };
+
 export default methods;
