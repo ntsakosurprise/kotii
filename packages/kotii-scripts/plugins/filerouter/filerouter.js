@@ -44,6 +44,7 @@ class FileRouter {
     this.getSourceCodes = methods.getSourceCodes;
     this.enableBabelRegister = methods.enableBabelRegister;
     this.addToAST = methods.addToAST;
+    this.variableCreation = methods.variableCreation;
   }
 }
 export default FileRouter;
