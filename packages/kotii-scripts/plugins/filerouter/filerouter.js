@@ -1,4 +1,8 @@
 import babel from "@babel/core";
+import generate from "@babel/generator";
+import parser from "@babel/parser";
+import traverse from "@babel/traverse";
+import * as t from "@babel/types";
 import fs from "fs";
 import { globSync } from "glob";
 import { createRequire } from "module";
@@ -21,6 +25,11 @@ class FileRouter {
     this.fs = fs;
     this.path = path;
     this.require = require;
+    this.parser = parser;
+    this.traverse = traverse.default;
+    this.t = t;
+    this.generate = generate.default;
+
     // this.openApp = openApp;
     // this.apps = apps;
     this.init = methods.init;
@@ -34,6 +43,7 @@ class FileRouter {
     this.parseJsxToReact = methods.parseJsxToReact;
     this.getSourceCodes = methods.getSourceCodes;
     this.enableBabelRegister = methods.enableBabelRegister;
+    this.addToAST = methods.addToAST;
   }
 }
 export default FileRouter;
