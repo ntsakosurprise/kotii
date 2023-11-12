@@ -13,7 +13,7 @@ methods.handleFileRoutes = async function (data) {
   const { payload } = data;
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
-  self.enableBabelRegister(filePaths.appSrc);
+  //self.enableBabelRegister(filePaths.appSrc);
   const pagesPaths = self.getPages(`${filePaths.appPagesFolder}/**/*.jsx`);
   const routesObject = self.createRouterComponents(
     pagesPaths,
@@ -181,7 +181,7 @@ methods.buildStringCode = function (code, destination, babelOptions = {}) {
 
   // Ignore non-JS files and test scripts
 
-  options.presets = ["@babel/preset-react", "@babel/preset-env"];
+  options.presets = ["@babel/preset-env", "@babel/preset-react"];
   // options.output = destination
 
   console.log("THE FILE NAME", options);
@@ -268,7 +268,7 @@ methods.enableBabelRegister = function (babelCWD) {
 
   loadFileSync("@babel/register").default({
     cwd: babelCWD,
-    presets: ["@babel/preset-env"],
+    presets: ["@babel/preset-env", "@babel/preset-react"],
   });
 };
 methods.addToAST = function (objectToAdd) {
@@ -307,9 +307,9 @@ methods.addToAST = function (objectToAdd) {
       if (path.node.type === "ImportDeclaration") return;
       console.log(
         "Identifier matched::",
-        path.container[2].declarations[0].id.name
+        path.container[3].declarations[0].id.name
       );
-      let firstVariableName = path.container[2].declarations[0].id.name;
+      let firstVariableName = path.container[3].declarations[0].id.name;
 
       if (firstVariableName === "mapsOfFiles") {
         self.variableCreation(path, t, objectToAdd, parser, true);
@@ -379,7 +379,7 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
             let funcAst = parser.parse(en.component.toString(), {
               sourceType: "module",
             });
-            self.jsxTo;
+            self.funcToJsx(funcAst);
             let functionInContext = funcAst.program.body[0];
             let funcName = functionInContext.id.name;
             let funcBody = functionInContext.body;
@@ -401,12 +401,16 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
   path.stop();
 };
 
-methods.funcAstToJsx = function (ast, t, traverse) {
+methods.funcToJsx = function (ast) {
+  const self = this;
+
+  const traverse = self.traverse;
+  const t = self.t;
   traverse(ast, {
     CallExpression(path) {
       if (
         t.isMemberExpression(path.node.callee) &&
-        t.isIdentifier(path.node.callee.object, { name: "React" }) &&
+        t.isIdentifier(path.node.callee.object, { name: "_react" }) &&
         t.isIdentifier(path.node.callee.property, { name: "createElement" })
       ) {
         const [type, props, ...childProcess] = path.node.arguments;
@@ -427,6 +431,21 @@ methods.funcAstToJsx = function (ast, t, traverse) {
             jsxChildren.push(t.jsxExpressionContainer(child));
           }
         });
+
+        const openingElement = t.jsxOpeningElement(
+          t.jsxIdentifier(type.value),
+          attributes,
+          false
+        );
+
+        const closingElement = t.jsxClosingElement(t.jsxIdentifier(type.value));
+        const jsxElement = t.jsxElement(
+          openingElement,
+          closingElement,
+          jsxChildren,
+          false
+        );
+        path.replaceWith(jsxElement);
       }
     },
   });
