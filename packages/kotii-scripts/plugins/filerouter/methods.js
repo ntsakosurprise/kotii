@@ -15,10 +15,15 @@ methods.handleFileRoutes = async function (data) {
   console.log("FILE PATHS", filePaths);
   self.enableBabelRegister(filePaths.appSrc);
   const pagesPaths = self.getPages(`${filePaths.appPagesFolder}/**/*.jsx`);
-  self.createRouterComponents(pagesPaths, filePaths.appSrc);
+  const routesObject = self.createRouterComponents(
+    pagesPaths,
+    filePaths.appSrc
+  );
+  self.addToAST(routesObject);
   // const sourceCodes = self.getSourceCodes(pagesPaths);
   // self.parseJsxToReact(sourceCodes);
   console.log("PAGES PATHS", pagesPaths);
+  console.log("Routes OBject", routesObject);
 
   // console.log(
   //   "PROCESSED",
@@ -109,7 +114,7 @@ methods.getItemPathAndFile = function (item) {
     .replace(/\[\.{3}.+\]/, "*");
   // .replace(/\/$/, "");
   if (!/^\/$/.test(patternMatch)) {
-    console.log("§  ");
+    console.log("Removes leading forwarslash");
     patternMatch = patternMatch.replace(/\/$/, "");
   }
   console.log("THE PAGES matched", patternMatch);
@@ -265,5 +270,72 @@ methods.enableBabelRegister = function (babelCWD) {
     cwd: babelCWD,
     presets: ["@babel/preset-env"],
   });
+};
+methods.addToAST = function (objectToAdd) {
+  console.log("addTOast gets a call");
+  const self = this;
+  const pao = self.pao;
+  const traverse = self.traverse;
+  const generate = self.generate;
+  const parser = self.parser;
+  const t = self.t;
+  const loadFileSync = pao.pa_loadFileSync;
+  const loadFile = pao.pa_loadFile;
+  const readFileSync = pao.pa_readFileSync;
+  const saveToFile = pao.pa_saveToFile;
+  const getWorkingFolder = pao.pa_getWorkingFolder;
+  const cwd = getWorkingFolder();
+  //self.enableBabelRegister(cwd);
+  const filePath = `${cwd}/build.js`;
+  const jsFile = readFileSync(filePath).replace(/;/g, "");
+  let ast = parser.parse(jsFile, { sourceType: "module" });
+  // console.log("jsFile replaced", jsFile);
+  //console.log("THE VALUE OF TRAVERSE", traverse);
+  traverse(ast, {
+    enter(path) {
+      console.log("TRAVERSE ENTERS", path.node);
+      if (!t.isIdentifier(path.node)) return;
+      console.log("PATH AFTER CHECK", path.node.type);
+      if (t.isIdentifier(path.node, { name: "surname" })) {
+        console.log("Identifier matched", path.parentPath);
+        path.parentPath.container.push(
+          t.variableDeclaration("const", [
+            t.variableDeclarator(
+              t.identifier("mapsOfFiles"),
+              t.objectExpression([
+                t.objectProperty(
+                  t.identifier("name"),
+                  t.stringLiteral("frank")
+                ),
+              ])
+            ),
+          ])
+        );
+        path.stop();
+      }
+
+      // if (t.isImportDeclaration(path.node)) {
+      //   path.node.name = "x";
+      // }
+    },
+  });
+  console.log("New AST", ast);
+  const { code: genCode } = generate(ast);
+  const modifiedCode = genCode.replace(/",/g, '";').replace(/};;/, "};");
+
+  console.log("New AST genCode", genCode);
+  console.log("Modiefied code", modifiedCode);
+  saveToFile(filePath, modifiedCode);
+
+  //console.log("file source code", fileCode);
+
+  //   .then((file) => {
+  //     console.log("I got the file", file);
+  //     let fileCode = parser.parse(file)
+  //   })
+  //   .catch((err) => {
+  //     console.log("THE ERR", err);
+  //   });
+  // console.log("THE FILE PATH", jsFile);
 };
 export default methods;
