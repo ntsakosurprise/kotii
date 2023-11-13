@@ -398,7 +398,7 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
             });
             console.log("FUNC AST", funcAst);
             console.log("FUNCK FIRST NODE");
-            self.reactJsx(funcAst,en.path);
+            self.reactJsx(funcAst, en.path);
             let functionInContext = funcAst.program.body[0];
             console.log("FUNCK FIRST NODE", functionInContext);
             // let funcName = functionInContext.id.name;
@@ -470,15 +470,15 @@ methods.funcToJsx = function (ast) {
     },
   });
 };
-methods.reactJsx = function (ast,moduleName) {
+methods.reactJsx = function (ast, moduleName) {
   const self = this;
-  const modModuleName = moduleName === "/" ? "index" : moduleName.replace()
+  const modModuleName = moduleName === "/" ? "index" : moduleName.replace();
 
   const traverse = self.traverse;
   const t = self.t;
   traverse(ast, {
     VariableDeclaration(path) {
-      if(path.declarations[0].id)
+      // if(path.declarations[0].id)
     },
   });
 };
