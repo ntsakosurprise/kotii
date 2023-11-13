@@ -120,8 +120,9 @@ methods.getItemPathAndFile = function (item) {
   }
   console.log("THE PAGES matched", patternMatch);
   console.log("THE ITEM", item);
-  console.log("THE FILE CODE", readFileSync(item));
+
   fileAsComp = loadFileSync(item);
+  console.log("THE FILE CODE", fileAsComp.default.toString());
   // await loadFile(item);
 
   return {
@@ -270,8 +271,8 @@ methods.enableBabelRegister = function (babelCWD) {
 
   loadFileSync("@babel/register").default({
     cwd: babelCWD,
-    presets: ["@babel/preset-env"],
-    plugins: [["@babel/plugin-transform-react-jsx", { runtime: "classic" }]],
+    // presets: ["@babel/preset-env"],
+    plugins: [["@babel/plugin-transform-react-jsx"]],
   });
 };
 methods.addToAST = function (objectToAdd) {
@@ -391,16 +392,21 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
         t.identifier("mapsOfFiles"),
         t.arrayExpression([
           ...files.map((en, i) => {
-            let funcAst = parser.parse(en.component.toString(), {
+            let functionAsString = en.component
+              .toString()
+              .replace(/\/\*#__PURE__\*\/_react.default/g, "React");
+            console.log("FUNCTION AS A STRING", functionAsString);
+            let funcAst = parser.parse(functionAsString, {
               sourceType: "module",
             });
+            console.log("FUNCTION STRING", functionAsString);
             // let funcAst = parser.parse(en.component, {
             //   sourceType: "module",
             //   plugins: ["jsx"],
             // });
             console.log("FUNC AST", funcAst);
             console.log("FUNCK FIRST NODE");
-            //self.reactJsx(funcAst, en.path);
+            self.funcToJsx(funcAst, en.path);
             let functionInContext = funcAst.program.body[0];
             console.log("FUNCK FIRST NODE", functionInContext);
             let funcName = functionInContext.id.name;
@@ -435,7 +441,7 @@ methods.funcToJsx = function (ast) {
         t.isIdentifier(path.node.callee.object, { name: "React" }) &&
         t.isIdentifier(path.node.callee.property, { name: "createElement" })
       ) {
-        const [type, props, ...childProcess] = path.node.arguments;
+        const [type, props, ...children] = path.node.arguments;
         let attributes = [];
         if (t.isObjectExpression(props)) {
           props.properties.forEach((prop) => {
