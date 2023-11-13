@@ -13,7 +13,7 @@ methods.handleFileRoutes = async function (data) {
   const { payload } = data;
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
-  //self.enableBabelRegister(filePaths.appSrc);
+  self.enableBabelRegister(filePaths.appSrc);
   const pagesPaths = self.getPages(`${filePaths.appPagesFolder}/**/*.jsx`);
   const routesObject = self.createRouterComponents(
     pagesPaths,
@@ -120,12 +120,12 @@ methods.getItemPathAndFile = function (item) {
   }
   console.log("THE PAGES matched", patternMatch);
   console.log("THE ITEM", item);
-  fileAsComp = readFileSync(item);
+  fileAsComp = loadFileSync(item);
   // await loadFile(item);
 
   return {
     path: patternMatch,
-    component: fileAsComp,
+    component: fileAsComp?.default ? fileAsComp.default : fileAsComp,
   };
 };
 methods.dynamicImport = async function (module) {
@@ -389,20 +389,20 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
         t.identifier("mapsOfFiles"),
         t.arrayExpression([
           ...files.map((en, i) => {
-            // let funcAst = parser.parse(en.component.toString(), {
-            //   sourceType: "module",
-            // });
-            let funcAst = parser.parse(en.component, {
+            let funcAst = parser.parse(en.component.toString(), {
               sourceType: "module",
-              plugins: ["jsx"],
             });
+            // let funcAst = parser.parse(en.component, {
+            //   sourceType: "module",
+            //   plugins: ["jsx"],
+            // });
             console.log("FUNC AST", funcAst);
             console.log("FUNCK FIRST NODE");
-            self.reactJsx(funcAst, en.path);
+            //self.reactJsx(funcAst, en.path);
             let functionInContext = funcAst.program.body[0];
             console.log("FUNCK FIRST NODE", functionInContext);
-            // let funcName = functionInContext.id.name;
-            // let funcBody = functionInContext.body;
+            let funcName = functionInContext.id.name;
+            let funcBody = functionInContext.body;
             console.log("AST for func", funcAst.program.body);
             console.log("AST FUNCTION PARTS", funcName, funcBody);
 
