@@ -120,6 +120,7 @@ methods.getItemPathAndFile = function (item) {
   }
   console.log("THE PAGES matched", patternMatch);
   console.log("THE ITEM", item);
+  console.log("THE FILE CODE", readFileSync(item));
   fileAsComp = loadFileSync(item);
   // await loadFile(item);
 
@@ -269,7 +270,8 @@ methods.enableBabelRegister = function (babelCWD) {
 
   loadFileSync("@babel/register").default({
     cwd: babelCWD,
-    presets: ["@babel/preset-env", "@babel/preset-react"],
+    presets: ["@babel/preset-env"],
+    plugins: [["@babel/plugin-transform-react-jsx", { runtime: "classic" }]],
   });
 };
 methods.addToAST = function (objectToAdd) {
