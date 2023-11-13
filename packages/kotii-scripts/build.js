@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Switch as ReactRoutes } from "react-router-dom";
 import Public from "./public.js";
-
 const mapsOfFiles = [
   {
     path: "/test",
