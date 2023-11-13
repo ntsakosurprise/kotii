@@ -1,5 +1,6 @@
 import HTMLWebpackPlugin from "html-webpack-plugin";
 import webpack from "webpack";
+
 export default () => {
   //   console.log("THE PROCESS", process.env.APPCONTEXT);
   let env = JSON.parse(process.env.APPCONTEXT); // GET the set APPCONTEXT environment variable
@@ -13,6 +14,16 @@ export default () => {
       filename: "[main].bundle.js",
       path: `${env.appBuildFolder}`, // save emitted bundle to this path or folder
     },
+    //externals: {
+    // react: {
+    //   root: "React",
+    //   commonjs2: "react",
+    //   commonjs: "react",
+    //   amd: "react",
+    //   umd: "react",
+    // },
+    //   React: "react",
+    // },
     resolve: {
       extensions: [".js", ".jsx", ".png", ".jpg"], // tell webpack to use these extenstions to resolve imported files[for importing without specifying the extension name]
       alias: {
@@ -58,7 +69,10 @@ export default () => {
           use: {
             loader: "babel-loader",
             options: {
-              presets: [["@babel/preset-env"], ["@babel/preset-react"]],
+              presets: [
+                ["@babel/preset-env"],
+                ["@babel/preset-react", { runtime: "automatic" }],
+              ],
             },
           },
         },
