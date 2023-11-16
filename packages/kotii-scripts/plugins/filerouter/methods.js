@@ -271,8 +271,12 @@ methods.enableBabelRegister = function (babelCWD) {
 
   loadFileSync("@babel/register").default({
     cwd: babelCWD,
-    // presets: ["@babel/preset-env"],
-    plugins: [["@babel/plugin-transform-react-jsx"]],
+    presets: ["@babel/preset-env", "@babel/preset-react"],
+    // plugins: [
+    //   "babel-plugin-macros",
+    //   "babel-plugin-styled-components",
+    //   ["@babel/plugin-transform-react-jsx"],
+    // ],
   });
 };
 methods.addToAST = function (objectToAdd) {
@@ -395,11 +399,12 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
             let functionAsString = en.component
               .toString()
               .replace(/\/\*#__PURE__\*\/_react.default/g, "React");
+            // .replace(/;/g, "");
             console.log("FUNCTION AS A STRING", functionAsString);
             let funcAst = parser.parse(functionAsString, {
               sourceType: "module",
             });
-            console.log("FUNCTION STRING", functionAsString);
+            //console.log("FUNCTION STRING", functionAsString);
             // let funcAst = parser.parse(en.component, {
             //   sourceType: "module",
             //   plugins: ["jsx"],
@@ -413,6 +418,7 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
             let funcBody = functionInContext.body;
             console.log("AST for func", funcAst.program.body);
             console.log("AST FUNCTION PARTS", funcName, funcBody);
+            console.log("THE FUNCTION NAME", funcName);
 
             return t.objectExpression([
               t.objectProperty(t.identifier("path"), t.stringLiteral(en.path)),
@@ -429,19 +435,42 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
   path.stop();
 };
 
-methods.funcToJsx = function (ast) {
+methods.funcToJsx = function (ast, pathID) {
   const self = this;
 
   const traverse = self.traverse;
   const t = self.t;
+  console.log("PROCESSING PATHID", pathID);
   traverse(ast, {
     CallExpression(path) {
+      console.log("JSX PATH", path.node);
+      console.log(
+        "JSX PATH.NODE.callee",
+        t.isMemberExpression(path.node.callee)
+      );
+      console.log(
+        "JSX PATH.NODE.callee.object",
+        t.isIdentifier(path.node.callee.object, { name: "React" })
+      );
+      console.log(
+        "JSX PATH.NODE.callee.property",
+        t.isIdentifier(path.node.callee.property, { name: "createElement" })
+      );
       if (
         t.isMemberExpression(path.node.callee) &&
         t.isIdentifier(path.node.callee.object, { name: "React" }) &&
         t.isIdentifier(path.node.callee.property, { name: "createElement" })
       ) {
+        console.log("JSX PATH ARGUMENTS", path.node.arguments);
         const [type, props, ...children] = path.node.arguments;
+
+        console.log("JSX PATH CHILDREN", children);
+        console.log("JSX PATH TYPE", type);
+        console.log("JSX PATH PROPS", props);
+        console.log(
+          "JSX PATH PROPS.ISOBJECTEXPRESSION",
+          t.isObjectExpression(props)
+        );
         let attributes = [];
         if (t.isObjectExpression(props)) {
           props.properties.forEach((prop) => {
@@ -456,24 +485,35 @@ methods.funcToJsx = function (ast) {
           if (t.isStringLiteral(child)) {
             jsxChildren.push(t.jsxText(child.value));
           } else if (t.isCallExpression(child)) {
+            console.log("NODE CHILD TYPE IS EXPRESSION");
             jsxChildren.push(t.jsxExpressionContainer(child));
           }
         });
 
+        console.log("JSX CONTRUCTED CHILDREN", jsxChildren);
+
+        const idAsValueOrName = type?.value ? type.value : type.name;
+        console.log("JSX TYPE.VALUE", idAsValueOrName);
+
         const openingElement = t.jsxOpeningElement(
-          t.jsxIdentifier(type.value),
+          t.jsxIdentifier(idAsValueOrName),
           attributes,
           false
         );
 
-        const closingElement = t.jsxClosingElement(t.jsxIdentifier(type.value));
+        const closingElement = t.jsxClosingElement(
+          t.jsxIdentifier(idAsValueOrName)
+        );
+        console.log("BEFORE PLACEMENT DONE");
         const jsxElement = t.jsxElement(
           openingElement,
           closingElement,
           jsxChildren,
           false
         );
+
         path.replaceWith(jsxElement);
+        console.log("REPLACEMENT IS DONE");
       }
     },
   });
