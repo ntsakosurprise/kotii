@@ -9,7 +9,7 @@ const mapsOfFiles = [{
 }, {
   path: "/",
   component: function Index() {
-    return <p>Focus on your idea, Forget about configurations</p>;
+    return <Hero>{<HeroText>Focus on your idea, Forget about configurations</HeroText>}</Hero>;
   }
 }, {
   path: "/faqs",
@@ -47,6 +47,7 @@ const mapsOfFiles = [{
 const name = "my name is my name";
 const surname = "Mashele";
 export { name, surname, mapsOfFiles };
+console.log("process workdir", process.cwd());
 
 //import Public from "../Public/component.js"
 
