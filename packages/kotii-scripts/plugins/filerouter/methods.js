@@ -121,13 +121,14 @@ methods.getItemPathAndFile = function (item) {
   console.log("THE PAGES matched", patternMatch);
   console.log("THE ITEM", item);
 
-  fileAsComp = loadFileSync(item);
-  console.log("THE FILE CODE", fileAsComp.default.toString());
+  // fileAsComp = loadFileSync(item);
+  // console.log("THE FILE CODE", fileAsComp.default.toString());
   // await loadFile(item);
 
   return {
     path: patternMatch,
-    component: fileAsComp?.default ? fileAsComp.default : fileAsComp,
+    //component: fileAsComp?.default ? fileAsComp.default : fileAsComp,
+    component: item,
   };
 };
 methods.dynamicImport = async function (module) {
