@@ -424,7 +424,8 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
               t.objectProperty(t.identifier("path"), t.stringLiteral(en.path)),
               t.objectProperty(
                 t.identifier("component"),
-                t.functionExpression(t.identifier(funcName), [], funcBody)
+                // t.functionExpression(t.identifier(funcName), [], funcBody)
+                t.stringLiteral(en.component)
               ),
             ]);
           }),
