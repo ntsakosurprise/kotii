@@ -397,29 +397,29 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
         t.identifier("mapsOfFiles"),
         t.arrayExpression([
           ...files.map((en, i) => {
-            let functionAsString = en.component
-              .toString()
-              .replace(/\/\*#__PURE__\*\/_react.default/g, "React");
+            // let functionAsString = en.component
+            //   .toString()
+            //   .replace(/\/\*#__PURE__\*\/_react.default/g, "React");
             // .replace(/;/g, "");
-            console.log("FUNCTION AS A STRING", functionAsString);
-            let funcAst = parser.parse(functionAsString, {
-              sourceType: "module",
-            });
+            // console.log("FUNCTION AS A STRING", functionAsString);
+            // let funcAst = parser.parse(functionAsString, {
+            //   sourceType: "module",
+            // });
             //console.log("FUNCTION STRING", functionAsString);
             // let funcAst = parser.parse(en.component, {
             //   sourceType: "module",
             //   plugins: ["jsx"],
             // });
-            console.log("FUNC AST", funcAst);
-            console.log("FUNCK FIRST NODE");
-            self.funcToJsx(funcAst, en.path);
-            let functionInContext = funcAst.program.body[0];
-            console.log("FUNCK FIRST NODE", functionInContext);
-            let funcName = functionInContext.id.name;
-            let funcBody = functionInContext.body;
-            console.log("AST for func", funcAst.program.body);
-            console.log("AST FUNCTION PARTS", funcName, funcBody);
-            console.log("THE FUNCTION NAME", funcName);
+            // console.log("FUNC AST", funcAst);
+            // console.log("FUNCK FIRST NODE");
+            // self.funcToJsx(funcAst, en.path);
+            // let functionInContext = funcAst.program.body[0];
+            // console.log("FUNCK FIRST NODE", functionInContext);
+            // let funcName = functionInContext.id.name;
+            // let funcBody = functionInContext.body;
+            // console.log("AST for func", funcAst.program.body);
+            // console.log("AST FUNCTION PARTS", funcName, funcBody);
+            // console.log("THE FUNCTION NAME", funcName);
 
             return t.objectExpression([
               t.objectProperty(t.identifier("path"), t.stringLiteral(en.path)),
