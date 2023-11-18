@@ -1,63 +1,84 @@
 import React from "react";
 import { BrowserRouter, Switch as ReactRoutes } from "react-router-dom";
 import Public from "./public.js";
-const mapsOfFiles = [{
-  path: "/test",
-  component: function Test() {
-    return <p>TEST Page</p>;
-  }
-}, {
-  path: "/",
-  component: function Index() {
-    return <Hero>{<HeroText>Focus on your idea, Forget about configurations</HeroText>}</Hero>;
-  }
-}, {
-  path: "/faqs",
-  component: function Faqs() {
-    return <p>Im the FAQS page</p>;
-  }
-}, {
-  path: "/contact-us",
-  component: function ContactUs() {
-    console.log("THE ABOUT PAGE");
-    return <p>Im the ABOUT page</p>;
-  }
-}, {
-  path: "/about",
-  component: function About() {
-    console.log("THE ABOUT PAGE");
-    return <p>Im the ABOUT page</p>;
-  }
-}, {
-  path: "/todo",
-  component: function Todo() {
-    return <p>Im the TODO page</p>;
-  }
-}, {
-  path: "/posts",
-  component: function Posts() {
-    return <p>Im the Posts page</p>;
-  }
-}, {
-  path: "/posts/:slug",
-  component: function AnythingSlug() {
-    return <p>Im the AnythingSlug page</p>;
-  }
-}];
+import About from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/about.jsx";
+import ContactUs from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/contact-us.jsx";
+import Faqs from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/faqs.jsx";
+import Home from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/index.jsx";
+import Posts from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/posts/index.jsx";
+import Slug from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/posts/[slug].jsx";
+import Test from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/test.jsx";
+import Todo from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/todo/index.jsx";
+const comps = {
+  Test,
+  Home,
+  Faqs,
+  ContactUs,
+  About,
+  Todo,
+  Posts,
+  Slug,
+};
+const mapsOfFiles = [
+  {
+    path: "/test",
+    component: "Test",
+  },
+  {
+    path: "/",
+    component: "Home",
+  },
+  {
+    path: "/faqs",
+    component: "Faqs",
+  },
+  {
+    path: "/contact-us",
+    component: "ContactUs",
+  },
+  {
+    path: "/about",
+    component: "About",
+  },
+  {
+    path: "/todo",
+    component: "Todo",
+  },
+  {
+    path: "/posts",
+    component: "Posts",
+  },
+  {
+    path: "/posts/:slug",
+    component: "Slug",
+  },
+];
 const name = "my name is my name";
 const surname = "Mashele";
 export { name, surname, mapsOfFiles };
-console.log("process workdir", process.cwd());
 
 //import Public from "../Public/component.js"
 
-const Routes = props => {
-  return <BrowserRouter>
+const Routes = (props) => {
+  return (
+    <BrowserRouter>
       <ReactRoutes>
         {mapsOfFiles.map((r, index) => {
-        return <Public {...props} exact path={r.path} component={r.component} key={index} />;
-      })}
+          console.log("THE COMPONENT");
+          let component = comps[r.component];
+          // console.log("FUNCTION TO RENDER", funcToRender)
+          return (
+            <Public
+              {...props}
+              exact
+              path={r.path}
+              component={component}
+              key={index}
+            />
+          );
+        })}
       </ReactRoutes>
-    </BrowserRouter>;
+    </BrowserRouter>
+  );
 };
 export default Routes;

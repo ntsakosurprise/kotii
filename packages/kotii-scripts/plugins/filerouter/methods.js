@@ -13,12 +13,20 @@ methods.handleFileRoutes = async function (data) {
   const { payload } = data;
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
-  self.enableBabelRegister(filePaths.appSrc);
+  //self.enableBabelRegister(filePaths.appSrc);
   const pagesPaths = self.getPages(`${filePaths.appPagesFolder}/**/*.jsx`);
   const routesObject = self.createRouterComponents(
     pagesPaths,
     filePaths.appSrc
   );
+  // self
+  //   .doImports(routesObject)
+  //   .then((completed) => {
+  //     console.log("MODULE IMPORTES SUCCESSFUL", completed);
+  //   })
+  //   .catch((err) => {
+  //     consoole.log("THERE WAS AN ERROR IMPORTING", err);
+  //   });
   self.addToAST(routesObject);
   // const sourceCodes = self.getSourceCodes(pagesPaths);
   // self.parseJsxToReact(sourceCodes);
@@ -98,6 +106,8 @@ methods.getItemPathAndFile = function (item) {
   const loadFile = pao.pa_loadFile;
   const loadFileSync = pao.pa_loadFileSync;
   const readFileSync = pao.pa_readFileSync;
+  const capitalizeFirstLetter = pao.pa_capitalizeFirstLetter;
+  const camelCase = pao.pa_camelCase;
   const extMatchPattern = /\.jsx|tsx$/g;
   let fileAsComp = null;
 
@@ -124,10 +134,18 @@ methods.getItemPathAndFile = function (item) {
   // fileAsComp = loadFileSync(item);
   // console.log("THE FILE CODE", fileAsComp.default.toString());
   // await loadFile(item);
+  let splitPatternMatch = patternMatch.split("/");
+  let splitLen = splitPatternMatch.length;
 
   return {
     path: patternMatch,
     //component: fileAsComp?.default ? fileAsComp.default : fileAsComp,
+    componentName:
+      patternMatch === "/"
+        ? "Home"
+        : capitalizeFirstLetter(
+            camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
+          ),
     component: item,
   };
 };
@@ -297,6 +315,7 @@ methods.addToAST = function (objectToAdd) {
   const cwd = getWorkingFolder();
   //console.log("EXECSYNC", execSync);
   //self.enableBabelRegister(cwd);
+
   const filePath = `${cwd}/build.js`;
   const jsFile = readFileSync(filePath).replace(/;/g, "");
   let ast = parser.parse(jsFile, { sourceType: "module", plugins: ["jsx"] });
@@ -346,12 +365,13 @@ methods.addToAST = function (objectToAdd) {
     },
   });
   console.log("New AST", ast);
+  let stringCode = self.insertImportDeclarations(objectToAdd);
   const { code: genCode } = generate(ast);
   const modifiedCode = genCode;
 
   console.log("New AST genCode", genCode);
   console.log("Modiefied code", modifiedCode);
-  saveToFile(filePath, modifiedCode);
+  saveToFile(filePath, `${stringCode} ${modifiedCode}`);
   // let commandToRun = "build:dev";
   // let bat = execSync("yarn", ["run", `${commandToRun}`], { cwd: cwd });
   // //console.log("BUILD SPAWN", buildSpawn);
@@ -426,7 +446,7 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
               t.objectProperty(
                 t.identifier("component"),
                 // t.functionExpression(t.identifier(funcName), [], funcBody)
-                t.stringLiteral(en.component)
+                t.stringLiteral(en.componentName)
               ),
             ]);
           }),
@@ -520,16 +540,93 @@ methods.funcToJsx = function (ast, pathID) {
     },
   });
 };
-methods.reactJsx = function (ast, moduleName) {
+methods.doImports = function (toImport) {
   const self = this;
-  const modModuleName = moduleName === "/" ? "index" : moduleName.replace();
-
-  const traverse = self.traverse;
-  const t = self.t;
-  traverse(ast, {
-    VariableDeclaration(path) {
-      // if(path.declarations[0].id)
-    },
+  return new Promise((res, rej) => {
+    Promise.all(
+      toImport.map((to, i) => {
+        return new Promise((resolve, reject) => {
+          self
+            .dynamicImport(to.component)
+            .then((imported) => {
+              console.log(
+                "Module has successfully been imported:",
+                to.component
+              );
+              resolve({ path: to.path, module: imported });
+            })
+            .catch((err) => {
+              console.log(
+                `importing module:${to}, has failed with an error:${err}`
+              );
+              reject(err);
+            });
+        });
+      })
+    ).then((completed) => {
+      res(completed);
+    });
   });
+};
+methods.insertImportDeclarations = function (imports, filePath) {
+  const self = this;
+  const pao = self.pao;
+  const template = self.template;
+  const generate = self.generate;
+  const t = self.t;
+  const parser = self.parser;
+  const saveToFile = pao.pa_saveToFile;
+
+  //   console.log("THE IMPORTS", imports);
+  //   const buildImport = template(`
+  //   let IMPORT_NAME = require(SOURCE);
+  // `);
+
+  //   let asty = "";
+
+  //   asty = buildImport({
+  //     IMPORT_NAME: t.identifier(`${imports[0].componentName}`),
+  //     SOURCE: t.stringLiteral(`${imports[0].component}`),
+  //   });
+  let constString = `const comps = {`;
+  let importString = imports.map((im, i) => {
+    constString += `${im.componentName},`;
+    return `import ${im.componentName} from "${im.component}";`;
+  });
+  // const myImport = template(`${importString.join(";")}`, {
+  //   sourceType: "module",
+  // });
+  constString += "}";
+  let joinedString = `${importString.join("")} ${constString};`;
+  console.log("ASTY JOINED STRING", joinedString);
+  let ast = parser.parse(joinedString, { sourceType: "module" });
+  let modifiedCode = generate(ast).code;
+  console.log("ASTY CODE THE IMPOT STRINGS", importString);
+  console.log("ASTY CODE", modifiedCode);
+  console.log();
+  return modifiedCode;
+  // saveToFile(filePath, modifiedCode);
+  // saveToFile(filePath, modifiedCode);
+  // const ast = buildImport({
+  //   IMPORT_NAME: t.identifier("myModule"),
+  //   SOURCE: t.stringLiteral("my-module")
+  // });
+
+  // return {
+  //   visitor: {
+  //     Program(path, state) {
+  //       const lastImport = path
+  //         .get("body")
+  //         .filter((p) => p.isImportDeclaration())
+  //         .pop();
+
+  //       if (lastImport) {
+  //         imports.forEach((im, i) => {
+  //           lastImport.insertAfter(myImport());
+  //         });
+  //       }
+  //     },
+  //   },
+  // };
 };
 export default methods;
