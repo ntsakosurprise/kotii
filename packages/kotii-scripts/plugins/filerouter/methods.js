@@ -14,7 +14,9 @@ methods.handleFileRoutes = async function (data) {
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
   //self.enableBabelRegister(filePaths.appSrc);
-  const pagesPaths = self.getPages(`${filePaths.appPagesFolder}/**/*.jsx`);
+  const pagesPaths = self.getPages(
+    `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
+  );
   const routesObject = self.createRouterComponents(
     pagesPaths,
     filePaths.appSrc
@@ -108,7 +110,7 @@ methods.getItemPathAndFile = function (item) {
   const readFileSync = pao.pa_readFileSync;
   const capitalizeFirstLetter = pao.pa_capitalizeFirstLetter;
   const camelCase = pao.pa_camelCase;
-  const extMatchPattern = /\.jsx|tsx$/g;
+  const extMatchPattern = /\.js|ts|tsx|jsx$/g;
   let fileAsComp = null;
 
   let gotEndpoint =
@@ -319,6 +321,7 @@ methods.addToAST = function (objectToAdd) {
   const filePath = `${cwd}/build.js`;
   const jsFile = readFileSync(filePath).replace(/;/g, "");
   let ast = parser.parse(jsFile, { sourceType: "module", plugins: ["jsx"] });
+  let isCompsDefined = false;
   // console.log("jsFile replaced", jsFile);
   console.log("THE VALUE OF TRAVERSE", traverse);
   traverse(ast, {
@@ -333,25 +336,23 @@ methods.addToAST = function (objectToAdd) {
         path.node.type === "ImportDeclaration"
       );
       if (path.node.type === "ImportDeclaration") return;
-      const mapsNode = path.container.filter((nd, i) => {
-        // console.log("ND IN MAP", nd);
+      let isRoutesDefined = false;
 
+      path.container.forEach((nd, i) => {
         if (nd.type !== "VariableDeclaration") return false;
-        // console.log("nd.TYPE", nd.type);
-        // console.log("nd.Declarations", nd.declarations[0].id.name);
-        let nodeIDName = nd.declarations[0].id.name;
-        if (nodeIDName === "mapsOfFiles" || nodeIDName === "surname") return nd;
-      });
-      console.log("MAPS OF NODE", mapsNode);
-      const nd = mapsNode[0];
-      const targetDeclaration = nd.declarations[0];
-      const targetDeclarationName = targetDeclaration.id.name;
-      // console.log("THE NODE DECLARATIONS", nd.declarations);
-      // console.log("Identifier matched::", nd.id.name);
-      let firstVariableName = targetDeclarationName;
-      console.log("FIRST VARIABLE NAME", firstVariableName);
 
-      if (firstVariableName === "mapsOfFiles") {
+        let declarations = nd.declarations;
+        declarations.forEach((dec, i) => {
+          if (dec.id.name === "routes") {
+            isRoutesDefined = true;
+          }
+          if (dec.id.name === "comps") isCompsDefined = true;
+        });
+        // let nodeIDName = nd.declarations[0].id.name;
+        // if (nodeIDName === "mapsOfFiles" || nodeIDName === "surname") return nd;
+      });
+
+      if (isRoutesDefined) {
         self.variableCreation(path, t, objectToAdd, parser, true);
       } else {
         self.variableCreation(path, t, objectToAdd, parser);
@@ -365,13 +366,18 @@ methods.addToAST = function (objectToAdd) {
     },
   });
   console.log("New AST", ast);
-  let stringCode = self.insertImportDeclarations(objectToAdd);
+  let stringCode = !isCompsDefined
+    ? self.insertImportDeclarations(objectToAdd)
+    : "";
   const { code: genCode } = generate(ast);
   const modifiedCode = genCode;
 
   console.log("New AST genCode", genCode);
   console.log("Modiefied code", modifiedCode);
-  saveToFile(filePath, `${stringCode} ${modifiedCode}`);
+  saveToFile(
+    filePath,
+    isCompsDefined ? modifiedCode : `${stringCode} ${modifiedCode}`
+  );
   // let commandToRun = "build:dev";
   // let bat = execSync("yarn", ["run", `${commandToRun}`], { cwd: cwd });
   // //console.log("BUILD SPAWN", buildSpawn);
@@ -414,7 +420,7 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
   creationMethod(
     t.variableDeclaration("const", [
       t.variableDeclarator(
-        t.identifier("mapsOfFiles"),
+        t.identifier("routes"),
         t.arrayExpression([
           ...files.map((en, i) => {
             // let functionAsString = en.component
