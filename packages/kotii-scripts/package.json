@@ -52,6 +52,7 @@
     "@babel/generator": "^7.23.3",
     "@babel/node": "^7.22.19",
     "@babel/parser": "^7.23.3",
+    "@babel/template": "^7.22.15",
     "@babel/traverse": "^7.23.3",
     "@babel/types": "^7.23.3",
     "@octokit/auth-basic": "^1.4.6",

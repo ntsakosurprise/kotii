@@ -1,6 +1,7 @@
 import babel from "@babel/core";
 import generate from "@babel/generator";
 import parser from "@babel/parser";
+import template from "@babel/template";
 import traverse from "@babel/traverse";
 import * as t from "@babel/types";
 import execSync from "child_process";
@@ -11,6 +12,7 @@ import path from "path";
 import React from "react";
 import routerDom from "react-router-dom";
 import methods from "./methods.js";
+
 const require = createRequire(import.meta.url);
 const { BrowserRouter, Switch } = routerDom;
 // exec('npm run dev')
@@ -30,6 +32,7 @@ class FileRouter {
     this.parser = parser;
     this.traverse = traverse.default;
     this.t = t;
+    this.template = template.default;
     this.generate = generate.default;
     this.execSync = execSync.spawn;
 
@@ -49,6 +52,8 @@ class FileRouter {
     this.addToAST = methods.addToAST;
     this.variableCreation = methods.variableCreation;
     this.funcToJsx = methods.funcToJsx;
+    this.doImports = methods.doImports;
+    this.insertImportDeclarations = methods.insertImportDeclarations;
   }
 }
 export default FileRouter;
