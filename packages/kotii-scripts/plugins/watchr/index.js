@@ -1,2 +1,2 @@
-import Watchr from "./watchr";
+import Watchr from "./watchr.js";
 export default Watchr;
