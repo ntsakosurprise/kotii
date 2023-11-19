@@ -10,6 +10,7 @@ class Cachr {
     this.handleCache = methods.handleCache;
     this.handleGetData = methods.handleGetData
     this.doCache = methods.doCache
+    this.handleDeleteData = methods.handleDeleteData
   }
 }
 export default Cachr;

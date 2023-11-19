@@ -5,6 +5,7 @@ methods.init = function () {
   this.listens({
     "store-data-in-cache": this.handleCache.bind(this),
     "get-data-from-cache": this.handleGetData.bind(this),
+    "delete-data-in-cache": this.handleDeleteData.bind(this),
   });
 };
 methods.handleCache = function (data) {
