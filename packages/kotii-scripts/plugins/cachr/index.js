@@ -1,2 +1,2 @@
-import Cachr from "./cachr";
+import Cachr from "./cachr.js";
 export default Cachr;
