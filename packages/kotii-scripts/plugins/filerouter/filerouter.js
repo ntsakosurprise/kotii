@@ -58,6 +58,8 @@ class FileRouter {
     this.funcToJsx = methods.funcToJsx;
     this.doImports = methods.doImports;
     this.insertImportDeclarations = methods.insertImportDeclarations;
+    this.checkForSavedFiles = methods.checkForSavedFiles;
+    this.watchFileAddEvent = methods.watchFileAddEvent;
   }
 }
 export default FileRouter;
