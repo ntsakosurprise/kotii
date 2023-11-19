@@ -1,9 +1,9 @@
 import methods from "./methods.js";
-class Watcher {
+class Watchr {
   constructor(pao) {
     this.pao = pao;
     this.init = methods.init;
     this.handleWatch = methods.handleWatch;
   }
 }
-export default Watcher;
+export default Watchr;
