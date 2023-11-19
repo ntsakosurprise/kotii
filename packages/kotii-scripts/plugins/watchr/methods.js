@@ -21,12 +21,7 @@ methods.watchFiles = function (data) {
   const self = this;
   const { callback, payload } = data;
   const watcher = self.watcher;
-  const {
-    watched,
-    persistent = false,
-    ignored = null,
-    events = null,
-  } = payload;
+  const { watched, persistent = true, ignored = null, events = null } = payload;
   if (!wathcer)
     watcher = self.chokidar.watch(watched, {
       persistent,

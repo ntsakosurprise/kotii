@@ -53,8 +53,11 @@ methods.handleGetData = function (data) {
   const self = this;
   const { callback, payload } = data;
   const { key, multiple = false } = payload;
+  console.log("SELF.NODECACHE", self.NodeCache);
+  if (!self.cache)
+    return callback({ status: false, message: "No cache has been configured" });
   const retrievedData = multiple ? self.cache.mget(key) : self.cache.get(key);
-  callback(retrievedData);
+  callback({ status: true, data: retrievedData });
 
   // console.log("THE DATA OF Init SCRIPTS", data);
   // data.callback({ message: "Init plugin successfully called" });
