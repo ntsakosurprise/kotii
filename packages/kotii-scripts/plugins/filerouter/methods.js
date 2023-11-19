@@ -15,8 +15,10 @@ methods.handleFileRoutes = async function (data) {
   console.log("FILE PATHS", filePaths);
   //self.enableBabelRegister(filePaths.appSrc);
   const hasCreatedFile = await self.checkForSavedFiles();
-  conso.log();
+  if (!hasCreatedFile) return;
+
   console.log("HASCREATEDFILE", hasCreatedFile);
+  console.log("");
   const pagesPaths = self.getPages(
     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
   );
@@ -32,7 +34,7 @@ methods.handleFileRoutes = async function (data) {
   //   .catch((err) => {
   //     consoole.log("THERE WAS AN ERROR IMPORTING", err);
   //   });
-  self.addToAST(routesObject);
+  self.addToAST(routesObject, pagesPaths);
   // const sourceCodes = self.getSourceCodes(pagesPaths);
   // self.parseJsxToReact(sourceCodes);
   console.log("PAGES PATHS", pagesPaths);
@@ -303,7 +305,7 @@ methods.enableBabelRegister = function (babelCWD) {
     // ],
   });
 };
-methods.addToAST = function (objectToAdd) {
+methods.addToAST = function (objectToAdd, pagesPaths) {
   console.log("addTOast gets a call");
   const self = this;
   const pao = self.pao;
@@ -380,6 +382,12 @@ methods.addToAST = function (objectToAdd) {
   saveToFile(
     filePath,
     isCompsDefined ? modifiedCode : `${stringCode} ${modifiedCode}`
+  );
+  self.cacheData(self.keys.CACHE_ROUTES_PATHS_KEY, pagesPaths);
+  self.watchFile(
+    self.keys.SAVE_FILES_KEY,
+    { added: false, filePath: "" },
+    { add: self.watchFileAddEvent }
   );
   // let commandToRun = "build:dev";
   // let bat = execSync("yarn", ["run", `${commandToRun}`], { cwd: cwd });
@@ -639,11 +647,25 @@ methods.insertImportDeclarations = function (imports, filePath) {
   // };
 };
 
-methods.watchFile = function (filesToWatch) {
+methods.watchFile = function (key, data, events, options = null) {
   const self = this;
   // const { watched, persistent = true, ignored = null, events = null } = payload;
   self.emit({
     type: "watch-target",
+    data: {
+      payload: { watched: data, events },
+      callback: (data) => {
+        console.log("File watch set", data);
+      },
+    },
+  });
+};
+
+methods.cacheData = function (dataToCache) {
+  const self = this;
+  // const { watched, persistent = true, ignored = null, events = null } = payload;
+  self.emit({
+    type: "store-data-in-cache",
     data: {
       payload: { watched: "" },
       callback: (data) => {
@@ -664,11 +686,18 @@ methods.checkForSavedFiles = function () {
         payload: { key: SAVE_FILES_KEY },
         callback: (keyGetResult) => {
           console.log("SAVE_FILES_KEY RESULT", keyGetResult);
-          resolve(keyGetResult);
+          if (!keyGetResult) return resolve(false);
+          if (!keyGetResult?.status) return resolve(false);
+          resolve(true);
         },
       },
     });
   });
+};
+methods.watchFileAddEvent = function (changed) {
+  const self = this;
+
+  console.log("fILES HAVE BEEN CHANGED", changed);
 };
 
 export default methods;
