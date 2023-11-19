@@ -14,7 +14,9 @@ methods.handleFileRoutes = async function (data) {
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
   //self.enableBabelRegister(filePaths.appSrc);
-  const hasCreatedFile = self.checkForSavedFiles();
+  const hasCreatedFile = await self.checkForSavedFiles();
+  conso.log();
+  console.log("HASCREATEDFILE", hasCreatedFile);
   const pagesPaths = self.getPages(
     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
   );
@@ -655,14 +657,17 @@ methods.checkForSavedFiles = function () {
   const self = this;
   const keys = self.keys;
   const { SAVE_FILES_KEY } = keys;
-  self.emit({
-    type: "get-data-from-cache",
-    data: {
-      payload: { key: SAVE_FILES_KEY },
-      callback: (keyGetResult) => {
-        console.log("SAVE_FILES_KEY RESULT", keyGetResult);
+  return new Promise((resolve, reject) => {
+    self.emit({
+      type: "get-data-from-cache",
+      data: {
+        payload: { key: SAVE_FILES_KEY },
+        callback: (keyGetResult) => {
+          console.log("SAVE_FILES_KEY RESULT", keyGetResult);
+          resolve(keyGetResult);
+        },
       },
-    },
+    });
   });
 };
 
