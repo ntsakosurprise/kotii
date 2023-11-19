@@ -6,7 +6,7 @@ class Watchr {
     this.chokidar = chokidar;
     this.init = methods.init;
     this.handleWatch = methods.handleWatch;
-    this.handleStopWatching = handleStopWatching;
+    this.handleStopWatching = methods.handleStopWatching;
     this.watchFiles = methods.watchFiles;
   }
 }
