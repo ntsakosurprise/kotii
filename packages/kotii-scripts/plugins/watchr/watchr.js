@@ -6,6 +6,8 @@ class Watchr {
     this.chokidar = chokidar;
     this.init = methods.init;
     this.handleWatch = methods.handleWatch;
+    this.handleStopWatching = handleStopWatching;
+    this.watchFiles = methods.watchFiles;
   }
 }
 export default Watchr;
