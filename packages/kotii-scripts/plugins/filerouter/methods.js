@@ -14,6 +14,7 @@ methods.handleFileRoutes = async function (data) {
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
   //self.enableBabelRegister(filePaths.appSrc);
+  const hasCreatedFile = self.checkForSavedFiles();
   const pagesPaths = self.getPages(
     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
   );
@@ -635,4 +636,34 @@ methods.insertImportDeclarations = function (imports, filePath) {
   //   },
   // };
 };
+
+methods.watchFile = function (filesToWatch) {
+  const self = this;
+  // const { watched, persistent = true, ignored = null, events = null } = payload;
+  self.emit({
+    type: "watch-target",
+    data: {
+      payload: { watched: "" },
+      callback: (data) => {
+        console.log("FILE ROUTES PROCESSED", data.message);
+      },
+    },
+  });
+};
+
+methods.checkForSavedFiles = function () {
+  const self = this;
+  const keys = self.keys;
+  const { SAVE_FILES_KEY } = keys;
+  self.emit({
+    type: "get-data-from-cache",
+    data: {
+      payload: { key: SAVE_FILES_KEY },
+      callback: (keyGetResult) => {
+        console.log("SAVE_FILES_KEY RESULT", keyGetResult);
+      },
+    },
+  });
+};
+
 export default methods;
