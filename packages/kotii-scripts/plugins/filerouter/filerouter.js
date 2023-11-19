@@ -35,6 +35,10 @@ class FileRouter {
     this.template = template.default;
     this.generate = generate.default;
     this.execSync = execSync.spawn;
+    this.keys = {
+      SAVE_FILES_KEY: "SAVE_FILES_KEY",
+      CACHE_ROUTES_PATHS_KEY: "CACHE_ROUTES_PATHS_KEY",
+    };
 
     // this.openApp = openApp;
     // this.apps = apps;
