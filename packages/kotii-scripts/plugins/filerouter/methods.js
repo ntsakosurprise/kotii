@@ -1,4 +1,5 @@
 const methods = {};
+import { createRequire } from "module";
 
 methods.init = function () {
   console.log("Filerouter has been initialised");
@@ -9,23 +10,54 @@ methods.init = function () {
 };
 methods.handleFileRoutes = async function (data) {
   const self = this;
+  const pao = self.pao;
+  const loadFileSync = pao.pa_loadFileSync;
+  const getWorkingFolder = pao.pa_getWorkingFolder;
+  const require = createRequire(import.meta.url);
   // console.log("HANDLE FILE ROUTES DATA", data);
   const { payload } = data;
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
+  const cwd = getWorkingFolder();
+  //console.log("EXECSYNC", execSync);
+  //self.enableBabelRegister(cwd);
+  console.log("THE CWD KOTII", cwd);
+  self.enableBabelRegister(cwd);
+  const filePath = `${cwd}/build.js`;
+  console.log("THE FILE PATH", filePath);
+  const loadEDfILES = require(filePath);
+  console.log("LoadedFiles", loadEDfILES);
+  // const jsFile = readFileSync(filePath).replace(/;/g, "");
+  // self
+  //   .doImport(filePath)
+  //   .then((imported) => {
+  //     console.log("Impored", imported);
+  //   })
+  //   .catch((err) => {
+  //     console.log("ERR WITH IMPORT", err);
+  //   });
   //self.enableBabelRegister(filePaths.appSrc);
-  const hasCreatedFile = await self.checkForSavedFiles();
-  if (!hasCreatedFile) return;
+  // const hasCreatedFile = await self.checkForSavedFiles();
+  // if (!hasCreatedFile) return;
+  // self.cacheData({ key: "TEST_CACHE_SAVE" }, ["TEST_CACHE_SAVING"]);
+  // self.checkForSavedFiles({ key: "TEST_CACHE_SAVE" }).then((checked) => {
+  //   console.log("SAVED CACHE", checked);
+  // });
+  // self.watchFile(
+  //   { added: false, filePath: "" },
+  //   { add: self.watchFileAddEvent, delete: self.watchFileDeleteEvent }
+  // );
+  ///console.log(maniac);
 
-  console.log("HASCREATEDFILE", hasCreatedFile);
-  console.log("");
-  const pagesPaths = self.getPages(
-    `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
-  );
-  const routesObject = self.createRouterComponents(
-    pagesPaths,
-    filePaths.appSrc
-  );
+  // console.log("HASCREATEDFILE", hasCreatedFile);
+  // console.log("");
+  // const pagesPaths = self.getPages(
+  //   `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
+  // );
+  // const routesObject = self.createRouterComponents(
+  //   pagesPaths,
+  //   filePaths.appSrc
+  // );
   // self
   //   .doImports(routesObject)
   //   .then((completed) => {
@@ -34,10 +66,10 @@ methods.handleFileRoutes = async function (data) {
   //   .catch((err) => {
   //     consoole.log("THERE WAS AN ERROR IMPORTING", err);
   //   });
-  self.addToAST(routesObject, pagesPaths);
+  //self.addToAST(routesObject, pagesPaths);
   // const sourceCodes = self.getSourceCodes(pagesPaths);
   // self.parseJsxToReact(sourceCodes);
-  console.log("PAGES PATHS", pagesPaths);
+  // console.log("PAGES PATHS", pagesPaths);
   //console.log("Routes OBject", routesObject);
 
   // console.log(
@@ -297,12 +329,12 @@ methods.enableBabelRegister = function (babelCWD) {
 
   loadFileSync("@babel/register").default({
     cwd: babelCWD,
-    presets: ["@babel/preset-env", "@babel/preset-react"],
-    // plugins: [
-    //   "babel-plugin-macros",
-    //   "babel-plugin-styled-components",
-    //   ["@babel/plugin-transform-react-jsx"],
-    // ],
+    //presets: ["@babel/preset-env", "@babel/preset-react"],
+    plugins: [
+      "babel-plugin-macros",
+      "babel-plugin-styled-components",
+      ["@babel/plugin-transform-react-jsx"],
+    ],
   });
 };
 methods.addToAST = function (objectToAdd, pagesPaths) {
@@ -383,12 +415,12 @@ methods.addToAST = function (objectToAdd, pagesPaths) {
     filePath,
     isCompsDefined ? modifiedCode : `${stringCode} ${modifiedCode}`
   );
-  self.cacheData(self.keys.CACHE_ROUTES_PATHS_KEY, pagesPaths);
-  self.watchFile(
-    self.keys.SAVE_FILES_KEY,
-    { added: false, filePath: "" },
-    { add: self.watchFileAddEvent }
-  );
+  //self.cacheData(self.keys.CACHE_ROUTES_PATHS_KEY, pagesPaths);
+  self.cacheData(self.keys.SAVE_FILES_KEY, { added: [], deleted: [] });
+  self.watchFile(pagesPaths, {
+    add: self.watchFileAddEvent,
+    delete: self.watchFileDeleteEvent,
+  });
   // let commandToRun = "build:dev";
   // let bat = execSync("yarn", ["run", `${commandToRun}`], { cwd: cwd });
   // //console.log("BUILD SPAWN", buildSpawn);
@@ -585,6 +617,23 @@ methods.doImports = function (toImport) {
     });
   });
 };
+methods.doImport = function (toImport) {
+  const self = this;
+  return new Promise((resolve, reject) => {
+    self
+      .dynamicImport(toImport)
+      .then((imported) => {
+        console.log("Module has successfully been imported:", toImport);
+        resolve({ module: imported });
+      })
+      .catch((err) => {
+        console.log(
+          `importing module:${toImport}, has failed with an error:${err}`
+        );
+        reject(err);
+      });
+  });
+};
 methods.insertImportDeclarations = function (imports, filePath) {
   const self = this;
   const pao = self.pao;
@@ -647,7 +696,7 @@ methods.insertImportDeclarations = function (imports, filePath) {
   // };
 };
 
-methods.watchFile = function (key, data, events, options = null) {
+methods.watchFile = function (data, events, options = null) {
   const self = this;
   // const { watched, persistent = true, ignored = null, events = null } = payload;
   self.emit({
@@ -661,31 +710,51 @@ methods.watchFile = function (key, data, events, options = null) {
   });
 };
 
-methods.cacheData = function (dataToCache) {
+methods.cacheData = function (dataToCache, cacheData) {
   const self = this;
   // const { watched, persistent = true, ignored = null, events = null } = payload;
   self.emit({
     type: "store-data-in-cache",
     data: {
-      payload: { watched: "" },
+      payload: { toCache: { key: dataToCache.key, data: cacheData } },
       callback: (data) => {
-        console.log("FILE ROUTES PROCESSED", data.message);
+        console.log("File ROUTER CACHE SAVING", data);
+        self.checkForSavedFiles({ key: "TEST_CACHE_SAVE" }).then((checked) => {
+          console.log("SAVED CACHE", checked);
+        });
       },
     },
   });
 };
 
-methods.checkForSavedFiles = function () {
+methods.updateCacheData = function (dataToCache) {
+  const self = this;
+
+  self.emit({
+    type: "update-data-in-cache",
+    data: {
+      payload: {
+        key: dataToCache.key,
+        updateData: { action: dataToCache.action, update: dataToCache.update },
+      },
+      callback: (data) => {
+        console.log("Update callback", data.message);
+      },
+    },
+  });
+};
+
+methods.checkForSavedFiles = function (check) {
   const self = this;
   const keys = self.keys;
-  const { SAVE_FILES_KEY } = keys;
+  // const { SAVE_FILES_KEY } = keys;
   return new Promise((resolve, reject) => {
     self.emit({
       type: "get-data-from-cache",
       data: {
-        payload: { key: SAVE_FILES_KEY },
+        payload: { key: check.key },
         callback: (keyGetResult) => {
-          console.log("SAVE_FILES_KEY RESULT", keyGetResult);
+          console.log(`${check.key} RESULT`, keyGetResult);
           if (!keyGetResult) return resolve(false);
           if (!keyGetResult?.status) return resolve(false);
           resolve(true);
@@ -696,6 +765,22 @@ methods.checkForSavedFiles = function () {
 };
 methods.watchFileAddEvent = function (changed) {
   const self = this;
+
+  self.updateCacheData({
+    key: self.keys.SAVE_FILES_KEY,
+    update: changed,
+    action: "add",
+  });
+};
+
+methods.watchFileDeleteEvent = function (changed) {
+  const self = this;
+
+  self.updateCacheData({
+    key: self.keys.SAVE_FILES_KEY,
+    update: changed,
+    action: "delete",
+  });
 
   console.log("fILES HAVE BEEN CHANGED", changed);
 };

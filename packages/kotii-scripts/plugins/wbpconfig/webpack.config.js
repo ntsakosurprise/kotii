@@ -10,6 +10,7 @@ export default () => {
     mode: "development",
     infrastructureLogging: { level: "none" },
     stats: "none",
+
     output: {
       filename: "[main].bundle.js",
       path: `${env.appBuildFolder}`, // save emitted bundle to this path or folder
@@ -58,6 +59,7 @@ export default () => {
         http: false,
         https: false,
         stream: false,
+
         // "crypto": false,
       }, // Add these as polyfills for use in the browser, webpack no longer auto-polyfills them
     },

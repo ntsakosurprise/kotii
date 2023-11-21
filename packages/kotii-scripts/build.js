@@ -1,16 +1,18 @@
 import React from "react";
 import { BrowserRouter, Switch as ReactRoutes } from "react-router-dom";
 import Public from "./public.js";
-import About from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/about.jsx";
-import ContactUs from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/contact-us.jsx";
-import Faqs from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/faqs.jsx";
-import Home from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/index.jsx";
-import Posts from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/posts/index.jsx";
-import Slug from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/posts/[slug].jsx";
-import Test from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/test.jsx";
-import Todo from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/pages/todo/index.jsx";
+import About from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/about.js";
+import ContactUs from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/contact-us.js";
+import Faqs from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/faqs.js";
+import Home from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/index.js";
+import Posts from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/posts/index.js";
+import Slug from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/posts/[slug].js";
+import Privacy from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/privacy.js";
+import Test from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/test.js";
+import Todo from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.js";
 const comps = {
   Test,
+  Privacy,
   Home,
   Faqs,
   ContactUs,
@@ -19,10 +21,14 @@ const comps = {
   Posts,
   Slug,
 };
-const mapsOfFiles = [
+const routes = [
   {
     path: "/test",
     component: "Test",
+  },
+  {
+    path: "/privacy",
+    component: "Privacy",
   },
   {
     path: "/",
@@ -55,7 +61,7 @@ const mapsOfFiles = [
 ];
 const name = "my name is my name";
 const surname = "Mashele";
-export { name, surname, mapsOfFiles };
+export { name, surname };
 
 //import Public from "../Public/component.js"
 
@@ -63,7 +69,7 @@ const Routes = (props) => {
   return (
     <BrowserRouter>
       <ReactRoutes>
-        {mapsOfFiles.map((r, index) => {
+        {routes.map((r, index) => {
           console.log("THE COMPONENT");
           let component = comps[r.component];
           // console.log("FUNCTION TO RENDER", funcToRender)

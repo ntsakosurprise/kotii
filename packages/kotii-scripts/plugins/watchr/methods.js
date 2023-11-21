@@ -36,9 +36,14 @@ methods.watchFiles = function (data) {
       eventsAttached: false,
       message: "Files are successfully watched",
     });
-  const { add = () => {}, change = () => {} } = events;
+  const {
+    add = () => {},
+    change = () => {},
+    delete: deleteEvent = () => {},
+  } = events;
   watcher.on("add", add);
   watcher.on("change", change);
+  watcher.on("unlink", deleteEvent);
   callback({
     status: true,
     eventsAttached: true,

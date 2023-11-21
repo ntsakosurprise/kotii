@@ -57,9 +57,13 @@ class FileRouter {
     this.variableCreation = methods.variableCreation;
     this.funcToJsx = methods.funcToJsx;
     this.doImports = methods.doImports;
+    this.doImport = methods.doImport;
     this.insertImportDeclarations = methods.insertImportDeclarations;
     this.checkForSavedFiles = methods.checkForSavedFiles;
     this.watchFileAddEvent = methods.watchFileAddEvent;
+    this.updateCacheData = methods.updateCacheData;
+    this.watchFileDeleteEvent = methods.watchFileDeleteEvent;
+    this.cacheData = methods.cacheData;
   }
 }
 export default FileRouter;

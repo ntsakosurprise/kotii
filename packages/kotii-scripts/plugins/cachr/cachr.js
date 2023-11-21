@@ -11,6 +11,9 @@ class Cachr {
     this.handleGetData = methods.handleGetData;
     this.doCache = methods.doCache;
     this.handleDeleteData = methods.handleDeleteData;
+    this.handleTakeUpdate = methods.handleTakeUpdate;
+    this.handleUpdate = methods.handleUpdate;
+    this.getDataLocal = methods.getDataLocal;
   }
 }
 export default Cachr;
