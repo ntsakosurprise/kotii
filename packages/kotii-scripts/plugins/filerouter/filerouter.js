@@ -65,6 +65,9 @@ class FileRouter {
     this.watchFileDeleteEvent = methods.watchFileDeleteEvent;
     this.cacheData = methods.cacheData;
     this.getRoutesHelper = methods.getRoutesHelper;
+    this.astAddNode = methods.astAddNode;
+    this.astDeleteNode = methods.astDeleteNode;
+    this.removeImportDeclarations = methods.removeImportDeclarations;
   }
 }
 export default FileRouter;
