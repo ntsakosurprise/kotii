@@ -26,6 +26,7 @@ methods.handleFileRoutes = async function (data) {
 
   const filePath = `${cwd}/manifest.js`;
   if (!isExistingDir(filePath)) {
+    console.log("THE MANIFEST DOES NOT EXIST", filePath);
     const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
     self.addToAST(routesObject, pagesPaths);
   } else {
@@ -394,7 +395,14 @@ methods.enableBabelRegister = function (babelCWD) {
     // ],
   });
 };
-methods.addToAST = function (objectToAdd, pagesPaths) {
+methods.addToAST = function (
+  objectToAdd = null,
+  pagesPaths,
+  toRemove = [
+    "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.js",
+  ],
+  isNewSource = false
+) {
   console.log("addTOast gets a call");
   const self = this;
   const pao = self.pao;
@@ -413,11 +421,23 @@ methods.addToAST = function (objectToAdd, pagesPaths) {
   //self.enableBabelRegister(cwd);
 
   const filePath = `${cwd}/build.js`;
+  const altPath = `${cwd}/build_test.js`;
   const jsFile = readFileSync(filePath).replace(/;/g, "");
   let ast = parser.parse(jsFile, { sourceType: "module", plugins: ["jsx"] });
   let isCompsDefined = false;
+
+  // if (!objectToAdd && toRemove) {
+  //   return self.astDeleteNode(node, t, objectToAdd);
+  // } else if (objectToAdd) {
+  //   self.astAddNode(ast, isNewSource);
+  // }
   // console.log("jsFile replaced", jsFile);
+  //import Todo from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.js";
   console.log("THE VALUE OF TRAVERSE", traverse);
+  // if (toRemove) {
+  //   self.removeImportDeclarations(ast, toRemove);
+  //   return saveToFile(filePath, generate(ast).code);
+  // }
   traverse(ast, {
     VariableDeclaration(path) {
       console.log("TRAVERSE ENTERS", path.container);
@@ -431,23 +451,52 @@ methods.addToAST = function (objectToAdd, pagesPaths) {
       );
       if (path.node.type === "ImportDeclaration") return;
       let isRoutesDefined = false;
-
+      let routesNode = null;
+      let compsNode = null;
       path.container.forEach((nd, i) => {
         if (nd.type !== "VariableDeclaration") return false;
-
         let declarations = nd.declarations;
         declarations.forEach((dec, i) => {
           if (dec.id.name === "routes") {
             isRoutesDefined = true;
+            routesNode = dec;
           }
-          if (dec.id.name === "comps") isCompsDefined = true;
+          if (dec.id.name === "comps") {
+            isCompsDefined = true;
+            compsNode = dec;
+          }
         });
         // let nodeIDName = nd.declarations[0].id.name;
         // if (nodeIDName === "mapsOfFiles" || nodeIDName === "surname") return nd;
       });
+      // console.log("AST NODE ROUTES", routesNode, isRoutesDefined);
+      // if (compsNode) {
+      //   console.log("AST NODE COMPS", compsNode);
+      //   return;
+      // }
 
       if (isRoutesDefined) {
-        self.variableCreation(path, t, objectToAdd, parser, true);
+        if (objectToAdd && toRemove) {
+          // self.astAddNode(routesNode, t, objectToAdd);
+          self.removeImportDeclarations(ast, toRemove, routesNode, compsNode);
+          saveToFile(filePath, generate(ast).code);
+
+          if (objectToAdd) return;
+          self.astDeleteNode(routesNode, t, toRemove);
+        } else if (objectToAdd) {
+          self.removeImportDeclarations(ast, toRemove);
+          // self.astDeleteNode(routesNode, t, objectToAdd);
+          // console.log("AST NODE SAVING");
+          // saveToFile(filePath, generate(ast).code);
+          path.stop();
+          if (objectToAdd) return;
+        } else if (toRemove) {
+          self.removeImportDeclarations(ast, toRemove, routesNode, compsNode);
+          // return saveToFile(filePath, generate(ast).code);
+          self.astDeleteNode(routesNode, t, toRemove);
+        } else if (isNewSource) {
+          self.variableCreation(path, t, objectToAdd, parser, true);
+        }
       } else {
         self.variableCreation(path, t, objectToAdd, parser);
       }
@@ -459,6 +508,7 @@ methods.addToAST = function (objectToAdd, pagesPaths) {
       // }
     },
   });
+  if (objectToAdd) return;
   console.log("New AST", ast);
   let stringCode = !isCompsDefined
     ? self.insertImportDeclarations(objectToAdd)
@@ -509,7 +559,179 @@ methods.addToAST = function (objectToAdd, pagesPaths) {
   // console.log("THE FILE PATH", jsFile);
 };
 
-methods.variableCreation = function (path, t, files, parser, replace = false) {
+methods.astAddNode = function (node, toAdd) {
+  const self = this;
+  const t = self.t;
+  const init = node.init;
+  const nodeUpdateType = node.id.type === "routes" ? "elements" : "properties";
+  // const nodeElements = init.elements;
+  console.log("AST NODE BEFORE LEN", node.init[nodeUpdateType].length);
+  if (nodeUpdateType === "elements") {
+    toAdd.forEach((adding, i) => {
+      init.elements.push(
+        t.objectExpression([
+          t.objectProperty(t.identifier("path"), t.stringLiteral(adding.path)),
+          t.objectProperty(
+            t.identifier("component"),
+            // t.functionExpression(t.identifier(funcName), [], funcBody)
+            t.stringLiteral(adding.componentName)
+          ),
+        ])
+      );
+    });
+  } else {
+    toAdd.forEach((adding, i) => {
+      init.properties.push(
+        t.objectExpression([
+          t.objectProperty(
+            t.identifier(`${adding.componentName}`),
+            t.stringLiteral(adding.componentName)
+          ),
+        ])
+      );
+    });
+  }
+
+  console.log("AST NODE AFTER", node.init[nodeUpdateType].length);
+  console.log("AST NODE AFTER CHANGE", node);
+
+  // traverse(node, {
+  //   objectExpression(path) {
+  //     if (path.node.type === "ImportDeclaration") return;
+  //     let isRoutesDefined = false;
+  //     let routesNode = null;
+  //     let compsNode = null;
+  //     path.container.forEach((nd, i) => {
+  //       if (nd.type !== "VariableDeclaration") return false;
+  //       let declarations = nd.declarations;
+  //       declarations.forEach((dec, i) => {
+  //         if (dec.id.name === "routes") {
+  //           isRoutesDefined = true;
+  //           routesNode = dec;
+  //         }
+  //         if (dec.id.name === "comps") {
+  //           isCompsDefined = true;
+  //           compsNode = dec;
+  //         }
+  //       });
+  //       // let nodeIDName = nd.declarations[0].id.name;
+  //       // if (nodeIDName === "mapsOfFiles" || nodeIDName === "surname") return nd;
+  //     });
+
+  //     if (isRoutesDefined) {
+  //       self.variableCreation(path, t, objectToAdd, parser, true, routesNode);
+  //     } else {
+  //       self.variableCreation(path, t, objectToAdd, parser, false, routesNode);
+  //     }
+
+  //     //}
+
+  //     // if (t.isImportDeclaration(path.node)) {
+  //     //   path.node.name = "x";
+  //     // }
+  //   },
+  // });
+};
+
+methods.astUpdateNode = function (ast, isNewSource) {
+  const self = this;
+  const pao = self.pao;
+  const traverse = self.traverse;
+  const parser = self.parser;
+  const t = self.t;
+  traverse(ast, {
+    VariableDeclaration(path) {
+      if (path.node.type === "ImportDeclaration") return;
+      let isRoutesDefined = false;
+      let routesNode = null;
+      let compsNode = null;
+      path.container.forEach((nd, i) => {
+        if (nd.type !== "VariableDeclaration") return false;
+        let declarations = nd.declarations;
+        declarations.forEach((dec, i) => {
+          if (dec.id.name === "routes") {
+            isRoutesDefined = true;
+            routesNode = dec;
+          }
+          if (dec.id.name === "comps") {
+            isCompsDefined = true;
+            compsNode = dec;
+          }
+        });
+        // let nodeIDName = nd.declarations[0].id.name;
+        // if (nodeIDName === "mapsOfFiles" || nodeIDName === "surname") return nd;
+      });
+
+      if (isRoutesDefined) {
+        self.variableCreation(path, t, objectToAdd, parser, true, routesNode);
+      } else {
+        self.variableCreation(path, t, objectToAdd, parser, false, routesNode);
+      }
+
+      //}
+
+      // if (t.isImportDeclaration(path.node)) {
+      //   path.node.name = "x";
+      // }
+    },
+  });
+};
+
+methods.astDeleteNode = function (routesNode, compsNode, toRemove) {
+  const self = this;
+  const t = self.t;
+  console.log("AST NODE DELETE", toRemove);
+  // const init = node.init;
+  // const nodeUpdateType = node.id.type === "routes" ? "elements" : "properties";
+  // const nodeElements = init.elements;
+
+  if (routesNode) {
+    let init = routesNode.init;
+    console.log("AST NODE ROUTES NODE", routesNode);
+    console.log("AST NODE INIT ELEMENT", init.elements[0]);
+    init.elements.forEach((elNode, i) => {
+      let objecProps = elNode.properties;
+      objecProps.forEach((prop, ii) => {
+        if (prop.key.name === "component") {
+          if (toRemove === prop.value.value) {
+            console.log("AST ROUTE ELEMENT OBJECT VALUE TO BE REMOVED");
+            init.elements.splice(i, 1);
+          }
+        }
+      });
+
+      // if (toRemove.indexOf(elNode..compnent) >= 0) {
+      //   init.elements.unshift(i);
+      // }
+    });
+  }
+  if (compsNode) {
+    let initProps = compsNode.init;
+    console.log("AST NODE COMPS NODE", compsNode);
+    console.log("AST NODE INIT Properties", initProps.properties[0]);
+    initProps.properties.forEach((propNode, i) => {
+      if (toRemove === propNode.key.name) {
+        console.log("AST NODE Object Proper to Be removed");
+        initProps.properties.splice(i, 1);
+      }
+      // init.properties.unshift(i);
+    });
+  }
+
+  // console.log("AST NODE AFTER", );
+  // console.log("AST NODE AFTER CHANGE", node);
+};
+
+methods.astRemoveNodes = function () {};
+
+methods.variableCreation = function (
+  path,
+  t,
+  files,
+  parser,
+  replace = false,
+  node = null
+) {
   const self = this;
   let creationMethod = replace
     ? path.replaceWith.bind(path)
@@ -752,6 +974,39 @@ methods.insertImportDeclarations = function (imports, filePath) {
   //     },
   //   },
   // };
+};
+methods.removeImportDeclarations = function (
+  ast,
+  toRemove,
+  routesNode,
+  compsNode
+) {
+  const self = this;
+  const pao = self.pao;
+  const template = self.template;
+  const generate = self.generate;
+  const t = self.t;
+  const parser = self.parser;
+  const traverse = self.traverse;
+  let removedImportsIds = [];
+
+  traverse(ast, {
+    ImportDeclaration(path) {
+      console.log("AST NODE AFTER Import Node", path.node.source.value);
+      console.log("AST NODE SPECIFIER", path.node.specifiers[0]?.local.name);
+      console.log(
+        "AST NODE AFTER Import Test",
+        toRemove.indexOf(path.node.source.value) >= 0
+      );
+      if (toRemove.indexOf(path.node.source.value) >= 0) {
+        let local = path.node.specifiers[0]?.local.name;
+        removedImportsIds.push(local);
+        self.astDeleteNode(routesNode, compsNode, local);
+        path.remove();
+      }
+    },
+  });
+  console.log("AST NODE TO BE REMOVED IS", removedImportsIds);
 };
 
 methods.watchFile = function (data, events, options = null) {
