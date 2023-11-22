@@ -1,5 +1,4 @@
 const methods = {};
-import { createRequire } from "module";
 
 methods.init = function () {
   console.log("Filerouter has been initialised");
@@ -11,31 +10,85 @@ methods.init = function () {
 methods.handleFileRoutes = async function (data) {
   const self = this;
   const pao = self.pao;
-  const loadFileSync = pao.pa_loadFileSync;
   const getWorkingFolder = pao.pa_getWorkingFolder;
-  const require = createRequire(import.meta.url);
+  const isExistingDir = pao.pa_isExistingDir;
   // console.log("HANDLE FILE ROUTES DATA", data);
   const { payload } = data;
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
+  const pagesSource = filePaths.appSrc;
   const cwd = getWorkingFolder();
   //console.log("EXECSYNC", execSync);
   //self.enableBabelRegister(cwd);
-  console.log("THE CWD KOTII", cwd);
-  self.enableBabelRegister(cwd);
-  const filePath = `${cwd}/build.js`;
-  console.log("THE FILE PATH", filePath);
-  const loadEDfILES = require(filePath);
-  console.log("LoadedFiles", loadEDfILES);
+  const pagesPaths = self.getPages(
+    `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
+  );
+
+  const filePath = `${cwd}/manifest.js`;
+  if (!isExistingDir(filePath)) {
+    const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
+    self.addToAST(routesObject, pagesPaths);
+  } else {
+    self
+      .doImport(filePath)
+      .then((imported) => {
+        console.log("Impored", imported.module.comps);
+        let meta = imported.module;
+        const { lastCompsCount = 0, compsSource, compsPaths } = meta;
+        const pagesPathsLen = pagesPaths.length;
+        let renamesToAdd = [];
+        let renamesToRemove = [];
+
+        if (compsSource !== pagesSource) {
+          const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
+          return self.addToAST(routesObject, pagesPaths, pagesSource);
+        }
+        if (lastCompsCount === pagesPathsLen) {
+          pagesPaths.forEach((pPath) => {
+            if (compsPaths.indexOf(pPath) < 0) renamesToAdd.push(pPath);
+          });
+          compsPaths.forEach((pPath) => {
+            if (pagesPaths.indexOf(pPath) < 0) renamesToRemove.push(pPath);
+          });
+          if (renamesToAdd.length === 0 && renamesToRemove === 0) return;
+          if (renamesToAdd.length > 0 && renamesToRemove > 0) {
+            const routesObject = self.getRoutesHelper(
+              renamesToAdd,
+              pagesSource
+            );
+            self.addToAST(routesObject, compsPaths, renamesToRemove);
+          } else if (renamesToAdd.length > 0) {
+            const routesObject = self.getRoutesHelper(
+              renamesToAdd,
+              pagesSource
+            );
+            self.addToAST(routesObject, compsPaths);
+          } else if (renamesToRemove.length > 0) {
+            self.addToAST(null, compsPaths, toRemove);
+          }
+        } else if (lastCompsCount < pagesPathsLen) {
+          let toAdd = [];
+          pagesPaths.forEach((pPath) => {
+            if (compsPaths.indexOf(pPath) < 0) toAdd.push(pPath);
+          });
+          const routesObject = self.getRoutesHelper(toAdd, pagesSource);
+          self.addToAST(routesObject, compsPaths);
+        } else {
+          let toRemove = [];
+          compsPaths.forEach((pPath) => {
+            if (pagesPaths.indexOf(pPath) < 0) toRemove.push(pPath);
+          });
+          // const routesObject = self.getRoutesHelper(toAdd, pagesSource);
+          self.addToAST(null, compsPaths, toRemove);
+        }
+      })
+      .catch((err) => {
+        console.log("ERR WITH IMPORT", err);
+      });
+  }
+
   // const jsFile = readFileSync(filePath).replace(/;/g, "");
-  // self
-  //   .doImport(filePath)
-  //   .then((imported) => {
-  //     console.log("Impored", imported);
-  //   })
-  //   .catch((err) => {
-  //     console.log("ERR WITH IMPORT", err);
-  //   });
+
   //self.enableBabelRegister(filePaths.appSrc);
   // const hasCreatedFile = await self.checkForSavedFiles();
   // if (!hasCreatedFile) return;
@@ -66,7 +119,7 @@ methods.handleFileRoutes = async function (data) {
   //   .catch((err) => {
   //     consoole.log("THERE WAS AN ERROR IMPORTING", err);
   //   });
-  //self.addToAST(routesObject, pagesPaths);
+
   // const sourceCodes = self.getSourceCodes(pagesPaths);
   // self.parseJsxToReact(sourceCodes);
   // console.log("PAGES PATHS", pagesPaths);
@@ -101,6 +154,10 @@ methods.getSourceCodes = function (codesSource) {
   return sourcesCodesList;
 
   //console.log("SOURCES AND THEIR CODES", sourcesCodesList);
+};
+methods.getRoutesHelper = function (paths, source) {
+  const self = this;
+  return self.createRouterComponents(paths, source);
 };
 methods.createRouterComponents = function (maps, pathy) {
   const self = this;
@@ -329,12 +386,12 @@ methods.enableBabelRegister = function (babelCWD) {
 
   loadFileSync("@babel/register").default({
     cwd: babelCWD,
-    //presets: ["@babel/preset-env", "@babel/preset-react"],
-    plugins: [
-      "babel-plugin-macros",
-      "babel-plugin-styled-components",
-      ["@babel/plugin-transform-react-jsx"],
-    ],
+    presets: ["@babel/preset-env", "@babel/preset-react"],
+    // plugins: [
+    //   "babel-plugin-macros",
+    //   "babel-plugin-styled-components",
+    //   ["@babel/plugin-transform-react-jsx"],
+    // ],
   });
 };
 methods.addToAST = function (objectToAdd, pagesPaths) {
@@ -619,11 +676,12 @@ methods.doImports = function (toImport) {
 };
 methods.doImport = function (toImport) {
   const self = this;
+  const pao = self.pao;
+  const loadFile = pao.pa_loadFile;
   return new Promise((resolve, reject) => {
-    self
-      .dynamicImport(toImport)
+    loadFile(toImport)
       .then((imported) => {
-        console.log("Module has successfully been imported:", toImport);
+        console.log("Module has successfully been imported:", imported.comps);
         resolve({ module: imported });
       })
       .catch((err) => {
