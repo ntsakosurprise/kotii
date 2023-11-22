@@ -398,12 +398,18 @@ methods.enableBabelRegister = function (babelCWD) {
 methods.addToAST = function (
   objectToAdd = null,
   pagesPaths,
-  toRemove = [
-    "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.js",
-  ],
+  toRemove = null,
   isNewSource = false
 ) {
   console.log("addTOast gets a call");
+  objectToAdd = [
+    {
+      path: "/todo",
+      componentName: "Todo",
+      component:
+        "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.js",
+    },
+  ];
   const self = this;
   const pao = self.pao;
   const traverse = self.traverse;
@@ -484,10 +490,15 @@ methods.addToAST = function (
           if (objectToAdd) return;
           self.astDeleteNode(routesNode, t, toRemove);
         } else if (objectToAdd) {
-          self.removeImportDeclarations(ast, toRemove);
+          const newCode = self.insertImportDeclarations(
+            objectToAdd,
+            false,
+            routesNode,
+            compsNode
+          );
           // self.astDeleteNode(routesNode, t, objectToAdd);
           // console.log("AST NODE SAVING");
-          // saveToFile(filePath, generate(ast).code);
+          saveToFile(filePath, `${newCode} ${generate(ast).code}`);
           path.stop();
           if (objectToAdd) return;
         } else if (toRemove) {
@@ -559,14 +570,14 @@ methods.addToAST = function (
   // console.log("THE FILE PATH", jsFile);
 };
 
-methods.astAddNode = function (node, toAdd) {
+methods.astAddNode = function (routesNode, compsNode, toAdd) {
   const self = this;
   const t = self.t;
-  const init = node.init;
-  const nodeUpdateType = node.id.type === "routes" ? "elements" : "properties";
+
   // const nodeElements = init.elements;
-  console.log("AST NODE BEFORE LEN", node.init[nodeUpdateType].length);
-  if (nodeUpdateType === "elements") {
+  console.log("AST NODE BEFORE LEN", toAdd);
+  if (routesNode) {
+    const init = routesNode.init;
     toAdd.forEach((adding, i) => {
       init.elements.push(
         t.objectExpression([
@@ -579,21 +590,25 @@ methods.astAddNode = function (node, toAdd) {
         ])
       );
     });
-  } else {
+  }
+
+  if (compsNode) {
+    const initProps = compsNode.init;
     toAdd.forEach((adding, i) => {
-      init.properties.push(
-        t.objectExpression([
-          t.objectProperty(
-            t.identifier(`${adding.componentName}`),
-            t.stringLiteral(adding.componentName)
-          ),
-        ])
+      initProps.properties.push(
+        t.identifier(`${adding.componentName}`)
+        // t.objectExpression([
+        //   t.objectProperty(
+        //     t.identifier(`${adding.componentName}`),
+        //     t.stringLiteral(adding.componentName)
+        //   ),
+        // ])
       );
     });
   }
 
-  console.log("AST NODE AFTER", node.init[nodeUpdateType].length);
-  console.log("AST NODE AFTER CHANGE", node);
+  // console.log("AST NODE AFTER", node.init[nodeUpdateType].length);
+  // console.log("AST NODE AFTER CHANGE", node);
 
   // traverse(node, {
   //   objectExpression(path) {
@@ -914,7 +929,12 @@ methods.doImport = function (toImport) {
       });
   });
 };
-methods.insertImportDeclarations = function (imports, filePath) {
+methods.insertImportDeclarations = function (
+  imports,
+  shouldBuildComps = false,
+  routesNode = null,
+  compsNode = null
+) {
   const self = this;
   const pao = self.pao;
   const template = self.template;
@@ -934,18 +954,21 @@ methods.insertImportDeclarations = function (imports, filePath) {
   //     IMPORT_NAME: t.identifier(`${imports[0].componentName}`),
   //     SOURCE: t.stringLiteral(`${imports[0].component}`),
   //   });
-  let constString = `const comps = {`;
+  let constString = shouldBuildComps ? `const comps = {` : "";
   let importString = imports.map((im, i) => {
-    constString += `${im.componentName},`;
+    if (shouldBuildComps) constString += `${im.componentName},`;
     return `import ${im.componentName} from "${im.component}";`;
   });
   // const myImport = template(`${importString.join(";")}`, {
   //   sourceType: "module",
   // });
-  constString += "}";
-  let joinedString = `${importString.join("")} ${constString};`;
+  constString += shouldBuildComps ? "}" : "";
+  let joinedString = shouldBuildComps
+    ? `${importString.join("")} ${constString};`
+    : `${importString.join("")}`;
   console.log("ASTY JOINED STRING", joinedString);
   let ast = parser.parse(joinedString, { sourceType: "module" });
+  !shouldBuildComps ? self.astAddNode(routesNode, compsNode, imports) : "";
   let modifiedCode = generate(ast).code;
   console.log("ASTY CODE THE IMPOT STRINGS", importString);
   console.log("ASTY CODE", modifiedCode);
