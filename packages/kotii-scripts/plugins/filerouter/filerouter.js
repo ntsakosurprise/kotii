@@ -64,6 +64,7 @@ class FileRouter {
     this.updateCacheData = methods.updateCacheData;
     this.watchFileDeleteEvent = methods.watchFileDeleteEvent;
     this.cacheData = methods.cacheData;
+    this.getRoutesHelper = methods.getRoutesHelper;
   }
 }
 export default FileRouter;
