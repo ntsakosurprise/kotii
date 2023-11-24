@@ -6,9 +6,9 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./build.js",
-      "require": "./build.js",
-      "default": "./build.js"
+      "import": "./app_.js",
+      "require": "./app_.js",
+      "default": "./app_.js"
     }
   },
   "bin": {
