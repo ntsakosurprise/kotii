@@ -68,6 +68,8 @@ class FileRouter {
     this.astAddNode = methods.astAddNode;
     this.astDeleteNode = methods.astDeleteNode;
     this.removeImportDeclarations = methods.removeImportDeclarations;
+    this.createMetaAst = methods.createMetaAst;
+    this.merge = methods.merge;
   }
 }
 export default FileRouter;
