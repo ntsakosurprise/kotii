@@ -2,13 +2,16 @@ import React from "react";
 import { BrowserRouter, Switch as ReactRoutes } from "react-router-dom";
 import Public from "./public.js";
 import About from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/about.js";
+import Connection from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/connection.js";
 import ContactUs from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/contact-us.js";
 import Faqs from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/faqs.js";
 import Home from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/index.js";
-import Posts from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/posts/index.js";
+import Pos from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/posts/index.js";
 import Slug from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/posts/[slug].js";
 import Privacy from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/privacy.js";
 import Test from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/test.js";
+import Testing from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/testing.js";
+import Test_jsxx from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/test_jsx.jsx";
 import Todo from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.js";
 const comps = {
   Test,
@@ -18,8 +21,11 @@ const comps = {
   ContactUs,
   About,
   Todo,
-  Posts,
+  Pos,
   Slug,
+  Connection,
+  Testing,
+  Test_jsxx,
 };
 const routes = [
   {
@@ -51,12 +57,24 @@ const routes = [
     component: "Todo",
   },
   {
-    path: "/posts",
-    component: "Posts",
+    path: "/pos",
+    component: "Pos",
   },
   {
-    path: "/posts/:slug",
+    path: "/pos/:slug",
     component: "Slug",
+  },
+  {
+    path: "/connection",
+    component: "Connection",
+  },
+  {
+    path: "/testing",
+    component: "Testing",
+  },
+  {
+    path: "/test_jsxx",
+    component: "Test_jsxx",
   },
 ];
 const name = "my name is my name";
