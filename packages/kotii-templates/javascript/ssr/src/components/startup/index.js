@@ -1,4 +1,4 @@
+import Layout from "./Layout/component.js";
 import Root from "./Root/component.js";
-import Routes from "./Routes/component.js";
 
-export { Routes, Root };
+export { Layout, Root };
