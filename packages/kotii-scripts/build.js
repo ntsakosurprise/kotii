@@ -79,6 +79,20 @@ const routes = [
 ];
 
 //import Public from "../Public/component.js"
+const Wrapper = (props) => {
+  //const Component = props.component;
+  return (
+    <div
+      style={{
+        paddingLeft: "2%",
+        paddingTop: "2vh",
+        fontFamily: '"Roboto", sans-serif',
+      }}
+    >
+      {props.children}
+    </div>
+  );
+};
 
 const Routes = (props) => {
   // const AppWrapper = props.wrapper;
@@ -87,6 +101,7 @@ const Routes = (props) => {
     : () => {
         return <></>;
       };
+
   return (
     <BrowserRouter>
       <ReactRoutes>
@@ -96,13 +111,15 @@ const Routes = (props) => {
             let component = comps[r.component];
             // console.log("FUNCTION TO RENDER", funcToRender)
             return (
-              <Public
-                {...props}
-                exact
-                path={r.path}
-                component={component}
-                key={index}
-              />
+              <Wrapper>
+                <Public
+                  {...props}
+                  exact
+                  path={r.path}
+                  component={component}
+                  key={index}
+                />
+              </Wrapper>
             );
           })}
         </Layout>
