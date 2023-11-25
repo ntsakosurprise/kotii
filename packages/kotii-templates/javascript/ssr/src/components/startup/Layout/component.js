@@ -4,7 +4,9 @@ import React from "react";
 
 const Layout = (props) => {
   return (
-    <div>
+    <div
+      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+    >
       <Header />
       {props.children}
       <Footer />
