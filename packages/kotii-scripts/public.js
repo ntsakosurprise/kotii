@@ -10,16 +10,12 @@ const Public = ({ component: Component, ...rest }) => {
 
   return (
     <>
-      {/* <Header /> */}
-      {/* <Hero /> */}
       <Route
         {...rest}
         render={(props) => {
           return <Component {...props} />;
         }}
       />
-      {/* <Fero /> */}
-      {/* <Footer /> */}
     </>
   );
 };
