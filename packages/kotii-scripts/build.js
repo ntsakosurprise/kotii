@@ -77,9 +77,6 @@ const routes = [
     component: "Test_jsxx",
   },
 ];
-const name = "my name is my name";
-const surname = "Mashele";
-export { name, surname };
 
 //import Public from "../Public/component.js"
 
