@@ -127,4 +127,37 @@ const Routes = (props) => {
     </BrowserRouter>
   );
 };
+
+const RoutesAsServerRoutes = (props) => {
+  // const AppWrapper = props.wrapper;
+  const Layout = props?.layout
+    ? props.layout
+    : () => {
+        return <></>;
+      };
+
+  return (
+    <ReactRoutes>
+      <Layout>
+        {routes.map((r, index) => {
+          console.log("THE COMPONENT");
+          let component = comps[r.component];
+          // console.log("FUNCTION TO RENDER", funcToRender)
+          return (
+            <Wrapper>
+              <Public
+                {...props}
+                exact
+                path={r.path}
+                component={component}
+                key={index}
+              />
+            </Wrapper>
+          );
+        })}
+      </Layout>
+    </ReactRoutes>
+  );
+};
+export { RoutesAsServerRoutes };
 export default Routes;
