@@ -12,7 +12,5 @@ export const server = "server";
 export default {
   domain,
   router,
-  logger,
-  cluster,
   server,
 };
