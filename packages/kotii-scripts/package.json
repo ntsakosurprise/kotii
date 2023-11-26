@@ -3,14 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
-  "type": "module",
-  "exports": {
-    ".": {
-      "import": "./app_.js",
-      "require": "./app_.js",
-      "default": "./app_.js"
-    }
-  },
   "bin": {
     "kotii-scripts": "./app.js"
   },
