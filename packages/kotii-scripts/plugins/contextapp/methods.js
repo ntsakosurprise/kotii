@@ -11,12 +11,14 @@ methods.init = function () {
 methods.handleContextApp = function (data) {
   // console.log("THE DATA OF START SCRIPTS", data);
   const self = this;
-  const resources = self.getContextAppInfo();
-  data.callback({
-    message: "Context app plugin successfully called",
-    data: resources,
+  self.getContextAppInfo().then((appInfo) => {
+    data.callback({
+      message: "Context app plugin successfully called",
+      data: appInfo,
+    });
   });
-  return;
+
+  // return;
 };
 methods.setContexts = function (data) {
   // console.log("THE DATA OF START SCRIPTS", data);
@@ -131,7 +133,7 @@ methods.checkIfIsFile = function (filePath) {
     return false;
   }
 };
-methods.doRoutes = function (path) {
+methods.doRoutes = function (path, pResolve, pReject) {
   const self = this;
   self.emit({
     type: "create-file-routes",
