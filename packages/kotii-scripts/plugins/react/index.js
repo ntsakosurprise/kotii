@@ -1,7 +1,6 @@
-
 // import ReactView from "./react"
 
-// export default ReactView 
+// export default ReactView
 
-const ReactView =  require("./reactview");
-module.exports = ReactView
+import ReactView from "./reactview.js";
+export default ReactView;

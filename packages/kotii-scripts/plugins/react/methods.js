@@ -14,11 +14,6 @@ methods.handleReactView = function (data) {
   self.callback = data.callback;
 
   self.runReactView(data);
-
-  // self.currentReactView = data
-  // self.log("Saving Jwt Key")
-  // self.key = data.key
-  // ${scripts.map((item,index)=> `<script key=${index} src=${item} />`)}
 };
 
 methods.runReactView = function (data) {
