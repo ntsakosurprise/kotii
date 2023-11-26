@@ -6694,6 +6694,11 @@ babel-preset-jest@^29.5.0:
     babel-plugin-jest-hoist "^29.5.0"
     babel-preset-current-node-syntax "^1.0.0"
 
+babel-register-esm@^1.2.5:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/babel-register-esm/-/babel-register-esm-1.2.5.tgz#66ff8e0b795f4af3ee11bf4895c73f2780dafde8"
+  integrity sha512-WaVd3Rm42kndYnufn8u1SbUUwuCxL2GAQX/7QXUL3w/7PffB+HcXrzmAqk1x01TjhFh/npSZ9Z3MNBc6dDb6Uw==
+
 babel-register@^6.26.0:
   version "6.26.0"
   resolved "https://registry.npmjs.org/babel-register/-/babel-register-6.26.0.tgz"
