@@ -12,6 +12,7 @@ methods.handleContextApp = function (data) {
   // console.log("THE DATA OF START SCRIPTS", data);
   const self = this;
   self.getContextAppInfo().then((appInfo) => {
+    console.log("CONTEXT APP:", appInfo);
     data.callback({
       message: "Context app plugin successfully called",
       data: appInfo,
@@ -43,63 +44,65 @@ methods.getAppInContextResources = function () {
   console.log("AAAP ROOT", self.appRoot);
   //console.log(pao);
 
-  const templateFolder = folder.slice(0, folder.indexOf("/kotii-scripts"));
-  const appPackageJson = JSON.parse(readFileSync(`${folder}/package.json`));
+  return new Promise((resolve, reject) => {
+    const templateFolder = folder.slice(0, folder.indexOf("/kotii-scripts"));
+    const appPackageJson = JSON.parse(readFileSync(`${folder}/package.json`));
 
-  const isPackageNameKotii =
-    appPackageJson.name === "kotii-scripts" ? true : false;
-  const appFolder = isPackageNameKotii
-    ? `${templateFolder}/kotii-templates/javascript/ssr`
-    : folder;
-  console.log("THE APP PACKAGE JSON", appPackageJson);
-  console.log("THE APP CONFIG", isPackageNameKotii);
-  console.log("THE TEMPLATE FOLDER", templateFolder);
-  console.log("THE TEMPLATE app FOLDER", appFolder);
-  const resources = {
-    appEnv: self.getFilePath(appFolder, ".env"),
-    appFolder: self.getFilePath(appFolder, "."),
-    appIndexFile: self.getFilePath(appFolder, "src/index.js"),
-    appPagesFolder: self.getFilePath(appFolder, "src/components/pages"),
-    appSrc: self.getFilePath(appFolder, "src"),
-    appTsConfig: self.getFilePath(appFolder, "tsconfig.ts"),
-    appJsConfig: self.getFilePath(appFolder, "tsconfig.js"),
-    appIndexHtml: self.getFilePath(appFolder, "public/index.html"),
-    appAssetsPublic: self.getFilePath(appFolder, "public"),
-    appBuildFolder: self.getFilePath(appFolder, "build"),
-    appPublicPath: self.checkIfIsFile(
-      self.getFilePath(appFolder, "package.json")
-    )
-      ? loadFile(self.getFilePath(appFolder, "package.json"))?.homePage || "/"
-      : "/",
-    appNodeModules: self.getFilePath(appFolder, "node_modules"),
-    appCustomWbpConfig: self.checkIfIsFile(
-      self.getFilePath(appFolder, "webpack.custom.js")
-    )
-      ? loadFile(self.getFilePath(appFolder, "webpack.custom.js"))
-      : null,
-    appKotiiJson: self.checkIfIsFile(self.getFilePath(appFolder, "kotii.js"))
-      ? loadFile(self.getFilePath(appFolder, "kotii.json"))
-      : null,
-  };
-  console.log("THE RESOURCES", resources);
-  // let appFileSavePath = `${resources.appSrc}/about_.js`;
-  // let appFilePath = `${resources.appSrc}/about.jsx`;
-  // loadFileSync("@babel/register").default({
-  //   cwd: resources.appSrc,
-  //   presets: ["@babel/preset-env"],
-  // });
-  // console.log("BABEL-REGISTER", babelRegister);
-  // let anonyMouse = babelRegister().default;
-  // console.log("ANONYMOUSE", anonyMouse);
-  // console.log("THE BABEL", babelRegister);
-  // let jsx = loadFileSync(appFilePath);
-  // let jsx = loadFileSync(appFilePath);
-  // console.log("LOADED JSX", jsx);
-  // jsx.default();
-  // let jsxCode = readFileSync(appFilePath);
-  // self.parseJsxToReact(jsxCode, appFileSavePath);
-  self.doRoutes(resources);
-  return resources;
+    const isPackageNameKotii =
+      appPackageJson.name === "kotii-scripts" ? true : false;
+    const appFolder = isPackageNameKotii
+      ? `${templateFolder}/kotii-templates/javascript/ssr`
+      : folder;
+    console.log("THE APP PACKAGE JSON", appPackageJson);
+    console.log("THE APP CONFIG", isPackageNameKotii);
+    console.log("THE TEMPLATE FOLDER", templateFolder);
+    console.log("THE TEMPLATE app FOLDER", appFolder);
+    const resources = {
+      appEnv: self.getFilePath(appFolder, ".env"),
+      appFolder: self.getFilePath(appFolder, "."),
+      appIndexFile: self.getFilePath(appFolder, "src/index.js"),
+      appPagesFolder: self.getFilePath(appFolder, "src/components/pages"),
+      appSrc: self.getFilePath(appFolder, "src"),
+      appTsConfig: self.getFilePath(appFolder, "tsconfig.ts"),
+      appJsConfig: self.getFilePath(appFolder, "tsconfig.js"),
+      appIndexHtml: self.getFilePath(appFolder, "public/index.html"),
+      appAssetsPublic: self.getFilePath(appFolder, "public"),
+      appBuildFolder: self.getFilePath(appFolder, "build"),
+      appPublicPath: self.checkIfIsFile(
+        self.getFilePath(appFolder, "package.json")
+      )
+        ? loadFile(self.getFilePath(appFolder, "package.json"))?.homePage || "/"
+        : "/",
+      appNodeModules: self.getFilePath(appFolder, "node_modules"),
+      appCustomWbpConfig: self.checkIfIsFile(
+        self.getFilePath(appFolder, "webpack.custom.js")
+      )
+        ? loadFile(self.getFilePath(appFolder, "webpack.custom.js"))
+        : null,
+      appKotiiJson: self.checkIfIsFile(self.getFilePath(appFolder, "kotii.js"))
+        ? loadFile(self.getFilePath(appFolder, "kotii.json"))
+        : null,
+    };
+    console.log("THE RESOURCES", resources);
+    // let appFileSavePath = `${resources.appSrc}/about_.js`;
+    // let appFilePath = `${resources.appSrc}/about.jsx`;
+    // loadFileSync("@babel/register").default({
+    //   cwd: resources.appSrc,
+    //   presets: ["@babel/preset-env"],
+    // });
+    // console.log("BABEL-REGISTER", babelRegister);
+    // let anonyMouse = babelRegister().default;
+    // console.log("ANONYMOUSE", anonyMouse);
+    // console.log("THE BABEL", babelRegister);
+    // let jsx = loadFileSync(appFilePath);
+    // let jsx = loadFileSync(appFilePath);
+    // console.log("LOADED JSX", jsx);
+    // jsx.default();
+    // let jsxCode = readFileSync(appFilePath);
+    // self.parseJsxToReact(jsxCode, appFileSavePath);
+    self.doRoutes(resources, resolve, reject);
+    // return resources;
+  });
 };
 methods.getContextAppInfo = function () {
   const self = this;
@@ -141,6 +144,7 @@ methods.doRoutes = function (path, pResolve, pReject) {
       payload: { path: path },
       callback: (data) => {
         console.log("FILE ROUTES PROCESSED", data.message);
+        pResolve(path);
       },
     },
   });
