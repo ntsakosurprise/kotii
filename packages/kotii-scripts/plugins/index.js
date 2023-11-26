@@ -8,9 +8,11 @@ import DevServer from "./devserver/index.js";
 import FileRouter from "./filerouter/index.js";
 import Gitauth from "./gitauth/index.js";
 import Github from "./github/index.js";
+import Hello from "./hello/hello.js";
 import Init from "./init/index.js";
 import Interpreter from "./interpreter/index.js";
 import JsxToReact from "./jsxtoreact/index.js";
+import ReactView from "./react/index.js";
 import ReactToJsx from "./reacttojsx/index.js";
 import Scaffold from "./scaffold/index.js";
 import Start from "./start/index.js";
@@ -49,4 +51,6 @@ export default {
   JsxToReact,
   Cachr,
   Watchr,
+  Hello,
+  ReactView,
 };
