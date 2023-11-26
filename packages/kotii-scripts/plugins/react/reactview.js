@@ -1,23 +1,21 @@
 import methods from "./methods.js";
 
 import React from "react";
-import { Provider } from "react-redux";
 import { StaticRouter } from "react-router-dom";
-import { createStore } from "redux";
 
 import { renderToString } from "react-dom/server";
-import App from "../../src/sevcode";
-import * as central from "../../src/store/store";
+import { RoutesAsServerRoutes } from "../../build.js";
+// import * as central from "../../src/store/store";
 
 class ReactView {
   constructor(pao) {
     this.pao = pao;
     this.React = React;
-    this.store = central.store;
-    this.createStore = createStore;
-    this.Provider = Provider;
+    // this.store = central.store;
+    // this.createStore = createStore;
+    // this.Provider = Provider;
     this.StaticRouter = StaticRouter;
-    this.REACTAPP = App;
+    this.REACTAPP = RoutesAsServerRoutes;
     this.renderToString = renderToString;
     // this.currentReactView = nul/
 
