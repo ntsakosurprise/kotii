@@ -14,6 +14,8 @@ methods.handleFileRoutes = async function (data) {
   const isExistingDir = pao.pa_isExistingDir;
   // console.log("HANDLE FILE ROUTES DATA", data);
   const { payload } = data;
+  self.callback = data.callback;
+
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
   const pagesSource = filePaths.appSrc;
@@ -61,6 +63,10 @@ methods.handleFileRoutes = async function (data) {
             compsSource,
             lastCompsCount
           );
+          self.callback({
+            message: "Routes Configured",
+            resources: payload.path,
+          });
           return;
         }
         if (renamesToAdd.length > 0 && renamesToRemove.length > 0) {
