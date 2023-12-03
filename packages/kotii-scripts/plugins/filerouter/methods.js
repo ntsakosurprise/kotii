@@ -38,11 +38,15 @@ methods.handleFileRoutes = async function (data) {
 
   self
     .doImport(filePath)
-    .then((imported) => {
+    .then(async (imported) => {
       // console.log("Impored", imported.module);
-      let meta = imported.module;
-      console.log("META ", imported);
-      if (meta)
+      let manifestJS = imported;
+      let meta = manifestJS.meta;
+      console.log("META ", meta);
+      const buildJS = await self.doImport(`${cwd}/build.js`);
+      const reactServerRoutes = self.buildServerRoutes(buildJS.routes);
+      console.log("THE ROUTES", reactServerRoutes);
+      if (meta || !meta)
         return self.callback({
           message: "Routes Configured",
           resources: payload.path,
@@ -929,7 +933,7 @@ methods.doImport = function (toImport) {
     loadFile(toImport)
       .then((imported) => {
         console.log("Module has successfully been imported:", imported);
-        resolve({ module: imported.meta });
+        resolve(imported);
       })
       .catch((err) => {
         console.log(
@@ -1227,6 +1231,23 @@ methods.merge = function (a, b, predicate = (a, b) => a === b) {
     c.some((cItem) => predicate(bItem, cItem)) ? null : c.push(bItem)
   );
   return c;
+};
+methods.buildServerRoutes = function (routesSource) {
+  const self = this;
+
+  let builtRoutes = routesSource.map((route) => {
+    return {
+      path: route.path,
+      view: true,
+      viewty: "modular",
+      viewso: "react",
+      title: "REACT SERVE-SIDE RENDERING COMPONENT",
+      method: "GET",
+      type: "public",
+    };
+  });
+  // console.log("ROUTES BUILT", builtRoutes);
+  return builtRoutes;
 };
 
 export default methods;
