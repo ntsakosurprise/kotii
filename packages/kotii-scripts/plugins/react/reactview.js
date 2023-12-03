@@ -4,7 +4,7 @@ import React from "react";
 import { StaticRouter } from "react-router-dom";
 
 import { renderToString } from "react-dom/server";
-//import { RoutesAsServerRoutes } from "../../build.js";
+import { RoutesAsServerRoutes } from "../../build.js";
 // import * as central from "../../src/store/store";
 
 class ReactView {
@@ -15,7 +15,7 @@ class ReactView {
     // this.createStore = createStore;
     // this.Provider = Provider;
     this.StaticRouter = StaticRouter;
-    this.REACTAPP = null;
+    this.REACTAPP = RoutesAsServerRoutes;
     this.renderToString = renderToString;
     // this.currentReactView = nul/
 
