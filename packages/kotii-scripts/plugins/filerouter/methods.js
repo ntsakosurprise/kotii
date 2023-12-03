@@ -1,4 +1,6 @@
 const methods = {};
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
 
 methods.init = function () {
   console.log("Filerouter has been initialised");
@@ -26,13 +28,20 @@ methods.handleFileRoutes = async function (data) {
     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
   );
 
-  const filePath = `${cwd}/manifest.js`;
+  const filePath = `${cwd}/imps.cjs`;
+  if (filePath) {
+    console.log("IMPORT LAOD THE REQUIRED OBJECT");
+    const manifes = require(filePath);
+    console.log("IMPORT LOAD THE REQUIRE WITH ", manifes);
+    return;
+  }
 
   self
     .doImport(filePath)
     .then((imported) => {
       // console.log("Impored", imported.module);
       let meta = imported.module;
+      console.log("META ", imported);
 
       const { lastCompsCount = 0, compsSource, compsPaths } = meta;
       const pagesPathsLen = pagesPaths.length;
@@ -907,8 +916,11 @@ methods.doImport = function (toImport) {
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
-  console.log("TIIMPORT", toImport);
+  const loadFileSync = pao.pa_loadFileSync;
+  // console.log("TIIMPORT", toImport);
   return new Promise((resolve, reject) => {
+    // const manifestFile = loadFileSync(toImport);
+    // resolve({ module: imported.meta });
     loadFile(toImport)
       .then((imported) => {
         console.log("Module has successfully been imported:", imported);
