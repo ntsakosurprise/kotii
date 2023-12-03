@@ -28,13 +28,13 @@ methods.handleFileRoutes = async function (data) {
     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
   );
 
-  const filePath = `${cwd}/imps.cjs`;
-  if (filePath) {
-    console.log("IMPORT LAOD THE REQUIRED OBJECT");
-    const manifes = require(filePath);
-    console.log("IMPORT LOAD THE REQUIRE WITH ", manifes);
-    return;
-  }
+  const filePath = `${cwd}/manifest.js`;
+  // if (filePath) {
+  //   console.log("IMPORT LAOD THE REQUIRED OBJECT");
+  //   const manifes = require(filePath);
+  //   console.log("IMPORT LOAD THE REQUIRE WITH ", manifes);
+  //   return;
+  // }
 
   self
     .doImport(filePath)
@@ -42,6 +42,11 @@ methods.handleFileRoutes = async function (data) {
       // console.log("Impored", imported.module);
       let meta = imported.module;
       console.log("META ", imported);
+      if (meta)
+        return self.callback({
+          message: "Routes Configured",
+          resources: payload.path,
+        });
 
       const { lastCompsCount = 0, compsSource, compsPaths } = meta;
       const pagesPathsLen = pagesPaths.length;
