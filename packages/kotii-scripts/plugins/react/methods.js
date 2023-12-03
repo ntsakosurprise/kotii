@@ -143,4 +143,4 @@ methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
 	  `;
 };
 
-module.exports = methods;
+export default methods;
