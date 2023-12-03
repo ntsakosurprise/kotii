@@ -6,7 +6,9 @@ import { StaticRouter } from "react-router-dom";
 import { renderToString } from "react-dom/server";
 import { RoutesAsServerRoutes } from "../../build.js";
 // import * as central from "../../src/store/store";
-
+/**
+ * @type ReactView
+ */
 class ReactView {
   constructor(pao) {
     this.pao = pao;

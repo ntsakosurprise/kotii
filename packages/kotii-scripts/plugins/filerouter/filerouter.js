@@ -17,7 +17,9 @@ import methods from "./methods.js";
 const { BrowserRouter, Switch } = routerDom;
 // exec('npm run dev')
 // import Public from "../Public/component.js";
-
+/**
+ * @type FileRouter
+ */
 class FileRouter {
   constructor(pao) {
     this.pao = pao;

@@ -3,6 +3,9 @@ import webpackDevMiddleware from "webpack-dev-middleware";
 import webpackHotMiddleware from "webpack-hot-middleware";
 import methods from "./methods.js";
 import webPackConfig from "./webpack.config.js";
+/**
+ * @type WebpackConfig
+ */
 class WebpackConfig {
   constructor(pao) {
     this.pao = pao;
