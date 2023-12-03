@@ -2,6 +2,9 @@ import fs from "fs";
 import { transform } from "lebab";
 import path from "path";
 import methods from "./methods.js";
+/**
+ * @type ContextApp
+ */
 class ContextApp {
   constructor(pao) {
     this.pao = pao;
