@@ -11,7 +11,7 @@ methods.init = function () {
 methods.handleContextApp = function (data) {
   // console.log("THE DATA OF START SCRIPTS", data);
   const self = this;
-  self.getContextAppInfo().then((appInfo) => {
+  self.getAppInContextResources().then((appInfo) => {
     console.log("CONTEXT APP:", appInfo);
     data.callback({
       message: "Context app plugin successfully called",
