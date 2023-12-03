@@ -7,13 +7,13 @@ import * as t from "@babel/types";
 import execSync from "child_process";
 import fs from "fs";
 import { globSync } from "glob";
-import { createRequire } from "module";
+// import { createRequire } from "module";
 import path from "path";
 import React from "react";
 import routerDom from "react-router-dom";
 import methods from "./methods.js";
 
-const require = createRequire(import.meta.url);
+// const require = createRequire(import.meta.url);
 const { BrowserRouter, Switch } = routerDom;
 // exec('npm run dev')
 // import Public from "../Public/component.js";
@@ -28,7 +28,7 @@ class FileRouter {
     this.Switch = Switch;
     this.fs = fs;
     this.path = path;
-    this.require = require;
+    // this.require = require;
     this.parser = parser;
     this.traverse = traverse.default;
     this.t = t;
