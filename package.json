@@ -18,7 +18,7 @@
     "bootstrap": "lerna bootstrap",
     "clean": "lerna run --parallel clean",
     "release": "lerna publish",
-    "start": "cd packages/kotii-scripts && babel-node --presets @babel/preset-react app.js start",
+    "start": "cd packages/kotii-scripts && node --experimental-loader ./compile/hooks.js app.js start",
     "build": "cd packages/kotii-scripts && node app.js build",
     "kotii": "node run_local/runKotiiCli.js"
   },
