@@ -96,6 +96,12 @@ export default () => {
           test: /\.(png|jpg|gif|svg)$/i,
           type: "asset/resource",
         },
+        {
+          test: /\.m?js$/,
+          resolve: {
+            fullySpecified: false, // disable the behaviour
+          },
+        },
         // {
         //   test: /\.scss$/,
         //   use: ["style-loader", "css-loader", "sass-loader"],
