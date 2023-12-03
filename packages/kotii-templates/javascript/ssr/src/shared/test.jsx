@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { css, keyframes } from "styled-components";
-import SVGImage from "./svgImage";
+import SVGImage from "./svgImage.jsx";
 
 const capitalizeFirstLetter = (text) => {
   console.log("The text Uppercasing;;;", text);
