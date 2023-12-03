@@ -159,5 +159,5 @@ const RoutesAsServerRoutes = (props) => {
     </ReactRoutes>
   );
 };
-export { RoutesAsServerRoutes };
+export { RoutesAsServerRoutes, routes };
 export default Routes;
