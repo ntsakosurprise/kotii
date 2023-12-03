@@ -83,7 +83,8 @@
     "react": "^18.2.0",
     "react-router-dom": "5.2.0",
     "rxjs-compat": "^6.6.7",
-    "simple-git": "^2.21.0"
+    "simple-git": "^2.21.0",
+    "styled-components": "^6.1.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

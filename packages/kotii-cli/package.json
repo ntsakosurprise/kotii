@@ -61,7 +61,8 @@
     "octonode": "^0.9.5",
     "open": "^9.1.0",
     "pkg-install": "^1.0.0",
-    "simple-git": "^2.21.0"
+    "simple-git": "^2.21.0",
+    "styled-components": "^6.1.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

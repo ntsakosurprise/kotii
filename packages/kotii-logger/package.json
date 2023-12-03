@@ -51,6 +51,6 @@
     "debug": "^4.3.4",
     "grommet": "^2.33.1",
     "kotii-utils": "*",
-    "styled-components": "5.3.11"
+    "styled-components": "^6.1.1"
   }
 }
