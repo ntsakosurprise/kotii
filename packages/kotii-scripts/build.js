@@ -111,7 +111,7 @@ const Routes = (props) => {
             let component = comps[r.component];
             // console.log("FUNCTION TO RENDER", funcToRender)
             return (
-              <Wrapper>
+              <Wrapper key={index}>
                 <Public
                   {...props}
                   exact
@@ -132,19 +132,20 @@ const RoutesAsServerRoutes = (props) => {
   // const AppWrapper = props.wrapper;
   const Layout = props?.layout
     ? props.layout
-    : () => {
-        return <></>;
+    : (props) => {
+        return <>{props.children}</>;
       };
-
+  // if (!Layout || Layout) return <div>My react component</div>;
   return (
     <ReactRoutes>
       <Layout>
         {routes.map((r, index) => {
           console.log("THE COMPONENT");
           let component = comps[r.component];
+          console.log("THE COMPONENT To Render", component);
           // console.log("FUNCTION TO RENDER", funcToRender)
           return (
-            <Wrapper>
+            <Wrapper key={index}>
               <Public
                 {...props}
                 exact
