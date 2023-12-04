@@ -13,6 +13,7 @@ methods.handleReactView = function (data) {
   self.adLog(data);
   self.callback = data.callback;
 
+  console.log("THE VIEW DATA", data);
   self.runReactView(data);
 };
 
@@ -22,6 +23,7 @@ methods.runReactView = function (data) {
   //     self;
   const { React, StaticRouter, renderToString, REACTAPP } = self;
   const { view } = data;
+  console.log("RENDER TO STRING FUNCTION", renderToString);
 
   // Render the component to a string
   const html = renderToString(
@@ -33,12 +35,15 @@ methods.runReactView = function (data) {
     </StaticRouter>
   );
 
+  console.log("THE HTML IN RUN REACT-VIEW", html);
+
   // Grab the initial state from our Redux store
 
   //   const finalState = store.getState();
   //   const fullPage = self.renderFullPage(html, finalState, view);
 
   const fullPage = self.renderFullPage(html, view);
+  console.log("THE HTML FULL PAGE", fullPage);
   return self.callback(null, fullPage);
 };
 
@@ -96,6 +101,7 @@ methods.runReactView = function (data) {
 // };
 
 methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
+  console.log("THE HTML", html);
   return `
 		  <!doctype html>
 		  <html>

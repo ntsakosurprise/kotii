@@ -16,10 +16,12 @@ methods.handleWebpackConfig = function (data) {
   // data.callback({ message: "Webpack plugin successfully called" });
   return;
 };
-methods.configureWebPack = function (data) {
+methods.configureWebPack = function (payload) {
   const self = this;
   const { webPackConfig, webpack, setContextEnv } = self;
-  setContextEnv(data);
+  const { routes = null, contextApp } = payload;
+  console.log("THE APP CONTEXT CONFIG", payload);
+  setContextEnv(contextApp);
   const webpackConfigObject = webPackConfig();
   console.log("THE WEBPACK CONFIG", webpackConfigObject);
   let wbpCompiler = null;
@@ -29,17 +31,20 @@ methods.configureWebPack = function (data) {
     console.log("Webpack config error", err);
     process.exit(1);
   }
-  self.configureDevServer({
-    compiler: wbpCompiler,
-    webpackConfig: webpackConfigObject,
-  });
+  self.configureDevServer(
+    {
+      compiler: wbpCompiler,
+      webpackConfig: webpackConfigObject,
+    },
+    routes
+  );
   // console.log("THE WEBPACK COMPILER", wbpCompiler);
   return;
 };
 methods.setContextEnv = function (mdconfig) {
   process.env["APPCONTEXT"] = JSON.stringify(mdconfig);
 };
-methods.configureDevServer = function (webpacks) {
+methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
   const self = this;
   const callback = self.callback;
   let wepackMiddlewares = null;
@@ -58,7 +63,11 @@ methods.configureDevServer = function (webpacks) {
   self.emit({
     type: serverType,
     data: {
-      payload: { ...webpacks, wepackMiddlewares },
+      payload: {
+        ...webpacks,
+        wepackMiddlewares,
+        configs: { router: anziiManualConfigs },
+      },
       callback: (data) => {
         callback(data.message);
       },
