@@ -13,9 +13,11 @@ methods.handleContextApp = function (data) {
   const self = this;
   self.getAppInContextResources().then((appInfo) => {
     console.log("CONTEXT APP:", appInfo);
+
     data.callback({
       message: "Context app plugin successfully called",
-      data: appInfo,
+      contextApp: appInfo.path,
+      routes: appInfo.routes,
     });
   });
 
@@ -38,8 +40,10 @@ methods.getAppInContextResources = function () {
   const loadFile = pao.pa_loadFile;
   const readFileSync = pao.pa_readFileSync;
   const loadFileSync = pao.pa_loadFileSync;
+  const getWorkingFolder = pao.pa_getWorkingFolder;
   const fs = self.fs;
   const { appFolder: folder, getFilePath, checkIfIsFile } = self;
+  const cwd = getWorkingFolder();
   console.log("AAPP FOLDER", folder);
   console.log("AAAP ROOT", self.appRoot);
   //console.log(pao);
@@ -67,7 +71,7 @@ methods.getAppInContextResources = function () {
       appJsConfig: self.getFilePath(appFolder, "tsconfig.js"),
       appIndexHtml: self.getFilePath(appFolder, "public/index.html"),
       appAssetsPublic: self.getFilePath(appFolder, "public"),
-      appBuildFolder: self.getFilePath(appFolder, "build"),
+      appBuildFolder: self.getFilePath(cwd, "build"),
       appPublicPath: self.checkIfIsFile(
         self.getFilePath(appFolder, "package.json")
       )
@@ -144,7 +148,7 @@ methods.doRoutes = function (path, pResolve, pReject) {
       payload: { path: path },
       callback: (data) => {
         console.log("FILE ROUTES PROCESSED", data.message);
-        pResolve(path);
+        pResolve({ routes: data.routes, path });
       },
     },
   });
