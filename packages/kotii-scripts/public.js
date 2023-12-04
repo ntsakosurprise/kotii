@@ -21,7 +21,7 @@ const Public = ({ component: Component, ...rest }) => {
 };
 
 Public.propTypes = {
-  component: PropTypes.element.isRequired,
+  component: PropTypes.func.isRequired,
 };
 
 export default Public;
