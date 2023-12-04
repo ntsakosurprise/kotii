@@ -1,18 +1,32 @@
 import HTMLWebpackPlugin from "html-webpack-plugin";
+import path from "path";
 import webpack from "webpack";
+
 export default () => {
   //   console.log("THE PROCESS", process.env.APPCONTEXT);
   let env = JSON.parse(process.env.APPCONTEXT); // GET the set APPCONTEXT environment variable
+  console.log("THE APP BUILD FOLDER", env.appBuildFolder);
   return {
     entry: ["webpack-hot-middleware/client", env.appIndexFile],
     context: env.appFolder,
     mode: "development",
     infrastructureLogging: { level: "none" },
     stats: "none",
+
     output: {
       filename: "[main].bundle.js",
       path: `${env.appBuildFolder}`, // save emitted bundle to this path or folder
     },
+    //externals: {
+    // react: {
+    //   root: "React",
+    //   commonjs2: "react",
+    //   commonjs: "react",
+    //   amd: "react",
+    //   umd: "react",
+    // },
+    //   React: "react",
+    // },
     resolve: {
       extensions: [".js", ".jsx", ".png", ".jpg"], // tell webpack to use these extenstions to resolve imported files[for importing without specifying the extension name]
       alias: {
@@ -36,6 +50,8 @@ export default () => {
         Constants: "/src/constants/",
         Assets: "/src/assets/index",
         AppGlobals: "/src/globals/index",
+        "react-router-dom": path.resolve("../../node_modules/react-router-dom"),
+        "react-router": path.resolve("../../node_modules/react-router"),
       }, // Alias references to files and folders inorder to use absolute paths in your file imports
       fallback: {
         fs: false,
@@ -47,6 +63,7 @@ export default () => {
         http: false,
         https: false,
         stream: false,
+
         // "crypto": false,
       }, // Add these as polyfills for use in the browser, webpack no longer auto-polyfills them
     },
@@ -58,7 +75,10 @@ export default () => {
           use: {
             loader: "babel-loader",
             options: {
-              presets: [["@babel/preset-env"], ["@babel/preset-react"]],
+              presets: [
+                ["@babel/preset-env"],
+                ["@babel/preset-react", { runtime: "automatic" }],
+              ],
             },
           },
         },
@@ -76,6 +96,12 @@ export default () => {
         {
           test: /\.(png|jpg|gif|svg)$/i,
           type: "asset/resource",
+        },
+        {
+          test: /\.m?js$/,
+          resolve: {
+            fullySpecified: false, // disable the behaviour
+          },
         },
         // {
         //   test: /\.scss$/,

@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import kotiiSvg from "./kotii.svg";
 import kotiiAltSvg from "./kotii_alt.svg";
@@ -27,15 +28,24 @@ const Brand = (props) => {
     : {};
   return (
     <StyledBrand>
-      <BrandLogo size={brandLogoSize}>
-        <img
-          src={logo === "kotii" ? kotiiSvg : kotiiAltSvg}
-          alt="Kotii Logo"
-          width={logoSize}
-        />
-      </BrandLogo>
-      <BrandText brandLogoTextStyles={brandLogoTextStyles}>Kotii</BrandText>
-      {/* <Test /> */}
+      <Link
+        to="/"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <BrandLogo size={brandLogoSize}>
+          <img
+            src={logo === "kotii" ? kotiiSvg : kotiiAltSvg}
+            alt="Kotii Logo"
+            width={logoSize}
+          />
+        </BrandLogo>
+        <BrandText brandLogoTextStyles={brandLogoTextStyles}>Kotii</BrandText>
+        {/* <Test /> */}
+      </Link>
     </StyledBrand>
   );
 };

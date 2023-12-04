@@ -1,8 +1,8 @@
 import React from "react";
-import { AiFillFile, AiFillFolder } from "react-icons/ai";
-import { FaLongArrowAltRight } from "react-icons/fa";
+import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
+import { FaLongArrowAltRight } from "react-icons/fa/index.js";
 import styled from "styled-components";
-import SVGConnections from "../shared/test";
+import SVGConnections from "../shared/test.jsx";
 
 const Main = styled("div")({
   display: "flex",

@@ -18,7 +18,7 @@ methods.handleStartScript = function (data) {
         // console.log("THIS DATA");
         // console.log(self.pao);
         console.log("WALAH", data);
-        self.getWebPackConfig(data.data, setCall);
+        self.getWebPackConfig(data, setCall);
       },
     },
   });

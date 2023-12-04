@@ -18,7 +18,7 @@
     "bootstrap": "lerna bootstrap",
     "clean": "lerna run --parallel clean",
     "release": "lerna publish",
-    "start": "cd packages/kotii-scripts && node app.js start",
+    "start": "cd packages/kotii-scripts && node --experimental-loader ./compile/hooks.js app.js start",
     "build": "cd packages/kotii-scripts && node app.js build",
     "kotii": "node run_local/runKotiiCli.js"
   },
@@ -41,11 +41,12 @@
     "@types/jsdom": "20",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "babel-register-esm": "^1.2.5",
     "cjstoesm": "^2.1.2",
     "cross-spawn": "^7.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "styled-components": "^5.3.5"
+    "styled-components": "^6.1.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",

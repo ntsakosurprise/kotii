@@ -1,4 +1,6 @@
 const methods = {};
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
 
 methods.init = function () {
   console.log("Filerouter has been initialised");
@@ -9,20 +11,167 @@ methods.init = function () {
 };
 methods.handleFileRoutes = async function (data) {
   const self = this;
+  const pao = self.pao;
+  const getWorkingFolder = pao.pa_getWorkingFolder;
+  const isExistingDir = pao.pa_isExistingDir;
   // console.log("HANDLE FILE ROUTES DATA", data);
   const { payload } = data;
+  self.callback = data.callback;
+
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
-  //self.enableBabelRegister(filePaths.appSrc);
-  const pagesPaths = self.getPages(`${filePaths.appPagesFolder}/**/*.jsx`);
-  const routesObject = self.createRouterComponents(
-    pagesPaths,
-    filePaths.appSrc
+  const pagesSource = filePaths.appSrc;
+  const cwd = getWorkingFolder();
+  //console.log("EXECSYNC", execSync);
+  //self.enableBabelRegister(cwd);
+  const pagesPaths = self.getPages(
+    `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
   );
-  self.addToAST(routesObject);
+
+  const filePath = `${cwd}/manifest.js`;
+  // if (filePath) {
+  //   console.log("IMPORT LAOD THE REQUIRED OBJECT");
+  //   const manifes = require(filePath);
+  //   console.log("IMPORT LOAD THE REQUIRE WITH ", manifes);
+  //   return;
+  // }
+
+  self
+    .doImport(filePath)
+    .then(async (imported) => {
+      // console.log("Impored", imported.module);
+      let manifestJS = imported;
+      let meta = manifestJS.meta;
+      console.log("META ", meta);
+      const buildJS = await self.doImport(`${cwd}/build.js`);
+      const reactServerRoutes = self.buildServerRoutes(buildJS.routes);
+      console.log("THE ROUTES", reactServerRoutes);
+      if (meta || !meta)
+        return self.callback({
+          message: "Routes Configured",
+          resources: payload.path,
+          routes: reactServerRoutes,
+        });
+
+      const { lastCompsCount = 0, compsSource, compsPaths } = meta;
+      const pagesPathsLen = pagesPaths.length;
+      let renamesToAdd = [];
+      let renamesToRemove = [];
+      // console.log("META", lastCompsCount, compsSource);
+      // if (!imported || imported) return;
+
+      if (lastCompsCount === 0 || !compsSource || compsPaths.length === 0) {
+        const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
+        return self.addToAST(routesObject, pagesPaths, null, pagesSource);
+      }
+
+      if (compsSource !== pagesSource) {
+        const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
+        return self.addToAST(routesObject, pagesPaths, null, pagesSource, true);
+      }
+      if (lastCompsCount === pagesPathsLen) {
+        pagesPaths.forEach((pPath) => {
+          if (compsPaths.indexOf(pPath) < 0) renamesToAdd.push(pPath);
+        });
+        compsPaths.forEach((pPath) => {
+          if (pagesPaths.indexOf(pPath) < 0) renamesToRemove.push(pPath);
+        });
+        if (renamesToAdd.length === 0 && renamesToRemove.length === 0) {
+          console.log(
+            "AST NODE NO NEED UPDATED REQUIRED",
+            compsSource,
+            lastCompsCount
+          );
+          self.callback({
+            message: "Routes Configured",
+            resources: payload.path,
+          });
+          return;
+        }
+        if (renamesToAdd.length > 0 && renamesToRemove.length > 0) {
+          const routesObject = self.getRoutesHelper(renamesToAdd, pagesSource);
+          self.addToAST(routesObject, pagesPaths, renamesToRemove, pagesSource);
+        } else if (renamesToAdd.length > 0) {
+          console.log("AST NODE RENAMES TO ADD", renamesToAdd);
+          const routesObject = self.getRoutesHelper(renamesToAdd, pagesSource);
+          self.addToAST(routesObject, pagesPaths, null, pagesSource);
+        } else if (renamesToRemove.length > 0) {
+          self.addToAST(null, pagesPaths, toRemove, pagesSource);
+        }
+      } else if (lastCompsCount < pagesPathsLen) {
+        console.log("AST NODE lastCompsCount");
+        let toAdd = [];
+        let toRemove = [];
+        pagesPaths.forEach((pPath) => {
+          if (compsPaths.indexOf(pPath) < 0) toAdd.push(pPath);
+        });
+        compsPaths.forEach((pPath) => {
+          if (pagesPaths.indexOf(pPath) < 0) toRemove.push(pPath);
+        });
+        console.log("TO ADD", toAdd);
+        console.log("TO RENAME", toRemove);
+        const routesObject = self.getRoutesHelper(toAdd, pagesSource);
+
+        if (toRemove.length > 0) {
+          console.log("ABOUT TO PROCESS WITH REMOVE");
+          self.addToAST(routesObject, pagesPaths, toRemove, pagesSource);
+        } else {
+          console.log("ABOUT TO PROCESS WITHOUT REMOVE");
+          self.addToAST(routesObject, pagesPaths, null, pagesSource);
+        }
+        // ? self.addToAST(routesObject, pagesPaths, toRemove, pagesSource)
+        // : self.addToAST(routesObject, pagesPaths, null, pagesSource);
+      } else {
+        console.log("AST NODE:: REMOVING");
+        let toRemove = [];
+        compsPaths.forEach((pPath) => {
+          if (pagesPaths.indexOf(pPath) < 0) toRemove.push(pPath);
+        });
+        console.log("TO REMOVE", toRemove);
+        // const routesObject = self.getRoutesHelper(toAdd, pagesSource);
+        self.addToAST(null, pagesPaths, toRemove, pagesSource);
+      }
+    })
+    .catch((err) => {
+      console.log("ERR WITH IMPORT", err);
+    });
+
+  // const jsFile = readFileSync(filePath).replace(/;/g, "");
+
+  //self.enableBabelRegister(filePaths.appSrc);
+  // const hasCreatedFile = await self.checkForSavedFiles();
+  // if (!hasCreatedFile) return;
+  // self.cacheData({ key: "TEST_CACHE_SAVE" }, ["TEST_CACHE_SAVING"]);
+  // self.checkForSavedFiles({ key: "TEST_CACHE_SAVE" }).then((checked) => {
+  //   console.log("SAVED CACHE", checked);
+  // });
+  // self.watchFile(
+  //   { added: false, filePath: "" },
+  //   { add: self.watchFileAddEvent, delete: self.watchFileDeleteEvent }
+  // );
+  ///console.log(maniac);
+
+  // console.log("HASCREATEDFILE", hasCreatedFile);
+  // console.log("");
+  // const pagesPaths = self.getPages(
+  //   `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
+  // );
+  // const routesObject = self.createRouterComponents(
+  //   pagesPaths,
+  //   filePaths.appSrc
+  // );
+  // self
+  //   .doImports(routesObject)
+  //   .then((completed) => {
+  //     console.log("MODULE IMPORTES SUCCESSFUL", completed);
+  //   })
+  //   .catch((err) => {
+  //     consoole.log("THERE WAS AN ERROR IMPORTING", err);
+  //   });
+
   // const sourceCodes = self.getSourceCodes(pagesPaths);
   // self.parseJsxToReact(sourceCodes);
-  console.log("PAGES PATHS", pagesPaths);
+  // console.log("PAGES PATHS", pagesPaths);
   //console.log("Routes OBject", routesObject);
 
   // console.log(
@@ -54,6 +203,10 @@ methods.getSourceCodes = function (codesSource) {
   return sourcesCodesList;
 
   //console.log("SOURCES AND THEIR CODES", sourcesCodesList);
+};
+methods.getRoutesHelper = function (paths, source) {
+  const self = this;
+  return self.createRouterComponents(paths, source);
 };
 methods.createRouterComponents = function (maps, pathy) {
   const self = this;
@@ -98,7 +251,9 @@ methods.getItemPathAndFile = function (item) {
   const loadFile = pao.pa_loadFile;
   const loadFileSync = pao.pa_loadFileSync;
   const readFileSync = pao.pa_readFileSync;
-  const extMatchPattern = /\.jsx|tsx$/g;
+  const capitalizeFirstLetter = pao.pa_capitalizeFirstLetter;
+  const camelCase = pao.pa_camelCase;
+  const extMatchPattern = /\.js|ts|tsx|jsx$/g;
   let fileAsComp = null;
 
   let gotEndpoint =
@@ -120,12 +275,23 @@ methods.getItemPathAndFile = function (item) {
   }
   console.log("THE PAGES matched", patternMatch);
   console.log("THE ITEM", item);
-  fileAsComp = readFileSync(item);
+
+  // fileAsComp = loadFileSync(item);
+  // console.log("THE FILE CODE", fileAsComp.default.toString());
   // await loadFile(item);
+  let splitPatternMatch = patternMatch.split("/");
+  let splitLen = splitPatternMatch.length;
 
   return {
     path: patternMatch,
-    component: fileAsComp,
+    //component: fileAsComp?.default ? fileAsComp.default : fileAsComp,
+    componentName:
+      patternMatch === "/"
+        ? "Home"
+        : capitalizeFirstLetter(
+            camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
+          ),
+    component: item,
   };
 };
 methods.dynamicImport = async function (module) {
@@ -270,10 +436,30 @@ methods.enableBabelRegister = function (babelCWD) {
   loadFileSync("@babel/register").default({
     cwd: babelCWD,
     presets: ["@babel/preset-env", "@babel/preset-react"],
+    // plugins: [
+    //   "babel-plugin-macros",
+    //   "babel-plugin-styled-components",
+    //   ["@babel/plugin-transform-react-jsx"],
+    // ],
   });
 };
-methods.addToAST = function (objectToAdd) {
-  console.log("addTOast gets a call");
+methods.addToAST = function (
+  objectToAdd = null,
+  pagesPaths,
+  toRemove = null,
+  source,
+  isNewSource = false
+) {
+  // console.log("addTOast gets a call");
+  // objectToAdd = [
+  //   {
+  //     path: "/todo",
+  //     componentName: "Todo",
+  //     component:
+  //       "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.js",
+  //   },
+  // ];
+
   const self = this;
   const pao = self.pao;
   const traverse = self.traverse;
@@ -287,45 +473,98 @@ methods.addToAST = function (objectToAdd) {
   const saveToFile = pao.pa_saveToFile;
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const cwd = getWorkingFolder();
+  // if (objectToAdd) {
+  //   return self.createMetaAst({
+  //     comps: ["Test", "Test2", "THIRDEYE", "FOUTHEYE"],
+  //     compsCurrentSource: "myCurrentSource",
+  //     lastCompsCount: 10,
+  //     compsPaths: ["path/1", "path/2", "path/4", "/path5"],
+  //   });
+  // }
   //console.log("EXECSYNC", execSync);
   //self.enableBabelRegister(cwd);
+
   const filePath = `${cwd}/build.js`;
-  const jsFile = readFileSync(filePath).replace(/;/g, "");
+  // const altPath = `${cwd}/build_test.js`;
+  const jsFile = readFileSync(filePath);
   let ast = parser.parse(jsFile, { sourceType: "module", plugins: ["jsx"] });
+  let isCompsDefined = false;
+  let importStrings = "";
+
+  // if (!objectToAdd && toRemove) {
+  //   return self.astDeleteNode(node, t, objectToAdd);
+  // } else if (objectToAdd) {
+  //   self.astAddNode(ast, isNewSource);
+  // }
   // console.log("jsFile replaced", jsFile);
-  console.log("THE VALUE OF TRAVERSE", traverse);
+  //import Todo from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.js";
+  // console.log("THE VALUE OF TRAVERSE", traverse);
+  // if (toRemove) {
+  //   self.removeImportDeclarations(ast, toRemove);
+  //   return saveToFile(filePath, generate(ast).code);
+  // }
   traverse(ast, {
     VariableDeclaration(path) {
-      console.log("TRAVERSE ENTERS", path.container);
+      // console.log("TRAVERSE ENTERS", path.container);
       // if (!t.isIdentifier(path.node)) return;
       //console.log("PATH AFTER CHECK", path.node.type);
       // if (t.isIdentifier(path.node, { name: "surname" })) {
-      console.log("THE NODE TYPE", path.node.type);
-      console.log(
-        "THE NODE TYPE IS IMPORT",
-        path.node.type === "ImportDeclaration"
-      );
+      // console.log("THE NODE TYPE", path.node.type);
+      // console.log(
+      //   "THE NODE TYPE IS IMPORT",
+      //   path.node.type === "ImportDeclaration"
+      // );
       if (path.node.type === "ImportDeclaration") return;
-      const mapsNode = path.container.filter((nd, i) => {
-        // console.log("ND IN MAP", nd);
-
+      let isRoutesDefined = false;
+      let routesNode = null;
+      let compsNode = null;
+      path.container.forEach((nd, i) => {
         if (nd.type !== "VariableDeclaration") return false;
-        // console.log("nd.TYPE", nd.type);
-        // console.log("nd.Declarations", nd.declarations[0].id.name);
-        let nodeIDName = nd.declarations[0].id.name;
-        if (nodeIDName === "mapsOfFiles" || nodeIDName === "surname") return nd;
+        let declarations = nd.declarations;
+        declarations.forEach((dec, i) => {
+          if (dec.id.name === "routes") {
+            isRoutesDefined = true;
+            routesNode = dec;
+          }
+          if (dec.id.name === "comps") {
+            isCompsDefined = true;
+            compsNode = dec;
+          }
+        });
+        // let nodeIDName = nd.declarations[0].id.name;
+        // if (nodeIDName === "mapsOfFiles" || nodeIDName === "surname") return nd;
       });
-      console.log("MAPS OF NODE", mapsNode);
-      const nd = mapsNode[0];
-      const targetDeclaration = nd.declarations[0];
-      const targetDeclarationName = targetDeclaration.id.name;
-      // console.log("THE NODE DECLARATIONS", nd.declarations);
-      // console.log("Identifier matched::", nd.id.name);
-      let firstVariableName = targetDeclarationName;
-      console.log("FIRST VARIABLE NAME", firstVariableName);
+      // console.log("AST NODE ROUTES", routesNode, isRoutesDefined);
+      // if (compsNode) {
+      //   console.log("AST NODE COMPS", compsNode);
+      //   return;
+      // }
 
-      if (firstVariableName === "mapsOfFiles") {
-        self.variableCreation(path, t, objectToAdd, parser, true);
+      if (isRoutesDefined) {
+        if (objectToAdd && toRemove) {
+          self.removeImportDeclarations(ast, toRemove, routesNode, compsNode);
+          importStrings = self.insertImportDeclarations(
+            objectToAdd,
+            false,
+            routesNode,
+            compsNode
+          );
+          path.stop();
+        } else if (objectToAdd) {
+          importStrings = self.insertImportDeclarations(
+            objectToAdd,
+            false,
+            routesNode,
+            compsNode
+          );
+
+          path.stop();
+        } else if (toRemove) {
+          self.removeImportDeclarations(ast, toRemove, routesNode, compsNode);
+          path.stop();
+        } else if (isNewSource) {
+          self.variableCreation(path, t, objectToAdd, parser, true);
+        }
       } else {
         self.variableCreation(path, t, objectToAdd, parser);
       }
@@ -337,13 +576,34 @@ methods.addToAST = function (objectToAdd) {
       // }
     },
   });
+
   console.log("New AST", ast);
+  importStrings = !isCompsDefined
+    ? self.insertImportDeclarations(objectToAdd, true)
+    : importStrings
+    ? importStrings
+    : "";
   const { code: genCode } = generate(ast);
   const modifiedCode = genCode;
 
   console.log("New AST genCode", genCode);
   console.log("Modiefied code", modifiedCode);
-  saveToFile(filePath, modifiedCode);
+  saveToFile(
+    filePath,
+    !importStrings ? modifiedCode : `${importStrings} ${modifiedCode}`
+  );
+  self.createMetaAst({
+    comps: [],
+    compsSource: source,
+    lastCompsCount: pagesPaths.length,
+    compsPaths: [...pagesPaths],
+  });
+  //self.cacheData(self.keys.CACHE_ROUTES_PATHS_KEY, pagesPaths);
+  // self.cacheData(self.keys.SAVE_FILES_KEY, { added: [], deleted: [] });
+  // self.watchFile(pagesPaths, {
+  //   add: self.watchFileAddEvent,
+  //   delete: self.watchFileDeleteEvent,
+  // });
   // let commandToRun = "build:dev";
   // let bat = execSync("yarn", ["run", `${commandToRun}`], { cwd: cwd });
   // //console.log("BUILD SPAWN", buildSpawn);
@@ -375,7 +635,129 @@ methods.addToAST = function (objectToAdd) {
   // console.log("THE FILE PATH", jsFile);
 };
 
-methods.variableCreation = function (path, t, files, parser, replace = false) {
+methods.astAddNode = function (routesNode, compsNode, toAdd) {
+  const self = this;
+  const t = self.t;
+
+  // const nodeElements = init.elements;
+  console.log("AST NODE BEFORE LEN", toAdd);
+  if (routesNode) {
+    const init = routesNode.init;
+    toAdd.forEach((adding, i) => {
+      init.elements.push(
+        t.objectExpression([
+          t.objectProperty(t.identifier("path"), t.stringLiteral(adding.path)),
+          t.objectProperty(
+            t.identifier("component"),
+            // t.functionExpression(t.identifier(funcName), [], funcBody)
+            t.stringLiteral(adding.componentName)
+          ),
+        ])
+      );
+    });
+  }
+
+  if (compsNode) {
+    const initProps = compsNode.init;
+    toAdd.forEach((adding, i) => {
+      initProps.properties.push(t.identifier(`${adding.componentName}`));
+    });
+  }
+
+  // console.log("AST NODE AFTER", node.init[nodeUpdateType].length);
+  // console.log("AST NODE AFTER CHANGE", node);
+
+  // traverse(node, {
+  //   objectExpression(path) {
+  //     if (path.node.type === "ImportDeclaration") return;
+  //     let isRoutesDefined = false;
+  //     let routesNode = null;
+  //     let compsNode = null;
+  //     path.container.forEach((nd, i) => {
+  //       if (nd.type !== "VariableDeclaration") return false;
+  //       let declarations = nd.declarations;
+  //       declarations.forEach((dec, i) => {
+  //         if (dec.id.name === "routes") {
+  //           isRoutesDefined = true;
+  //           routesNode = dec;
+  //         }
+  //         if (dec.id.name === "comps") {
+  //           isCompsDefined = true;
+  //           compsNode = dec;
+  //         }
+  //       });
+  //       // let nodeIDName = nd.declarations[0].id.name;
+  //       // if (nodeIDName === "mapsOfFiles" || nodeIDName === "surname") return nd;
+  //     });
+
+  //     if (isRoutesDefined) {
+  //       self.variableCreation(path, t, objectToAdd, parser, true, routesNode);
+  //     } else {
+  //       self.variableCreation(path, t, objectToAdd, parser, false, routesNode);
+  //     }
+
+  //     //}
+
+  //     // if (t.isImportDeclaration(path.node)) {
+  //     //   path.node.name = "x";
+  //     // }
+  //   },
+  // });
+};
+
+methods.astDeleteNode = function (routesNode, compsNode, toRemove) {
+  const self = this;
+  const t = self.t;
+  console.log("AST NODE DELETE", toRemove);
+  // const init = node.init;
+  // const nodeUpdateType = node.id.type === "routes" ? "elements" : "properties";
+  // const nodeElements = init.elements;
+
+  if (routesNode) {
+    let init = routesNode.init;
+    console.log("AST NODE ROUTES NODE", routesNode);
+    console.log("AST NODE INIT ELEMENT", init.elements[0]);
+    init.elements.forEach((elNode, i) => {
+      let objecProps = elNode.properties;
+      objecProps.forEach((prop, ii) => {
+        if (prop.key.name === "component") {
+          if (toRemove === prop.value.value) {
+            console.log("AST ROUTE ELEMENT OBJECT VALUE TO BE REMOVED");
+            init.elements.splice(i, 1);
+          }
+        }
+      });
+
+      // if (toRemove.indexOf(elNode..compnent) >= 0) {
+      //   init.elements.unshift(i);
+      // }
+    });
+  }
+  if (compsNode) {
+    let initProps = compsNode.init;
+    console.log("AST NODE COMPS NODE", compsNode);
+    console.log("AST NODE INIT Properties", initProps.properties[0]);
+    initProps.properties.forEach((propNode, i) => {
+      if (toRemove === propNode.key.name) {
+        console.log("AST NODE Object Proper to Be removed");
+        initProps.properties.splice(i, 1);
+      }
+      // init.properties.unshift(i);
+    });
+  }
+
+  // console.log("AST NODE AFTER", );
+  // console.log("AST NODE AFTER CHANGE", node);
+};
+
+methods.variableCreation = function (
+  path,
+  t,
+  files,
+  parser,
+  replace = false,
+  node = null
+) {
   const self = this;
   let creationMethod = replace
     ? path.replaceWith.bind(path)
@@ -386,31 +768,39 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
   creationMethod(
     t.variableDeclaration("const", [
       t.variableDeclarator(
-        t.identifier("mapsOfFiles"),
+        t.identifier("routes"),
         t.arrayExpression([
           ...files.map((en, i) => {
-            // let funcAst = parser.parse(en.component.toString(), {
+            // let functionAsString = en.component
+            //   .toString()
+            //   .replace(/\/\*#__PURE__\*\/_react.default/g, "React");
+            // .replace(/;/g, "");
+            // console.log("FUNCTION AS A STRING", functionAsString);
+            // let funcAst = parser.parse(functionAsString, {
             //   sourceType: "module",
             // });
-            let funcAst = parser.parse(en.component, {
-              sourceType: "module",
-              plugins: ["jsx"],
-            });
-            console.log("FUNC AST", funcAst);
-            console.log("FUNCK FIRST NODE");
-            self.reactJsx(funcAst, en.path);
-            let functionInContext = funcAst.program.body[0];
-            console.log("FUNCK FIRST NODE", functionInContext);
+            //console.log("FUNCTION STRING", functionAsString);
+            // let funcAst = parser.parse(en.component, {
+            //   sourceType: "module",
+            //   plugins: ["jsx"],
+            // });
+            // console.log("FUNC AST", funcAst);
+            // console.log("FUNCK FIRST NODE");
+            // self.funcToJsx(funcAst, en.path);
+            // let functionInContext = funcAst.program.body[0];
+            // console.log("FUNCK FIRST NODE", functionInContext);
             // let funcName = functionInContext.id.name;
             // let funcBody = functionInContext.body;
-            console.log("AST for func", funcAst.program.body);
-            console.log("AST FUNCTION PARTS", funcName, funcBody);
+            // console.log("AST for func", funcAst.program.body);
+            // console.log("AST FUNCTION PARTS", funcName, funcBody);
+            // console.log("THE FUNCTION NAME", funcName);
 
             return t.objectExpression([
               t.objectProperty(t.identifier("path"), t.stringLiteral(en.path)),
               t.objectProperty(
                 t.identifier("component"),
-                t.functionExpression(t.identifier(funcName), [], funcBody)
+                // t.functionExpression(t.identifier(funcName), [], funcBody)
+                t.stringLiteral(en.componentName)
               ),
             ]);
           }),
@@ -421,19 +811,42 @@ methods.variableCreation = function (path, t, files, parser, replace = false) {
   path.stop();
 };
 
-methods.funcToJsx = function (ast) {
+methods.funcToJsx = function (ast, pathID) {
   const self = this;
 
   const traverse = self.traverse;
   const t = self.t;
+  console.log("PROCESSING PATHID", pathID);
   traverse(ast, {
     CallExpression(path) {
+      console.log("JSX PATH", path.node);
+      console.log(
+        "JSX PATH.NODE.callee",
+        t.isMemberExpression(path.node.callee)
+      );
+      console.log(
+        "JSX PATH.NODE.callee.object",
+        t.isIdentifier(path.node.callee.object, { name: "React" })
+      );
+      console.log(
+        "JSX PATH.NODE.callee.property",
+        t.isIdentifier(path.node.callee.property, { name: "createElement" })
+      );
       if (
         t.isMemberExpression(path.node.callee) &&
         t.isIdentifier(path.node.callee.object, { name: "React" }) &&
         t.isIdentifier(path.node.callee.property, { name: "createElement" })
       ) {
-        const [type, props, ...childProcess] = path.node.arguments;
+        console.log("JSX PATH ARGUMENTS", path.node.arguments);
+        const [type, props, ...children] = path.node.arguments;
+
+        console.log("JSX PATH CHILDREN", children);
+        console.log("JSX PATH TYPE", type);
+        console.log("JSX PATH PROPS", props);
+        console.log(
+          "JSX PATH PROPS.ISOBJECTEXPRESSION",
+          t.isObjectExpression(props)
+        );
         let attributes = [];
         if (t.isObjectExpression(props)) {
           props.properties.forEach((prop) => {
@@ -448,38 +861,394 @@ methods.funcToJsx = function (ast) {
           if (t.isStringLiteral(child)) {
             jsxChildren.push(t.jsxText(child.value));
           } else if (t.isCallExpression(child)) {
+            console.log("NODE CHILD TYPE IS EXPRESSION");
             jsxChildren.push(t.jsxExpressionContainer(child));
           }
         });
 
+        console.log("JSX CONTRUCTED CHILDREN", jsxChildren);
+
+        const idAsValueOrName = type?.value ? type.value : type.name;
+        console.log("JSX TYPE.VALUE", idAsValueOrName);
+
         const openingElement = t.jsxOpeningElement(
-          t.jsxIdentifier(type.value),
+          t.jsxIdentifier(idAsValueOrName),
           attributes,
           false
         );
 
-        const closingElement = t.jsxClosingElement(t.jsxIdentifier(type.value));
+        const closingElement = t.jsxClosingElement(
+          t.jsxIdentifier(idAsValueOrName)
+        );
+        console.log("BEFORE PLACEMENT DONE");
         const jsxElement = t.jsxElement(
           openingElement,
           closingElement,
           jsxChildren,
           false
         );
+
         path.replaceWith(jsxElement);
+        console.log("REPLACEMENT IS DONE");
       }
     },
   });
 };
-methods.reactJsx = function (ast, moduleName) {
+methods.doImports = function (toImport) {
   const self = this;
-  const modModuleName = moduleName === "/" ? "index" : moduleName.replace();
-
-  const traverse = self.traverse;
+  return new Promise((res, rej) => {
+    Promise.all(
+      toImport.map((to, i) => {
+        return new Promise((resolve, reject) => {
+          self
+            .dynamicImport(to.component)
+            .then((imported) => {
+              console.log(
+                "Module has successfully been imported:",
+                to.component
+              );
+              resolve({ path: to.path, module: imported });
+            })
+            .catch((err) => {
+              console.log(
+                `importing module:${to}, has failed with an error:${err}`
+              );
+              reject(err);
+            });
+        });
+      })
+    ).then((completed) => {
+      res(completed);
+    });
+  });
+};
+methods.doImport = function (toImport) {
+  const self = this;
+  const pao = self.pao;
+  const loadFile = pao.pa_loadFile;
+  const loadFileSync = pao.pa_loadFileSync;
+  // console.log("TIIMPORT", toImport);
+  return new Promise((resolve, reject) => {
+    // const manifestFile = loadFileSync(toImport);
+    // resolve({ module: imported.meta });
+    loadFile(toImport)
+      .then((imported) => {
+        console.log("Module has successfully been imported:", imported);
+        resolve(imported);
+      })
+      .catch((err) => {
+        console.log(
+          `importing module:${toImport}, has failed with an error:${err}`
+        );
+        reject(err);
+      });
+  });
+};
+methods.insertImportDeclarations = function (
+  imports,
+  shouldBuildComps = false,
+  routesNode = null,
+  compsNode = null
+) {
+  const self = this;
+  const pao = self.pao;
+  const template = self.template;
+  const generate = self.generate;
   const t = self.t;
+  const parser = self.parser;
+  const saveToFile = pao.pa_saveToFile;
+
+  //   console.log("THE IMPORTS", imports);
+  //   const buildImport = template(`
+  //   let IMPORT_NAME = require(SOURCE);
+  // `);
+
+  //   let asty = "";
+
+  //   asty = buildImport({
+  //     IMPORT_NAME: t.identifier(`${imports[0].componentName}`),
+  //     SOURCE: t.stringLiteral(`${imports[0].component}`),
+  //   });
+  let constString = shouldBuildComps ? `const comps = {` : "";
+  let importString = imports.map((im, i) => {
+    if (shouldBuildComps) constString += `${im.componentName},`;
+    return `import ${im.componentName} from "${im.component}";`;
+  });
+  // const myImport = template(`${importString.join(";")}`, {
+  //   sourceType: "module",
+  // });
+  constString += shouldBuildComps ? "}" : "";
+  let joinedString = shouldBuildComps
+    ? `${importString.join("")} ${constString};`
+    : `${importString.join("")}`;
+  console.log("ASTY JOINED STRING", joinedString);
+  let ast = parser.parse(joinedString, { sourceType: "module" });
+  !shouldBuildComps ? self.astAddNode(routesNode, compsNode, imports) : "";
+  let modifiedCode = generate(ast).code;
+  console.log("ASTY CODE THE IMPOT STRINGS", importString);
+  console.log("ASTY CODE", modifiedCode);
+  console.log();
+  return modifiedCode;
+  // saveToFile(filePath, modifiedCode);
+  // saveToFile(filePath, modifiedCode);
+  // const ast = buildImport({
+  //   IMPORT_NAME: t.identifier("myModule"),
+  //   SOURCE: t.stringLiteral("my-module")
+  // });
+
+  // return {
+  //   visitor: {
+  //     Program(path, state) {
+  //       const lastImport = path
+  //         .get("body")
+  //         .filter((p) => p.isImportDeclaration())
+  //         .pop();
+
+  //       if (lastImport) {
+  //         imports.forEach((im, i) => {
+  //           lastImport.insertAfter(myImport());
+  //         });
+  //       }
+  //     },
+  //   },
+  // };
+};
+methods.removeImportDeclarations = function (
+  ast,
+  toRemove,
+  routesNode,
+  compsNode
+) {
+  const self = this;
+  const pao = self.pao;
+  const template = self.template;
+  const generate = self.generate;
+  const t = self.t;
+  const parser = self.parser;
+  const traverse = self.traverse;
+  let removedImportsIds = [];
+
+  traverse(ast, {
+    ImportDeclaration(path) {
+      console.log("AST NODE AFTER Import Node", path.node.source.value);
+      console.log("AST NODE SPECIFIER", path.node.specifiers[0]?.local.name);
+      console.log(
+        "AST NODE AFTER Import Test",
+        toRemove.indexOf(path.node.source.value) >= 0
+      );
+      if (toRemove.indexOf(path.node.source.value) >= 0) {
+        let local = path.node.specifiers[0]?.local.name;
+        removedImportsIds.push(local);
+        self.astDeleteNode(routesNode, compsNode, local);
+        path.remove();
+      }
+    },
+  });
+  console.log("AST NODE TO BE REMOVED IS", removedImportsIds);
+};
+
+methods.createMetaAst = function (metaData) {
+  const self = this;
+  const pao = self.pao;
+  const template = self.template;
+  const generate = self.generate;
+  const t = self.t;
+  const parser = self.parser;
+  const traverse = self.traverse;
+  const readFileSync = pao.pa_readFileSync;
+  const saveToFile = pao.pa_saveToFile;
+  const getWorkingFolder = pao.pa_getWorkingFolder;
+  const contains = pao.pa_contains;
+  const cwd = getWorkingFolder();
+
+  const filePath = `${cwd}/manifest.js`;
+  const jsFile = readFileSync(filePath);
+  let ast = parser.parse(jsFile, { sourceType: "module" });
+
   traverse(ast, {
     VariableDeclaration(path) {
-      // if(path.declarations[0].id)
+      console.log("AST NODE META ", path.node.declarations);
+      console.log("AST NODE META DECLARATION", path.node.declarations[0]);
+      console.log("AST NODE META ID", path.node.declarations[0].id);
+      console.log("AST NODE META INIT", path.node.declarations[0].init);
+      const declarations = path.node.declarations;
+      let targetDeclaration = null;
+      declarations.forEach((declaration) => {
+        if (declaration.id.name === "meta") targetDeclaration = declaration;
+      });
+      const declarationInit = targetDeclaration.init;
+      declarationInit.properties.forEach((declarationInitProp) => {
+        if (declarationInitProp.key.name === "comps") {
+          let elements = [];
+          // let merged = self.merge(elements, metaData.comps);
+          // console.log("AST NODE THE MERGED COMPS", merged);
+          if (declarationInitProp.value.elements.length > 0) {
+            declarationInitProp.value.elements.forEach((el) => {
+              elements.push(el.value);
+            });
+            declarationInitProp.value.elements = [];
+            elements = elements.filter((ele) => {
+              if (metaData.comps.indexOf(ele) >= 0) return ele;
+            });
+          }
+
+          metaData.comps.forEach((compName) => {
+            if (!contains(elements, compName)) elements.push(compName);
+          });
+          console.log("AST NODE ELEMENTS UPDATED AFTER", elements);
+          elements.forEach((element) => {
+            declarationInitProp.value.elements.push(t.stringLiteral(element));
+          });
+        }
+        if (declarationInitProp.key.name === "compsPaths") {
+          let elements = [];
+          // let merged = self.merge(elements, metaData.comps);
+          // console.log("AST NODE THE MERGED COMPS", merged);
+          if (declarationInitProp.value.elements.length > 0) {
+            declarationInitProp.value.elements.forEach((el) => {
+              elements.push(el.value);
+            });
+            declarationInitProp.value.elements = [];
+            elements = elements.filter((ele) => {
+              if (metaData.compsPaths.indexOf(ele) >= 0) return ele;
+            });
+          }
+
+          metaData.compsPaths.forEach((compName) => {
+            if (!contains(elements, compName)) elements.push(compName);
+          });
+          console.log("AST NODE ELEMENTS UPDATED AFTER", elements);
+          elements.forEach((element) => {
+            declarationInitProp.value.elements.push(t.stringLiteral(element));
+          });
+        }
+        if (declarationInitProp.key.name === "lastCompsCount") {
+          declarationInitProp.value = t.NumericLiteral(metaData.lastCompsCount);
+        }
+
+        if (declarationInitProp.key.name === "compsSource") {
+          declarationInitProp.value = t.stringLiteral(metaData.compsSource);
+        }
+      });
+    },
+  });
+
+  saveToFile(filePath, generate(ast).code);
+};
+
+methods.watchFile = function (data, events, options = null) {
+  const self = this;
+  // const { watched, persistent = true, ignored = null, events = null } = payload;
+  self.emit({
+    type: "watch-target",
+    data: {
+      payload: { watched: data, events },
+      callback: (data) => {
+        console.log("File watch set", data);
+      },
     },
   });
 };
+
+methods.cacheData = function (dataToCache, cacheData) {
+  const self = this;
+  // const { watched, persistent = true, ignored = null, events = null } = payload;
+  self.emit({
+    type: "store-data-in-cache",
+    data: {
+      payload: { toCache: { key: dataToCache.key, data: cacheData } },
+      callback: (data) => {
+        console.log("File ROUTER CACHE SAVING", data);
+        self.checkForSavedFiles({ key: "TEST_CACHE_SAVE" }).then((checked) => {
+          console.log("SAVED CACHE", checked);
+        });
+      },
+    },
+  });
+};
+
+methods.updateCacheData = function (dataToCache) {
+  const self = this;
+
+  self.emit({
+    type: "update-data-in-cache",
+    data: {
+      payload: {
+        key: dataToCache.key,
+        updateData: { action: dataToCache.action, update: dataToCache.update },
+      },
+      callback: (data) => {
+        console.log("Update callback", data.message);
+      },
+    },
+  });
+};
+
+methods.checkForSavedFiles = function (check) {
+  const self = this;
+  const keys = self.keys;
+  // const { SAVE_FILES_KEY } = keys;
+  return new Promise((resolve, reject) => {
+    self.emit({
+      type: "get-data-from-cache",
+      data: {
+        payload: { key: check.key },
+        callback: (keyGetResult) => {
+          console.log(`${check.key} RESULT`, keyGetResult);
+          if (!keyGetResult) return resolve(false);
+          if (!keyGetResult?.status) return resolve(false);
+          resolve(true);
+        },
+      },
+    });
+  });
+};
+methods.watchFileAddEvent = function (changed) {
+  const self = this;
+
+  self.updateCacheData({
+    key: self.keys.SAVE_FILES_KEY,
+    update: changed,
+    action: "add",
+  });
+};
+
+methods.watchFileDeleteEvent = function (changed) {
+  const self = this;
+
+  self.updateCacheData({
+    key: self.keys.SAVE_FILES_KEY,
+    update: changed,
+    action: "delete",
+  });
+
+  console.log("fILES HAVE BEEN CHANGED", changed);
+};
+
+methods.merge = function (a, b, predicate = (a, b) => a === b) {
+  const c = [...a]; // copy to avoid side effects
+  // add all items from B to copy C if they're not already present
+  b.forEach((bItem) =>
+    c.some((cItem) => predicate(bItem, cItem)) ? null : c.push(bItem)
+  );
+  return c;
+};
+methods.buildServerRoutes = function (routesSource) {
+  const self = this;
+
+  let builtRoutes = routesSource.map((route) => {
+    return {
+      path: route.path,
+      view: true,
+      viewty: "modular",
+      viewso: "react",
+      title: "REACT SERVE-SIDE RENDERING COMPONENT",
+      method: "GET",
+      type: "public",
+    };
+  });
+  // console.log("ROUTES BUILT", builtRoutes);
+  return builtRoutes;
+};
+
 export default methods;

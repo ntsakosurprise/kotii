@@ -6,9 +6,9 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./build.js",
-      "require": "./build.js",
-      "default": "./build.js"
+      "import": "./app_.js",
+      "require": "./app_.js",
+      "default": "./app_.js"
     }
   },
   "bin": {
@@ -52,6 +52,7 @@
     "@babel/generator": "^7.23.3",
     "@babel/node": "^7.22.19",
     "@babel/parser": "^7.23.3",
+    "@babel/template": "^7.22.15",
     "@babel/traverse": "^7.23.3",
     "@babel/types": "^7.23.3",
     "@octokit/auth-basic": "^1.4.6",
@@ -63,6 +64,7 @@
     "babel-plugin-transform-remove-strict-mode": "^0.0.2",
     "bitbucket": "^2.4.2",
     "chalk": "^4.1.0",
+    "chokidar": "^3.5.3",
     "clear": "^0.1.0",
     "clui": "^0.3.6",
     "configstore": "^5.0.1",
@@ -74,13 +76,15 @@
     "inquirer": "^7.3.3",
     "is-online": "^8.5.1",
     "listr": "^0.14.3",
+    "node-cache": "^5.1.2",
     "octonode": "^0.9.5",
     "open": "^9.1.0",
     "pkg-install": "^1.0.0",
     "react": "^18.2.0",
     "react-router-dom": "5.2.0",
     "rxjs-compat": "^6.6.7",
-    "simple-git": "^2.21.0"
+    "simple-git": "^2.21.0",
+    "styled-components": "^6.1.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
@@ -93,6 +97,8 @@
     "@babel/register": "^7.4.4",
     "autoprefixer": "^8.6.5",
     "babel-loader": "^8.0.6",
+    "babel-plugin-macros": "^3.1.0",
+    "babel-plugin-styled-components": "^2.1.4",
     "babel-plugin-transform-remove-strict-mode": "0.0.2",
     "babel-plugin-transform-strict-mode": "^6.24.1",
     "concat": "^1.0.3",

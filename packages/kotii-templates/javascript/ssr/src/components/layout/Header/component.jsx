@@ -28,7 +28,9 @@ const AppHeader = () => {
         {/* <Link to="https://github.com/ntsakosurprise/kotii" target={"_blank"}>
           <TfiGithub style={{ color: "#00BFA5", fontSize: "25px" }} />
         </Link> */}
-
+        {/* <Link to="/faqs">Faqs</Link>
+        <Link to="/connection">Connection</Link>
+        <Link to="/about">About</Link> */}
         <Link to="/privacy">
           <TfiGithub style={{ color: "#00BFA5", fontSize: "25px" }} />
         </Link>

@@ -7,6 +7,8 @@
 
 import an from "../../../Development/frameworks/anzii/lib/start.js";
 import plugins from "./plugins/index.js";
+// import Test from "./test.js";
+// console.log("Test", Test);
 process.argv.push("cli");
 process.env.ANZII_CLI_WITH_SERVER = "true";
 process.on("beforeExit", () => {

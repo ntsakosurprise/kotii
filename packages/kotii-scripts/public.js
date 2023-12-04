@@ -1,4 +1,4 @@
-import { PropTypes } from "prop-types";
+import PropTypes from "prop-types";
 import React from "react";
 import { Route } from "react-router-dom";
 
@@ -10,22 +10,18 @@ const Public = ({ component: Component, ...rest }) => {
 
   return (
     <>
-      {/* <Header /> */}
-      {/* <Hero /> */}
       <Route
         {...rest}
         render={(props) => {
           return <Component {...props} />;
         }}
       />
-      {/* <Fero /> */}
-      {/* <Footer /> */}
     </>
   );
 };
 
 Public.propTypes = {
-  component: PropTypes.element.isRequired,
+  component: PropTypes.func.isRequired,
 };
 
 export default Public;
