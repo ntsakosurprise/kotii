@@ -50,6 +50,7 @@ methods.handleFileRoutes = async function (data) {
         return self.callback({
           message: "Routes Configured",
           resources: payload.path,
+          routes: reactServerRoutes,
         });
 
       const { lastCompsCount = 0, compsSource, compsPaths } = meta;
