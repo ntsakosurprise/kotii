@@ -72,6 +72,7 @@ class FileRouter {
     this.removeImportDeclarations = methods.removeImportDeclarations;
     this.createMetaAst = methods.createMetaAst;
     this.merge = methods.merge;
+    this.buildServerRoutes = methods.buildServerRoutes;
   }
 }
 export default FileRouter;
