@@ -1239,6 +1239,7 @@ methods.buildServerRoutes = function (routesSource) {
   let builtRoutes = routesSource.map((route) => {
     return {
       path: route.path,
+      alias: route.path === "/" ? "/home" : null,
       view: true,
       viewty: "modular",
       viewso: "react",
