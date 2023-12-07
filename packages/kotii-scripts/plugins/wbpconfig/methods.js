@@ -18,11 +18,15 @@ methods.handleWebpackConfig = function (data) {
 };
 methods.configureWebPack = function (payload) {
   const self = this;
-  const { webPackConfig, webpack, setContextEnv } = self;
+  const { webpack, setContextEnv } = self;
+  const webPackConfig = process.env?.ANZII_CLI_WITH_SERVER
+    ? self.webPackServerConfig
+    : self.webPackConfig;
   const { routes = null, contextApp } = payload;
   console.log("THE APP CONTEXT CONFIG", payload);
   setContextEnv(contextApp);
   const webpackConfigObject = webPackConfig();
+
   console.log("THE WEBPACK CONFIG", webpackConfigObject);
   let wbpCompiler = null;
   try {
@@ -52,10 +56,10 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
     ? "config-manual"
     : "dev-server";
   serverType === "config-manual"
-    ? (wepackMiddlewares = [
-        { name: "webpackDevMiddleware", use: self.webpackDevMiddleware },
-        { name: "webpackHotMiddleware", use: self.webpackHotMiddleware },
-      ])
+    ? (wepackMiddlewares = {
+        webpackDevMiddleware: self.webpackDevMiddleware,
+        webpackHotMiddleware: self.webpackHotMiddleware,
+      })
     : "";
   // console.log("SELF IN CONFIGURE", self);
   console.log("THE APP WITH APP CLI", process.env?.ANZII_CLI_WITH_SERVER);
@@ -66,7 +70,10 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
       payload: {
         ...webpacks,
         wepackMiddlewares,
-        configs: { router: anziiManualConfigs },
+        configs: {
+          router: anziiManualConfigs,
+          domain: [{ name: "static", set: "build" }],
+        },
       },
       callback: (data) => {
         callback(data.message);
