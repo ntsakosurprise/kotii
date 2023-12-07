@@ -3,6 +3,7 @@ import webpackDevMiddleware from "webpack-dev-middleware";
 import webpackHotMiddleware from "webpack-hot-middleware";
 import methods from "./methods.js";
 import webPackConfig from "./webpack.config.js";
+import webPackServerConfig from "./webpack.server.config.js";
 /**
  * @type WebpackConfig
  */
@@ -10,6 +11,7 @@ class WebpackConfig {
   constructor(pao) {
     this.pao = pao;
     this.webPackConfig = webPackConfig;
+    this.webPackServerConfig = webPackServerConfig;
     this.webpack = webpack;
     this.webpackDevMiddleware = webpackDevMiddleware;
     this.webpackHotMiddleware = webpackHotMiddleware;
