@@ -142,7 +142,7 @@ methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
 		  <body>
 			  <div id="root">${html}</div>
 			 
-			  <script src="/build/client.js" ></script>
+			  <script src="/[main].bundle.js" ></script>
 	
 		  </body>
 		  </html>
