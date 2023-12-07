@@ -17,7 +17,17 @@ const StyledHeader = styled("header")({
 });
 
 const HeaderActions = styled("div")(() => {
-  return { display: "flex", flexDirection: "row", alignItems: "center" };
+  return {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 25,
+  };
+});
+
+const StyledLink = styled(Link)({
+  display: "flex",
+  flexDirection: "row",
 });
 
 const AppHeader = () => {
@@ -28,12 +38,13 @@ const AppHeader = () => {
         {/* <Link to="https://github.com/ntsakosurprise/kotii" target={"_blank"}>
           <TfiGithub style={{ color: "#00BFA5", fontSize: "25px" }} />
         </Link> */}
-        {/* <Link to="/faqs">Faqs</Link>
-        <Link to="/connection">Connection</Link>
-        <Link to="/about">About</Link> */}
-        <Link to="/privacy">
+        <StyledLink to="/faqs">Faqs</StyledLink>
+        <StyledLink to="/connection">Connection</StyledLink>
+        <StyledLink to="/about">About</StyledLink>
+        <StyledLink to="/todo">Todo</StyledLink>
+        <StyledLink to="/privacy">
           <TfiGithub style={{ color: "#00BFA5", fontSize: "25px" }} />
-        </Link>
+        </StyledLink>
       </HeaderActions>
     </StyledHeader>
   );
