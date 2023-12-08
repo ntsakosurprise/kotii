@@ -15,7 +15,7 @@ const Faqs = () => {
           setTestState("THE NEW STATE IS TO");
         }}
       >
-        FAQS Button
+        FAQS Button Test
       </button>
     </p>
   );
