@@ -3,7 +3,7 @@ import { AiFillGithub, AiFillTwitterCircle } from "react-icons/ai";
 import styled from "styled-components";
 import { Brand } from "../shared/";
 
-const AuthorText = styled("a")({
+const AuthorText = styled("section")({
   display: "flex",
   flexDirection: "column",
   gap: 5,

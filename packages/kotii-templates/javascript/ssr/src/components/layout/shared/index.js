@@ -23,7 +23,7 @@ const Brand = (props) => {
   const logo = props?.logo ? props.logo : "kotii";
   const brandLogoSize = props?.brandLogoSize ? props.brandLogoSize : 50;
   const logoSize = props?.logoSize ? props?.logoSize : 40;
-  const brandLogoTextStyles = props?.brandLogoTextStyles
+  const { brandLogoTextStyles } = props?.brandLogoTextStyles
     ? props.brandLogoTextStyles
     : {};
   return (
