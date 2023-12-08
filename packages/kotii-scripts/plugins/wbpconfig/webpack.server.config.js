@@ -7,7 +7,7 @@ export default () => {
   console.log("THE SERVER CONFIG");
   console.log("THE APP BUILD FOLDER", env.appBuildFolder);
   return {
-    entry: ["webpack-hot-middleware/client", env.appIndexFile],
+    entry: ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
     context: env.appFolder,
     mode: "development",
     infrastructureLogging: { level: "none" },
