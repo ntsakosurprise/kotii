@@ -1,6 +1,7 @@
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
-import Routes from "./build.js";
+import ClientRoutes, { RoutesAsServerRoutes } from "./build.js";
+
 // if (module.hot) {
 //   module.hot.accept();
 // }
@@ -53,7 +54,7 @@ const App = (appWrapper = null, layout = null) => {
         hydrateRoot(
           document.getElementById("root"),
           <AppWrapper>
-            <Routes layout={Layout} />
+            <ClientRoutes layout={Layout} />
           </AppWrapper>
         );
       } else {
@@ -61,7 +62,7 @@ const App = (appWrapper = null, layout = null) => {
         hydrateRoot(
           document.getElementById("root"),
           <AppWrapper>
-            <Routes layout={Layout} />
+            <ClientRoutes layout={Layout} />
           </AppWrapper>
         );
         // root.render(
@@ -75,9 +76,37 @@ const App = (appWrapper = null, layout = null) => {
     }
   } else {
     if (typeof window !== "undefined") {
-      hydrateRoot(document.getElementById("root"), <Routes />);
+      hydrateRoot(document.getElementById("root"), <ClientRoutes />);
     }
   }
 };
 
+const ServerApp = (appWrapper = null, layout = null, pathStuff = null) => {
+  if (appWrapper || layout) {
+    if (appWrapper && layout) {
+      const AppWrapper = appWrapper;
+      const Layout = layout;
+      return (
+        <AppWrapper>
+          <RoutesAsServerRoutes layout={Layout} pathStuff />
+        </AppWrapper>
+      );
+    } else {
+      const AppWrapper = appWrapper;
+      const Layout = layout;
+      if (AppWrapper) {
+        return (
+          <AppWrapper>
+            <RoutesAsServerRoutes />
+          </AppWrapper>
+        );
+      } else {
+        return <RoutesAsServerRoutes layout={Layout} />;
+      }
+    }
+  } else {
+    return <RoutesAsServerRoutes />;
+  }
+};
+export { ServerApp };
 export default App;
