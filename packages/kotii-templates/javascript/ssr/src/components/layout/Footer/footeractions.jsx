@@ -1,6 +1,6 @@
 import React from "react";
-import { FiExternalLink } from "react-icons/fi";
-import { MdExplore } from "react-icons/md";
+import { FiExternalLink } from "react-icons/fi/index.js";
+import { MdExplore } from "react-icons/md/index.js";
 import styled from "styled-components";
 
 const Items = [
