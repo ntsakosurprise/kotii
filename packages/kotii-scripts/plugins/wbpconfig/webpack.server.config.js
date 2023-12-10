@@ -98,7 +98,7 @@ export default () => {
           type: "asset/resource",
         },
         {
-          test: /\.m?js$/,
+          test: /\.m?js?x$/,
           resolve: {
             fullySpecified: false, // disable the behaviour
           },
