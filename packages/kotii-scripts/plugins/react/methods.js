@@ -21,18 +21,49 @@ methods.runReactView = function (data) {
   const self = this;
   //   const { store, React, StaticRouter, renderToString, Provider, REACTAPP } =
   //     self;
-  const { React, StaticRouter, renderToString, REACTAPP } = self;
+  const {
+    React,
+    StaticRouter,
+    renderToString,
+    REACTAPP,
+    Header,
+    Footer,
+    GlobalStyle,
+  } = self;
   const { view } = data;
   //   console.log("RENDER TO STRING FUNCTION", renderToString);
 
   // Render the component to a string
+
+  console.log("THE HEADER", Header, Footer);
+
+  const Layout = (props) => {
+    return (
+      <div
+        style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+      >
+        <Header />
+        {props.children}
+        <Footer />
+      </div>
+    );
+  };
+
+  const Root = (props) => {
+    return (
+      <div>
+        <GlobalStyle />
+        {/* {props.children} */}
+      </div>
+    );
+  };
+  //console.log("THE ROOT", Root, Layout);
   const html = renderToString(
-    <StaticRouter location={view.match} context={{}}>
-      <REACTAPP />
-      {/* <Provider store={store}>
-        <REACTAPP />
-      </Provider> */}
-    </StaticRouter>
+    // <StaticRouter basename={{}} location={view.match} context={{}}>
+
+    REACTAPP(Root, Layout, view.match)
+
+    // </StaticRouter>
   );
 
   //   console.log("THE HTML IN RUN REACT-VIEW", html);
