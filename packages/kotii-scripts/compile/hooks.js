@@ -7,6 +7,12 @@ let whiteListedUrls = [
   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-scripts/public.js",
   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-scripts/app_.js",
 ];
+/**
+ *
+ * sets node hook to intercept requests to styled-components by manually
+ * reading the file content from disk and returning it to avoid styled
+ * component function being undefiend
+ */
 const styledComponentsUrl =
   "file:///Users/surprisemashele/Documents/kotii/node_modules/styled-components/dist/styled-components.cjs.js";
 const styledComponentsUrlFromClient =
