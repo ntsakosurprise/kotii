@@ -107,7 +107,7 @@ const Path = () => {
 
         <PathIcon>
           <AiFillFile color="#00BFA5" />
-          <PathText>index.js</PathText>
+          <PathText>index.jsx</PathText>
         </PathIcon>
 
         {/* <PathPointer>

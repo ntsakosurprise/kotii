@@ -2,9 +2,9 @@
 import React from "react";
 import styled from "styled-components";
 import { Link } from "wouter";
+import KotiiAltSvg from "./kotiiAltSvg";
+import KotiiSvg from "./kotiiSvg";
 // import kotiiSvg from "./kotii.svg";
-// import kotiiAltSvg from "./kotii_alt.svg";
-import KotiiSvg from "./kotiiSvg.jsx";
 const StyledBrand = styled("div")({
   display: "flex",
   flexDirection: "row",
@@ -21,9 +21,9 @@ const BrandText = styled("p")((props) => {
 
 const Brand = (props) => {
   // eslint-disable-next-line react/prop-types
-  // const logo = props?.logo ? props.logo : "kotii";
+  const logo = props?.logo ? props.logo : "kotii";
   const brandLogoSize = props?.brandLogoSize ? props.brandLogoSize : 50;
-  // const logoSize = props?.logoSize ? props?.logoSize : 40;
+  const logoSize = props?.logoSize ? props?.logoSize : 40;
   const { brandLogoTextStyles } = props?.brandLogoTextStyles
     ? props.brandLogoTextStyles
     : {};
@@ -38,7 +38,12 @@ const Brand = (props) => {
         }}
       >
         <BrandLogo size={brandLogoSize}>
-          <KotiiSvg />
+          {logo === "kotii" ? (
+            <KotiiSvg width={logoSize} />
+          ) : (
+            <KotiiAltSvg width={logoSize} />
+          )}
+          {/* <KotiiSvg /> */}
           {/* <img
             src={logo === "kotii" ? kotiiSvg : kotiiAltSvg}
             alt="Kotii Logo"

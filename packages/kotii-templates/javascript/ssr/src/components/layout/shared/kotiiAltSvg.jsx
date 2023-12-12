@@ -1,11 +1,13 @@
 import React from "react";
 
-const KotiiAltSvg = () => {
+const KotiiAltSvg = (props) => {
+  // eslint-disable-next-line react/prop-types
+  const { width = 40 } = props;
   return (
     <>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="61"
+        width={width}
         height="54"
         viewBox="0 0 61 54"
         fill="none"
