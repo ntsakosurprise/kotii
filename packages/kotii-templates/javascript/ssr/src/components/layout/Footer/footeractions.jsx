@@ -84,7 +84,7 @@ const FooterActionsWrapper = styled("div")({
   gap: 50,
 });
 
-const Link = styled("a")({
+const CustomLink = styled("a")({
   textDecoration: "none",
   display: "flex",
   backgroundColor: "inherit",
@@ -95,9 +95,9 @@ const getItems = () => {
   return Items.map((item, i) => {
     return (
       <ExploreItem key={i}>
-        <Link href={item.to} target="_blank">
+        <CustomLink href={item.to} target="_blank">
           {item.label.toUpperCase()}
-        </Link>
+        </CustomLink>
         <FiExternalLink
           style={{
             position: "absolute",
