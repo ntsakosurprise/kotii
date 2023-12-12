@@ -110,6 +110,13 @@ const ClientRoutes = (props) => {
           {routes.map((r, index) => {
             console.log("THE COMPONENT");
             let Component = comps[r.component];
+            const ComponentWrapped = () => {
+              return (
+                <Wrapper>
+                  <Component />
+                </Wrapper>
+              );
+            };
             // console.log("FUNCTION TO RENDER", funcToRender)
             // return (
             //   <Wrapper key={index}>
@@ -128,7 +135,7 @@ const ClientRoutes = (props) => {
                 // {...rest}
                 key={index}
                 path={r.path}
-                component={Component}
+                component={ComponentWrapped}
                 // render={(props) => {
                 //   return <Component {...props} />;
                 // }}
@@ -159,6 +166,13 @@ const RoutesAsServerRoutes = (props) => {
           console.log("THE COMPONENT");
           let Component = comps[r.component];
           console.log("THE COMPONENT To Render", Component);
+          let ComponentWrapped = () => {
+            return (
+              <Wrapper>
+                <Component />
+              </Wrapper>
+            );
+          };
           // console.log("FUNCTION TO RENDER", funcToRender)
           // return (
           //   <Public
@@ -172,9 +186,9 @@ const RoutesAsServerRoutes = (props) => {
           return (
             <Route
               // {...rest}
-              path={r.path}
               key={index}
-              component={Component}
+              path={r.path}
+              component={ComponentWrapped}
               // render={(props) => {
               //   return <Component {...props} />;
               // }}
