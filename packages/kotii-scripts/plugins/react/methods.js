@@ -1,4 +1,7 @@
 const methods = {};
+import { Link } from "react-router-dom";
+import { Router } from "wouter";
+//import Footer from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/layout/Footer/component.jsx";
 
 methods.init = function () {
   this.adLog("React View has been initialised");
@@ -35,7 +38,7 @@ methods.runReactView = function (data) {
 
   // Render the component to a string
 
-  console.log("THE HEADER", Header, Footer);
+  // console.log("THE HEADER", Header, Footer);
 
   const Layout = (props) => {
     return (
@@ -53,20 +56,27 @@ methods.runReactView = function (data) {
     return (
       <div>
         <GlobalStyle />
-        {/* {props.children} */}
+        {props.children}
       </div>
     );
   };
+
+  const LayoutAlt = () => {
+    <nav>
+      <Link to="/test">Test Link</Link>
+    </nav>;
+  };
   //console.log("THE ROOT", Root, Layout);
-  const html = renderToString(
-    // <StaticRouter basename={{}} location={view.match} context={{}}>
+  let html = "";
+  try {
+    html = renderToString(
+      <Router ssrPath={view.match}>{REACTAPP(Root, Layout)}</Router>
+    );
+  } catch (error) {
+    console.log("THE RENDER ERROR", error);
+  }
 
-    REACTAPP(Root, Layout, view.match)
-
-    // </StaticRouter>
-  );
-
-  //   console.log("THE HTML IN RUN REACT-VIEW", html);
+  console.log("THE HTML IN RUN REACT-VIEW", html);
 
   // Grab the initial state from our Redux store
 
@@ -173,7 +183,7 @@ methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
 		  <body>
 			  <div id="root">${html}</div>
 			 
-			  <script src="/[main].bundle.js" ></script>
+        <script src="/[main].bundle.js" ></script>
 	
 		  </body>
 		  </html>

@@ -1,7 +1,6 @@
 import React from "react";
 
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { StaticRouter } from "react-router-dom/server.mjs";
+import { Route, Router, Switch as Routes } from "wouter";
 
 import Connection from "../kotii-templates/javascript/ssr/src/pages/connection.jsx";
 import ContactUs from "../kotii-templates/javascript/ssr/src/pages/contact-us.jsx";
@@ -105,9 +104,9 @@ const ClientRoutes = (props) => {
       };
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Layout>
+    <Router>
+      <Layout>
+        <Routes>
           {routes.map((r, index) => {
             console.log("THE COMPONENT");
             let Component = comps[r.component];
@@ -129,16 +128,16 @@ const ClientRoutes = (props) => {
                 // {...rest}
                 key={index}
                 path={r.path}
-                element={Component}
+                component={Component}
                 // render={(props) => {
                 //   return <Component {...props} />;
                 // }}
               />
             );
           })}
-        </Layout>
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </Layout>
+    </Router>
   );
 };
 
@@ -146,23 +145,15 @@ const RoutesAsServerRoutes = (props) => {
   // const AppWrapper = props.wrapper;
   console.log("RoutesASsERVER ROUTES", props.layout, props.pathStuff);
   // let Header = props.layout;
-  // const Layout = !props?.layout
-  //   ? props.layout
-  //   : (props) => {
-  //       // const Header = props.layout;
-  //       // console.log("ROUTES HEADER", props);
-  //       return (
-  //         <>
-  //           <Link>My first link</Link>
-  //           <Link>My Second Link</Link>
-  //           <Header />
-  //         </>
-  //       );
-  //     };
+  const Layout = props?.layout
+    ? props.layout
+    : () => {
+        return <></>;
+      };
+
   // if (!Layout || Layout) return <div>My react component</div>;
   return (
-    <StaticRouter location={props.pathStuff}>
-      {/* <Layout> */}
+    <Layout>
       <Routes>
         {routes.map((r, index) => {
           console.log("THE COMPONENT");
@@ -183,7 +174,7 @@ const RoutesAsServerRoutes = (props) => {
               // {...rest}
               path={r.path}
               key={index}
-              element={Component}
+              component={Component}
               // render={(props) => {
               //   return <Component {...props} />;
               // }}
@@ -191,8 +182,7 @@ const RoutesAsServerRoutes = (props) => {
           );
         })}
       </Routes>
-      {/* </Layout> */}
-    </StaticRouter>
+    </Layout>
   );
 };
 export { RoutesAsServerRoutes, routes };
