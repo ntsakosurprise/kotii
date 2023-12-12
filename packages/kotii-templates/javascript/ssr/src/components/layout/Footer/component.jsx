@@ -1,8 +1,8 @@
 import React from "react";
 
 import styled from "styled-components";
-import FooterActions from "./footeractions";
-import FooterBrand from "./footerbrand";
+import FooterActions from "./footeractions.jsx";
+import FooterBrand from "./footerbrand.jsx";
 
 const StyledFooter = styled("footer")({
   marginTop: "auto",

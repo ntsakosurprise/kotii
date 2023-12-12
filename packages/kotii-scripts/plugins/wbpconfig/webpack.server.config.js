@@ -50,8 +50,12 @@ export default () => {
         Constants: "/src/constants/",
         Assets: "/src/assets/index",
         AppGlobals: "/src/globals/index",
-        "react-router-dom": path.resolve("../../node_modules/react-router-dom"),
-        "react-router": path.resolve("../../node_modules/react-router"),
+        "react-router-dom": path.resolve(
+          `${env.appFolder}/node_modules/react-router-dom`
+        ),
+        "react-router": path.resolve(
+          `${env.appFolder}/node_modules/react-router`
+        ),
       }, // Alias references to files and folders inorder to use absolute paths in your file imports
       fallback: {
         fs: false,
@@ -98,7 +102,7 @@ export default () => {
           type: "asset/resource",
         },
         {
-          test: /\.m?js$/,
+          test: /\.m?js?x$/,
           resolve: {
             fullySpecified: false, // disable the behaviour
           },

@@ -1,10 +1,11 @@
 import React from "react";
-import { BrowserRouter, Switch as ReactRoutes } from "react-router-dom";
+
+import { Route, Router, Switch as Routes } from "wouter";
+
 import Connection from "../kotii-templates/javascript/ssr/src/pages/connection.jsx";
 import ContactUs from "../kotii-templates/javascript/ssr/src/pages/contact-us.jsx";
 import Pos from "../kotii-templates/javascript/ssr/src/pages/posts/index.jsx";
 import Slug from "../kotii-templates/javascript/ssr/src/pages/posts/[slug].jsx";
-import Public from "./public.js";
 import About from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/about.jsx";
 import Faqs from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/faqs.jsx";
 import Home from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/index.jsx";
@@ -94,7 +95,7 @@ const Wrapper = (props) => {
   );
 };
 
-const Routes = (props) => {
+const ClientRoutes = (props) => {
   // const AppWrapper = props.wrapper;
   const Layout = props?.layout
     ? props.layout
@@ -103,62 +104,100 @@ const Routes = (props) => {
       };
 
   return (
-    <BrowserRouter>
-      <ReactRoutes>
-        <Layout>
+    <Router>
+      <Layout>
+        <Routes>
           {routes.map((r, index) => {
             console.log("THE COMPONENT");
-            let component = comps[r.component];
+            let Component = comps[r.component];
+            const ComponentWrapped = () => {
+              return (
+                <Wrapper>
+                  <Component />
+                </Wrapper>
+              );
+            };
             // console.log("FUNCTION TO RENDER", funcToRender)
+            // return (
+            //   <Wrapper key={index}>
+            //     <Public
+            //       {...props}
+            //       exact
+            //       path={r.path}
+            //       component={component}
+            //       key={index}
+            //     />
+            //   </Wrapper>
+            // );
+
             return (
-              <Wrapper key={index}>
-                <Public
-                  {...props}
-                  exact
-                  path={r.path}
-                  component={component}
-                  key={index}
-                />
-              </Wrapper>
+              <Route
+                // {...rest}
+                key={index}
+                path={r.path}
+                component={ComponentWrapped}
+                // render={(props) => {
+                //   return <Component {...props} />;
+                // }}
+              />
             );
           })}
-        </Layout>
-      </ReactRoutes>
-    </BrowserRouter>
+        </Routes>
+      </Layout>
+    </Router>
   );
 };
 
 const RoutesAsServerRoutes = (props) => {
   // const AppWrapper = props.wrapper;
+  console.log("RoutesASsERVER ROUTES", props.layout, props.pathStuff);
+  // let Header = props.layout;
   const Layout = props?.layout
     ? props.layout
-    : (props) => {
-        return <>{props.children}</>;
+    : () => {
+        return <></>;
       };
+
   // if (!Layout || Layout) return <div>My react component</div>;
   return (
-    <ReactRoutes>
-      <Layout>
+    <Layout>
+      <Routes>
         {routes.map((r, index) => {
           console.log("THE COMPONENT");
-          let component = comps[r.component];
-          console.log("THE COMPONENT To Render", component);
+          let Component = comps[r.component];
+          console.log("THE COMPONENT To Render", Component);
+          let ComponentWrapped = () => {
+            return (
+              <Wrapper>
+                <Component />
+              </Wrapper>
+            );
+          };
           // console.log("FUNCTION TO RENDER", funcToRender)
+          // return (
+          //   <Public
+          //     {...props}
+          //     exact
+          //     path={r.path}
+          //     component={component}
+          //     key={index}
+          //   />
+          // );
           return (
-            <Wrapper key={index}>
-              <Public
-                {...props}
-                exact
-                path={r.path}
-                component={component}
-                key={index}
-              />
-            </Wrapper>
+            <Route
+              // {...rest}
+              key={index}
+              path={r.path}
+              component={ComponentWrapped}
+              // render={(props) => {
+              //   return <Component {...props} />;
+              // }}
+            />
           );
         })}
-      </Layout>
-    </ReactRoutes>
+      </Routes>
+    </Layout>
   );
 };
 export { RoutesAsServerRoutes, routes };
-export default Routes;
+export default ClientRoutes;

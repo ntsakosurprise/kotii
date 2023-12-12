@@ -1,8 +1,8 @@
 import React from "react";
-import { TfiGithub } from "react-icons/tfi/index.js";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { Link } from "wouter";
-import { Brand } from "../shared/index.jsx";
+import Footer from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/layout/Footer/component.jsx";
+
 // import { Link } from "react-router-dom";
 
 const StyledHeader = styled("header")({
@@ -31,21 +31,19 @@ const StyledLink = styled(Link)({
 });
 
 const AppHeader = () => {
+  console.log("THE APP Footer", Footer);
   return (
     <StyledHeader>
-      <Brand />
       <HeaderActions>
-        {/* <Link href="https://github.com/ntsakosurprise/kotii" target={"_blank"}>
+        {/* <Link to="https://github.com/ntsakosurprise/kotii" target={"_blank"}>
           <TfiGithub style={{ color: "#00BFA5", fontSize: "25px" }} />
         </Link> */}
-        <StyledLink href="/faqs">Faqs</StyledLink>
-        <StyledLink href="/connection">Connection</StyledLink>
-        <StyledLink href="/about">About</StyledLink>
-        <StyledLink href="/todo">Todo</StyledLink>
-        <StyledLink href="/privacy">
-          <TfiGithub style={{ color: "#00BFA5", fontSize: "25px" }} />
-        </StyledLink>
+        <StyledLink to="/faqs">Faqs</StyledLink>
+        <StyledLink to="/connection">Connection</StyledLink>
+        <StyledLink to="/about">About</StyledLink>
+        <StyledLink to="/todo">Todo</StyledLink>
       </HeaderActions>
+      <Footer />
     </StyledHeader>
   );
 };

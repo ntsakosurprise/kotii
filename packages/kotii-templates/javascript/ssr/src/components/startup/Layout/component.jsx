@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
-import { Footer, Header } from "Layouts";
 import React from "react";
+import { Footer, Header } from "../../../components/layout/index.jsx";
 
 const Layout = (props) => {
   return (

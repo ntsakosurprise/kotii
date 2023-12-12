@@ -1,7 +1,7 @@
 import React from "react";
-import { AiFillGithub, AiFillTwitterCircle } from "react-icons/ai";
+import { AiFillGithub, AiFillTwitterCircle } from "react-icons/ai/index.js";
 import styled from "styled-components";
-import { Brand } from "../shared/";
+import { Brand } from "../shared/index.jsx";
 
 const AuthorText = styled("section")({
   display: "flex",
@@ -44,7 +44,7 @@ const FooterBrandWrapper = styled("div")({
   marginLeft: "2%",
 });
 
-const Link = styled("a")({
+const CustomLink = styled("a")({
   textDecoration: "none",
   display: "flex",
   backgroundColor: "inherit",
@@ -61,12 +61,18 @@ const FooterBrand = () => {
         <AuthorText>
           <MakerByText>
             <Text>Made By</Text>
-            <Link href="https://twitter.com/ntsakosurprise" target={"_blank"}>
+            <CustomLink
+              href="https://twitter.com/ntsakosurprise"
+              target={"_blank"}
+            >
               <AiFillTwitterCircle />
-            </Link>
-            <Link href="https://github.com/ntsakosurprise" target={"_blank"}>
+            </CustomLink>
+            <CustomLink
+              href="https://github.com/ntsakosurprise"
+              target={"_blank"}
+            >
               <AiFillGithub />
-            </Link>
+            </CustomLink>
           </MakerByText>
           <MakerAuthText>
             <small style={{ color: "black", fontWeight: "bolder" }}>@</small>
