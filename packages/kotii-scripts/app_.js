@@ -81,14 +81,14 @@ const App = (appWrapper = null, layout = null) => {
   }
 };
 
-const ServerApp = (appWrapper = null, layout = null, pathStuff = null) => {
+const ServerApp = (appWrapper = null, layout = null) => {
   if (appWrapper || layout) {
     if (appWrapper && layout) {
       const AppWrapper = appWrapper;
       const Layout = layout;
       return (
         <AppWrapper>
-          <RoutesAsServerRoutes layout={Layout} pathStuff />
+          <RoutesAsServerRoutes layout={Layout} />
         </AppWrapper>
       );
     } else {
