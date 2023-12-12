@@ -5,12 +5,13 @@ import React from "react";
 import { StaticRouter } from "react-router-dom/server.mjs";
 
 import { renderToString } from "react-dom/server";
+import { ServerApp } from "../../app_.js";
+// import Header from "./header.jsx";
 import {
   Footer,
   Header,
-} from "../../../kotii-templates/javascript/ssr/src/components/layout/index.jsx";
-import { GlobalStyle } from "../../../kotii-templates/javascript/ssr/src/globals/styles.js";
-import { ServerApp } from "../../app_.js";
+} from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/layout/index.jsx";
+import { GlobalStyle } from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/globals/styles.js";
 
 // import * as central from "../../src/store/store";
 /**
