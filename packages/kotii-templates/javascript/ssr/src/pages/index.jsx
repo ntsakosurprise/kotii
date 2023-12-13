@@ -1,9 +1,11 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
 import { FaLongArrowAltRight } from "react-icons/fa/index.js";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import SVGConnections from "../shared/test.jsx";
-
+import * as actions from "../store/home/actions.js";
 const Main = styled("div")({
   display: "flex",
   flexDirection: "row",
@@ -157,7 +159,28 @@ const SVG = styled("div")({
   width: "50%",
   position: "relative",
 });
+
+const PeopleList = (props) => {
+  console.log("THE PROPS TO PEOPLE COMP", props);
+  if (props.people.length > 0)
+    return (
+      <ul>
+        {props.people.map((person, i) => {
+          return <li key={i}>{person}</li>;
+        })}
+      </ul>
+    );
+  return null;
+};
 const Index = () => {
+  const peopleList = useSelector((state) => {
+    console.log("STATE RECEIVED", state);
+    return state.homeReducer.people;
+  });
+  const dispatch = useDispatch();
+  const showUsersList = () => {
+    dispatch(actions.showPeopleList());
+  };
   return (
     <Main>
       <Hero>
@@ -168,8 +191,10 @@ const Index = () => {
         <Path />
         <StyledButton>
           <ButtonBackCard />
-          <ButtonFrontCard>Learn More </ButtonFrontCard>
+          <ButtonFrontCard onClick={showUsersList}>Learn More </ButtonFrontCard>
         </StyledButton>
+
+        {peopleList ? <PeopleList people={peopleList} /> : null}
         {/* <img src={connectionsSvg} width={50} alt="connections svg" /> */}
       </Hero>
       <SVG>
