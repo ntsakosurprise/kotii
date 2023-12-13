@@ -7,13 +7,12 @@ import { StaticRouter } from "react-router-dom/server.mjs";
 import { renderToString } from "react-dom/server";
 import { ServerApp } from "../../app_.js";
 // import Header from "./header.jsx";
+import { store } from "../../app_redux.js";
 import {
   Footer,
   Header,
 } from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/layout/index.jsx";
 import { GlobalStyle } from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/globals/styles.js";
-
-// import * as central from "../../src/store/store";
 /**
  * @type ReactView
  */
@@ -21,8 +20,7 @@ class ReactView {
   constructor(pao) {
     this.pao = pao;
     this.React = React;
-    // this.store = central.store;
-    // this.createStore = createStore;
+    this.store = store;
     // this.Provider = Provider;
     this.StaticRouter = StaticRouter;
     this.REACTAPP = ServerApp;
