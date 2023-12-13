@@ -1,13 +1,22 @@
 const methods = {};
 import { Link } from "react-router-dom";
 import { Router } from "wouter";
+
 //import Footer from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/layout/Footer/component.jsx";
 
 methods.init = function () {
   this.adLog("React View has been initialised");
   this.listens({
     "handle-react-view": this.handleReactView.bind(this),
+    "take-ssr-routes": this.handleSsrRoutes.bind(this),
   });
+};
+
+methods.handleSsrRoutes = function (data) {
+  const self = this;
+  console.log("THE SSR ROUTES", data);
+  console.log("THE ACTUAL DATA", data.payload.routes);
+  self.ssrRoutes = data.payload.routes;
 };
 
 methods.handleReactView = function (data) {
@@ -24,6 +33,7 @@ methods.runReactView = function (data) {
   const self = this;
   //   const { store, React, StaticRouter, renderToString, Provider, REACTAPP } =
   //     self;
+  // console.log("runReactView", data);
   const {
     React,
     renderToString,
@@ -31,7 +41,7 @@ methods.runReactView = function (data) {
     Header,
     Footer,
     GlobalStyle,
-    store,
+    createReduxStore,
   } = self;
   const { view } = data;
   //   console.log("RENDER TO STRING FUNCTION", renderToString);
@@ -67,31 +77,37 @@ methods.runReactView = function (data) {
     </nav>;
   };
   //console.log("THE ROOT", Root, Layout);
-  let html = "";
-  try {
-    html = renderToString(
-      <Router ssrPath={view.match}>{REACTAPP(Root, Layout)}</Router>
-    );
-  } catch (error) {
-    console.log("THE RENDER ERROR", error);
-  }
-
-  console.log("THE HTML IN RUN REACT-VIEW", html);
 
   // Grab the initial state from our Redux store
+  const store = createReduxStore();
+  self.getStateDataFromServer(view.match, store).then((stateData) => {
+    console.log("GOT STATE DATA", stateData);
+    let html = "";
+    try {
+      html = renderToString(
+        <Router ssrPath={view.match}>{REACTAPP(Root, Layout, store)}</Router>
+      );
+    } catch (error) {
+      console.log("THE RENDER ERROR", error);
+    }
 
-  const finalState = store.getState();
-  const fullPage = self.renderFullPage(html, finalState, {
-    ...view,
-    title: "My TEST REDUX TITLE",
+    console.log("THE HTML IN RUN REACT-VIEW", html);
+
+    const finalState = store.getState();
+    const fullPage = self.renderFullPage(html, finalState, {
+      ...view,
+      title: "My TEST REDUX TITLE",
+    });
+    return self.callback(null, fullPage);
   });
 
   //const fullPage = self.renderFullPage(html, view);
   //   console.log("THE HTML FULL PAGE", fullPage);
-  return self.callback(null, fullPage);
 };
 
 methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
+  const self = this;
+  const { serialize } = self;
   console.log("THE PRELOADED STATE", preloadedState);
   return `
 		<!doctype html>
@@ -133,10 +149,9 @@ methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
 			<div id="root">${html}</div>
 			<script>
 
-			window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(
-        /</g,
-        "\\u003c"
-      )}
+		
+      window.__PRELOADED_STATE__ = ${serialize(preloadedState)}
+      
       
 			</script>
 			<script src="/[main].bundle.js" ></script>
@@ -144,6 +159,24 @@ methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
 		</body>
 		</html>
     `;
+};
+
+methods.getStateDataFromServer = function (routePath, store) {
+  const self = this;
+  const routes = self.ssrRoutes;
+
+  return new Promise((resolve, reject) => {
+    let dataFetchPromises = routes.filter((route, i) => {
+      if (route.path === routePath && route?.requiresData) {
+        return route.requiresData(store);
+      }
+    });
+
+    Promise.all(dataFetchPromises).then((resolveData) => {
+      console.log("THE RESOLVED DATA", resolveData);
+      resolve(resolveData);
+    });
+  });
 };
 
 // methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
@@ -186,6 +219,11 @@ methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
 // 		  </head>
 // 		  <body>
 // 			  <div id="root">${html}</div>
+
+// 	window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(
+//   /</g,
+//   "\\u003c"
+// )}
 
 //         <script src="/[main].bundle.js" ></script>
 

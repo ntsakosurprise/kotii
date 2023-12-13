@@ -7,7 +7,8 @@ import { StaticRouter } from "react-router-dom/server.mjs";
 import { renderToString } from "react-dom/server";
 import { ServerApp } from "../../app_.js";
 // import Header from "./header.jsx";
-import { store } from "../../app_redux.js";
+import serialize from "serialize-javascript";
+import createReduxStore from "../../app_redux.js";
 import {
   Footer,
   Header,
@@ -19,8 +20,9 @@ import { GlobalStyle } from "/Users/surprisemashele/Documents/kotii/packages/kot
 class ReactView {
   constructor(pao) {
     this.pao = pao;
+    this.ssrRoutes = null;
     this.React = React;
-    this.store = store;
+    this.createReduxStore = createReduxStore;
     // this.Provider = Provider;
     this.StaticRouter = StaticRouter;
     this.REACTAPP = ServerApp;
@@ -28,6 +30,7 @@ class ReactView {
     this.Footer = Footer;
     this.GlobalStyle = GlobalStyle;
     this.renderToString = renderToString;
+    this.serialize = serialize;
     // this.currentReactView = nul/
 
     // // methods
@@ -36,6 +39,8 @@ class ReactView {
     this.handleReactView = methods.handleReactView;
     this.runReactView = methods.runReactView;
     this.renderFullPage = methods.renderFullPage;
+    this.handleSsrRoutes = methods.handleSsrRoutes;
+    this.getStateDataFromServer = methods.getStateDataFromServer;
   }
 }
 
