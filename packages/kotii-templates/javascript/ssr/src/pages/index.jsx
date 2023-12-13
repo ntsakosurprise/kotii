@@ -204,4 +204,8 @@ const Index = () => {
   );
 };
 
+export const getServerState = (store) => {
+  return store.dispatch(actions.showPeopleList());
+};
+
 export default Index;
