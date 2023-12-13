@@ -73,6 +73,7 @@ class FileRouter {
     this.createMetaAst = methods.createMetaAst;
     this.merge = methods.merge;
     this.buildServerRoutes = methods.buildServerRoutes;
+    this.getComponentServerState = methods.getComponentServerState;
   }
 }
 export default FileRouter;
