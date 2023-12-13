@@ -1,0 +1,2 @@
+export const SHOW_PEOPLE_LIST = "SHOW_PEOPLE_LIST";
+export const HIDE_PEOPLE_LIST = "HIDE_PEOPLE_LIST";
