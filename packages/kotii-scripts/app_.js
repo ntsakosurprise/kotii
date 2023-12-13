@@ -1,5 +1,7 @@
 import React from "react";
 import { hydrateRoot } from "react-dom/client";
+import { Provider } from "react-redux";
+import { store } from "./app_redux.js";
 import ClientRoutes, { RoutesAsServerRoutes } from "./build.js";
 
 // if (module.hot) {
@@ -53,17 +55,21 @@ const App = (appWrapper = null, layout = null) => {
         const Layout = layout;
         hydrateRoot(
           document.getElementById("root"),
-          <AppWrapper>
-            <ClientRoutes layout={Layout} />
-          </AppWrapper>
+          <Provider store={store}>
+            <AppWrapper>
+              <ClientRoutes layout={Layout} />
+            </AppWrapper>
+          </Provider>
         );
       } else {
         const Layout = layout;
         hydrateRoot(
           document.getElementById("root"),
-          <AppWrapper>
-            <ClientRoutes layout={Layout} />
-          </AppWrapper>
+          <Provider store={store}>
+            <AppWrapper>
+              <ClientRoutes layout={Layout} />
+            </AppWrapper>
+          </Provider>
         );
         // root.render(
         //   <StrictMode>
@@ -87,25 +93,37 @@ const ServerApp = (appWrapper = null, layout = null) => {
       const AppWrapper = appWrapper;
       const Layout = layout;
       return (
-        <AppWrapper>
-          <RoutesAsServerRoutes layout={Layout} />
-        </AppWrapper>
+        <Provider store={store}>
+          <AppWrapper>
+            <RoutesAsServerRoutes layout={Layout} />
+          </AppWrapper>
+        </Provider>
       );
     } else {
       const AppWrapper = appWrapper;
       const Layout = layout;
       if (AppWrapper) {
         return (
-          <AppWrapper>
-            <RoutesAsServerRoutes />
-          </AppWrapper>
+          <Provider store={store}>
+            <AppWrapper>
+              <RoutesAsServerRoutes />
+            </AppWrapper>
+          </Provider>
         );
       } else {
-        return <RoutesAsServerRoutes layout={Layout} />;
+        return (
+          <Provider store={store}>
+            <RoutesAsServerRoutes layout={Layout} />
+          </Provider>
+        );
       }
     }
   } else {
-    return <RoutesAsServerRoutes />;
+    return (
+      <Provider store={store}>
+        <RoutesAsServerRoutes />
+      </Provider>
+    );
   }
 };
 export { ServerApp };
