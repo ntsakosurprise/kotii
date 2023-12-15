@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { Head } from "kotii-scripts";
 import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
 import { FaLongArrowAltRight } from "react-icons/fa/index.js";
@@ -75,6 +76,7 @@ const PathPointer = styled("small")(() => {
 const Path = () => {
   return (
     <div style={{ minWidth: "100px" }}>
+      <Head title={"Kotii Framework Boilerplate"} />
       <HeroPath>
         <PathIcon>
           <AiFillFolder color="#00BFA5" />
