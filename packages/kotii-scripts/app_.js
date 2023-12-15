@@ -90,5 +90,6 @@ const ServerApp = (
     );
   }
 };
+export { Head } from "./react-components/index.jsx";
 export { ServerApp };
 export default App;
