@@ -121,14 +121,14 @@ methods.renderFullPage = function (
   console.log("THE PRELOADED STATE", preloadedState);
   return `
 		<!doctype html>
-		<html>
+		<html ${head.htmlAttributes.toString()}>
 
     <head>
     ${head?.title.toString()}
     ${head?.meta.toString()}
     ${head?.link.toString()}
     </head>
-		<body>
+		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
 			<script>
       window.__PRELOADED_STATE__ = ${serialize(preloadedState)}
