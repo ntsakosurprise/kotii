@@ -6,6 +6,7 @@ import { StaticRouter } from "react-router-dom/server.mjs";
 
 import { renderToString } from "react-dom/server";
 import { ServerApp } from "../../app_.js";
+import { Head, HeadHelmet } from "../../react-components/index.jsx";
 // import Header from "./header.jsx";
 import serialize from "serialize-javascript";
 import createReduxStore from "../../app_redux.js";
@@ -14,6 +15,7 @@ import {
   Header,
 } from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/layout/index.jsx";
 import { GlobalStyle } from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/globals/styles.js";
+
 /**
  * @type ReactView
  */
@@ -31,6 +33,9 @@ class ReactView {
     this.GlobalStyle = GlobalStyle;
     this.renderToString = renderToString;
     this.serialize = serialize;
+    this.Head = Head;
+    this.HeadHelmet = HeadHelmet;
+
     // this.currentReactView = nul/
 
     // // methods
