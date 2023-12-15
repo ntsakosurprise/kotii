@@ -76,7 +76,6 @@ const PathPointer = styled("small")(() => {
 const Path = () => {
   return (
     <div style={{ minWidth: "100px" }}>
-      <Head title={"Kotii Framework Boilerplate"} />
       <HeroPath>
         <PathIcon>
           <AiFillFolder color="#00BFA5" />
@@ -186,6 +185,7 @@ const Index = () => {
   };
   return (
     <Main>
+      <Head title={"Kotii Framework Boilerplate"} />
       <Hero>
         <HeroText>
           Edit, save, and see your changes reflected in real-time. Get started
