@@ -178,8 +178,9 @@ const Index = () => {
     return state.homeReducer.people;
   });
   const dispatch = useDispatch();
-  const showUsersList = () => {
-    dispatch(actions.showPeopleList());
+  const doList = () => {
+    if (peopleList.length <= 0) dispatch(actions.showPeopleList());
+    dispatch(actions.hidePeopleList());
   };
   return (
     <Main>
@@ -191,7 +192,7 @@ const Index = () => {
         <Path />
         <StyledButton>
           <ButtonBackCard />
-          <ButtonFrontCard onClick={showUsersList}>Learn More </ButtonFrontCard>
+          <ButtonFrontCard onClick={doList}>Learn More </ButtonFrontCard>
         </StyledButton>
 
         {peopleList ? <PeopleList people={peopleList} /> : null}
