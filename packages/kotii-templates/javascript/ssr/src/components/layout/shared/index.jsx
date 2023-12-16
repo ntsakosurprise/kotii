@@ -2,8 +2,8 @@
 import React from "react";
 import styled from "styled-components";
 import { Link } from "wouter";
-import KotiiAltSvg from "./kotiiAltSvg";
-import KotiiSvg from "./kotiiSvg";
+import KotiiAltSvg from "./kotiiAltSvg.jsx";
+import KotiiSvg from "./kotiiSvg.jsx";
 // import kotiiSvg from "./kotii.svg";
 const StyledBrand = styled("div")({
   display: "flex",

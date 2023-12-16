@@ -72,6 +72,7 @@ methods.getAppInContextResources = function () {
       appIndexHtml: self.getFilePath(appFolder, "public/index.html"),
       appAssetsPublic: self.getFilePath(appFolder, "public"),
       appBuildFolder: self.getFilePath(cwd, "build"),
+      appReduxFolder: self.getFilePath(appFolder, "/src/store"),
       appPublicPath: self.checkIfIsFile(
         self.getFilePath(appFolder, "package.json")
       )

@@ -36,6 +36,9 @@ methods.handleFileRoutes = async function (data) {
   //   return;
   // }
 
+  // const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
+  // console.log("THE PAGES routesObject", routesObject);
+
   self
     .doImport(filePath)
     .then(async (imported) => {
@@ -44,7 +47,11 @@ methods.handleFileRoutes = async function (data) {
       let meta = manifestJS.meta;
       console.log("META ", meta);
       const buildJS = await self.doImport(`${cwd}/build.js`);
-      const reactServerRoutes = self.buildServerRoutes(buildJS.routes);
+      const routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
+      const reactServerRoutes = self.buildServerRoutes(
+        buildJS.routes,
+        routesObject
+      );
       console.log("THE ROUTES", reactServerRoutes);
       if (meta || !meta)
         return self.callback({
@@ -206,7 +213,10 @@ methods.getSourceCodes = function (codesSource) {
 };
 methods.getRoutesHelper = function (paths, source) {
   const self = this;
-  return self.createRouterComponents(paths, source);
+  return new Promise(async (resolve, reject) => {
+    const madeRs = await self.createRouterComponents(paths, source);
+    resolve(madeRs);
+  });
 };
 methods.createRouterComponents = function (maps, pathy) {
   const self = this;
@@ -219,30 +229,20 @@ methods.createRouterComponents = function (maps, pathy) {
   // const dirPath = `${pathy}/components/system`;
   //const dirPath = `${pathy}/components/system`;
   //if (!isExistingDir(dirPath)) makeFolderSync(dirPath);
-  let compsMaps = maps.map((contextModule) => {
-    // const readFile = loadFile(contextModule);
-    // console.log("COntext Module", contextModule);
-    // console.log("our path", contextModule.replace(/pages/g, "_pages"));
-    // saveToFile(contextModule.replace(/pages/g, "_pages"), readFile);
-    // self.buildFile(contextModule);
-    return self.getItemPathAndFile(contextModule);
+  return new Promise((resolve, reject) => {
+    let compsMaps = maps.map(async (contextModule) => {
+      // const readFile = loadFile(contextModule);
+      // console.log("COntext Module", contextModule);
+      // console.log("our path", contextModule.replace(/pages/g, "_pages"));
+      // saveToFile(contextModule.replace(/pages/g, "_pages"), readFile);
+      // self.buildFile(contextModule);
+
+      return await self.getItemPathAndFile(contextModule);
+    });
+    Promise.all(compsMaps).then((completed) => {
+      resolve(completed);
+    });
   });
-
-  // if (!isExistingDir(`${dirPath}/maps.js`))
-  console.log("MAPS OF FILES", compsMaps);
-  console.log("Maps of files stringified", JSON.stringify(compsMaps));
-  console.log("THE UTIL");
-  // compsMaps.map((co, i) => {
-  //   console.log("COMPONENTS INSPECTED", util.inspect(co.component));
-  // });
-  // console.log("COMPONENTS INSPECTED");
-  // console.log("THE COMPS", `${compsMaps}`);
-  // let builtCode = self.buildStringCode(compsMaps);
-  // console.log("ABOUT TO SAVE THE FILE", builtCode.code);
-
-  // saveToFile(`${dirPath}/maps.js`, builtCode.code);
-
-  return compsMaps;
 };
 methods.getItemPathAndFile = function (item) {
   console.log("THE PAGES MAPS ITEM", item);
@@ -253,7 +253,7 @@ methods.getItemPathAndFile = function (item) {
   const readFileSync = pao.pa_readFileSync;
   const capitalizeFirstLetter = pao.pa_capitalizeFirstLetter;
   const camelCase = pao.pa_camelCase;
-  const extMatchPattern = /\.js|ts|tsx|jsx$/g;
+  const extMatchPattern = /\.jsx|\.ts|\.tsx|\.jsx$/g;
   let fileAsComp = null;
 
   let gotEndpoint =
@@ -273,26 +273,41 @@ methods.getItemPathAndFile = function (item) {
     console.log("Removes leading forwarslash");
     patternMatch = patternMatch.replace(/\/$/, "");
   }
-  console.log("THE PAGES matched", patternMatch);
-  console.log("THE ITEM", item);
+
+  return new Promise((res, rej) => {
+    let splitPatternMatch = patternMatch.split("/");
+    let splitLen = splitPatternMatch.length;
+    console.log("THE PAGES matched", patternMatch);
+    console.log("THE ITEM", item);
+    //console.log("THE LOADED FILE", loadFileSync(item));
+
+    self.doImport(item).then((imported) => {
+      console.log("THE PAGE FILE IN CONTEXT EXPORTS", imported);
+      const { getServerState = null } = imported;
+      // if (imported.getServerState) {
+      //   console.log(
+      //     "THE GETSERVERSTATE METHOD",
+      //     imported.getServerState(createReduxStore())
+      //   );
+      // }
+      res({
+        path: patternMatch,
+        //component: fileAsComp?.default ? fileAsComp.default : fileAsComp,
+        componentName:
+          patternMatch === "/"
+            ? "Home"
+            : capitalizeFirstLetter(
+                camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
+              ),
+        component: item,
+        getServerState,
+      });
+    });
+  });
 
   // fileAsComp = loadFileSync(item);
   // console.log("THE FILE CODE", fileAsComp.default.toString());
   // await loadFile(item);
-  let splitPatternMatch = patternMatch.split("/");
-  let splitLen = splitPatternMatch.length;
-
-  return {
-    path: patternMatch,
-    //component: fileAsComp?.default ? fileAsComp.default : fileAsComp,
-    componentName:
-      patternMatch === "/"
-        ? "Home"
-        : capitalizeFirstLetter(
-            camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
-          ),
-    component: item,
-  };
 };
 methods.dynamicImport = async function (module) {
   const self = this;
@@ -1233,8 +1248,10 @@ methods.merge = function (a, b, predicate = (a, b) => a === b) {
   );
   return c;
 };
-methods.buildServerRoutes = function (routesSource) {
+methods.buildServerRoutes = function (routesSource, routesObject) {
   const self = this;
+
+  console.log("THE ROUTESOBJECT", routesObject);
 
   let builtRoutes = routesSource.map((route) => {
     return {
@@ -1246,10 +1263,32 @@ methods.buildServerRoutes = function (routesSource) {
       title: "REACT SERVE-SIDE RENDERING COMPONENT",
       method: "GET",
       type: "public",
+      requiresData: self.getComponentServerState(route.path, routesObject),
     };
   });
   // console.log("ROUTES BUILT", builtRoutes);
   return builtRoutes;
+};
+
+methods.getComponentServerState = function (path, routesObject) {
+  const self = this;
+
+  console.log("THE ROUTESOBJECT", routesObject);
+
+  let gotServerState = routesObject.filter((route) => {
+    if (
+      route?.getServerState &&
+      route.path.toLowerCase() === path.toLowerCase()
+    ) {
+      console.log("THE ACTUAL DATA THE THING MATCHED");
+      console.log("THE CURRENT ROUTE", route);
+      return route;
+    }
+  });
+
+  console.log("THE ACTUAL DATA GOT SERVER STATE", gotServerState);
+  // console.log("ROUTES BUILT", builtRoutes);
+  return gotServerState.length > 0 ? gotServerState[0].getServerState : null;
 };
 
 export default methods;

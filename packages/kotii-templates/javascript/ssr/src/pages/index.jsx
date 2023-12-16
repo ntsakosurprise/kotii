@@ -1,9 +1,12 @@
+/* eslint-disable react/prop-types */
+import { Head } from "kotii-scripts";
 import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
 import { FaLongArrowAltRight } from "react-icons/fa/index.js";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import SVGConnections from "../shared/test.jsx";
-
+import * as actions from "../store/home/actions.js";
 const Main = styled("div")({
   display: "flex",
   flexDirection: "row",
@@ -157,9 +160,32 @@ const SVG = styled("div")({
   width: "50%",
   position: "relative",
 });
+
+const PeopleList = (props) => {
+  console.log("THE PROPS TO PEOPLE COMP", props);
+  if (props.people.length > 0)
+    return (
+      <ul>
+        {props.people.map((person, i) => {
+          return <li key={i}>{person}</li>;
+        })}
+      </ul>
+    );
+  return null;
+};
 const Index = () => {
+  const peopleList = useSelector((state) => {
+    console.log("STATE RECEIVED", state);
+    return state.homeReducer.people;
+  });
+  const dispatch = useDispatch();
+  const doList = () => {
+    if (peopleList.length <= 0) dispatch(actions.showPeopleList());
+    dispatch(actions.hidePeopleList());
+  };
   return (
     <Main>
+      <Head title={"Kotii Framework Boilerplate"} />
       <Hero>
         <HeroText>
           Edit, save, and see your changes reflected in real-time. Get started
@@ -168,8 +194,10 @@ const Index = () => {
         <Path />
         <StyledButton>
           <ButtonBackCard />
-          <ButtonFrontCard>Learn More </ButtonFrontCard>
+          <ButtonFrontCard onClick={doList}>Learn More </ButtonFrontCard>
         </StyledButton>
+
+        {peopleList ? <PeopleList people={peopleList} /> : null}
         {/* <img src={connectionsSvg} width={50} alt="connections svg" /> */}
       </Hero>
       <SVG>
@@ -177,6 +205,10 @@ const Index = () => {
       </SVG>
     </Main>
   );
+};
+
+export const getServerState = (store) => {
+  return store.dispatch(actions.showPeopleList());
 };
 
 export default Index;

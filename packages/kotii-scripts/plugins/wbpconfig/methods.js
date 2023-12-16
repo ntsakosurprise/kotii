@@ -65,6 +65,10 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
   console.log("THE APP WITH APP CLI", process.env?.ANZII_CLI_WITH_SERVER);
   console.log("THE SERVER TYPE", serverType);
   self.emit({
+    type: "take-ssr-routes",
+    data: { payload: { routes: [...anziiManualConfigs] } },
+  });
+  self.emit({
     type: serverType,
     data: {
       payload: {
