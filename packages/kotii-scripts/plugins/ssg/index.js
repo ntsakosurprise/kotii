@@ -1,2 +1,2 @@
-import Ssg from "./ssg";
+import Ssg from "./ssg.js";
 export default Ssg;

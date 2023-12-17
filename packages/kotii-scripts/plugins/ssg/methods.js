@@ -3,25 +3,26 @@ methods.init = function () {
   // console.log('Bitbucket has been initialised')
   console.log("");
   this.listens({
-    start: this.handleStaticGeneration.bind(this),
+    "generate-static-content": this.handleStaticGeneration.bind(this),
   });
 };
 methods.handleStaticGeneration = function (data) {
   console.log("THE DAT OF START SCRIPTS", data);
   const self = this;
   const setCall = data.callback;
-  self.emit({
-    type: "context-app",
-    data: {
-      myName: "ntsako",
-      callback: (data) => {
-        // console.log("THIS DATA");
-        // console.log(self.pao);
-        console.log("WALAH", data);
-        self.getWebPackConfig(data, setCall);
-      },
-    },
-  });
+  setCall({ message: "handleStaticGeneration in action" });
+  // self.emit({
+  //   type: "context-app",
+  //   data: {
+  //     myName: "ntsako",
+  //     callback: (data) => {
+  //       // console.log("THIS DATA");
+  //       // console.log(self.pao);
+  //       console.log("WALAH", data);
+  //       self.getWebPackConfig(data, setCall);
+  //     },
+  //   },
+  // });
   return;
 };
 methods.getWebPackConfig = function (dataToConfig, setCall) {
