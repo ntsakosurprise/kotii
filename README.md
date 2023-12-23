@@ -2,7 +2,7 @@
 
 ## Welcome
 
-Kotii is a meta framework that has been made to be simple and intuitive. It is currently designed to work with React. There are also considerations to integrate it with other mainstream JavaScript frameworks.
+Kotii is a frontend meta framework that has been made to be simple and intuitive. It is currently designed to work with React. There are also considerations to integrate it with other mainstream JavaScript frameworks.
 
 Kotii is actually from one of the languages in South Africa known as XiTsonga or simply Tsonga. The name Kotii itself is derived from the word “kotani”, which in English is translated to mean “be able (to build with)”
 
