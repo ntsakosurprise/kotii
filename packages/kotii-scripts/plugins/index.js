@@ -16,9 +16,11 @@ import JsxToReact from "./jsxtoreact/index.js";
 import ReactView from "./react/reactview.js";
 import ReactToJsx from "./reacttojsx/index.js";
 import Scaffold from "./scaffold/index.js";
+import Ssg from "./ssg/index.js";
 import Start from "./start/index.js";
 import Watchr from "./watchr/index.js";
 import WebpackConfig from "./wbpconfig/index.js";
+
 // const require = createRequire(import.meta.url);
 // const ReactView = require("./react/index.cjs");
 export { Interpreter };
@@ -56,4 +58,5 @@ export default {
   Watchr,
   Hello,
   ReactView,
+  Ssg,
 };

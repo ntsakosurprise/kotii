@@ -19,7 +19,7 @@
     "clean": "lerna run --parallel clean",
     "release": "lerna publish",
     "start": "cd packages/kotii-scripts && node --experimental-loader ./compile/hooks.js app.js start",
-    "build": "cd packages/kotii-scripts && node app.js build",
+    "build": "cd packages/kotii-scripts && node --experimental-loader ./compile/hooks.js app.js build",
     "kotii": "node run_local/runKotiiCli.js"
   },
   "license": "ISC",
