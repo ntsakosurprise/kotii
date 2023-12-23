@@ -2,13 +2,11 @@
 
 ## Welcome
 
-This is a documentaion website for MyMtnNextgen app and its related resources. The site has been made with the purpose of helping anyone understand the project and its implementation better and in detail.
+Kotii is a meta framework that has been made to be simple and intuitive. It is currently designed to work with React. There are also considerations to integrate it with other mainstream JavaScript frameworks.
 
-It has been made to be very simple and intuitive, following a chronological order presentation style. In preparing the documentation, the team has placed a greater emphasis on new developers who have a little to no insight into the ins and outs of the project.
+Kotii is actually from one of the languages in South Africa known as XiTsonga or simply Tsonga. The name Kotii itself is derived from the word “kotani”, which in English is translated to mean “be able (to build with)”
 
-Nonetheless, this documentation has also been made effective enough to cater for seasoned developers to aid them in their daily work operations in the context of <blockquote>myMTN </blockquote>.
-
-In the context of _MyMtnNextgen_, this documentation site presents information about things such as the _project set up_, _framework_, _conventions_ used and followed, _best practices_, _components_ usage, and many other features.
+It was initially intended to be a boilerplate under the react framework paradigm, but evolved overtime into a framework instead, as a result of a strong desire that the initial author had of creating something meaningful.
 
 ### Code Snippets
 
