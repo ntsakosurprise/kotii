@@ -11,7 +11,6 @@
     "url": "git+https://github.com/MTN-Group/mymtn-nextgen-docs.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1",
     "start": "webpack-dev-server --open --hot --mode development",
     "build": "webpack --mode production"
   },

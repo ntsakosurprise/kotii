@@ -4,7 +4,6 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "jest",
     "coverage": "jest --coverage",
     "start": "webpack-dev-server --watch",
     "build": "webpack --mode production",
