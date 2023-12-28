@@ -7,8 +7,8 @@ import { KotiiThemeProvider } from "../../../context";
 import Page from "../Page";
 import PageContent from "./PageContent";
 
-describe("Running Test for Page component", () => {
-  test("Check if page component renders", () => {
+describe("Running Test for PageContent component", () => {
+  test("Check if PageContent component renders", () => {
     render(
       <KotiiThemeProvider>
         <Page kind="wide" pad={"none"}>

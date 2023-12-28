@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Overlay from "./Overlay";
 
-describe("Running Test for PageHeader component", () => {
-  test("Check if page header component renders", () => {
+describe("Running Test for Overlay component", () => {
+  test("Check if Overlay component renders", () => {
     render(
       <KotiiThemeProvider>
         <Overlay />
