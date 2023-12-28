@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import ThumbsRating from "./ThumbsRating";
 
-describe("Running Test for PageHeader component", () => {
-  test("Check if page header component renders", () => {
+describe("Running Test for ThumbsRating component", () => {
+  test("Check if ThumbsRating component renders", () => {
     render(
       <KotiiThemeProvider>
         <ThumbsRating name="mystar" />

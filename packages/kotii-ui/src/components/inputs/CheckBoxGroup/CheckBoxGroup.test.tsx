@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import CheckBoxGroup from "./CheckBoxGroup";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for CheckBoxGroup component", () => {
+  test("Check if CheckBoxGroup component renders", () => {
     render(
       <KotiiThemeProvider>
         <CheckBoxGroup options={["Maui", "Kauai", "Oahu"]} />

@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Select from "./Select";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Select component", () => {
+  test("Check if Select component renders", () => {
     render(
       <KotiiThemeProvider>
         <Select options={["option1"]} />

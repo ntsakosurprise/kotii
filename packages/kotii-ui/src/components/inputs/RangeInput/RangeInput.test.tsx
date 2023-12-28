@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import RangeInput from "./RangeInput";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for RangeInput component", () => {
+  test("Check if RangeInput component renders", () => {
     render(
       <KotiiThemeProvider>
         <RangeInput />

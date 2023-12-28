@@ -4,13 +4,13 @@ import React from "react";
 
 import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
-import DateInput from "./FileInput";
+import FileInput from "./FileInput";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for FileInput component", () => {
+  test("Check if FileInput component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DateInput />
+        <FileInput />
       </KotiiThemeProvider>
     );
     // expect(

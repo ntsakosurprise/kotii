@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import StarRating from "./StarRating";
 
-describe("Running Test for PageHeader component", () => {
-  test("Check if page header component renders", () => {
+describe("Running Test for StarRating component", () => {
+  test("Check if StarRating component renders", () => {
     render(
       <KotiiThemeProvider>
         <StarRating name="mystar" />

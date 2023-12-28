@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import MaskedInput from "./MaskedInput";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for MaskedInput component", () => {
+  test("Check if MaskedInput component renders", () => {
     render(
       <KotiiThemeProvider>
         <MaskedInput />

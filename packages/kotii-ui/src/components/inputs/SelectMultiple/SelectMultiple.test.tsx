@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import SelectMultiple from "./SelectMultiple";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for SelectMultiple component", () => {
+  test("Check if SelectMultiple component renders", () => {
     render(
       <KotiiThemeProvider>
         <SelectMultiple options={["option1"]} />
