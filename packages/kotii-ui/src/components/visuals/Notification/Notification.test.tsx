@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Notification from "./Notification";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Notification component", () => {
+  test("Check if Notification component renders", () => {
     render(
       <KotiiThemeProvider>
         <Notification />

@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Heading from "./Heading";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Heading component", () => {
+  test("Check if Heading component renders", () => {
     render(
       <KotiiThemeProvider>
         <Heading />

@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import SkipLink from "./SkipLink";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for SkipLink component", () => {
+  test("Check if SkipLink component renders", () => {
     render(
       <KotiiThemeProvider>
         <SkipLink id="test" />

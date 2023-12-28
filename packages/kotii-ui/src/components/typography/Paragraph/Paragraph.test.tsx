@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Paragraph from "./Paragraph";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Paragraph  component", () => {
+  test("Check if Paragraph component renders", () => {
     render(
       <KotiiThemeProvider>
         <Paragraph>{DOM_BY_TEXT}</Paragraph>

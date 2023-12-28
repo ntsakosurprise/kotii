@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Meter from "./Meter";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Meter component", () => {
+  test("Check if Meter component renders", () => {
     render(
       <KotiiThemeProvider>
         <Meter />

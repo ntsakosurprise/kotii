@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Image from "./Image";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Image component", () => {
+  test("Check if Image component renders", () => {
     render(
       <KotiiThemeProvider>
         <Image />

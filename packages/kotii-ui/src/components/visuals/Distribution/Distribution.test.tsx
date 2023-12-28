@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Distribution from "./Distribution";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Distribution component", () => {
+  test("Check if Distribution component renders", () => {
     render(
       <KotiiThemeProvider>
         <Distribution values={[{ value: 5, color: { dark: "blue" } }]} />

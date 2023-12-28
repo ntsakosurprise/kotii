@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Clock from "./Clock";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Clock component", () => {
+  test("Check if Clock component renders", () => {
     render(
       <KotiiThemeProvider>
         <Clock />

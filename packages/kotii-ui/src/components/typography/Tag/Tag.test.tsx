@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import TAG from "./Tag";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for TAG component", () => {
+  test("Check if TAG component renders", () => {
     render(
       <KotiiThemeProvider>
         <TAG value="theValue">{DOM_BY_TEXT}</TAG>

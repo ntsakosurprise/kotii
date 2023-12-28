@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Spinner from "./Spinner";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Spinner component", () => {
+  test("Check if Spinner component renders", () => {
     render(
       <KotiiThemeProvider>
         <Spinner />

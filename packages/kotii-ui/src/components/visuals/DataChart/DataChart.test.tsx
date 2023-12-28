@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import DataChart from "./DataChart";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for DataChart component", () => {
+  test("Check if DataChart component renders", () => {
     render(
       <KotiiThemeProvider>
         <DataChart data={[0, 1]} />
