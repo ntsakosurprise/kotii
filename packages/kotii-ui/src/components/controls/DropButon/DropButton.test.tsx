@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import DropButton from "./DropButton";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for DropButton component", () => {
+  test("Check if DropButton component renders", () => {
     render(
       <KotiiThemeProvider>
         <DropButton dropContent={<div></div>} />

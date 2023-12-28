@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Menu from "./Menu";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Menu component", () => {
+  test("Check if Menu component renders", () => {
     render(
       <KotiiThemeProvider>
         <Menu items={[]} />
