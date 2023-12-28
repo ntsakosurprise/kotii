@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import DataTableColumns from "./DataTableColumns";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for DataTableColumns component", () => {
+  test("Check if DataTableColumns component renders", () => {
     render(
       <KotiiThemeProvider>
         <DataTableColumns drop={true} options={["myOption"]} />
