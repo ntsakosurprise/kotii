@@ -10,7 +10,7 @@ describe("Running Test for Accordion component", () => {
   test("Check if Accordion component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Accordion>
+        <Accordion testID={DOM_BY_TEXT}>
           <p>{DOM_BY_TEXT}</p>
         </Accordion>
       </KotiiThemeProvider>

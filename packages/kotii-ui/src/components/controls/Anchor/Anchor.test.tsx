@@ -10,7 +10,7 @@ describe("Running Test for Anchor component", () => {
   test("Check if Anchor component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Anchor>
+        <Anchor testID={DOM_BY_TEXT}>
           <p>{DOM_BY_TEXT}</p>
         </Anchor>
       </KotiiThemeProvider>

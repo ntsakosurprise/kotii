@@ -10,7 +10,7 @@ describe("Running Test for Keyboard component", () => {
   test("Check if Keyboard component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Keyboard>
+        <Keyboard testID={DOM_BY_TEXT}>
           <p>test</p>
         </Keyboard>
       </KotiiThemeProvider>

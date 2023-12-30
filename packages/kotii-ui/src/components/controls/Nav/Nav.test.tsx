@@ -10,7 +10,7 @@ describe("Running Test for Nav component", () => {
   test("Check if Nav component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Nav>
+        <Nav testID={DOM_BY_TEXT}>
           <p>{DOM_BY_TEXT}</p>
         </Nav>
       </KotiiThemeProvider>

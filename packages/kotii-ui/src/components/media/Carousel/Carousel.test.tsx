@@ -10,7 +10,7 @@ describe("Running Test for Carousel component", () => {
   test("Check if Carousel component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Carousel>
+        <Carousel testID={DOM_BY_TEXT}>
           <p>test</p>
         </Carousel>
       </KotiiThemeProvider>

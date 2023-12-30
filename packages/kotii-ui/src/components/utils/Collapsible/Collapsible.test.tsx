@@ -10,7 +10,7 @@ describe("Running Test for Collapsible component", () => {
   test("Check if Collapsible component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Collapsible>
+        <Collapsible testID={DOM_BY_TEXT}>
           <p>test</p>
         </Collapsible>
       </KotiiThemeProvider>

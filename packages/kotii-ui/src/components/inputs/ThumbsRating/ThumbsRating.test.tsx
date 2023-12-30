@@ -9,7 +9,7 @@ describe("Running Test for ThumbsRating component", () => {
   test("Check if ThumbsRating component renders", () => {
     render(
       <KotiiThemeProvider>
-        <ThumbsRating name="mystar" testID={DOM_BY_TEXT} testID={DOM_BY_TEXT} />
+        <ThumbsRating name="mystar" testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
 

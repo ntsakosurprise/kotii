@@ -10,7 +10,7 @@ describe("Running Test for Video component", () => {
   test("Check if Video component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Video>
+        <Video testID={DOM_BY_TEXT}>
           <p>test</p>
         </Video>
       </KotiiThemeProvider>

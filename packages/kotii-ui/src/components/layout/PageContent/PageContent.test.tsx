@@ -11,7 +11,7 @@ describe("Running Test for PageContent component", () => {
   test("Check if PageContent component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Page kind="wide" pad={"none"}>
+        <Page kind="wide" pad={"none"} testID={DOM_BY_TEXT}>
           <PageContent>
             <p>{DOM_BY_TEXT}</p>
           </PageContent>

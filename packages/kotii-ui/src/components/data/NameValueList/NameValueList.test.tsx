@@ -8,9 +8,7 @@ import NameValueList from "./NameValueList";
 
 describe("Running Test for NameValueList component", () => {
   test("Check if NameValueList component renders", () => {
-    render(
-      <KotiiThemeProvider>
-        <NameValueList testID={DOM_BY_TEXT} />
+    render(<KotiiThemeProvider><NameValueList testID={DOM_BY_TEXT} / testID={DOM_BY_TEXT}>
       </KotiiThemeProvider>
     );
     // expect(
