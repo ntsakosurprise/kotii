@@ -28,6 +28,7 @@ export interface PageHeaderProps
       | "South America";
   }[];
   hoverColor?: string | { dark?: string; light?: string };
+
   onSelectPlace?: (place: [number, number]) => void;
   places?: {
     color?: string | { dark?: string; light?: string };
