@@ -2,6 +2,8 @@ export const setInStorage = (key, value) => {
   // console.log("GETTING KEY valuePairs;;;", key);
   // console.log("KEY VALUE;;;", value);
   localStorage.setItem(key, JSON.stringify(value));
+  if (getFromStorage(key)) return true;
+  return false;
 };
 
 export const getFromStorage = (key) => {
@@ -20,4 +22,6 @@ export const getFromStorage = (key) => {
 export const removeFromStorage = (key) => {
   // console.log("Removing Key from storage;;;", key);
   localStorage.removeItem(key);
+  if (!getFromStorage(key)) return true;
+  return false;
 };
