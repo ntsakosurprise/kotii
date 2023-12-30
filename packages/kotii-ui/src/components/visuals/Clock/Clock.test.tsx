@@ -10,7 +10,7 @@ describe("Running Test for Clock component", () => {
   test("Check if Clock component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Clock />
+        <Clock testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

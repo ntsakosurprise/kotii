@@ -10,7 +10,7 @@ describe("Running Test for Heading component", () => {
   test("Check if Heading component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Heading />
+        <Heading testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

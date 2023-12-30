@@ -10,7 +10,7 @@ describe("Running Test for TextArea component", () => {
   test("Check if TextArea component renders", () => {
     render(
       <KotiiThemeProvider>
-        <TextArea options={["option1"]} />
+        <TextArea options={["option1"]} testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

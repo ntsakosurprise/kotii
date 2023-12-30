@@ -10,7 +10,7 @@ describe("Running Test for MaskedInput component", () => {
   test("Check if MaskedInput component renders", () => {
     render(
       <KotiiThemeProvider>
-        <MaskedInput />
+        <MaskedInput testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

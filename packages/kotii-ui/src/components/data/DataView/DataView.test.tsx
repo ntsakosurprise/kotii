@@ -10,7 +10,7 @@ describe("Running Test for DataView component", () => {
   test("Check if DataView component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DataView />
+        <DataView testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

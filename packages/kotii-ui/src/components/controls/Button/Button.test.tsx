@@ -10,7 +10,7 @@ describe("Running Test for Button component", () => {
   test("Check if Button component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Button />
+        <Button testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

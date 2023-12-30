@@ -10,7 +10,7 @@ describe("Running Test for FileInput component", () => {
   test("Check if FileInput component renders", () => {
     render(
       <KotiiThemeProvider>
-        <FileInput />
+        <FileInput testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

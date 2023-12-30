@@ -10,7 +10,7 @@ describe("Running Test for FormField component", () => {
   test("Check if FormField component renders", () => {
     render(
       <KotiiThemeProvider>
-        <FormField />
+        <FormField testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

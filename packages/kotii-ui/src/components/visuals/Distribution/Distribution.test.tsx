@@ -10,7 +10,10 @@ describe("Running Test for Distribution component", () => {
   test("Check if Distribution component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Distribution values={[{ value: 5, color: { dark: "blue" } }]} />
+        <Distribution
+          values={[{ value: 5, color: { dark: "blue" } }]}
+          testID={DOM_BY_TEXT}
+        />
       </KotiiThemeProvider>
     );
     // expect(

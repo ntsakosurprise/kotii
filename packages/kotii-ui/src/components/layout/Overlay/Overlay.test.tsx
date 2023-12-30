@@ -10,7 +10,7 @@ describe("Running Test for Overlay component", () => {
   test("Check if Overlay component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Overlay />
+        <Overlay testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

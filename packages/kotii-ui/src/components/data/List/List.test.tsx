@@ -10,7 +10,7 @@ describe("Running Test for List component", () => {
   test("Check if List component renders", () => {
     render(
       <KotiiThemeProvider>
-        <List />
+        <List testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

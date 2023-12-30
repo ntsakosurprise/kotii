@@ -10,7 +10,7 @@ describe("Running Test for CheckBox component", () => {
   test("Check if CheckBox component renders", () => {
     render(
       <KotiiThemeProvider>
-        <CheckBox />
+        <CheckBox testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

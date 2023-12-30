@@ -10,7 +10,7 @@ describe("Running Test for Notification component", () => {
   test("Check if Notification component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Notification />
+        <Notification testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

@@ -11,7 +11,7 @@ describe("Running Test for DataSummary component", () => {
   test("Check if DataSummary component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DataSummary />
+        <DataSummary testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

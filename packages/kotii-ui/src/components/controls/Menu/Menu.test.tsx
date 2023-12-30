@@ -2,6 +2,7 @@ import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import React from "react";
 
+import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Menu from "./Menu";
 
@@ -9,7 +10,7 @@ describe("Running Test for Menu component", () => {
   test("Check if Menu component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Menu items={[]} />
+        <Menu items={[]} testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     /** To be  properly tested, this component is currently referenced using other elements other

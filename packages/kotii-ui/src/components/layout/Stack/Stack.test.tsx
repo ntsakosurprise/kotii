@@ -10,7 +10,7 @@ describe("Running Test for Stack component", () => {
   test("Check if Stack component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Stack />
+        <Stack testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

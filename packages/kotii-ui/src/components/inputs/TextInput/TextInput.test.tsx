@@ -10,7 +10,7 @@ describe("Running Test for TextInput component", () => {
   test("Check if TextInput component renders", () => {
     render(
       <KotiiThemeProvider>
-        <TextInput />
+        <TextInput testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

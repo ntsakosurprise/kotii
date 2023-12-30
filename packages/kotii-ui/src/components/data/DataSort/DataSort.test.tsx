@@ -11,7 +11,7 @@ describe("Running Test for DataSort component", () => {
   test("Check if DataSort component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DataSort />
+        <DataSort testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

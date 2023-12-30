@@ -10,7 +10,7 @@ describe("Running Test for SideBar component", () => {
   test("Check if SideBar component renders", () => {
     render(
       <KotiiThemeProvider>
-        <SideBar />
+        <SideBar testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

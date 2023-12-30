@@ -12,7 +12,7 @@ describe("Running Test for Svg component", () => {
   test("Check if Svg component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Svg asComponent={KotiiSVG} inline={true} />
+        <Svg asComponent={KotiiSVG} inline={true} testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

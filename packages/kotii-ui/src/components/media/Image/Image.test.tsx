@@ -10,7 +10,7 @@ describe("Running Test for Image component", () => {
   test("Check if Image component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Image />
+        <Image testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

@@ -10,7 +10,7 @@ describe("Running Test for RangeInput component", () => {
   test("Check if RangeInput component renders", () => {
     render(
       <KotiiThemeProvider>
-        <RangeInput />
+        <RangeInput testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

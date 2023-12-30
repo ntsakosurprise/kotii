@@ -10,7 +10,7 @@ describe("Running Test for Spinner component", () => {
   test("Check if Spinner component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Spinner />
+        <Spinner testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

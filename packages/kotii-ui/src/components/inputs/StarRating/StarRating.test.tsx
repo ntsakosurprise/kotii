@@ -10,7 +10,7 @@ describe("Running Test for StarRating component", () => {
   test("Check if StarRating component renders", () => {
     render(
       <KotiiThemeProvider>
-        <StarRating name="mystar" />
+        <StarRating name="mystar" testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

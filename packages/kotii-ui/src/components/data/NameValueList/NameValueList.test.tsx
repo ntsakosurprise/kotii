@@ -10,7 +10,7 @@ describe("Running Test for NameValueList component", () => {
   test("Check if NameValueList component renders", () => {
     render(
       <KotiiThemeProvider>
-        <NameValueList />
+        <NameValueList testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

@@ -10,7 +10,7 @@ describe("Running Test for Select component", () => {
   test("Check if Select component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Select options={["option1"]} />
+        <Select options={["option1"]} testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

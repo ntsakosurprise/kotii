@@ -10,7 +10,10 @@ describe("Running Test for CheckBoxGroup component", () => {
   test("Check if CheckBoxGroup component renders", () => {
     render(
       <KotiiThemeProvider>
-        <CheckBoxGroup options={["Maui", "Kauai", "Oahu"]} />
+        <CheckBoxGroup
+          options={["Maui", "Kauai", "Oahu"]}
+          testID={DOM_BY_TEXT}
+        />
       </KotiiThemeProvider>
     );
     // expect(

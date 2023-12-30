@@ -10,7 +10,7 @@ describe("Running Test for Meter component", () => {
   test("Check if Meter component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Meter />
+        <Meter testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

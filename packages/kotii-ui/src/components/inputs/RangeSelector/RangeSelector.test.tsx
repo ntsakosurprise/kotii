@@ -10,7 +10,7 @@ describe("Running Test for RangeSelector component", () => {
   test("Check if RangeSelector component renders", () => {
     render(
       <KotiiThemeProvider>
-        <RangeSelector />
+        <RangeSelector testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

@@ -10,7 +10,7 @@ describe("Running Test for Table component", () => {
   test("Check if Table component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Table />
+        <Table testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

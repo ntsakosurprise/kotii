@@ -11,7 +11,7 @@ describe("Running Test for DataSearch component", () => {
   test("Check if DataSearch component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DataSearch />
+        <DataSearch testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

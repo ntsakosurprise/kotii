@@ -10,7 +10,7 @@ describe("Running Test for DateInput component", () => {
   test("Check if DateInput component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DateInput />
+        <DateInput testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

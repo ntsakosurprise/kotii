@@ -11,7 +11,7 @@ describe("Running Test for DataFilter component", () => {
   test("Check if DataFilter component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DataFilter property="" />
+        <DataFilter property="" testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

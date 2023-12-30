@@ -10,7 +10,11 @@ describe("Running Test for DataTableColumns component", () => {
   test("Check if DataTableColumns component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DataTableColumns drop={true} options={["myOption"]} />
+        <DataTableColumns
+          drop={true}
+          options={["myOption"]}
+          testID={DOM_BY_TEXT}
+        />
       </KotiiThemeProvider>
     );
     // expect(

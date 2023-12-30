@@ -10,7 +10,7 @@ describe("Running Test for DataTableGroupBy component", () => {
   test("Check if DataTableGroupBy component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DataTableGroupBy />
+        <DataTableGroupBy testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

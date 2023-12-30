@@ -10,7 +10,7 @@ describe("Running Test for Grid component", () => {
   test("Check if Grid component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Grid />
+        <Grid testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

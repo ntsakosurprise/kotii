@@ -10,7 +10,7 @@ describe("Running Test for SkipLink component", () => {
   test("Check if SkipLink component renders", () => {
     render(
       <KotiiThemeProvider>
-        <SkipLink id="test" />
+        <SkipLink id="test" testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

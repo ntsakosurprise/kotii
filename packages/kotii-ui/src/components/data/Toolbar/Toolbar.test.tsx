@@ -10,7 +10,7 @@ describe("Running Test for Toolbar component", () => {
   test("Check if Toolbar component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Toolbar />
+        <Toolbar testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

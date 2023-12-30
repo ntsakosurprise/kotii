@@ -10,7 +10,7 @@ describe("Running Test for DropButton component", () => {
   test("Check if DropButton component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DropButton dropContent={<div></div>} />
+        <DropButton dropContent={<div></div>} testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

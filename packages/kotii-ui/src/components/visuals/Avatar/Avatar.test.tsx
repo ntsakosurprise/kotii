@@ -10,7 +10,7 @@ describe("Running Test for Avatar component", () => {
   test("Check if Avatar component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Avatar />
+        <Avatar testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

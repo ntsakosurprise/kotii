@@ -10,7 +10,7 @@ describe("Running Test for DataChart component", () => {
   test("Check if DataChart component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DataChart data={[0, 1]} />
+        <DataChart data={[0, 1]} testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(
