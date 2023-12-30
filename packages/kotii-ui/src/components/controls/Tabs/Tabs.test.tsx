@@ -10,7 +10,7 @@ describe("Running Test for Tabs component", () => {
   test("Check if Tabs component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Tabs>
+        <Tabs testID={DOM_BY_TEXT}>
           <p>test</p>
         </Tabs>
       </KotiiThemeProvider>

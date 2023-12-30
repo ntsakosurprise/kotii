@@ -13,6 +13,11 @@ describe("Running Test for Distribution component", () => {
         <Distribution
           values={[{ value: 5, color: { dark: "blue" } }]}
           testID={DOM_BY_TEXT}
+          children={(value) => (
+            <div style={{ backgroundColor: value.color }}>
+              <p>{value.value}</p>
+            </div>
+          )}
         />
       </KotiiThemeProvider>
     );

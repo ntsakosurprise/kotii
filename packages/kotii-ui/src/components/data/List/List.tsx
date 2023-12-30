@@ -7,11 +7,8 @@ import { PageHeaderProps } from "./types";
 
 const WrappedList = styled.div<PageHeaderProps>``;
 
-const NameValueList: React.FC<PageHeaderProps> = ({
-  testID = "",
-  ...props
-}) => {
-  return <WrappedList>{/* <Glist {...props} /> */}</WrappedList   data-testid={testID}>;
+const List: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
+  return <WrappedList data-testid={testID} />;
 };
 
-export default NameValueList;
+export default List;

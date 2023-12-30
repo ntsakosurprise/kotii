@@ -14,7 +14,11 @@ const Svg: React.FC<PageHeaderProps> = ({
   asComponent,
   ...props
 }) => {
-  return <WrappedSvg>{inline && asComponent ? asComponent : null}</WrappedSvg   data-testid={testID}>;
+  return (
+    <WrappedSvg data-testid={testID}>
+      {inline && asComponent ? asComponent : null}
+    </WrappedSvg>
+  );
 };
 
 export default Svg;

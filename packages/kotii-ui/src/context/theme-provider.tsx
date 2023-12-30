@@ -38,7 +38,7 @@ export const CustomThemeProvider = (props) => {
   // console.log("currentTheme;;;", theme);
   // console.log("CurrentThemes", themes);
   // console.log(isThemeLoaded);
-  console.log(props);
+  //console.log(props);
   useEffect(() => {
     logStoredThemesStatus();
   }, []);

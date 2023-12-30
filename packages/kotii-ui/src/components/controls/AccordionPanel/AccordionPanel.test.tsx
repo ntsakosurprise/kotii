@@ -10,7 +10,7 @@ describe("Running Test for AccordionPanel component", () => {
   test("Check if AccordionPanel component renders", () => {
     render(
       <KotiiThemeProvider>
-        <AccordionPanel>
+        <AccordionPanel testID={DOM_BY_TEXT}>
           <p>{DOM_BY_TEXT}</p>
         </AccordionPanel>
       </KotiiThemeProvider>
@@ -18,6 +18,6 @@ describe("Running Test for AccordionPanel component", () => {
     // expect(
     //   screen.getByRole("button", { name: "Button marbella" })
     // ).toBeDisabled();
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

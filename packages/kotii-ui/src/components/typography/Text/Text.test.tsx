@@ -7,7 +7,7 @@ import Text from "./Text";
 
 describe("Running Test for Text component", () => {
   test("Check if Text component renders", () => {
-    render(<Text>{DOM_BY_TEXT}</Text>);
+    render(<Text testID={DOM_BY_TEXT}>{DOM_BY_TEXT}</Text>);
     expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

@@ -8,10 +8,10 @@ import { PageHeaderProps } from "./types";
 
 const WrappedDrop = styled.div<PageHeaderProps>``;
 
-const Drop: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
+const Drop: React.FC<PageHeaderProps> = ({ testID = "", target, ...props }) => {
   return (
-    <WrappedDrop data-testid={testID}>
-      <Gdrop {...props} />
+    <WrappedDrop data-testid={testID} target={target}>
+      <Gdrop target={target} {...props} />
     </WrappedDrop>
   );
 };

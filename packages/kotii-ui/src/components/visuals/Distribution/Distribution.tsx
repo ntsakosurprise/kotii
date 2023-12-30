@@ -1,4 +1,4 @@
-import { Distribution as Gdistribution } from "grommet";
+// import { Distribution as Gdistribution } from "grommet";
 import React from "react";
 import styled from "styled-components";
 
@@ -13,11 +13,8 @@ const Distribution: React.FC<PageHeaderProps> = ({
   values,
   ...props
 }) => {
-  return (
-    <WrappedDistribution values={values} data-testid={testID}>
-      <Gdistribution {...props} values={values} />
-    </WrappedDistribution>
-  );
+  /** To be implemented correctly */
+  return <WrappedDistribution data-testid={testID} values={values} />;
 };
 
 export default Distribution;

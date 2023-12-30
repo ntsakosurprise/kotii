@@ -8,9 +8,12 @@ import Drop from "./Drop";
 
 describe("Running Test for Drop component", () => {
   test("Check if Drop  component renders", () => {
+    const elRef = React.createRef();
+    /** The use of Ref for jest will be improved, the current implementation is a temp fix */
     render(
       <KotiiThemeProvider>
-        <Drop testID={DOM_BY_TEXT} />
+        <div ref={elRef as any} />
+        <Drop testID={DOM_BY_TEXT} target={elRef} />
       </KotiiThemeProvider>
     );
     // expect(

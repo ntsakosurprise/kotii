@@ -4,11 +4,11 @@ import styled from "styled-components";
 
 // import { BoxProps } from "./types";
 //import { BaseProps } from "../../../types";
-import { PageHeaderProps } from "./types";
+import { SidebarProps } from "./types";
 
-const WrappedSideBar = styled.div<PageHeaderProps>``;
+const WrappedSideBar = styled.div<SidebarProps>``;
 
-const SideBar: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
+const SideBar: React.FC<SidebarProps> = ({ testID = "", ...props }) => {
   return (
     <WrappedSideBar data-testid={testID}>
       <Sidebar {...props} />

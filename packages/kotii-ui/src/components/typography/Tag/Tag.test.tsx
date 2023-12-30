@@ -10,7 +10,9 @@ describe("Running Test for TAG component", () => {
   test("Check if TAG component renders", () => {
     render(
       <KotiiThemeProvider>
-        <TAG value="theValue">{DOM_BY_TEXT}</TAG>
+        <TAG value="theValue" testID={DOM_BY_TEXT}>
+          {DOM_BY_TEXT}
+        </TAG>
       </KotiiThemeProvider>
     );
     // expect(

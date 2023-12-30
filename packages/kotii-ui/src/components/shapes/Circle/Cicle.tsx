@@ -15,11 +15,16 @@ const StyledCircle = styled("div")((props) => {
   return { ...styles };
 });
 
-const Circle: React.FC<CircleProps> = ({ name, children, ...props }) => {
+const Circle: React.FC<CircleProps> = ({
+  testID = "",
+  name,
+  children,
+  ...props
+}) => {
   const { theme, themes, changeTheme, themeMode = "dark" } = useKotiiTheme();
   const newProps = { ...props, themeMode };
   return (
-    <StyledCircle {...newProps} theme={theme}>
+    <StyledCircle {...newProps} theme={theme} data-testid={testID}>
       {children ? children : null}
     </StyledCircle>
   );

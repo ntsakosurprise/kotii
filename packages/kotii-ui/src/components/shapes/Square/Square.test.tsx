@@ -9,7 +9,9 @@ describe("Testing Square Shape Cases", () => {
   test("Test if Shape renders with styled components", () => {
     render(
       <KotiiThemeProvider>
-        <Square width={"100px"}>{DOM_BY_TEXT}</Square>
+        <Square width={"small"} testID={DOM_BY_TEXT}>
+          {DOM_BY_TEXT}
+        </Square>
       </KotiiThemeProvider>
     );
     expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();

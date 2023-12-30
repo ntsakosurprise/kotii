@@ -10,7 +10,7 @@ describe("Running Test for Markdown component", () => {
   test("Check if Markdown component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Markdown>{DOM_BY_TEXT}</Markdown>
+        <Markdown testID={DOM_BY_TEXT}>{DOM_BY_TEXT}</Markdown>
       </KotiiThemeProvider>
     );
     // expect(

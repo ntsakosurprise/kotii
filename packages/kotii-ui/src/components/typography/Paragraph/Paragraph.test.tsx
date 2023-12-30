@@ -10,7 +10,7 @@ describe("Running Test for Paragraph  component", () => {
   test("Check if Paragraph component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Paragraph>{DOM_BY_TEXT}</Paragraph>
+        <Paragraph testID={DOM_BY_TEXT}>{DOM_BY_TEXT}</Paragraph>
       </KotiiThemeProvider>
     );
     // expect(

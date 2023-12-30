@@ -10,7 +10,7 @@ describe("Running Test for InfiniteScroll component", () => {
   test("Check if InfiniteScroll component renders", () => {
     render(
       <KotiiThemeProvider>
-        <InfiniteScroll>
+        <InfiniteScroll testID={DOM_BY_TEXT}>
           <p>test</p>
         </InfiniteScroll>
       </KotiiThemeProvider>

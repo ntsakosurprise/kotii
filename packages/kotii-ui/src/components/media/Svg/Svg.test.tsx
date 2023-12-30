@@ -6,8 +6,8 @@ import { KotiiThemeProvider } from "../../../context";
 // const kottiSvg = require("./kotii.svg") as string;
 const KotiiSVG = require("./kotii.svg");
 
+import { DOM_BY_TEXT } from "../../../constants";
 import Svg from "./Svg";
-
 describe("Running Test for Svg component", () => {
   test("Check if Svg component renders", () => {
     render(
@@ -18,8 +18,6 @@ describe("Running Test for Svg component", () => {
     // expect(
     //   screen.getByRole("button", { name: "Button marbella" })
     // ).toBeDisabled();
-    waitFor(() =>
-      expect(screen.getAllByRole("HTMLElement")).toBeInTheDocument()
-    );
+    waitFor(() => expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument());
   });
 });

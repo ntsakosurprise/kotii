@@ -76,13 +76,13 @@ const StyledSquare = styled("div")((props) => {
   return { ...styles };
 });
 
-const Square: React.FC<SquareProps> = ({ children, ...props }) => {
+const Square: React.FC<SquareProps> = ({ children, testID, ...props }) => {
   const { theme, themes, changeTheme, themeMode = "dark" } = useKotiiTheme();
   const newProps = { ...props, themeMode };
   console.log("ChangeThemeMode", changeTheme);
 
   return (
-    <StyledSquare {...newProps} theme={theme}>
+    <StyledSquare {...newProps} theme={theme} data-testid={testID}>
       {children ? children : null}
     </StyledSquare>
   );

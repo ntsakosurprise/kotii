@@ -7,7 +7,11 @@ import { PageProps } from "./types";
 
 const WrappedPageContent = styled.div<PageProps>``;
 
-const PageContent: React.FC<PageProps> = ({ children, ...props }) => {
+const PageContent: React.FC<PageProps> = ({
+  testID = "",
+  children,
+  ...props
+}) => {
   return (
     <WrappedPageContent data-testid={testID}>
       <GpageContent {...props}>{children}</GpageContent>
