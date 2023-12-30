@@ -14,7 +14,7 @@ const Collapsible: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedCollapsible>
+    <WrappedCollapsible data-testid={testID}>
       <Gcollapsible {...props}>{children}</Gcollapsible>
     </WrappedCollapsible>
   );

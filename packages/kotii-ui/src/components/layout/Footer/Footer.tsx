@@ -12,7 +12,7 @@ const Footer: React.FC<BaseProps> = ({
   ...props
 }) => {
   return (
-    <WrappedFooter>
+    <WrappedFooter data-testid={testID}>
       <Gfooter direction={direction} pad={pad} {...props}>
         {children}
       </Gfooter>

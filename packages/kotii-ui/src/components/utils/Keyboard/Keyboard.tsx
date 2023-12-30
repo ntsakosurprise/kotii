@@ -14,7 +14,7 @@ const Keyboard: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedKeyboard>
+    <WrappedKeyboard data-testid={testID}>
       <Gkeyboard {...props}>{children}</Gkeyboard>
     </WrappedKeyboard>
   );

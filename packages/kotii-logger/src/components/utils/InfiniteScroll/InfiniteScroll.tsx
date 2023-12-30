@@ -14,7 +14,7 @@ const InfiniteScroll: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedInfiniteScroll>
+    <WrappedInfiniteScroll data-testid={testID}>
       <GinfiteScroll {...props}>{children}</GinfiteScroll>
     </WrappedInfiniteScroll>
   );

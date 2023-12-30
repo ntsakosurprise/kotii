@@ -10,7 +10,7 @@ const WrappedDataSearch = styled.div<PageHeaderProps>``;
 
 const DataSearch: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedDataSearch>
+    <WrappedDataSearch data-testid={testID}>
       <GdataSearch {...props} />
     </WrappedDataSearch>
   );

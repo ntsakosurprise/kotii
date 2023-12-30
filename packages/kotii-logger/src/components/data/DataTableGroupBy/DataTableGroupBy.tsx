@@ -13,7 +13,7 @@ const DataTableGroupBy: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedDataTableGBy>
+    <WrappedDataTableGBy data-testid={testID}>
       <GdataTableGroupBy {...props} />
     </WrappedDataTableGBy>
   );

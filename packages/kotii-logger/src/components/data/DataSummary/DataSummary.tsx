@@ -10,7 +10,7 @@ const WrappedDataSummary = styled.div<PageHeaderProps>``;
 
 const DataSummary: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedDataSummary>
+    <WrappedDataSummary data-testid={testID}>
       <GdataSummary {...props} />
     </WrappedDataSummary>
   );

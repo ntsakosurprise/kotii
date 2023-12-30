@@ -8,7 +8,7 @@ const WrappedCard = styled.div<BaseProps>``;
 
 const Box: React.FC<BaseProps> = ({ pad, direction, children, ...props }) => {
   return (
-    <WrappedCard>
+    <WrappedCard data-testid={testID}>
       <Gcard direction={direction} pad={pad} {...props}>
         {children}
       </Gcard>

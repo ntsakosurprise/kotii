@@ -14,7 +14,7 @@ const Accordion: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedAccordion>
+    <WrappedAccordion data-testid={testID}>
       <Gaccordion {...props}>{children}</Gaccordion>
     </WrappedAccordion>
   );

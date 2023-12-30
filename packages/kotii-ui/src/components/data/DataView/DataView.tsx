@@ -10,7 +10,7 @@ const WrappedDataView = styled.div<PageHeaderProps>``;
 
 const DataView: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedDataView>
+    <WrappedDataView data-testid={testID}>
       <GdataView {...props} />
     </WrappedDataView>
   );

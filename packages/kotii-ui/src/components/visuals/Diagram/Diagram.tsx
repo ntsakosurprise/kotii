@@ -14,7 +14,7 @@ const Diagram: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedDiagram connections={connections}>
+    <WrappedDiagram connections={connections} data-testid={testID}>
       <Gdiagram {...props} connections={connections} />
     </WrappedDiagram>
   );

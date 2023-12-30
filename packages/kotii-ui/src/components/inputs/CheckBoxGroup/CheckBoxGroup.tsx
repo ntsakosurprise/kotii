@@ -14,7 +14,7 @@ const CheckBoxGroup: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedCheckBox options={options}>
+    <WrappedCheckBox options={options} data-testid={testID}>
       <GcheckBoxGroup {...props} options={options} />
     </WrappedCheckBox>
   );

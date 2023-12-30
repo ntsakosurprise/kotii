@@ -15,7 +15,7 @@ const DataTableColumns: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedDataTableColumns options={options} drop>
+    <WrappedDataTableColumns options={options} drop data-testid={testID}>
       <GdataTableColumns {...props} drop options={options} />
     </WrappedDataTableColumns>
   );

@@ -9,7 +9,7 @@ const WrappedPage = styled.div<PageProps>``;
 
 const Page: React.FC<PageProps> = ({ children, ...props }) => {
   return (
-    <WrappedPage>
+    <WrappedPage data-testid={testID}>
       <Gpage {...props}>{children}</Gpage>
     </WrappedPage>
   );

@@ -10,7 +10,7 @@ const WrappedSkipLink = styled.div<PageHeaderProps>``;
 
 const SkipLink: React.FC<PageHeaderProps> = ({ testID = "", id, ...props }) => {
   return (
-    <WrappedSkipLink id={id}>
+    <WrappedSkipLink id={id} data-testid={testID}>
       <GskipLink id={id} {...props} />
     </WrappedSkipLink>
   );

@@ -14,7 +14,7 @@ const TextArea: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedTextArea options={options}>
+    <WrappedTextArea options={options} data-testid={testID}>
       <GtextArea {...props} />
     </WrappedTextArea>
   );

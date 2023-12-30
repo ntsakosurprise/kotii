@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 const WrappedMap = styled.div<PageHeaderProps>``;
 
 const WorldMap: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
-  return <WrappedMap>{/* <Gworldmap {...props} /> */}</WrappedMap>;
+  return <WrappedMap>{/* <Gworldmap {...props} /> */}</WrappedMap   data-testid={testID}>;
 };
 
 export default WorldMap;

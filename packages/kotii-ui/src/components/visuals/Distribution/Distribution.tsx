@@ -14,7 +14,7 @@ const Distribution: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedDistribution values={values}>
+    <WrappedDistribution values={values} data-testid={testID}>
       <Gdistribution {...props} values={values} />
     </WrappedDistribution>
   );

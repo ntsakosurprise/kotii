@@ -10,7 +10,7 @@ const WrappedCheckBox = styled.div<PageHeaderProps>``;
 
 const CheckBox: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedCheckBox>
+    <WrappedCheckBox data-testid={testID}>
       <GcheckBox {...props} />
     </WrappedCheckBox>
   );

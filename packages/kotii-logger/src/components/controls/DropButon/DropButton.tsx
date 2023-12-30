@@ -15,7 +15,7 @@ const DropButton: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedDropButton dropContent={dropContent}>
+    <WrappedDropButton dropContent={dropContent} data-testid={testID}>
       <GdropButton {...props} dropContent={dropContent} />
     </WrappedDropButton>
   );

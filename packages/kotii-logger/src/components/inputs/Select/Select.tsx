@@ -14,7 +14,7 @@ const Select: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedSelect options={options}>
+    <WrappedSelect options={options} data-testid={testID}>
       <GrangeSelect {...props} options={options} />
     </WrappedSelect>
   );

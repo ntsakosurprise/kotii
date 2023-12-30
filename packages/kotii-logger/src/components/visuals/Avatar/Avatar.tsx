@@ -10,7 +10,7 @@ const WrappedAvatar = styled.div<PageHeaderProps>``;
 
 const Avatar: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedAvatar>
+    <WrappedAvatar data-testid={testID}>
       <Gavatar {...props} />
     </WrappedAvatar>
   );

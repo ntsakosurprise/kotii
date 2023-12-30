@@ -10,7 +10,7 @@ const WrappedTable = styled.div<PageHeaderProps>``;
 
 const Table: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedTable>
+    <WrappedTable data-testid={testID}>
       <Gtable {...props} />
     </WrappedTable>
   );

@@ -10,7 +10,7 @@ const WrappedClock = styled.div<PageHeaderProps>``;
 
 const Clock: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedClock>
+    <WrappedClock data-testid={testID}>
       <Gclock {...props} />
     </WrappedClock>
   );

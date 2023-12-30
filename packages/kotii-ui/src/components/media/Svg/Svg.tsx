@@ -14,13 +14,13 @@ const Svg: React.FC<PageHeaderProps> = ({
   asComponent,
   ...props
 }) => {
-  return <WrappedSvg>{inline && asComponent ? asComponent : null}</WrappedSvg>;
+  return <WrappedSvg>{inline && asComponent ? asComponent : null}</WrappedSvg   data-testid={testID}>;
 };
 
 export default Svg;
 
 // <KotiiThemeProvider>
-//       <WrappedSvg>
+//       <WrappedSvg   data-testid={testID}>
 //         <KotiiSvg />
 //       </WrappedSvg>
 //     </KotiiThemeProvider>

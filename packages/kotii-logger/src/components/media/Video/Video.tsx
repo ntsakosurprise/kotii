@@ -10,7 +10,7 @@ const WrappedVideo = styled.div<PageHeaderProps>``;
 
 const Video: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedVideo>
+    <WrappedVideo data-testid={testID}>
       <Gvideo {...props} />
     </WrappedVideo>
   );

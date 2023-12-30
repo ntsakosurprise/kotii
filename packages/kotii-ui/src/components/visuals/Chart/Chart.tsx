@@ -14,7 +14,7 @@ const Chart: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedChart values={values}>
+    <WrappedChart values={values} data-testid={testID}>
       <Gchart {...props} values={values} />
     </WrappedChart>
   );

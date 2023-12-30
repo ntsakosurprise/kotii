@@ -13,7 +13,7 @@ const ThumbsRating: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedThumbsRating name={name}>
+    <WrappedThumbsRating name={name} data-testid={testID}>
       <GthumbsRating {...props} name={name} />
     </WrappedThumbsRating>
   );

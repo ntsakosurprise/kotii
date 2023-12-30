@@ -10,7 +10,7 @@ const WrappedFileInput = styled.div<PageHeaderProps>``;
 
 const FileInput: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedFileInput>
+    <WrappedFileInput data-testid={testID}>
       <GfileInput {...props} />
     </WrappedFileInput>
   );

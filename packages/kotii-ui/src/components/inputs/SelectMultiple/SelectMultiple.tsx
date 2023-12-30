@@ -14,7 +14,7 @@ const SelectMultiple: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedSelectMultiple options={options}>
+    <WrappedSelectMultiple options={options} data-testid={testID}>
       <GrangeSelectMultiple {...props} options={options} />
     </WrappedSelectMultiple>
   );

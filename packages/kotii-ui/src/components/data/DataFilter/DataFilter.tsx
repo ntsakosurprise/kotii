@@ -14,7 +14,7 @@ const DataFilter: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedDataFilter property={property}>
+    <WrappedDataFilter property={property} data-testid={testID}>
       <GdataFilter {...props} property={property} />
     </WrappedDataFilter>
   );

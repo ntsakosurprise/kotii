@@ -10,7 +10,7 @@ const WrappedText = styled.div<PageHeaderProps>``;
 
 const Paragraph: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedText>
+    <WrappedText data-testid={testID}>
       <Gparagaph {...props} />
     </WrappedText>
   );

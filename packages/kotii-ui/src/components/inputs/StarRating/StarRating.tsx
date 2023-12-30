@@ -13,7 +13,7 @@ const StarRating: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedStarRating name={name}>
+    <WrappedStarRating name={name} data-testid={testID}>
       <GstarRating {...props} name={name} />
     </WrappedStarRating>
   );

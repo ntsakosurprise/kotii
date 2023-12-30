@@ -10,7 +10,7 @@ const WrappedImage = styled.div<PageHeaderProps>``;
 
 const Image: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedImage>
+    <WrappedImage data-testid={testID}>
       <Gimage {...props} />
     </WrappedImage>
   );

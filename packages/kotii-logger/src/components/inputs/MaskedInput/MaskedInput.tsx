@@ -10,7 +10,7 @@ const WrappedMaskedInput = styled.div<PageHeaderProps>``;
 
 const MaskedInput: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedMaskedInput>
+    <WrappedMaskedInput data-testid={testID}>
       <GmaskedInput {...props} />
     </WrappedMaskedInput>
   );

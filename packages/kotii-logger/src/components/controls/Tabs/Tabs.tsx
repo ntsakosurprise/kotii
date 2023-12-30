@@ -10,7 +10,7 @@ const WrappedTabs = styled.div<PageHeaderProps>``;
 
 const Tabs: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedTabs>
+    <WrappedTabs data-testid={testID}>
       <Gtabs {...props} />
     </WrappedTabs>
   );

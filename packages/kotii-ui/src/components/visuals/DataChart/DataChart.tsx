@@ -10,7 +10,7 @@ const WrappedDataChart = styled.div<PageHeaderProps>``;
 
 const Chart: React.FC<PageHeaderProps> = ({ testID = "", data, ...props }) => {
   return (
-    <WrappedDataChart data={data}>
+    <WrappedDataChart data={data} data-testid={testID}>
       <GdataChart {...props} data={data} />
     </WrappedDataChart>
   );

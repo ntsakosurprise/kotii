@@ -10,7 +10,7 @@ const WrappedCarousel = styled.div<PageHeaderProps>``;
 
 const Carousel: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedCarousel>
+    <WrappedCarousel data-testid={testID}>
       <Gcarousel {...props} />
     </WrappedCarousel>
   );

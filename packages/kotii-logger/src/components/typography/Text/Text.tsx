@@ -15,7 +15,7 @@ const Text: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedText>
+    <WrappedText data-testid={testID}>
       <CustomText {...props}>{children}</CustomText>
     </WrappedText>
   );

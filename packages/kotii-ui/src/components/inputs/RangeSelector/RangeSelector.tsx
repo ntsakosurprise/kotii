@@ -13,7 +13,7 @@ const RangeSelector: React.FC<PageHeaderProps> = ({
   ...props
 }) => {
   return (
-    <WrappedRangeSelector>
+    <WrappedRangeSelector data-testid={testID}>
       <GrangeSelector {...props} />
     </WrappedRangeSelector>
   );
