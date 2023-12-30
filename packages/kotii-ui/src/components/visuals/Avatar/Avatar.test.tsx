@@ -6,8 +6,8 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Avatar from "./Avatar";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Avatar component", () => {
+  test("Check if Avatar component renders", () => {
     render(
       <KotiiThemeProvider>
         <Avatar />
