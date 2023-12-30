@@ -12,6 +12,6 @@ describe("Running Test for Footer component", () => {
         <p>{DOM_BY_TEXT}</p>
       </Footer>
     );
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

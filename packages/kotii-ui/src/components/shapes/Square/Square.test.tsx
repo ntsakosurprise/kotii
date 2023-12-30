@@ -12,6 +12,6 @@ describe("Testing Square Shape Cases", () => {
         <Square width={"100px"}>{DOM_BY_TEXT}</Square>
       </KotiiThemeProvider>
     );
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

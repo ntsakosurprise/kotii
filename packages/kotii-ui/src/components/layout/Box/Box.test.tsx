@@ -12,6 +12,6 @@ describe("Running Test for Box component", () => {
         <p>{DOM_BY_TEXT}</p>
       </Box>
     );
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });
