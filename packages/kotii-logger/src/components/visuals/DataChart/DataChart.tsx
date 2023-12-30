@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedDataChart = styled.div<PageHeaderProps>``;
 
-const Chart: React.FC<PageHeaderProps> = ({ data, ...props }) => {
+const Chart: React.FC<PageHeaderProps> = ({ testID = "", data, ...props }) => {
   return (
     <WrappedDataChart data={data}>
       <GdataChart {...props} data={data} />

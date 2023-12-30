@@ -9,7 +9,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedMenu = styled.div<PageHeaderProps>``;
 
-const Menu: React.FC<PageHeaderProps> = ({ items, ...props }) => {
+const Menu: React.FC<PageHeaderProps> = ({ testID = "", items, ...props }) => {
   return (
     <WrappedMenu items={items}>
       <Gmenu items={items} {...props} />

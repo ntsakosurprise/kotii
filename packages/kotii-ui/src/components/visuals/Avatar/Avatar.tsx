@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedAvatar = styled.div<PageHeaderProps>``;
 
-const Avatar: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Avatar: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
     <WrappedAvatar>
       <Gavatar {...props} />

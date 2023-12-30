@@ -8,7 +8,12 @@ import { PageHeaderProps } from "./types";
 
 const WrappedTag = styled.div<PageHeaderProps>``;
 
-const TAG: React.FC<PageHeaderProps> = ({ value, children, ...props }) => {
+const TAG: React.FC<PageHeaderProps> = ({
+  testID = "",
+  value,
+  children,
+  ...props
+}) => {
   return (
     <WrappedTag value={value}>
       <Tag value={value} {...props} />

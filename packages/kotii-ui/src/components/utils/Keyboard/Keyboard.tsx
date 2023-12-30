@@ -8,7 +8,11 @@ import { PageHeaderProps } from "./types";
 
 const WrappedKeyboard = styled.div<PageHeaderProps>``;
 
-const Keyboard: React.FC<PageHeaderProps> = ({ children, ...props }) => {
+const Keyboard: React.FC<PageHeaderProps> = ({
+  testID = "",
+  children,
+  ...props
+}) => {
   return (
     <WrappedKeyboard>
       <Gkeyboard {...props}>{children}</Gkeyboard>

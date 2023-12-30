@@ -9,6 +9,7 @@ import { PageHeaderProps } from "./types";
 const WrappedDataTableColumns = styled.div<PageHeaderProps>``;
 
 const DataTableColumns: React.FC<PageHeaderProps> = ({
+  testID = "",
   drop,
   options,
   ...props

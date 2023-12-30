@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedRangeInput = styled.div<PageHeaderProps>``;
 
-const RangeInput: React.FC<PageHeaderProps> = ({ ...props }) => {
+const RangeInput: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
     <WrappedRangeInput>
       <GrangeInput {...props} />

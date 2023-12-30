@@ -8,7 +8,11 @@ import { PageHeaderProps } from "./types";
 
 const WrappedDataFilter = styled.div<PageHeaderProps>``;
 
-const DataFilter: React.FC<PageHeaderProps> = ({ property, ...props }) => {
+const DataFilter: React.FC<PageHeaderProps> = ({
+  testID = "",
+  property,
+  ...props
+}) => {
   return (
     <WrappedDataFilter property={property}>
       <GdataFilter {...props} property={property} />

@@ -8,7 +8,11 @@ import { PageHeaderProps } from "./types";
 
 const WrappedAnchor = styled.div<PageHeaderProps>``;
 
-const Anchor: React.FC<PageHeaderProps> = ({ children, ...props }) => {
+const Anchor: React.FC<PageHeaderProps> = ({
+  testID = "",
+  children,
+  ...props
+}) => {
   return (
     <WrappedAnchor>
       <Ganchor {...props}>{children}</Ganchor>

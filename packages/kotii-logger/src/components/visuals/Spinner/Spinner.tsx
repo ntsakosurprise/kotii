@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedSpinner = styled.div<PageHeaderProps>``;
 
-const Notification: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Notification: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
     <WrappedSpinner>
       <Gspinner {...props} />

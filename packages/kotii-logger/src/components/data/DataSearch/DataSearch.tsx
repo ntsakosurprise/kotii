@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedDataSearch = styled.div<PageHeaderProps>``;
 
-const DataSearch: React.FC<PageHeaderProps> = ({ ...props }) => {
+const DataSearch: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
     <WrappedDataSearch>
       <GdataSearch {...props} />

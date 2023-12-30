@@ -7,7 +7,11 @@ import { PageHeaderProps } from "./types";
 
 const WrappedThumbsRating = styled.div<PageHeaderProps>``;
 
-const ThumbsRating: React.FC<PageHeaderProps> = ({ name, ...props }) => {
+const ThumbsRating: React.FC<PageHeaderProps> = ({
+  testID = "",
+  name,
+  ...props
+}) => {
   return (
     <WrappedThumbsRating name={name}>
       <GthumbsRating {...props} name={name} />

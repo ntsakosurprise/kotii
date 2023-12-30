@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedDateInput = styled.div<PageHeaderProps>``;
 
-const DateInput: React.FC<PageHeaderProps> = ({ ...props }) => {
+const DateInput: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
     <WrappedDateInput>
       <GdateInput {...props} />

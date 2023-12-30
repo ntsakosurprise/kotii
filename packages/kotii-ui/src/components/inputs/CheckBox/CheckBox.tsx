@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedCheckBox = styled.div<PageHeaderProps>``;
 
-const CheckBox: React.FC<PageHeaderProps> = ({ ...props }) => {
+const CheckBox: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
     <WrappedCheckBox>
       <GcheckBox {...props} />

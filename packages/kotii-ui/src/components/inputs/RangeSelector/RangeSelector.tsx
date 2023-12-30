@@ -8,7 +8,10 @@ import { PageHeaderProps } from "./types";
 
 const WrappedRangeSelector = styled.div<PageHeaderProps>``;
 
-const RangeSelector: React.FC<PageHeaderProps> = ({ ...props }) => {
+const RangeSelector: React.FC<PageHeaderProps> = ({
+  testID = "",
+  ...props
+}) => {
   return (
     <WrappedRangeSelector>
       <GrangeSelector {...props} />

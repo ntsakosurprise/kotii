@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedDataView = styled.div<PageHeaderProps>``;
 
-const DataView: React.FC<PageHeaderProps> = ({ ...props }) => {
+const DataView: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
     <WrappedDataView>
       <GdataView {...props} />

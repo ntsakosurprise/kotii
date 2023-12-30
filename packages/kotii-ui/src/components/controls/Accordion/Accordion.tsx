@@ -8,7 +8,11 @@ import { PageHeaderProps } from "./types";
 
 const WrappedAccordion = styled.div<PageHeaderProps>``;
 
-const Accordion: React.FC<PageHeaderProps> = ({ children, ...props }) => {
+const Accordion: React.FC<PageHeaderProps> = ({
+  testID = "",
+  children,
+  ...props
+}) => {
   return (
     <WrappedAccordion>
       <Gaccordion {...props}>{children}</Gaccordion>

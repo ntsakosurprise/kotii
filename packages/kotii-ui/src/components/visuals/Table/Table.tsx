@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedTable = styled.div<PageHeaderProps>``;
 
-const Table: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Table: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
     <WrappedTable>
       <Gtable {...props} />

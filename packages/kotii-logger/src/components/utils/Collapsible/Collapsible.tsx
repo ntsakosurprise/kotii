@@ -8,7 +8,11 @@ import { PageHeaderProps } from "./types";
 
 const WrappedCollapsible = styled.div<PageHeaderProps>``;
 
-const Collapsible: React.FC<PageHeaderProps> = ({ children, ...props }) => {
+const Collapsible: React.FC<PageHeaderProps> = ({
+  testID = "",
+  children,
+  ...props
+}) => {
   return (
     <WrappedCollapsible>
       <Gcollapsible {...props}>{children}</Gcollapsible>

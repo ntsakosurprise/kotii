@@ -9,8 +9,8 @@ import { PageHeaderProps } from "./types";
 const WrappedCalendar = styled.div<PageHeaderProps>``;
 
 const Select: React.FC<PageHeaderProps> = ({
-  children,
   testID = "",
+  children,
   ...props
 }) => {
   return (

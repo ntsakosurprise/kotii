@@ -7,7 +7,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedMarkdown = styled.div<PageHeaderProps>``;
 
-const Markdown: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Markdown: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return <WrappedMarkdown>{/* <Gmarkdown {...props} /> */}</WrappedMarkdown>;
 };
 

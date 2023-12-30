@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedButton = styled.div<PageHeaderProps>``;
 
-const Button: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Button: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
     <WrappedButton>
       <Gbutton {...props} />

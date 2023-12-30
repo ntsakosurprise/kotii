@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedMain = styled.div<PageHeaderProps>``;
 
-const Grid: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Grid: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
     <WrappedMain>
       <Gmain {...props} />

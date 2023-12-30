@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedDataSummary = styled.div<PageHeaderProps>``;
 
-const DataSummary: React.FC<PageHeaderProps> = ({ ...props }) => {
+const DataSummary: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
     <WrappedDataSummary>
       <GdataSummary {...props} />

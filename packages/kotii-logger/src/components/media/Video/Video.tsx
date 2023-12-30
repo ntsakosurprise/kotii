@@ -8,7 +8,7 @@ import { PageHeaderProps } from "./types";
 
 const WrappedVideo = styled.div<PageHeaderProps>``;
 
-const Video: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Video: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
     <WrappedVideo>
       <Gvideo {...props} />

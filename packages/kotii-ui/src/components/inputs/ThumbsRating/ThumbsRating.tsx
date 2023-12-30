@@ -8,8 +8,8 @@ import { PageHeaderProps } from "./types";
 const WrappedThumbsRating = styled.div<PageHeaderProps>``;
 
 const ThumbsRating: React.FC<PageHeaderProps> = ({
-  name,
   testID = "",
+  name,
   ...props
 }) => {
   return (
