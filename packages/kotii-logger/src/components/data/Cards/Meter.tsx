@@ -8,9 +8,9 @@ import { PageHeaderProps } from "./types";
 
 const WrappedMeter = styled.div<PageHeaderProps>``;
 
-const Chart: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Chart: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedMeter>
+    <WrappedMeter data-testid={testID}>
       <Gmeter {...props} />
     </WrappedMeter>
   );

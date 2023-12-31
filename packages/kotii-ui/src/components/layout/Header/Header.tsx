@@ -2,17 +2,18 @@ import { Header as Gheader } from "grommet";
 import React from "react";
 import styled from "styled-components";
 // import { BoxProps } from "./types";
-import { BaseProps } from "../../../types";
+import { HeaderProps } from "./types";
 
-const WrappedHeader = styled.div<BaseProps>``;
-const Header: React.FC<BaseProps> = ({
+const WrappedHeader = styled.div<HeaderProps>``;
+const Header: React.FC<HeaderProps> = ({
   // pad,
   // direction,
+  testID = "",
   children,
   ...props
 }) => {
   return (
-    <WrappedHeader>
+    <WrappedHeader data-testid={testID}>
       <Gheader {...props}>{children}</Gheader>
     </WrappedHeader>
   );

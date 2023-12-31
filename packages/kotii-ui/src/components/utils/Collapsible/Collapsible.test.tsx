@@ -6,11 +6,11 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Collapsible from "./Collapsible";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Collapsible component", () => {
+  test("Check if Collapsible component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Collapsible>
+        <Collapsible testID={DOM_BY_TEXT}>
           <p>test</p>
         </Collapsible>
       </KotiiThemeProvider>
@@ -18,6 +18,6 @@ describe("Running Test for Grid component", () => {
     // expect(
     //   screen.getByRole("button", { name: "Button marbella" })
     // ).toBeDisabled();
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

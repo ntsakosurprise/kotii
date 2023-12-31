@@ -8,9 +8,13 @@ import { PageHeaderProps } from "./types";
 
 const WrappedDistribution = styled.div<PageHeaderProps>``;
 
-const Distribution: React.FC<PageHeaderProps> = ({ values, ...props }) => {
+const Distribution: React.FC<PageHeaderProps> = ({
+  testID = "",
+  values,
+  ...props
+}) => {
   return (
-    <WrappedDistribution values={values}>
+    <WrappedDistribution values={values} data-testid={testID}>
       <Gdistribution {...props} values={values} />
     </WrappedDistribution>
   );

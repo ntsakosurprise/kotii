@@ -6,16 +6,16 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Chart from "./Chart";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Chart component", () => {
+  test("Check if Chart component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Chart values={[0, 1]} />
+        <Chart values={[0, 1]} testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(
     //   screen.getByRole("button", { name: "Button marbella" })
     // ).toBeDisabled();
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

@@ -12,7 +12,7 @@ const Header: React.FC<BaseProps> = ({
   ...props
 }) => {
   return (
-    <WrappedHeader>
+    <WrappedHeader data-testid={testID}>
       <Gheader {...props}>{children}</Gheader>
     </WrappedHeader>
   );

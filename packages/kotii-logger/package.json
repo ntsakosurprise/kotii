@@ -20,8 +20,7 @@
     "clean": "rimraf lib coverage tsconfig.tsbuildinfo",
     "start": "webpack-dev-server --watch",
     "build": "webpack --mode production",
-    "buildDev": "webpack --mode development",
-    "test": "jest"
+    "buildDev": "webpack --mode development"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",

@@ -7,16 +7,16 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import DataFilters from "./DataFilters";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for DataFilter   component", () => {
+  test("Check if DataFilter  component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DataFilters />
+        <DataFilters testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(
     //   screen.getByRole("button", { name: "Button marbella" })
     // ).toBeDisabled();
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

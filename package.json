@@ -20,7 +20,9 @@
     "release": "lerna publish",
     "start": "cd packages/kotii-scripts && node --experimental-loader ./compile/hooks.js app.js start",
     "build": "cd packages/kotii-scripts && node --experimental-loader ./compile/hooks.js app.js build",
-    "kotii": "node run_local/runKotiiCli.js"
+    "kotii": "node run_local/runKotiiCli.js",
+    "commit": "commit",
+    "test": "npx lerna run test"
   },
   "license": "ISC",
   "readmeFilename": "README.md",
@@ -46,11 +48,12 @@
     "cross-spawn": "^7.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "styled-components": "^6.1.1"
+    "styled-components": "5.3.11"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.0.3",
-    "@commitlint/config-conventional": "^17.0.3",
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "@commitlint/prompt-cli": "^18.4.3",
     "eslint": "^8.19.0",
     "eslint-plugin-jest": "^27.2.1",
     "eslint-plugin-react": "^7.30.1",
@@ -61,6 +64,7 @@
     "node-sass": "^7.0.1",
     "nx": "^14.4.2",
     "prettier": "^2.7.1",
+    "ts-jest": "^29.1.1",
     "typescript": "^4.9.4"
   }
 }

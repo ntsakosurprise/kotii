@@ -8,9 +8,13 @@ import { PageHeaderProps } from "./types";
 
 const WrappedSelect = styled.div<PageHeaderProps>``;
 
-const Select: React.FC<PageHeaderProps> = ({ options, ...props }) => {
+const Select: React.FC<PageHeaderProps> = ({
+  testID = "",
+  options,
+  ...props
+}) => {
   return (
-    <WrappedSelect options={options}>
+    <WrappedSelect options={options} data-testid={testID}>
       <GrangeSelect {...props} options={options} />
     </WrappedSelect>
   );

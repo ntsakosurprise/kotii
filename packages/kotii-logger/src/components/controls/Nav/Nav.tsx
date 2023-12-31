@@ -8,9 +8,13 @@ import { PageHeaderProps } from "./types";
 
 const WrappedNav = styled.div<PageHeaderProps>``;
 
-const Nav: React.FC<PageHeaderProps> = ({ children, ...props }) => {
+const Nav: React.FC<PageHeaderProps> = ({
+  testID = "",
+  children,
+  ...props
+}) => {
   return (
-    <WrappedNav>
+    <WrappedNav data-testid={testID}>
       <Gnav {...props}>{children}</Gnav>
     </WrappedNav>
   );

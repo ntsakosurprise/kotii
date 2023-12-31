@@ -10,11 +10,11 @@ describe("Running Test for Header component", () => {
   test("Check Header component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Header>
+        <Header testID={DOM_BY_TEXT}>
           <p>{DOM_BY_TEXT}</p>
         </Header>
       </KotiiThemeProvider>
     );
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

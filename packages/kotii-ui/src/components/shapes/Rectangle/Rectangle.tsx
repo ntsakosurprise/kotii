@@ -15,11 +15,16 @@ const StyledShape = styled("div")((props) => {
   return { ...styles };
 });
 
-const Rectangle: React.FC<ShapeProps> = ({ name, children, ...props }) => {
+const Rectangle: React.FC<ShapeProps> = ({
+  testID = "",
+  name,
+  children,
+  ...props
+}) => {
   const { theme, themes, changeTheme, themeMode = "dark" } = useKotiiTheme();
   const newProps = { ...props, themeMode };
   return (
-    <StyledShape {...newProps} theme={theme}>
+    <StyledShape {...newProps} theme={theme} data-testid={testID}>
       {children ? children : null}
     </StyledShape>
   );

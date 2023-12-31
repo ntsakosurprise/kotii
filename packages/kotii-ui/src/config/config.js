@@ -2,7 +2,7 @@ import { getFromStorage, removeFromStorage, setInStorage } from "kotii-utils";
 import { themes } from "./themes";
 
 const initiateThemes = () => {
-  console.log("PROCESSDEFAULTHEME;;;", themes);
+  //console.log("PROCESSDEFAULTHEME;;;", themes);
 
   if (!getFromStorage("theme")) {
     setInStorage("theme", themes.seaWave);
@@ -17,9 +17,9 @@ initiateThemes();
 
 export const logStoredThemesStatus = () => {
   if (getFromStorage("themes")) {
-    console.log("Themes have been set", getFromStorage("themes"));
+    //console.log("Themes have been set", getFromStorage("themes"));
   } else {
-    console.log("Themes are not yet available");
+    //console.log("Themes are not yet available");
   }
 };
 

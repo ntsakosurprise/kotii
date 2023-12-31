@@ -8,7 +8,7 @@ const WrappedBox = styled.div<BaseProps>``;
 
 const Box: React.FC<BaseProps> = ({ pad, direction, children, ...props }) => {
   return (
-    <WrappedBox>
+    <WrappedBox data-testid={testID}>
       <Gbox direction={direction} pad={pad} {...props}>
         {children}
       </Gbox>

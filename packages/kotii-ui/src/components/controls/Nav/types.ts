@@ -1,2 +1,4 @@
 import { BaseProps } from "../../../types";
-export { BaseProps as PageHeaderProps };
+export interface NavProps extends Omit<BaseProps, "onClick"> {
+  onClick?: (event: React.MouseEvent) => void;
+}

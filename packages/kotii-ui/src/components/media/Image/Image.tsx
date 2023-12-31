@@ -8,9 +8,9 @@ import { PageHeaderProps } from "./types";
 
 const WrappedImage = styled.div<PageHeaderProps>``;
 
-const Image: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Image: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedImage>
+    <WrappedImage data-testid={testID}>
       <Gimage {...props} />
     </WrappedImage>
   );

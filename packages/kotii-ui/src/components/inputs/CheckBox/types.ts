@@ -1,10 +1,13 @@
 import { ReactElement } from "react";
 import { BaseProps } from "../../../types";
 export interface PageHeaderProps
-  extends Omit<BaseProps, "children" | "wrap" | "width" | "fill" | "size"> {
+  extends Omit<
+    BaseProps,
+    "children" | "wrap" | "width" | "fill" | "size" | "onClick"
+  > {
   gridArea?: string;
   disabled?: boolean;
-
+  onClick?: (event: React.MouseEvent) => void;
   checked?: boolean;
   children?: ReactElement;
   id?: string;

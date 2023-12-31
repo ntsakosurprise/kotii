@@ -8,9 +8,9 @@ import { PageHeaderProps } from "./types";
 
 const WrappedSideBar = styled.div<PageHeaderProps>``;
 
-const SideBar: React.FC<PageHeaderProps> = ({ ...props }) => {
+const SideBar: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedSideBar>
+    <WrappedSideBar data-testid={testID}>
       <Sidebar {...props} />
     </WrappedSideBar>
   );

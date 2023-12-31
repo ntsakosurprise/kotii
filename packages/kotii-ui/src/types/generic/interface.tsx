@@ -55,6 +55,7 @@ export interface BaseProps {
     | "xxlarge"
     | { min: string; max: string };
   wrap?: boolean | "reverse";
+  testID?: string | number;
 }
 
 export interface MarkdownType {

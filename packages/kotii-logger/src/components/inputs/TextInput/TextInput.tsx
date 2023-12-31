@@ -8,9 +8,9 @@ import { PageHeaderProps } from "./types";
 
 const WrappedTextInput = styled.div<PageHeaderProps>``;
 
-const TextInput: React.FC<PageHeaderProps> = ({ ...props }) => {
+const TextInput: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedTextInput>
+    <WrappedTextInput data-testid={testID}>
       <GtextInput {...props} />
     </WrappedTextInput>
   );

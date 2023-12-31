@@ -4,10 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1",
     "start": "webpack-dev-server --watch",
     "build": "webpack --mode production",
-    "buildDev": "webpack --mode development"
+    "buildDev": "webpack --mode development",
+    "test": "jest"
   },
   "dependencies": {
     "@node-loader/babel": "^2.0.1",
@@ -21,6 +21,7 @@
     "babel-cli": "^6.26.0",
     "babel-loader": "^8.2.3",
     "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.6.1",
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.7.4"

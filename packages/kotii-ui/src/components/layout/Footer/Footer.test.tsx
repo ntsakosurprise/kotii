@@ -8,10 +8,10 @@ import Footer from "./Footer";
 describe("Running Test for Footer component", () => {
   test("Check Footer component Renders", () => {
     render(
-      <Footer>
+      <Footer testID={DOM_BY_TEXT}>
         <p>{DOM_BY_TEXT}</p>
       </Footer>
     );
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

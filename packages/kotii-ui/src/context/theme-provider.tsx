@@ -38,13 +38,13 @@ export const CustomThemeProvider = (props) => {
   // console.log("currentTheme;;;", theme);
   // console.log("CurrentThemes", themes);
   // console.log(isThemeLoaded);
-  console.log(props);
+  //console.log(props);
   useEffect(() => {
     logStoredThemesStatus();
   }, []);
 
   const changeThemeMode = (themeMode) => {
-    console.log("CURRENT THEMMODE", JSON.stringify(themeMode));
+    //console.log("CURRENT THEMMODE", JSON.stringify(themeMode));
     if (themeMode === "dark") {
       setThemeMode("light");
     } else {
@@ -57,9 +57,9 @@ export const CustomThemeProvider = (props) => {
     setThemeName(name);
   };
   useEffect(() => {
-    console.log("THEME NAME CHANGED;;;", themeName);
-    console.log("directThemes", directThemes);
-    console.log("directThemes theme", directThemes[themeName]);
+    // console.log("THEME NAME CHANGED;;;", themeName);
+    // console.log("directThemes", directThemes);
+    // console.log("directThemes theme", directThemes[themeName]);
     setCurrentTheme(directThemes[themeName]);
   }, [themeName]);
   // console.log("The theme name", themeName);
