@@ -4908,7 +4908,7 @@
     js-yaml "^3.10.0"
     tslib "^2.4.0"
 
-"@yarnpkg/parsers@^3.0.0-rc.18":
+"@yarnpkg/parsers@^3.0.0", "@yarnpkg/parsers@^3.0.0-rc.18":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@yarnpkg/parsers/-/parsers-3.0.0.tgz#a43136f094bca5dcc1ae784c296446a85211cc62"
   integrity sha512-jVZa3njBv6tcOUw34nlUdUM/40wwtm/gnVF8rtk0tA6vNcokqYI8CFU1BZjlpFwUSZaXxYkrtuPE/f2MMFlTxQ==
@@ -5172,7 +5172,7 @@ anymatch@^3.0.3, anymatch@~3.1.2:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
-anzii@^6.0.0, anzii@^6.1.0:
+anzii@^6.0.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/anzii/-/anzii-6.1.0.tgz#47ff947d94461a4a9c49ca09a26e365ec899bb1e"
   integrity sha512-bZhtrbWs7V4T0FLgWpvru4eyL116oe73jtDXq8UJzbvi1LemAIdpzs7GT5MvJEvCa5ZDnhEyujyQSjdJYWl/tw==
@@ -14698,6 +14698,15 @@ onetime@^6.0.0:
   dependencies:
     mimic-fn "^4.0.0"
 
+open@8.4.1:
+  version "8.4.1"
+  resolved "https://registry.yarnpkg.com/open/-/open-8.4.1.tgz#2ab3754c07f5d1f99a7a8d6a82737c95e3101cff"
+  integrity sha512-/4b7qZNhv6Uhd7jjnREh1NjnPxlTq+XNWPG88Ydkj5AILcA5m3ajvcg57pB24EQjKv0dK62XnDqk9c/hkIG5Kg==
+  dependencies:
+    define-lazy-prop "^2.0.0"
+    is-docker "^2.1.1"
+    is-wsl "^2.2.0"
+
 open@^7.4.2:
   version "7.4.2"
   resolved "https://registry.yarnpkg.com/open/-/open-7.4.2.tgz#b8147e26dcf3e426316c730089fd71edd29c2321"
@@ -18613,6 +18622,11 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
 
+typescript@<4.8:
+  version "4.7.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
+  integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
+
 "typescript@^3 || ^4", typescript@^4.9.4:
   version "4.9.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
@@ -18652,6 +18666,43 @@ unbox-primitive@^1.0.2:
     has-bigints "^1.0.2"
     has-symbols "^1.0.3"
     which-boxed-primitive "^1.0.2"
+
+"undefined@file:../Development/frameworks/anzii/packages/anzii/anzii-6.1.0.tgz":
+  version "6.1.0"
+  resolved "file:../Development/frameworks/anzii/packages/anzii/anzii-6.1.0.tgz#84ba8f28f4089fe4fd4458a5e7bae6c73a53b0c8"
+  dependencies:
+    "@babel/polyfill" "^7.12.1"
+    "@babel/register" "^7.12.13"
+    app-root-path "^3.0.0"
+    bcryptjs "^2.4.3"
+    body-parser "^1.18.3"
+    cjstoesm "^2.1.2"
+    config "^2.0.2"
+    cors "^2.8.5"
+    debug "^3.2.6"
+    esm "^3.2.25"
+    express "^4.16.3"
+    express-async-errors "^3.1.1"
+    extend "^3.0.2"
+    fakeredis "^2.0.0"
+    file-type "^14.1.4"
+    formidable "^1.2.2"
+    fs "0.0.1-security"
+    glob "^10.3.10"
+    mysql "^2.16.0"
+    mysql2 "^2.3.3"
+    node.extend "^2.0.2"
+    open "8.4.1"
+    passport "^0.4.1"
+    patch-package "^6.2.2"
+    promise-mysql "^3.3.1"
+    react "^18.2.0"
+    redis "^2.6.3"
+    supports-color "^7.1.0"
+    typescript "<4.8"
+    uuid "^7.0.2"
+    winston "^3.2.1"
+    yarn-run-all "^3.1.1"
 
 undefsafe@^2.0.5:
   version "2.0.5"
