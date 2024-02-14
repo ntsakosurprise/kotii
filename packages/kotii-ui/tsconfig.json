@@ -4,8 +4,8 @@
     "outDir": "lib",
     // "rootDir": ".",
     "allowJs": true,
-    "baseUrl": "./"
-
+    "baseUrl": "./",
+    "module": "CommonJS"
     // "paths": {
     //   "Config": ["src/config/"],
     //   "Hooks": ["src/hooks/index"],
@@ -15,5 +15,5 @@
     //   "Constants": ["./src/constants/*"]
     // }
   },
-  "include": ["./src", "./globals.d.ts"]
+  "include": ["./src"]
 }

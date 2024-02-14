@@ -7,9 +7,9 @@ import { PageProps } from "./types";
 
 const WrappedPage = styled.div<PageProps>``;
 
-const Page: React.FC<PageProps> = ({ testID = "", children, ...props }) => {
+const Page: React.FC<PageProps> = ({ children, ...props }) => {
   return (
-    <WrappedPage data-testid={testID}>
+    <WrappedPage>
       <Gpage {...props}>{children}</Gpage>
     </WrappedPage>
   );
