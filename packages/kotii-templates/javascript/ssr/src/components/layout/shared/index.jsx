@@ -1,9 +1,10 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import styled from "styled-components";
+import styledDefault from "styled-components";
 import { Link } from "wouter";
 import KotiiAltSvg from "./kotiiAltSvg.jsx";
 import KotiiSvg from "./kotiiSvg.jsx";
+const styled = styledDefault.default;
 // import kotiiSvg from "./kotii.svg";
 const StyledBrand = styled("div")({
   display: "flex",

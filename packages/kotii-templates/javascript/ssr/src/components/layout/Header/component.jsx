@@ -1,8 +1,9 @@
 import React from "react";
 import { TfiGithub } from "react-icons/tfi/index.js";
-import styled from "styled-components";
+import styledDefault from "styled-components";
 import { Link } from "wouter";
 import { Brand } from "../shared/index.jsx";
+const styled = styledDefault.default;
 // import { Link } from "react-router-dom";
 
 const StyledHeader = styled("header")({

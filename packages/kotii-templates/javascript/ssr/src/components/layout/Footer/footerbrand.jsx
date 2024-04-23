@@ -1,7 +1,8 @@
 import React from "react";
 import { AiFillGithub, AiFillTwitterCircle } from "react-icons/ai/index.js";
-import styled from "styled-components";
+import styledDefault from "styled-components";
 import { Brand } from "../shared/index.jsx";
+const styled = styledDefault.default;
 
 const AuthorText = styled("section")({
   display: "flex",

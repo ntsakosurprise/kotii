@@ -1,5 +1,6 @@
 import React from "react";
-import styled from "styled-components";
+import styledDefault from "styled-components";
+const styled = styledDefault.default;
 const StyledSvgImage = styled("svg")({
   position: "absolute",
   // top: "120%",
