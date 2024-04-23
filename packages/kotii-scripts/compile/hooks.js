@@ -31,20 +31,20 @@ export async function load(url, context, nextLoad) {
   console.log("LOAD HOOK FORMAT", format);
   console.log("LOAD HOOK FORMAT URL", url);
   console.log("LOAD EXTENSION NAME", fileExtension);
-  if (
-    format === "commonjs" &&
-    (url === styledComponentsUrl || url === styledComponentsUrlFromClient)
-  ) {
-    let cutCode = fs.readFileSync(new URL(styledComponentESMUrm).pathname, {
-      encoding: "utf-8",
-    });
-    console.log("THE CUTCODE", cutCode);
-    return {
-      format: "module",
-      shortCircuit: true,
-      source: cutCode,
-    };
-  }
+  // if (
+  //   format === "commonjs" &&
+  //   (url === styledComponentsUrl || url === styledComponentsUrlFromClient)
+  // ) {
+  //   let cutCode = fs.readFileSync(new URL(styledComponentESMUrm).pathname, {
+  //     encoding: "utf-8",
+  //   });
+  //   console.log("THE CUTCODE", cutCode);
+  //   return {
+  //     format: "module",
+  //     shortCircuit: true,
+  //     source: cutCode,
+  //   };
+  // }
 
   if (
     whiteListedUrls.indexOf(url) >= 0 ||
