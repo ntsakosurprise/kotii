@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
+import styled from "kotii-styled";
 import React from "react";
-import styledDefault from "styled-components";
-const styled = styledDefault.default;
+
 const GoogleFonts = styled.div`
   @import url("https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap");
   @import url("https://fonts.googleapis.com/css2?family=Pangolin&display=swap");

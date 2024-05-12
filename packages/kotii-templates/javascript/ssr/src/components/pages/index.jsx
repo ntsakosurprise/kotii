@@ -1,6 +1,5 @@
+import styled from "kotii-styled";
 import React from "react";
-import styledDefault from "styled-components";
-const styled = styledDefault.default;
 
 const Hero = styled("div")(() => {
   return {

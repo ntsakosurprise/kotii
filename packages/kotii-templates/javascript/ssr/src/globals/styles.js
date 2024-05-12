@@ -1,6 +1,4 @@
-import { createGlobalStyle } from "styled-components";
-// import { resetStyles } from "../base/reset.styles";
-// import { markDownStyles } from "../markdown/markdown.styles";
+import { createGlobalStyle } from "kotii-styled";
 
 export const GlobalStyle = createGlobalStyle`
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -11,8 +9,8 @@ h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 	dl, dt, dd, ol, ul, li,
 	fieldset, form, label, legend,
 	table, caption, tbody, tfoot, thead, tr, th, td,
-	article, aside, canvas, details, embed, 
-	figure, figcaption, footer, header, hgroup, 
+	article, aside, canvas, details, embed,
+	figure, figcaption, footer, header, hgroup,
 	menu, nav, output, ruby, section, summary,
 	time, mark, audio, video {
 		margin: 0;
@@ -22,33 +20,28 @@ h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 		vertical-align: baseline;
 	}
 	/* HTML5 display-role reset for older browsers */
-	article, aside, details, figcaption, figure, 
+	article, aside, details, figcaption, figure,
 	footer, header, hgroup, menu, nav, section {
 		display: block;
 	}
-	
+
 	html, body{
 		background: #f2f3f4;
         font-size: 100%;
 		background: white;
-		
-        
+
 	}
     body {
 		line-height: 1;
         box-sizing: border-box;
         margin: 0 auto;
-		
-		
-		
 
 		& #root{
-			
+
 			display: flex;
 			flex-direction: column;
 			min-height: 100vh;
-			
-			
+
 		}
 	}
 
@@ -73,6 +66,5 @@ h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 	}
 	a{
 		text-decoration: none;
-		
-    
+
     `;
