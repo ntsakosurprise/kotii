@@ -13,14 +13,18 @@ let whiteListedUrls = [
  * reading the file content from disk and returning it to avoid styled
  * component function being undefiend
  */
-const styledComponentsUrl =
-  "file:///Users/surprisemashele/Documents/kotii/node_modules/styled-components/dist/styled-components.cjs.js";
-const styledComponentsUrlFromClient =
-  "file:///Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/node_modules/styled-components/dist/styled-components.cjs.js";
-const styledComponentESMUrm =
-  "file:///Users/surprisemashele/Documents/kotii/node_modules/styled-components/dist/styled-components.esm.js";
-// let pagesURL =
-//   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/";
+// const styledComponentsUrl =
+//   "file:///Users/surprisemashele/Documents/kotii/node_modules/styled-components/dist/styled-components.cjs.js";
+// const styledComponentsUrlFromClient =
+//   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/node_modules/styled-components/dist/styled-components.cjs.js";
+// // const styledComponentESMUrm =
+// //   "file:///Users/surprisemashele/Documents/kotii/node_modules/styled-components/dist/styled-components.esm.js";
+// const styledComponentESMUrm =
+//   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/node_modules/styled-components/dist/styled-components.esm.js";
+// // let pagesURL =
+// //   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/";
+// let styledUrl =
+//   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-scriptsnk/import_test.js";
 let extJsx = ".jsx";
 let extSvg = ".svg";
 export async function load(url, context, nextLoad) {
@@ -33,9 +37,10 @@ export async function load(url, context, nextLoad) {
   console.log("LOAD EXTENSION NAME", fileExtension);
   // if (
   //   format === "commonjs" &&
-  //   (url === styledComponentsUrl || url === styledComponentsUrlFromClient)
+  //   (url === styledComponentsUrlFromClient || url === styledComponentsUrl)
   // ) {
-  //   let cutCode = fs.readFileSync(new URL(styledComponentESMUrm).pathname, {
+  //   console.log("THE FORMAT IS COMMONJS", format, url);
+  //   let cutCode = fs.readFileSync(new URL(styledUrl).pathname, {
   //     encoding: "utf-8",
   //   });
   //   console.log("THE CUTCODE", cutCode);
