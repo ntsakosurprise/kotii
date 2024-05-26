@@ -27,7 +27,7 @@ class Interpreter {
     this.outPut = methods.outPut;
     this.showAvailableCommands = methods.showAvailableCommands;
     this.createKotiiAppCommand = methods.createKotiiAppCommand;
-    this.helpCommand = methods.helpComand;
+    this.help = methods.help;
     this.versionCommand = methods.versionCommand;
     this.parseCommands = methods.parseCommands;
     this.processOptionsAsCommands = methods.processOptionsAsCommands;

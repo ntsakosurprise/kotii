@@ -128,7 +128,7 @@ methods.showAvailableCommands = function () {
   console.log(mainHelp);
 };
 
-methods.helpComand = function () {
+methods.help = function () {
   const self = this;
   const chalk = self.chalk;
   let help = `
@@ -209,6 +209,7 @@ methods.createKotiiAppCommand = function () {
 };
 
 methods.startCommand = function () {
+  console.log("START COMMAND RAN");
   const self = this;
   const pao = self.pao;
   const chalk = self.chalk;
