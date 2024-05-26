@@ -2,7 +2,8 @@ import React from "react";
 import { hydrateRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import createReduxStore from "./app_redux.js";
-import ClientRoutes, { RoutesAsServerRoutes } from "./build.js";
+// import ClientRoutes, { RoutesAsServerRoutes } from "./build.js";
+import { ClientRoutes, RoutesAsServerRoutes } from "./build.js";
 
 const App = (appWrapper = null, layout = null) => {
   const store = createReduxStore(window.__PRELOADED_STATE__);

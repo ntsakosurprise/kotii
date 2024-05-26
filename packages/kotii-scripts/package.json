@@ -76,6 +76,7 @@
     "import-jsx": "^5.0.0",
     "inquirer": "^7.3.3",
     "is-online": "^8.5.1",
+    "kotii-styled": "file:../kotii-styled",
     "listr": "^0.14.3",
     "node-cache": "^5.1.2",
     "octonode": "^0.9.5",

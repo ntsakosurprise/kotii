@@ -199,5 +199,6 @@ const RoutesAsServerRoutes = (props) => {
     </Layout>
   );
 };
-export { RoutesAsServerRoutes, routes };
-export default ClientRoutes;
+// export { RoutesAsServerRoutes, routes };
+// export default ClientRoutes;
+export { RoutesAsServerRoutes, routes, ClientRoutes };
