@@ -1,0 +1,19 @@
+{
+  "name": "kotii-styled",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js",
+      "default": "./index_.js"
+    }
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "styled-components": "^6.1.11"
+  }
+}
