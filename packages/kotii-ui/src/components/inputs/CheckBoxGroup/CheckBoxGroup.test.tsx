@@ -6,16 +6,19 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import CheckBoxGroup from "./CheckBoxGroup";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for CheckBoxGroup component", () => {
+  test("Check if CheckBoxGroup component renders", () => {
     render(
       <KotiiThemeProvider>
-        <CheckBoxGroup options={["Maui", "Kauai", "Oahu"]} />
+        <CheckBoxGroup
+          options={["Maui", "Kauai", "Oahu"]}
+          testID={DOM_BY_TEXT}
+        />
       </KotiiThemeProvider>
     );
     // expect(
     //   screen.getByRole("button", { name: "Button marbella" })
     // ).toBeDisabled();
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

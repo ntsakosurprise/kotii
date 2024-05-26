@@ -40,7 +40,7 @@ module.exports = {
       Hooks: "src/hooks/index",
       Context: "src/context/",
       Utilities: "src/utils/index",
-      Constants: path.resolve(__dirname, "./src/constants/index"),
+      Constants: path.resolve(__dirname, "./src/constants/"),
       Assets: "src/assets/",
       AppGlobals: "src/globals/index",
       Types: "src/types",
@@ -63,6 +63,14 @@ module.exports = {
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"],
+      },
+      // {
+      //   test: /\.(png|jpg|gif|svg)$/i,
+      //   type: "asset/resource",
+      // },
+      {
+        test: /\.svg$/,
+        use: ["@svgr/webpack"],
       },
       // {
       //   test: /\.scss$/,

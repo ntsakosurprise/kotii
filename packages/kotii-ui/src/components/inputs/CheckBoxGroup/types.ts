@@ -2,7 +2,10 @@ import { CheckBoxType } from "grommet";
 import { ReactElement } from "react";
 import { BaseProps } from "../../../types";
 export interface PageHeaderProps
-  extends Omit<BaseProps, "children" | "wrap" | "width" | "fill" | "size"> {
+  extends Omit<
+    BaseProps,
+    "children" | "wrap" | "width" | "fill" | "size" | "onClick"
+  > {
   gridArea?: string;
   disabled?: boolean;
   checked?: boolean;
@@ -14,6 +17,7 @@ export interface PageHeaderProps
   value?: [number | string];
   valueKey?: string;
   labelKey?: string;
+  onClick?: (event: React.MouseEvent) => void;
 
   // skeleton?: { width?: { min?: number } };
 }

@@ -4,12 +4,12 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1",
     "start": "webpack-dev-server --watch",
     "build": "webpack --mode production",
     "buildDev": "webpack --mode development"
   },
   "dependencies": {
+    "@node-loader/babel": "^2.0.1",
     "grommet": "^2.32.2",
     "grommet-icons": "^4.11.0",
     "i18next": "^21.8.14",

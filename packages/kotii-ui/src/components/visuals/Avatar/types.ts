@@ -1,6 +1,6 @@
 import { BaseProps } from "../../../types";
 export interface PageHeaderProps
-  extends Omit<BaseProps, "children" | "wrap" | "size"> {
+  extends Omit<BaseProps, "children" | "wrap" | "size" | "onClick"> {
   // width?: string | number;
   src?: string;
   size?:
@@ -13,6 +13,7 @@ export interface PageHeaderProps
     | "3xl"
     | "4xl"
     | "5xl";
+  onClick?: (event: React.MouseEvent) => void;
 
   // skeleton?: { width?: { min?: number } };
 }

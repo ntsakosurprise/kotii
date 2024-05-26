@@ -4,13 +4,13 @@ import styled from "styled-components";
 
 // import { BoxProps } from "./types";
 //import { BaseProps } from "../../../types";
-import { PageHeaderProps } from "./types";
+import { MainProps } from "./types";
 
-const WrappedMain = styled.div<PageHeaderProps>``;
+const WrappedMain = styled.div<MainProps>``;
 
-const Grid: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Grid: React.FC<MainProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedMain>
+    <WrappedMain data-testid={testID}>
       <Gmain {...props} />
     </WrappedMain>
   );

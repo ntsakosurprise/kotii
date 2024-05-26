@@ -12,6 +12,7 @@ export interface PageHeaderProps
     | "pad"
     | "round"
     | "background"
+    | "onClick"
   > {
   gridArea?: string;
 
@@ -20,6 +21,7 @@ export interface PageHeaderProps
   color?: string | { dark?: string; light?: string };
   size?: "xsmall" | "small" | "medium" | "large" | "xlarge" | string;
   message?: string | { start?: string; end?: string };
+  onClick?: (event: React.MouseEvent) => void;
 
   // skeleton?: { width?: { min?: number } };
 }

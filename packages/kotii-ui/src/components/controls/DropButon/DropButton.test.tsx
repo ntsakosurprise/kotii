@@ -6,16 +6,16 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import DropButton from "./DropButton";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for DropButton component", () => {
+  test("Check if DropButton component renders", () => {
     render(
       <KotiiThemeProvider>
-        <DropButton dropContent={<div></div>} />
+        <DropButton dropContent={<div></div>} testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(
     //   screen.getByRole("button", { name: "Button marbella" })
     // ).toBeDisabled();
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

@@ -4,15 +4,16 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1",
     "start": "webpack-dev-server --watch",
     "build": "webpack --mode production",
     "buildDev": "webpack --mode development"
   },
   "dependencies": {
+    "@node-loader/babel": "^2.0.1",
     "i18next": "^21.8.14",
     "kotii-utils": "*",
     "react-i18next": "^11.18.1",
+    "react-icons": "^4.11.0",
     "react-select": "^5.4.0",
     "styled-components": "^6.0.5"
   },

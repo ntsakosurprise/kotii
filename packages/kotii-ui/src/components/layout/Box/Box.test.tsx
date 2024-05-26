@@ -8,10 +8,10 @@ import Box from "./Box";
 describe("Running Test for Box component", () => {
   test("Check Box Component renders", () => {
     render(
-      <Box size="large" direction="row">
+      <Box size="large" direction="row" testID={DOM_BY_TEXT}>
         <p>{DOM_BY_TEXT}</p>
       </Box>
     );
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

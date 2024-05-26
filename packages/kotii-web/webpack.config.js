@@ -3,7 +3,7 @@ const path = require("path");
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: ["webpack/hot/dev-server", "./src/index.js"],
   target: "web",
   output: {
     path: path.join(__dirname, "dist"),
@@ -57,6 +57,10 @@ module.exports = {
       {
         test: /\.md$/,
         use: ["kotii-markdown"],
+      },
+      {
+        test: /\.(png|jpg|gif|svg)$/i,
+        type: "asset/resource",
       },
       // {
       //   test: /\.scss$/,

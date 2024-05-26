@@ -1,6 +1,17 @@
 import React, { useEffect } from "react";
+import stones from "../../../../public/img/stones.jpg";
+
 // import { Link } from "react-router-dom";
-import { Box, Button, Circle, Square, Text, useKotiiTheme } from "kotii-ui";
+import {
+  Box,
+  Button,
+  Circle,
+  Oval,
+  Rectangle,
+  Shape,
+  Square,
+  Text,
+} from "kotii-ui";
 const buttonMinWidth = "105px";
 const TokensButton = (props) => {
   return (
@@ -24,17 +35,22 @@ const TokensButton = (props) => {
   );
 };
 
-const randomInteger = (min, max) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
+// const randomInteger = (min, max) => {
+//   return Math.floor(Math.random() * (max - min + 1)) + min;
+// };
 
 const Hero = () => {
-  const { changeTheme, changeThemeMode } = useKotiiTheme();
-  const themeNames = ["dark", "light", "seaWave", "cherry"];
-  const themeModes = ["dark", "light"];
+  // const { changeTheme, changeThemeMode } = useKotiiTheme();
+  // const themeNames = ["dark", "light", "seaWave", "cherry"];
+  // const themeModes = ["dark", "light"];
   useEffect(() => {
-    console.log("HERO REMOUNTED");
+    console.log("!!! HERO REMOUNTED");
+    return () => {
+      console.log("!!! HERO UNMOUNTING");
+    };
   }, []);
+
+  useEffect(() => () => console.log("!!! HERO UNMOUNTING"), []);
   return (
     <Box
       direction={"column"}
@@ -61,6 +77,20 @@ const Hero = () => {
         <Text size="60px" color={"white"}>
           Kotii Component Library
         </Text>
+        <Shape
+          size="large"
+          name={"octagon"}
+          style={{
+            backgroundImage: `url(${stones})`,
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+          }}
+        >
+          <Box background="app-background">
+            <Text>My Shape Text</Text>
+            <img src="/img/stones.jpg" alt="Kotii Logo" width={"40px"} />
+          </Box>
+        </Shape>
       </Box>
       <Box
         direction="row"
@@ -106,16 +136,18 @@ const Hero = () => {
             <Square width={10}>
               <Text color={"white"}>Square</Text>
             </Square>
-            <Circle />
+            <Circle background="app-background" size="xxsmall" />
+            <Rectangle background="app-background" />
+            <Oval />
             <Square width="xsmall" background="app-background" />
-            <Button
+            {/* <Button
               label="changeTheme"
               onClick={() => changeTheme(themeNames[randomInteger(0, 3)])}
             />
             <Button
               label="changeThemeMode"
               onClick={() => changeThemeMode(themeModes[randomInteger(0, 1)])}
-            />
+            /> */}
           </Box>
         </Box>
       </Box>

@@ -6,16 +6,18 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import TAG from "./Tag";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for TAG component", () => {
+  test("Check if TAG component renders", () => {
     render(
       <KotiiThemeProvider>
-        <TAG value="theValue">{DOM_BY_TEXT}</TAG>
+        <TAG value="theValue" testID={DOM_BY_TEXT}>
+          {DOM_BY_TEXT}
+        </TAG>
       </KotiiThemeProvider>
     );
     // expect(
     //   screen.getByRole("button", { name: "Button marbella" })
     // ).toBeDisabled();
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

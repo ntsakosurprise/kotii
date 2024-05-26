@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/kotii-ui" },
+    { "path": "packages/kotii-markdown" },
+    { "path": "packages/kotii-utils" }
+  ]
+}

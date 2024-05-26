@@ -10,12 +10,12 @@ describe("Running Test for PageHeader component", () => {
   test("Check if page header component renders", () => {
     render(
       <KotiiThemeProvider>
-        <PageHeader parent={<p>{DOM_BY_TEXT}</p>} />
+        <PageHeader parent={<p>{DOM_BY_TEXT}</p>} testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(
     //   screen.getByRole("button", { name: "Button marbella" })
     // ).toBeDisabled();
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });
