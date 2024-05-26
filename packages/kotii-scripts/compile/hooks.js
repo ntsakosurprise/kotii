@@ -32,9 +32,9 @@ export async function load(url, context, nextLoad) {
   const { format } = context;
   const fileExtension = path.extname(url);
   const fileName = path.basename(url);
-  console.log("LOAD HOOK FORMAT", format);
-  console.log("LOAD HOOK FORMAT URL", url);
-  console.log("LOAD EXTENSION NAME", fileExtension);
+  // console.log("LOAD HOOK FORMAT", format);
+  // console.log("LOAD HOOK FORMAT URL", url);
+  // console.log("LOAD EXTENSION NAME", fileExtension);
   // if (
   //   format === "commonjs" &&
   //   (url === styledComponentsUrlFromClient || url === styledComponentsUrl)
@@ -56,36 +56,36 @@ export async function load(url, context, nextLoad) {
     fileExtension === extJsx ||
     fileExtension === extSvg
   ) {
-    console.log("JSX METHODS FILE", url);
-    console.log("THE CONTEXT", context);
+    // console.log("JSX METHODS FILE", url);
+    // console.log("THE CONTEXT", context);
     let options = {};
     let source = null;
     if (fileExtension === extJsx) {
-      console.log("PROCESSING FOR JSX EXTENSION");
+      // console.log("PROCESSING FOR JSX EXTENSION");
       options.presets = ["@babel/preset-react"];
       source = fs.readFileSync(new URL(url).pathname, { encoding: "utf-8" });
-      console.log("The Resulting Source", source);
+      // console.log("The Resulting Source", source);
     } else if (fileExtension === extSvg) {
-      console.log("PROCESSING THE SVG EXTENSION", extSvg, fileName);
+      // console.log("PROCESSING THE SVG EXTENSION", extSvg, fileName);
       options.presets = ["@babel/preset-react"];
       options.plugins = [["inline-react-svg", { filename: fileName }]];
       source = fs.readFileSync(new URL(url).pathname, { encoding: "utf-8" });
     } else {
-      console.log("PROCESSING JSX WITHOUT EXTENSION");
+      // console.log("PROCESSING JSX WITHOUT EXTENSION");
       options.presets = ["@babel/preset-react"];
       source = await nextLoad(url, { ...context, format });
     }
 
-    console.log("THE RAW SOURCE", source);
+    // console.log("THE RAW SOURCE", source);
     let rawSource = typeof source === "string" ? source : source.source;
 
     // options.presets = ["@babel/preset-react"];
     // options.plugins = ["@svgr/babel-plugin-transform-svg-component"];
 
-    console.log("THE FILE NAME", options);
+    // console.log("THE FILE NAME", options);
     const result = babel.transform(rawSource, options);
-    console.log("THE RAW SOURCE", rawSource);
-    console.log("THE RESULT BABEL TRANSFORM", result.code);
+    // console.log("THE RAW SOURCE", rawSource);
+    // console.log("THE RESULT BABEL TRANSFORM", result.code);
 
     return {
       format: format
@@ -107,9 +107,9 @@ export async function load(url, context, nextLoad) {
 // let imports = {};
 export async function resolve(specifier, context, nextResolve) {
   const { parentURL = null } = context;
-  console.log("RESOLVE specifier", specifier);
-  console.log("RESOLVE context", context);
-  console.log("RESOLVE nextResolve", nextResolve);
+  // console.log("RESOLVE specifier", specifier);
+  // console.log("RESOLVE context", context);
+  // console.log("RESOLVE nextResolve", nextResolve);
   const { parentUrl } = context;
   return nextResolve(specifier);
   // Take an `import` or `require` specifier and resolve it to a URL.
