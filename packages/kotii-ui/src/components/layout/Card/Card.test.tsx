@@ -8,15 +8,10 @@ import Card from "./Card";
 describe("Running Test for Card", () => {
   test("Check Card Renders", () => {
     render(
-      <Card
-        height="small"
-        width="small"
-        background="green"
-        testID={DOM_BY_TEXT}
-      >
+      <Card height="small" width="small" background="green">
         <p>{DOM_BY_TEXT}</p>
       </Card>
     );
-    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

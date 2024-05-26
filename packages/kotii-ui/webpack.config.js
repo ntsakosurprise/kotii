@@ -40,7 +40,7 @@ module.exports = {
       Hooks: "src/hooks/index",
       Context: "src/context/",
       Utilities: "src/utils/index",
-      Constants: path.resolve(__dirname, "./src/constants/index"),
+      Constants: path.resolve(__dirname, "./src/constants/"),
       Assets: "src/assets/",
       AppGlobals: "src/globals/index",
       Types: "src/types",

@@ -18,6 +18,6 @@ describe("Running Test for Page component", () => {
     // expect(
     //   screen.getByRole("button", { name: "Button marbella" })
     // ).toBeDisabled();
-    expect(screen.getByText("My name")).toBeInTheDocument();
+    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

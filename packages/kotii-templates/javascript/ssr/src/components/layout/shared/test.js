@@ -1,5 +1,5 @@
+import styled, { css, keyframes } from "kotii-styled";
 import React from "react";
-import styled, { css, keyframes } from "styled-components";
 import SVGImage from "./svgImage";
 
 const capitalizeFirstLetter = (text) => {

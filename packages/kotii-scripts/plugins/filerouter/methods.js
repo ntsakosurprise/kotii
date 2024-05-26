@@ -47,6 +47,7 @@ methods.handleFileRoutes = async function (data) {
       let meta = manifestJS.meta;
       console.log("META ", meta);
       const buildJS = await self.doImport(`${cwd}/build.js`);
+      console.log("BUILD:JS", buildJS);
       const routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
       const reactServerRoutes = self.buildServerRoutes(
         buildJS.routes,
@@ -311,7 +312,7 @@ methods.getItemPathAndFile = function (item) {
 };
 methods.dynamicImport = async function (module) {
   const self = this;
-  console.log("THE DYNAMI GOT A CALL");
+  console.log("THE DYNAMIC GOT A CALL", module);
   const open = await import(module);
   return open;
 };
@@ -911,6 +912,7 @@ methods.funcToJsx = function (ast, pathID) {
 };
 methods.doImports = function (toImport) {
   const self = this;
+  console.log("TO IMPORT", toImport);
   return new Promise((res, rej) => {
     Promise.all(
       toImport.map((to, i) => {
@@ -922,6 +924,7 @@ methods.doImports = function (toImport) {
                 "Module has successfully been imported:",
                 to.component
               );
+              console.log("THE IMPORTED", imported);
               resolve({ path: to.path, module: imported });
             })
             .catch((err) => {
@@ -1251,6 +1254,7 @@ methods.merge = function (a, b, predicate = (a, b) => a === b) {
 methods.buildServerRoutes = function (routesSource, routesObject) {
   const self = this;
 
+  console.log("THe routes source", routesSource);
   console.log("THE ROUTESOBJECT", routesObject);
 
   let builtRoutes = routesSource.map((route) => {

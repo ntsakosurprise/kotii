@@ -4,9 +4,7 @@ import {
   // LanguageSwitcher,
   useLanguage,
 } from "kotii-languages";
-import { logger } from "kotii-logger";
-// import { getPages, Routes as KotiiRouterRoot } from "kotii-router";
-import { KotiiGlobal, KotiiThemeProvider, Square, Text } from "kotii-ui";
+import { KotiiGlobal, KotiiThemeProvider } from "kotii-ui";
 import {
   peTranslation,
   tsTranslation,
@@ -16,8 +14,6 @@ import {
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Root } from "Startup";
-// const routerLoader = require("kotii-router-loader!.");
-// console.log("THE RESULT", routerLoader);
 // import { GlobalStyle } from "./globals";
 
 const Test = () => {

@@ -1,7 +1,7 @@
+import styled from "kotii-styled";
 import React from "react";
 import { FiExternalLink } from "react-icons/fi/index.js";
 import { MdExplore } from "react-icons/md/index.js";
-import styled from "styled-components";
 
 const Items = [
   {

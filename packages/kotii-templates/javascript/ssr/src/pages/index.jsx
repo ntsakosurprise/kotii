@@ -1,12 +1,14 @@
 /* eslint-disable react/prop-types */
 import { Head } from "kotii-scripts";
+import styled from "kotii-styled";
 import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
 import { FaLongArrowAltRight } from "react-icons/fa/index.js";
 import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
+
 import SVGConnections from "../shared/test.jsx";
 import * as actions from "../store/home/actions.js";
+
 const Main = styled("div")({
   display: "flex",
   flexDirection: "row",
