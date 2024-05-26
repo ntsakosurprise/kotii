@@ -24,10 +24,5 @@ methods.doStaticSiteGeneration = function (data) {
     },
   });
 };
-methods.api = function (data) {
-  const self = this;
-  const clientOptions = { auth: data.token };
-  const bitbucket = new Bitbucket(clientOptions);
-  return bitbucket;
-};
+
 export default methods;
