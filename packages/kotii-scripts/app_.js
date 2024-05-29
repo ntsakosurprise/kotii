@@ -1,10 +1,11 @@
-import React from "react";
-import { hydrateRoot } from "react-dom/client";
+import React, { StrictMode } from "react";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import { Provider } from "react-redux";
+
 import createReduxStore from "./app_redux.js";
 // import ClientRoutes, { RoutesAsServerRoutes } from "./build.js";
 import { ClientRoutes, RoutesAsServerRoutes } from "./build.js";
-import { AppProvider } from "./react-components/index.jsx";
+import { AppProvider, useAppContext } from "./react-components/index.jsx";
 const App = (appWrapper = null, layout = null) => {
   import("./manifest.js").then((importedManifest) => {
     let meta = importedManifest.meta;
@@ -12,90 +13,94 @@ const App = (appWrapper = null, layout = null) => {
       // const ClientRoutes = importedBuild.ClientRoutes;
       const { app } = meta;
       const { stateVendor = null, type } = app;
-      if (stateVendor && stateVendor === "redux") {
-        return appWithRedux(appWrapper, layout);
-      }
 
-      appNormal(appWrapper, layout);
-
-      if (appWrapper || layout) {
-        if (typeof window !== "undefined") {
-          const AppWrapper = appWrapper;
-          //   const Layout = props.layout;
-          if (appWrapper && layout) {
-            const Layout = layout;
-            hydrateRoot(
-              document.getElementById("root"),
-              <Provider store={store}>
-                <AppWrapper>
-                  <ClientRoutes layout={Layout} />
-                </AppWrapper>
-              </Provider>
-            );
-          } else {
-            const Layout = layout;
-            hydrateRoot(
-              document.getElementById("root"),
-              <Provider store={store}>
-                <AppWrapper>
-                  <ClientRoutes layout={Layout} />
-                </AppWrapper>
-              </Provider>
-            );
-            // root.render(
-            //   <StrictMode>
-            //     <AppWrapper>
-            //       <Routes layout={Layout} />
-            //     </AppWrapper>
-            //   </StrictMode>
-            // );
-          }
+      if (type !== "ssr") {
+        if (stateVendor && stateVendor === "redux") {
+          const store = createReduxStore(window.__PRELOADED_STATE__);
+          return appSpaWithRedux(appWrapper, layout, store);
         }
+        return appSpa(appWrapper, layout);
       } else {
-        if (typeof window !== "undefined") {
-          if (meta?.app?.type !== "ssr") {
-            return <ClientRoutes />;
-          } else {
-            hydrateRoot(document.getElementById("root"), <ClientRoutes />);
-          }
+        if (stateVendor && stateVendor === "redux") {
+          const store = createReduxStore(window.__PRELOADED_STATE__);
+          return appWithRedux(appWrapper, layout, store);
         }
+        return appNormal(appWrapper, layout);
       }
     });
   });
 };
-const appWithRedux = (appWrapper, layout) => {
-  const store = createReduxStore(window.__PRELOADED_STATE__);
-  let AppWrapper = appWrapper;
+const appWithRedux = (appWrapper, layout, store, isServer = false) => {
+  if (isServer)
+    return (
+      <Provider store={store}>
+        <AppProvider appWrapper={appWrapper} layout={layout}>
+          <AppGeneric isServer={true} />
+        </AppProvider>
+      </Provider>
+    );
+
   hydrateRoot(
     document.getElementById("root"),
     <Provider store={store}>
       <AppProvider appWrapper={appWrapper} layout={layout}>
-        {appWrapper ? (
-          <AppWrapper>
-            <ClientRoutes />
-          </AppWrapper>
-        ) : (
-          <ClientRoutes />
-        )}
+        <AppGeneric />
       </AppProvider>
     </Provider>
   );
 };
 
+const AppGeneric = (props) => {
+  const { appWrapper } = useAppContext();
+  const { isServer = false } = props;
+  const AppWrapper = appWrapper;
+
+  return appWrapper ? (
+    <AppWrapper>
+      {!isServer ? <ClientRoutes /> : <RoutesAsServerRoutes />}
+    </AppWrapper>
+  ) : !isServer ? (
+    <ClientRoutes />
+  ) : (
+    <RoutesAsServerRoutes />
+  );
+};
+
 const appNormal = (appWrapper, layout) => {
-  let AppWrapper = appWrapper;
   hydrateRoot(
     document.getElementById("root"),
     <AppProvider appWrapper={appWrapper} layout={layout}>
-      {appWrapper ? (
-        <AppWrapper>
-          <ClientRoutes />
-        </AppWrapper>
-      ) : (
-        <ClientRoutes />
-      )}
+      <AppGeneric />
     </AppProvider>
   );
+};
+
+const appSpa = (appWrapper, layout) => {
+  if (typeof window !== "undefined") {
+    const root = createRoot(document.getElementById("root"));
+    root.render(
+      <StrictMode>
+        <AppProvider appWrapper={appWrapper} layout={layout}>
+          <AppGeneric />
+        </AppProvider>
+      </StrictMode>
+    );
+  }
+};
+
+const appSpaWithRedux = (appWrapper, layout, store) => {
+  if (typeof window !== "undefined") {
+    const root = createRoot(document.getElementById("root"));
+    root.render(
+      <StrictMode>
+        <Provider store={store}>
+          <AppProvider appWrapper={appWrapper} layout={layout}>
+            <AppGeneric />
+          </AppProvider>
+        </Provider>
+      </StrictMode>
+    );
+  }
 };
 
 const ServerApp = (
@@ -104,43 +109,20 @@ const ServerApp = (
   storeFromSource = null
 ) => {
   const store = !storeFromSource ? createReduxStore() : storeFromSource;
-  if (appWrapper || layout) {
-    if (appWrapper && layout) {
-      const AppWrapper = appWrapper;
-      const Layout = layout;
-      return (
-        <Provider store={store}>
-          <AppWrapper>
-            <RoutesAsServerRoutes layout={Layout} />
-          </AppWrapper>
-        </Provider>
-      );
-    } else {
-      const AppWrapper = appWrapper;
-      const Layout = layout;
-      if (AppWrapper) {
-        return (
-          <Provider store={store}>
-            <AppWrapper>
-              <RoutesAsServerRoutes />
-            </AppWrapper>
-          </Provider>
-        );
-      } else {
-        return (
-          <Provider store={store}>
-            <RoutesAsServerRoutes layout={Layout} />
-          </Provider>
-        );
+  import("./manifest.js").then((importedManifest) => {
+    let meta = importedManifest.meta;
+    import("./build.js").then((importedBuild) => {
+      // const ClientRoutes = importedBuild.ClientRoutes;
+      const { app } = meta;
+      const { stateVendor = null, type } = app;
+
+      if (stateVendor && stateVendor === "redux") {
+        console.log("THE STATE VENDOR IS IS REDUX");
+        return appWithRedux(appWrapper, layout, store, true);
       }
-    }
-  } else {
-    return (
-      <Provider store={store}>
-        <RoutesAsServerRoutes />
-      </Provider>
-    );
-  }
+      return appNormal(appWrapper, layout, store);
+    });
+  });
 };
 export { Head } from "./react-components/index.jsx";
 export { ServerApp };

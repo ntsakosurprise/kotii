@@ -12,7 +12,7 @@ import Home from "/Users/surprisemashele/Documents/kotii/packages/kotii-template
 import Privacy from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/privacy.jsx";
 import Test from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/test.jsx";
 import Testing from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/testing.jsx";
-// import Test.jsxxxx from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/test.jsxxx.jsxxx";
+
 import Todo from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.jsx";
 const comps = {
   Test,
@@ -148,12 +148,10 @@ const ClientRoutes = () => {
   );
 };
 
-const RoutesAsServerRoutes = (props) => {
-  // const AppWrapper = props.wrapper;
-  console.log("RoutesASsERVER ROUTES", props.layout, props.pathStuff);
-  // let Header = props.layout;
-  const Layout = props?.layout
-    ? props.layout
+const RoutesAsServerRoutes = () => {
+  const { layout } = useAppContext();
+  const Layout = layout
+    ? layout
     : () => {
         return <></>;
       };
