@@ -19,7 +19,7 @@ const meta = {
   ],
   app: {
     type: "ssr",
-    stateVendor: "red",
+    stateVendor: "redux",
   },
 };
 export { meta };

@@ -1,6 +1,5 @@
 import React from "react";
 import { Route, Router, Switch as Routes } from "wouter";
-import { useAppContext } from "./react-components/index.jsx";
 
 import Connection from "../kotii-templates/javascript/ssr/src/pages/connection.jsx";
 import ContactUs from "../kotii-templates/javascript/ssr/src/pages/contact-us.jsx";
@@ -93,12 +92,10 @@ const Wrapper = (props) => {
   );
 };
 
-const ClientRoutes = () => {
-  const { layout } = useAppContext();
+const ClientRoutes = (props) => {
   // const AppWrapper = props.wrapper;
-  // console.log("THE CLIENT ROUTES", layout);
-  const Layout = layout
-    ? layout
+  const Layout = props?.layout
+    ? props.layout
     : () => {
         return <></>;
       };
@@ -163,8 +160,9 @@ const RoutesAsServerRoutes = (props) => {
     <Layout>
       <Routes>
         {routes.map((r, index) => {
+          console.log("THE COMPONENT");
           let Component = comps[r.component];
-
+          console.log("THE COMPONENT To Render", Component);
           let ComponentWrapped = () => {
             return (
               <Wrapper>
@@ -172,9 +170,26 @@ const RoutesAsServerRoutes = (props) => {
               </Wrapper>
             );
           };
-
+          // console.log("FUNCTION TO RENDER", funcToRender)
+          // return (
+          //   <Public
+          //     {...props}
+          //     exact
+          //     path={r.path}
+          //     component={component}
+          //     key={index}
+          //   />
+          // );
           return (
-            <Route key={index} path={r.path} component={ComponentWrapped} />
+            <Route
+              // {...rest}
+              key={index}
+              path={r.path}
+              component={ComponentWrapped}
+              // render={(props) => {
+              //   return <Component {...props} />;
+              // }}
+            />
           );
         })}
       </Routes>

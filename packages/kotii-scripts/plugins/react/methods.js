@@ -45,6 +45,7 @@ methods.runReactView = function (data) {
     HeadHelmet,
   } = self;
   const { view } = data;
+
   //   console.log("RENDER TO STRING FUNCTION", renderToString);
 
   // Render the component to a string
@@ -84,6 +85,7 @@ methods.runReactView = function (data) {
   self.getStateDataFromServer(view.match, store).then((stateData) => {
     console.log("GOT STATE DATA", stateData);
     let html = "";
+
     try {
       html = renderToString(
         <Router ssrPath={view.match}>{REACTAPP(Root, Layout, store)}</Router>

@@ -3,14 +3,20 @@ import { hydrateRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import createReduxStore from "./app_redux.js";
 // import ClientRoutes, { RoutesAsServerRoutes } from "./build.js";
-import { RoutesAsServerRoutes } from "./build.js";
-
+import { ClientRoutes, RoutesAsServerRoutes } from "./build.js";
+import { AppProvider } from "./react-components/index.jsx";
 const App = (appWrapper = null, layout = null) => {
   import("./manifest.js").then((importedManifest) => {
     let meta = importedManifest.meta;
     import("./build.js").then((importedBuild) => {
-      const ClientRoutes = importedBuild.ClientRoutes;
-      const store = createReduxStore(window.__PRELOADED_STATE__);
+      // const ClientRoutes = importedBuild.ClientRoutes;
+      const { app } = meta;
+      const { stateVendor = null, type } = app;
+      if (stateVendor && stateVendor === "redux") {
+        return appWithRedux(appWrapper, layout);
+      }
+
+      appNormal(appWrapper, layout);
 
       if (appWrapper || layout) {
         if (typeof window !== "undefined") {
@@ -57,24 +63,39 @@ const App = (appWrapper = null, layout = null) => {
     });
   });
 };
-const AppWithRedux = (AppWrapper, Layout) => {
+const appWithRedux = (appWrapper, layout) => {
+  const store = createReduxStore(window.__PRELOADED_STATE__);
+  let AppWrapper = appWrapper;
   hydrateRoot(
     document.getElementById("root"),
     <Provider store={store}>
-      {AppWrapper ? (
-        <AppWrapper>
-          <AppWithReduxClientRoutes Layout={Layout} />
-        </AppWrapper>
-      ) : (
-        <AppWithReduxClientRoutes Layout={Layout} />
-      )}
+      <AppProvider appWrapper={appWrapper} layout={layout}>
+        {appWrapper ? (
+          <AppWrapper>
+            <ClientRoutes />
+          </AppWrapper>
+        ) : (
+          <ClientRoutes />
+        )}
+      </AppProvider>
     </Provider>
   );
 };
 
-const AppWithReduxClientRoutes = (Layout) => {
-  if (Layout) return <ClientRoutes layout={Layout} />;
-  return <ClientRoutes />;
+const appNormal = (appWrapper, layout) => {
+  let AppWrapper = appWrapper;
+  hydrateRoot(
+    document.getElementById("root"),
+    <AppProvider appWrapper={appWrapper} layout={layout}>
+      {appWrapper ? (
+        <AppWrapper>
+          <ClientRoutes />
+        </AppWrapper>
+      ) : (
+        <ClientRoutes />
+      )}
+    </AppProvider>
+  );
 };
 
 const ServerApp = (
