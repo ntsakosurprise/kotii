@@ -1,11 +1,17 @@
 import babel from "@babel/core";
 import fs from "fs";
+import { pathToFileURL } from "node:url";
 import path from "path";
+
+let fileScheme = "file://";
+let workdir = `${process.cwd()}`;
+let sep = path.sep;
+
 let whiteListedUrls = [
-  "file:///Users/surprisemashele/Documents/kotii/packages/kotii-scripts/plugins/react/methods.js",
-  "file:///Users/surprisemashele/Documents/kotii/packages/kotii-scripts/build.js",
-  "file:///Users/surprisemashele/Documents/kotii/packages/kotii-scripts/public.js",
-  "file:///Users/surprisemashele/Documents/kotii/packages/kotii-scripts/app_.js",
+  `${pathToFileURL(`${workdir}${sep}plugins${sep}react${sep}methods.js`)}`,
+  `${pathToFileURL(`${workdir}${sep}build.js`)}`,
+  `${pathToFileURL(`${workdir}${sep}public.js`)}`,
+  `${pathToFileURL(`${workdir}${sep}app_.js`)}`,
 ];
 /**
  *
@@ -32,6 +38,11 @@ export async function load(url, context, nextLoad) {
   const { format } = context;
   const fileExtension = path.extname(url);
   const fileName = path.basename(url);
+  // const workdir = process.cwd();
+  // console.log("THE URL", pathToFileURL(url));
+  // console.log("THE WORKING DIR", workdir);
+  // console.log("THE WHITELISTED", whiteListedUrls, whiteListedUrls.indexOf(url));
+
   // console.log("LOAD HOOK FORMAT", format);
   // console.log("LOAD HOOK FORMAT URL", url);
   // console.log("LOAD EXTENSION NAME", fileExtension);
