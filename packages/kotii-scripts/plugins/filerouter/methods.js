@@ -14,6 +14,8 @@ methods.handleFileRoutes = async function (data) {
   const pao = self.pao;
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const isExistingDir = pao.pa_isExistingDir;
+  const saveToFile = pao.pa_saveToFile;
+  const loadFileSync = pao.pa_loadFileSync;
   // console.log("HANDLE FILE ROUTES DATA", data);
   const { payload } = data;
   self.callback = data.callback;
@@ -21,12 +23,15 @@ methods.handleFileRoutes = async function (data) {
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
   const pagesSource = filePaths.appSrc;
+  const appManifest = filePaths.appManifest;
+  let manifestData = null;
   const cwd = getWorkingFolder();
   //console.log("EXECSYNC", execSync);
   //self.enableBabelRegister(cwd);
   const pagesPaths = self.getPages(
     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
   );
+  appManifest ? (manifestData = loadFileSync(appManifest)) : null;
 
   const filePath = `${cwd}/manifest.js`;
   // if (filePath) {
@@ -54,12 +59,95 @@ methods.handleFileRoutes = async function (data) {
         routesObject
       );
       console.log("THE ROUTES", reactServerRoutes);
-      if (meta || !meta)
+      if (meta || !meta) {
+        let testSavePath = `${cwd}/test_build_save.js`;
+        saveToFile(
+          testSavePath,
+          `import React from "react";
+          import { Route, Router, Switch as Routes } from "wouter";
+          
+          import Connection from "../kotii-templates/javascript/ssr/src/pages/connection.jsx";
+          import ContactUs from "../kotii-templates/javascript/ssr/src/pages/contact-us.jsx";
+          import Pos from "../kotii-templates/javascript/ssr/src/pages/posts/index.jsx";
+          import Slug from "../kotii-templates/javascript/ssr/src/pages/posts/[slug].jsx";
+          import About from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/about.jsx";
+          import Faqs from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/faqs.jsx";
+          import Home from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/index.jsx";
+          import Privacy from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/privacy.jsx";
+          import Test from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/test.jsx";
+          import Testing from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/testing.jsx";
+          // import Test.jsxxxx from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/test.jsxxx.jsxxx";
+          import Todo from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.jsx";
+          const comps = {
+            Test,
+            Privacy,
+            Home,
+            Faqs,
+            ContactUs,
+            About,
+            Todo,
+            Pos,
+            Slug,
+            Connection,
+            Testing,
+          };
+          const routes = [
+            {
+              path: "/test",
+              component: "Test",
+            },
+            {
+              path: "/privacy",
+              component: "Privacy",
+            },
+            {
+              path: "/",
+              component: "Home",
+            },
+            {
+              path: "/faqs",
+              component: "Faqs",
+            },
+            {
+              path: "/contact-us",
+              component: "ContactUs",
+            },
+            {
+              path: "/about",
+              component: "About",
+            },
+            {
+              path: "/todo",
+              component: "Todo",
+            },
+            {
+              path: "/pos",
+              component: "Pos",
+            },
+            {
+              path: "/pos/:slug",
+              component: "Slug",
+            },
+            {
+              path: "/connection",
+              component: "Connection",
+            },
+            {
+              path: "/testing",
+              component: "Testing",
+            },
+            // {
+            //   path: "/test.jsxxxx",
+            //   component: "Test.jsxxxx",
+            // },
+          ];`
+        );
         return self.callback({
           message: "Routes Configured",
           resources: payload.path,
           routes: reactServerRoutes,
         });
+      }
 
       const { lastCompsCount = 0, compsSource, compsPaths } = meta;
       const pagesPathsLen = pagesPaths.length;
@@ -143,49 +231,6 @@ methods.handleFileRoutes = async function (data) {
     .catch((err) => {
       console.log("ERR WITH IMPORT", err);
     });
-
-  // const jsFile = readFileSync(filePath).replace(/;/g, "");
-
-  //self.enableBabelRegister(filePaths.appSrc);
-  // const hasCreatedFile = await self.checkForSavedFiles();
-  // if (!hasCreatedFile) return;
-  // self.cacheData({ key: "TEST_CACHE_SAVE" }, ["TEST_CACHE_SAVING"]);
-  // self.checkForSavedFiles({ key: "TEST_CACHE_SAVE" }).then((checked) => {
-  //   console.log("SAVED CACHE", checked);
-  // });
-  // self.watchFile(
-  //   { added: false, filePath: "" },
-  //   { add: self.watchFileAddEvent, delete: self.watchFileDeleteEvent }
-  // );
-  ///console.log(maniac);
-
-  // console.log("HASCREATEDFILE", hasCreatedFile);
-  // console.log("");
-  // const pagesPaths = self.getPages(
-  //   `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
-  // );
-  // const routesObject = self.createRouterComponents(
-  //   pagesPaths,
-  //   filePaths.appSrc
-  // );
-  // self
-  //   .doImports(routesObject)
-  //   .then((completed) => {
-  //     console.log("MODULE IMPORTES SUCCESSFUL", completed);
-  //   })
-  //   .catch((err) => {
-  //     consoole.log("THERE WAS AN ERROR IMPORTING", err);
-  //   });
-
-  // const sourceCodes = self.getSourceCodes(pagesPaths);
-  // self.parseJsxToReact(sourceCodes);
-  // console.log("PAGES PATHS", pagesPaths);
-  //console.log("Routes OBject", routesObject);
-
-  // console.log(
-  //   "PROCESSED",
-  //   self.createRouterComponents(pagesPaths, data.payload.path.appSrc)
-  // );
 };
 methods.getPages = function (filesToGet) {
   const self = this;
@@ -466,16 +511,6 @@ methods.addToAST = function (
   source,
   isNewSource = false
 ) {
-  // console.log("addTOast gets a call");
-  // objectToAdd = [
-  //   {
-  //     path: "/todo",
-  //     componentName: "Todo",
-  //     component:
-  //       "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.js",
-  //   },
-  // ];
-
   const self = this;
   const pao = self.pao;
   const traverse = self.traverse;
@@ -489,16 +524,6 @@ methods.addToAST = function (
   const saveToFile = pao.pa_saveToFile;
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const cwd = getWorkingFolder();
-  // if (objectToAdd) {
-  //   return self.createMetaAst({
-  //     comps: ["Test", "Test2", "THIRDEYE", "FOUTHEYE"],
-  //     compsCurrentSource: "myCurrentSource",
-  //     lastCompsCount: 10,
-  //     compsPaths: ["path/1", "path/2", "path/4", "/path5"],
-  //   });
-  // }
-  //console.log("EXECSYNC", execSync);
-  //self.enableBabelRegister(cwd);
 
   const filePath = `${cwd}/build.js`;
   // const altPath = `${cwd}/build_test.js`;
@@ -507,18 +532,6 @@ methods.addToAST = function (
   let isCompsDefined = false;
   let importStrings = "";
 
-  // if (!objectToAdd && toRemove) {
-  //   return self.astDeleteNode(node, t, objectToAdd);
-  // } else if (objectToAdd) {
-  //   self.astAddNode(ast, isNewSource);
-  // }
-  // console.log("jsFile replaced", jsFile);
-  //import Todo from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.js";
-  // console.log("THE VALUE OF TRAVERSE", traverse);
-  // if (toRemove) {
-  //   self.removeImportDeclarations(ast, toRemove);
-  //   return saveToFile(filePath, generate(ast).code);
-  // }
   traverse(ast, {
     VariableDeclaration(path) {
       // console.log("TRAVERSE ENTERS", path.container);

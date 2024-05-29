@@ -87,6 +87,11 @@ methods.getAppInContextResources = function () {
       appKotiiJson: self.checkIfIsFile(self.getFilePath(appFolder, "kotii.js"))
         ? loadFile(self.getFilePath(appFolder, "kotii.json"))
         : null,
+      appManifest: self.checkIfIsFile(
+        self.getFilePath(appFolder, "app.manifest.json")
+      )
+        ? self.getFilePath(appFolder, "app.manifest.json")
+        : null,
     };
     console.log("THE RESOURCES", resources);
     // let appFileSavePath = `${resources.appSrc}/about_.js`;
