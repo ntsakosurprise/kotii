@@ -9,8 +9,9 @@ methods.init = function () {
   });
 };
 methods.handleContextApp = function (data) {
-  // console.log("THE DATA OF START SCRIPTS", data);
+  console.log("THE DATA OF HANDLE CONTEXT", data);
   const self = this;
+
   self.getAppInContextResources().then((appInfo) => {
     console.log("CONTEXT APP:", appInfo);
 
@@ -18,6 +19,7 @@ methods.handleContextApp = function (data) {
       message: "Context app plugin successfully called",
       contextApp: appInfo.path,
       routes: appInfo.routes,
+      ...appInfo,
     });
   });
 
@@ -110,7 +112,7 @@ methods.getAppInContextResources = function () {
     // jsx.default();
     // let jsxCode = readFileSync(appFilePath);
     // self.parseJsxToReact(jsxCode, appFileSavePath);
-    self.doRoutes(resources, resolve, reject);
+    self.doRoutes({ path: resources }, resolve, reject);
     // return resources;
   });
 };
@@ -146,15 +148,15 @@ methods.checkIfIsFile = function (filePath) {
     return false;
   }
 };
-methods.doRoutes = function (path, pResolve, pReject) {
+methods.doRoutes = function (resources, pResolve, pReject) {
   const self = this;
   self.emit({
     type: "create-file-routes",
     data: {
-      payload: { path: path },
+      payload: resources,
       callback: (data) => {
         console.log("FILE ROUTES PROCESSED", data.message);
-        pResolve({ routes: data.routes, path });
+        pResolve({ routes: data.routes, ...resources, ...data });
       },
     },
   });
