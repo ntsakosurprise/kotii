@@ -22,7 +22,7 @@ methods.configureWebPack = function (payload) {
   const webPackConfig = process.env?.ANZII_CLI_WITH_SERVER
     ? self.webPackServerConfig
     : self.webPackConfig;
-  const { routes = null, contextApp } = payload;
+  const { routes = null, contextApp, build = false } = payload;
   console.log("THE APP CONTEXT CONFIG", payload);
   setContextEnv(contextApp);
   const webpackConfigObject = webPackConfig();
@@ -35,13 +35,40 @@ methods.configureWebPack = function (payload) {
     console.log("Webpack config error", err);
     process.exit(1);
   }
-  self.configureDevServer(
-    {
-      compiler: wbpCompiler,
-      webpackConfig: webpackConfigObject,
-    },
-    routes
-  );
+  if (!build)
+    return self.hookIntoWebpackCompilation(wbpCompiler).then((hooked) => {
+      console.log("THE CONFIG HOOK STATUS", hooked);
+      self.configureDevServer(
+        {
+          compiler: wbpCompiler,
+          webpackConfig: webpackConfigObject,
+        },
+        routes
+      );
+    });
+
+  self.hookIntoWebpackCompilation(wbpCompiler).then((hooked) => {
+    console.log("ABOUT TO TRIGGER MANUAL webpack compilation");
+    wbpCompiler.run((err, stats) => {
+      console.log("COMPILER ERR", err);
+      const info = stats.toJson();
+
+      if (stats.hasErrors()) {
+        console.error(info.errors);
+      }
+
+      if (stats.hasWarnings()) {
+        console.warn(info.warnings);
+      }
+      console.log("COMPILER INFO", info.assets);
+      self.callback({
+        webpackCompileStats: {
+          assets: info.assets,
+        },
+      });
+    });
+  });
+
   // console.log("THE WEBPACK COMPILER", wbpCompiler);
   return;
 };
@@ -85,10 +112,15 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
     },
   });
 };
-methods.api = function (data) {
+methods.hookIntoWebpackCompilation = async function (compiler, configWp) {
   const self = this;
-  const clientOptions = { auth: data.token };
-  const bitbucket = new Bitbucket(clientOptions);
-  return bitbucket;
+  compiler.hooks.invalid.tap("invalid", () => {
+    console.log("wEBPACK is compiling our code....");
+  });
+  compiler.hooks.invalid.tap("done", (stats) => {
+    console.log("Compiler is done compiling our code");
+    console.log(stats);
+  });
+  return true;
 };
 export default methods;

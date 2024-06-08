@@ -14,7 +14,7 @@ methods.handleDevServer = async function (data) {
     ...webpackConfig.devServer,
     open: false,
   };
-  const hookStatus = self.hookIntoWebpackCompilation(compiler);
+  // const hookStatus = self.hookIntoWebpackCompilation(compiler);
   const server = new webpackDevServer(devServerOptions, compiler);
   const runServer = async () => {
     console.log("Starting DevServer");
