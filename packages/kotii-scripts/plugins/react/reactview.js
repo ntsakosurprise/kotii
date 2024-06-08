@@ -6,10 +6,12 @@ import { StaticRouter } from "react-router-dom/server.mjs";
 
 import { renderToString } from "react-dom/server";
 import { ServerApp } from "../../app_.js";
+import { meta } from "../../manifest.js";
 import { Head, HeadHelmet } from "../../react-components/index.jsx";
 // import Header from "./header.jsx";
 import serialize from "serialize-javascript";
 import createReduxStore from "../../app_redux.js";
+
 import {
   Footer,
   Header,
@@ -35,6 +37,7 @@ class ReactView {
     this.serialize = serialize;
     this.Head = Head;
     this.HeadHelmet = HeadHelmet;
+    this.meta = meta;
 
     // this.currentReactView = nul/
 
@@ -46,6 +49,7 @@ class ReactView {
     this.renderFullPage = methods.renderFullPage;
     this.handleSsrRoutes = methods.handleSsrRoutes;
     this.getStateDataFromServer = methods.getStateDataFromServer;
+    this.handleReactStaticViews = methods.handleReactStaticViews;
   }
 }
 
