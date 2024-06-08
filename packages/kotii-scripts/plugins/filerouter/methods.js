@@ -60,92 +60,11 @@ methods.handleFileRoutes = async function (data) {
       );
       console.log("THE ROUTES", reactServerRoutes);
       if (meta || !meta) {
-        let testSavePath = `${cwd}/test_build_save.js`;
-        saveToFile(
-          testSavePath,
-          `import React from "react";
-          import { Route, Router, Switch as Routes } from "wouter";
-          
-          import Connection from "../kotii-templates/javascript/ssr/src/pages/connection.jsx";
-          import ContactUs from "../kotii-templates/javascript/ssr/src/pages/contact-us.jsx";
-          import Pos from "../kotii-templates/javascript/ssr/src/pages/posts/index.jsx";
-          import Slug from "../kotii-templates/javascript/ssr/src/pages/posts/[slug].jsx";
-          import About from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/about.jsx";
-          import Faqs from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/faqs.jsx";
-          import Home from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/index.jsx";
-          import Privacy from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/privacy.jsx";
-          import Test from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/test.jsx";
-          import Testing from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/testing.jsx";
-          // import Test.jsxxxx from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/test.jsxxx.jsxxx";
-          import Todo from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.jsx";
-          const comps = {
-            Test,
-            Privacy,
-            Home,
-            Faqs,
-            ContactUs,
-            About,
-            Todo,
-            Pos,
-            Slug,
-            Connection,
-            Testing,
-          };
-          const routes = [
-            {
-              path: "/test",
-              component: "Test",
-            },
-            {
-              path: "/privacy",
-              component: "Privacy",
-            },
-            {
-              path: "/",
-              component: "Home",
-            },
-            {
-              path: "/faqs",
-              component: "Faqs",
-            },
-            {
-              path: "/contact-us",
-              component: "ContactUs",
-            },
-            {
-              path: "/about",
-              component: "About",
-            },
-            {
-              path: "/todo",
-              component: "Todo",
-            },
-            {
-              path: "/pos",
-              component: "Pos",
-            },
-            {
-              path: "/pos/:slug",
-              component: "Slug",
-            },
-            {
-              path: "/connection",
-              component: "Connection",
-            },
-            {
-              path: "/testing",
-              component: "Testing",
-            },
-            // {
-            //   path: "/test.jsxxxx",
-            //   component: "Test.jsxxxx",
-            // },
-          ];`
-        );
         return self.callback({
           message: "Routes Configured",
           resources: payload.path,
           routes: reactServerRoutes,
+          routesObject: routesObject,
         });
       }
 
@@ -327,7 +246,7 @@ methods.getItemPathAndFile = function (item) {
     console.log("THE ITEM", item);
     //console.log("THE LOADED FILE", loadFileSync(item));
 
-    self.doImport(item).then((imported) => {
+    self.doImport(item, true).then((imported) => {
       console.log("THE PAGE FILE IN CONTEXT EXPORTS", imported);
       const { getServerState = null } = imported;
       // if (imported.getServerState) {
@@ -953,7 +872,7 @@ methods.doImports = function (toImport) {
     });
   });
 };
-methods.doImport = function (toImport) {
+methods.doImport = function (toImport, all = false) {
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
@@ -962,7 +881,7 @@ methods.doImport = function (toImport) {
   return new Promise((resolve, reject) => {
     // const manifestFile = loadFileSync(toImport);
     // resolve({ module: imported.meta });
-    loadFile(toImport)
+    loadFile(toImport, all)
       .then((imported) => {
         console.log("Module has successfully been imported:", imported);
         resolve(imported);
@@ -1280,6 +1199,7 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
       title: "REACT SERVE-SIDE RENDERING COMPONENT",
       method: "GET",
       type: "public",
+      name: route.component,
       requiresData: self.getComponentServerState(route.path, routesObject),
     };
   });
@@ -1290,9 +1210,10 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
 methods.getComponentServerState = function (path, routesObject) {
   const self = this;
 
-  console.log("THE ROUTESOBJECT", routesObject);
+  console.log("THE ROUTESOBJECT", routesObject, path);
 
   let gotServerState = routesObject.filter((route) => {
+    console.log("THE ROUTE", route);
     if (
       route?.getServerState &&
       route.path.toLowerCase() === path.toLowerCase()
