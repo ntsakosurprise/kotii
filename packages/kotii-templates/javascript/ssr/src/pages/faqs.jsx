@@ -14,7 +14,7 @@ const Faqs = () => {
       <p>
         <button
           onClick={() => {
-            setTestState("THE NEW STATE IS TO");
+            // setTestState("THE NEW STATE IS TO");
           }}
         >
           FAQS Button Test
