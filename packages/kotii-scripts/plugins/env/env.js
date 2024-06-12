@@ -27,17 +27,20 @@ class Env {
             if (self.KOTTI_ENV_REGEX.test(envID)) return true;
           }
         );
-        filteredKotiiVariables.forEach((variable) => {
-          kotiiEnvs[variable] = process.env[variable];
-          kotiiEnvsStringified[variable] = JSON.stringify(
-            process.env[variable]
-          );
-        });
+        if (filteredKotiiVariables.length > 0) {
+          filteredKotiiVariables.forEach((variable) => {
+            kotiiEnvs[variable] = process.env[variable];
+            kotiiEnvsStringified[variable] = JSON.stringify(
+              process.env[variable]
+            );
+          });
+        }
 
         return self.callback({
           message: message,
-          raw: kotiiEnvs,
-          stringified: kotiiEnvsStringified,
+          raw: Object.keys(kotiiEnvs).length > 0 ? kotiiEnvs : null,
+          stringified:
+            Object.keys(kotiiEnvs).length > 0 ? kotiiEnvsStringified : null,
           // "process.env": kotiiEnvs,
         });
       })
@@ -50,8 +53,12 @@ class Env {
   getEnvFiles(envFilesPath) {
     const self = this;
     return new Promise((resolve, reject) => {
-      dotenv.config({ path: envFilesPath });
-      resolve(true);
+      if (envFilesPath) {
+        resolve(true);
+        dotenv.config({ path: envFilesPath });
+      } else {
+        resolve(true);
+      }
 
       // self
       //   .doImport(envFilesPath, true)

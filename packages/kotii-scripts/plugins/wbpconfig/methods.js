@@ -84,10 +84,16 @@ methods.setContextEnv = function (mdconfig, envs = null) {
   process.env["APPCONTEXT"] = JSON.stringify(mdconfig);
   if (envs) {
     // console.log("STRINGIFIED ENVS", envs);
-    process.env["APP_ENVS"] = JSON.stringify({
-      ...envs.stringified,
-      NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-    });
+    if (envs?.stringified) {
+      process.env["APP_ENVS"] = JSON.stringify({
+        ...envs.stringified,
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+      });
+    } else {
+      process.env["APP_ENVS"] = JSON.stringify({
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+      });
+    }
   }
 };
 methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
