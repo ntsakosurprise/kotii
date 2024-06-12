@@ -11,8 +11,9 @@ methods.init = function () {
 methods.handleContextApp = function (data) {
   console.log("THE DATA OF HANDLE CONTEXT", data);
   const self = this;
+  const { build = false } = data;
 
-  self.getAppInContextResources().then((appInfo) => {
+  self.getAppInContextResources(build).then((appInfo) => {
     console.log("CONTEXT APP:", appInfo);
 
     data.callback({
@@ -36,7 +37,7 @@ methods.setContexts = function (data) {
   self.appFolder = getWorkingFolder();
   self.appRoot = getRootDir();
 };
-methods.getAppInContextResources = function () {
+methods.getAppInContextResources = function (environment = false) {
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
@@ -50,6 +51,7 @@ methods.getAppInContextResources = function () {
   console.log("AAAP ROOT", self.appRoot);
   //console.log(pao);
 
+  self.setNodeEnv(environment);
   return new Promise((resolve, reject) => {
     const templateFolder = folder.slice(0, folder.indexOf("/kotii-scripts"));
     const appPackageJson = JSON.parse(readFileSync(`${folder}/package.json`));
@@ -64,7 +66,7 @@ methods.getAppInContextResources = function () {
     console.log("THE TEMPLATE FOLDER", templateFolder);
     console.log("THE TEMPLATE app FOLDER", appFolder);
     const resources = {
-      appEnv: self.getFilePath(appFolder, ".env"),
+      appEnv: self.getEnvFilePath(appFolder),
       appFolder: self.getFilePath(appFolder, "."),
       appIndexFile: self.getFilePath(appFolder, "src/index.js"),
       appPagesFolder: self.getFilePath(appFolder, "src/components/pages"),
@@ -208,5 +210,32 @@ methods.parseJsxToReact = function (userCode, fileToSaveTo) {
       },
     },
   });
+};
+methods.setNodeEnv = function (environment = false) {
+  !process.env?.NODE_ENV
+    ? !environment
+      ? (process.env["NODE_ENV"] = "development")
+      : (process.env["NODE_ENV"] = "production")
+    : null;
+};
+methods.getEnvFilePath = function (basePath) {
+  const self = this;
+  const pao = self.pao;
+  const loadFile = pao.pa_loadFile;
+  const readFileSync = pao.pa_readFileSync;
+  const loadFileSync = pao.pa_loadFileSync;
+  const getWorkingFolder = pao.pa_getWorkingFolder;
+  const environment = process.env.NODE_ENV;
+  let envFilePath = self.getFilePath(
+    basePath,
+    `.env.${environment.toLowerCase()}`
+  );
+
+  if (self.checkIfIsFile(envFilePath)) {
+    console.log("THE ENV FILE PATH", envFilePath);
+    return envFilePath;
+  } else {
+    return null;
+  }
 };
 export default methods;

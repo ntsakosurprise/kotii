@@ -22,6 +22,8 @@ class ContextApp {
     this.checkIfIsFile = methods.checkIfIsFile;
     this.doRoutes = methods.doRoutes;
     this.parseJsxToReact = methods.parseJsxToReact;
+    this.setNodeEnv = methods.setNodeEnv;
+    this.getEnvFilePath = methods.getEnvFilePath;
   }
 }
 export default ContextApp;
