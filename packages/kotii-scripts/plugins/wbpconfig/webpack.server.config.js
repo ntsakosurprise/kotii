@@ -4,7 +4,7 @@ import webpack from "webpack";
 export default () => {
   //   console.log("THE PROCESS", process.env.APPCONTEXT);
   let env = JSON.parse(process.env.APPCONTEXT); // GET the set APPCONTEXT environment variable
-  let appEnvironmentVariables = JSON.parse(process.env.APP_ENVS);
+  let appEnvironmentVariables = JSON.parse(process.env.APP_ENVS); // Get context app kotii environment variables
   console.log("THE APP BUILD FOLDER", env.appBuildFolder);
   console.log("WEBPACK APP ENVS", appEnvironmentVariables);
   console.log("THE SERVER CONFIG");
@@ -12,13 +12,14 @@ export default () => {
   return {
     entry: ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
     context: env.appFolder,
-    mode: "development",
+    mode: process.env.NODE_ENV,
     infrastructureLogging: { level: "none" },
     stats: "none",
 
     output: {
       filename: "[main].bundle.js",
       path: `${env.appBuildFolder}`, // save emitted bundle to this path or folder
+      clean: true, // Clean build folder before emitting new bundle
     },
     //externals: {
     // react: {
