@@ -17,7 +17,7 @@ methods.handleWebpackConfig = function (data) {
   // console.log("SELF. AFTER SETTING CALLBACK", self);
   // console.log("THE NODE ENV", process.env.NODE_ENV);
   self.getEnvVariables(appEnv).then((envs) => {
-    console.log("THE ENVS", envs);
+    // console.log("THE ENVS", envs);
     self.configureWebPack(data.payload, envs);
   });
 
@@ -31,7 +31,7 @@ methods.configureWebPack = function (payload, envs = null) {
     ? self.webPackServerConfig
     : self.webPackConfig;
   const { routes = null, contextApp, build = false } = payload;
-  console.log("THE APP CONTEXT CONFIG", payload);
+  // console.log("THE APP CONTEXT CONFIG", payload);
   setContextEnv(contextApp, envs);
   const webpackConfigObject = webPackConfig();
 
