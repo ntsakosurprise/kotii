@@ -5,7 +5,7 @@ import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
 import { FaLongArrowAltRight } from "react-icons/fa/index.js";
 import { useDispatch, useSelector } from "react-redux";
-
+import CONFIG from "../config/environment_variables.js";
 import SVGConnections from "../shared/test.jsx";
 import * as actions from "../store/home/actions.js";
 
@@ -176,6 +176,8 @@ const PeopleList = (props) => {
   return null;
 };
 const Index = () => {
+  console.log("THE ENVIRONMENT CONFIG", CONFIG.GITHUB_APP_ID);
+  console.log("OUR NODE ENV", process.env.NODE_ENV);
   const peopleList = useSelector((state) => {
     console.log("STATE RECEIVED", state);
     return state.homeReducer.people;

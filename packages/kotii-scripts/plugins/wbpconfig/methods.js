@@ -11,20 +11,28 @@ methods.handleWebpackConfig = function (data) {
   const self = this;
   // console.log("SELF BEFORE", self);
   self["callback"] = data.callback;
+  const { contextApp } = data.payload;
+  const { appEnv = "" } = contextApp;
+  console.log("WEBPACK DATA PAYLOAD", data.payload);
   // console.log("SELF. AFTER SETTING CALLBACK", self);
-  self.configureWebPack(data.payload, data.callback);
+  // console.log("THE NODE ENV", process.env.NODE_ENV);
+  self.getEnvVariables(appEnv).then((envs) => {
+    // console.log("THE ENVS", envs);
+    self.configureWebPack(data.payload, envs);
+  });
+
   // data.callback({ message: "Webpack plugin successfully called" });
   return;
 };
-methods.configureWebPack = function (payload) {
+methods.configureWebPack = function (payload, envs = null) {
   const self = this;
   const { webpack, setContextEnv } = self;
   const webPackConfig = process.env?.ANZII_CLI_WITH_SERVER
     ? self.webPackServerConfig
     : self.webPackConfig;
-  const { routes = null, contextApp } = payload;
-  console.log("THE APP CONTEXT CONFIG", payload);
-  setContextEnv(contextApp);
+  const { routes = null, contextApp, build = false } = payload;
+  // console.log("THE APP CONTEXT CONFIG", payload);
+  setContextEnv(contextApp, envs);
   const webpackConfigObject = webPackConfig();
 
   console.log("THE WEBPACK CONFIG", webpackConfigObject);
@@ -35,18 +43,58 @@ methods.configureWebPack = function (payload) {
     console.log("Webpack config error", err);
     process.exit(1);
   }
-  self.configureDevServer(
-    {
-      compiler: wbpCompiler,
-      webpackConfig: webpackConfigObject,
-    },
-    routes
-  );
+  if (!build)
+    return self.hookIntoWebpackCompilation(wbpCompiler).then((hooked) => {
+      console.log("THE CONFIG HOOK STATUS", hooked);
+      self.configureDevServer(
+        {
+          compiler: wbpCompiler,
+          webpackConfig: webpackConfigObject,
+        },
+        routes
+      );
+    });
+
+  self.hookIntoWebpackCompilation(wbpCompiler).then((hooked) => {
+    console.log("ABOUT TO TRIGGER MANUAL webpack compilation");
+    wbpCompiler.run((err, stats) => {
+      console.log("COMPILER ERR", err);
+      const info = stats.toJson();
+
+      if (stats.hasErrors()) {
+        console.error(info.errors);
+      }
+
+      if (stats.hasWarnings()) {
+        console.warn(info.warnings);
+      }
+      console.log("COMPILER INFO", info.assets);
+      self.callback({
+        webpackCompileStats: {
+          assets: info.assets,
+        },
+      });
+    });
+  });
+
   // console.log("THE WEBPACK COMPILER", wbpCompiler);
   return;
 };
-methods.setContextEnv = function (mdconfig) {
+methods.setContextEnv = function (mdconfig, envs = null) {
   process.env["APPCONTEXT"] = JSON.stringify(mdconfig);
+  if (envs) {
+    // console.log("STRINGIFIED ENVS", envs);
+    if (envs?.stringified) {
+      process.env["APP_ENVS"] = JSON.stringify({
+        ...envs.stringified,
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+      });
+    } else {
+      process.env["APP_ENVS"] = JSON.stringify({
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+      });
+    }
+  }
 };
 methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
   const self = this;
@@ -85,10 +133,29 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
     },
   });
 };
-methods.api = function (data) {
+methods.getEnvVariables = function (envPath) {
   const self = this;
-  const clientOptions = { auth: data.token };
-  const bitbucket = new Bitbucket(clientOptions);
-  return bitbucket;
+  return new Promise((resolve, reject) => {
+    self.emit({
+      type: "get-env-variables",
+      data: {
+        envPath: envPath,
+        callback: (envVariables) => {
+          resolve(envVariables);
+        },
+      },
+    });
+  });
+};
+methods.hookIntoWebpackCompilation = async function (compiler, configWp) {
+  const self = this;
+  compiler.hooks.invalid.tap("invalid", () => {
+    console.log("wEBPACK is compiling our code....");
+  });
+  compiler.hooks.invalid.tap("done", (stats) => {
+    console.log("Compiler is done compiling our code");
+    console.log(stats);
+  });
+  return true;
 };
 export default methods;

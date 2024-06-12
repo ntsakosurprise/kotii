@@ -5,7 +5,10 @@ import webpack from "webpack";
 export default () => {
   //   console.log("THE PROCESS", process.env.APPCONTEXT);
   let env = JSON.parse(process.env.APPCONTEXT); // GET the set APPCONTEXT environment variable
+  let appEnvironmentVariables = JSON.parse(process.env.APP_ENVS);
   console.log("THE APP BUILD FOLDER", env.appBuildFolder);
+  console.log("WEBPACK APP ENVS", appEnvironmentVariables);
+
   return {
     entry: ["webpack-hot-middleware/client", env.appIndexFile],
     context: env.appFolder,

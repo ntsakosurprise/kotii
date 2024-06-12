@@ -6,6 +6,7 @@ import Config from "./config/index.js";
 import Configstorer from "./configstore/index.js";
 import ContextApp from "./contextapp/index.js";
 import DevServer from "./devserver/index.js";
+import Env from "./env/env.js";
 import FileRouter from "./filerouter/index.js";
 import Gitauth from "./gitauth/index.js";
 import Github from "./github/index.js";
@@ -37,6 +38,7 @@ export { WebpackConfig };
 export { DevServer };
 export { ContextApp };
 export { FileRouter };
+export { Env };
 export default {
   Interpreter,
   Scaffold,
@@ -59,4 +61,5 @@ export default {
   Hello,
   ReactView,
   Ssg,
+  Env,
 };

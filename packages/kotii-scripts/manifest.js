@@ -17,5 +17,9 @@ const meta = {
     "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/testing.js",
     "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/test_jsx.jsx",
   ],
+  app: {
+    type: "ssr",
+    stateVendor: "redux",
+  },
 };
 export { meta };

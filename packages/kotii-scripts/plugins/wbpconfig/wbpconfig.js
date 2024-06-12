@@ -21,6 +21,8 @@ class WebpackConfig {
     this.giveWebpackFunction = methods.giveWebpackFunction;
     this.setContextEnv = methods.setContextEnv;
     this.configureDevServer = methods.configureDevServer;
+    this.hookIntoWebpackCompilation = methods.hookIntoWebpackCompilation;
+    this.getEnvVariables = methods.getEnvVariables;
   }
 }
 export default WebpackConfig;

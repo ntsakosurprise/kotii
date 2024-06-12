@@ -1,6 +1,6 @@
 import React from "react";
-
 import { Route, Router, Switch as Routes } from "wouter";
+import { useAppContext } from "./react-components/index.jsx";
 
 import Connection from "../kotii-templates/javascript/ssr/src/pages/connection.jsx";
 import ContactUs from "../kotii-templates/javascript/ssr/src/pages/contact-us.jsx";
@@ -12,7 +12,7 @@ import Home from "/Users/surprisemashele/Documents/kotii/packages/kotii-template
 import Privacy from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/privacy.jsx";
 import Test from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/test.jsx";
 import Testing from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/testing.jsx";
-// import Test.jsxxxx from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/test.jsxxx.jsxxx";
+
 import Todo from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.jsx";
 const comps = {
   Test,
@@ -26,7 +26,6 @@ const comps = {
   Slug,
   Connection,
   Testing,
-  // Test.jsxxxx,
 };
 const routes = [
   {
@@ -79,7 +78,6 @@ const routes = [
   // },
 ];
 
-//import Public from "../Public/component.jsx"
 const Wrapper = (props) => {
   //const Component = props.component;
   return (
@@ -95,10 +93,12 @@ const Wrapper = (props) => {
   );
 };
 
-const ClientRoutes = (props) => {
+const ClientRoutes = () => {
+  const { layout } = useAppContext();
   // const AppWrapper = props.wrapper;
-  const Layout = props?.layout
-    ? props.layout
+  // console.log("THE CLIENT ROUTES", layout);
+  const Layout = layout
+    ? layout
     : () => {
         return <></>;
       };
@@ -148,12 +148,10 @@ const ClientRoutes = (props) => {
   );
 };
 
-const RoutesAsServerRoutes = (props) => {
-  // const AppWrapper = props.wrapper;
-  console.log("RoutesASsERVER ROUTES", props.layout, props.pathStuff);
-  // let Header = props.layout;
-  const Layout = props?.layout
-    ? props.layout
+const RoutesAsServerRoutes = () => {
+  const { layout } = useAppContext();
+  const Layout = layout
+    ? layout
     : () => {
         return <></>;
       };
@@ -163,9 +161,8 @@ const RoutesAsServerRoutes = (props) => {
     <Layout>
       <Routes>
         {routes.map((r, index) => {
-          console.log("THE COMPONENT");
           let Component = comps[r.component];
-          console.log("THE COMPONENT To Render", Component);
+
           let ComponentWrapped = () => {
             return (
               <Wrapper>
@@ -173,26 +170,9 @@ const RoutesAsServerRoutes = (props) => {
               </Wrapper>
             );
           };
-          // console.log("FUNCTION TO RENDER", funcToRender)
-          // return (
-          //   <Public
-          //     {...props}
-          //     exact
-          //     path={r.path}
-          //     component={component}
-          //     key={index}
-          //   />
-          // );
+
           return (
-            <Route
-              // {...rest}
-              key={index}
-              path={r.path}
-              component={ComponentWrapped}
-              // render={(props) => {
-              //   return <Component {...props} />;
-              // }}
-            />
+            <Route key={index} path={r.path} component={ComponentWrapped} />
           );
         })}
       </Routes>

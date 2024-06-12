@@ -1,5 +1,4 @@
 const methods = {};
-import { Link } from "react-router-dom";
 import { Router } from "wouter";
 
 //import Footer from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/layout/Footer/component.jsx";
@@ -9,6 +8,7 @@ methods.init = function () {
   this.listens({
     "handle-react-view": this.handleReactView.bind(this),
     "take-ssr-routes": this.handleSsrRoutes.bind(this),
+    "handle-react-static": this.handleReactStaticViews.bind(this),
   });
 };
 
@@ -26,14 +26,34 @@ methods.handleReactView = function (data) {
   self.callback = data.callback;
 
   console.log("THE VIEW DATA", data);
-  self.runReactView(data);
+  self.runReactView(data).then((html) => {
+    self.callback(null, html);
+  });
 };
 
+methods.handleReactStaticViews = function (data) {
+  const self = this;
+  // console.log("Static Views");
+  self.callback = data.callback;
+
+  console.log("THE VIEW DATA", data);
+  const { views } = data;
+  let mappedPromises = views.map(async (view) => {
+    let gotHtmlView = await self.runReactView({
+      view: { match: view.path },
+      staticRender: true,
+    });
+    // console.log("THE GOT HTML VIEW", gotHtmlView, view.name);
+    return { content: gotHtmlView, name: view.name };
+  });
+  Promise.all(mappedPromises).then((htmlViews) => {
+    // console.log("ALL VIEWS PROMISES MAPPED", htmlViews);
+    self.callback(htmlViews);
+  });
+};
 methods.runReactView = function (data) {
   const self = this;
-  //   const { store, React, StaticRouter, renderToString, Provider, REACTAPP } =
-  //     self;
-  // console.log("runReactView", data);
+
   const {
     React,
     renderToString,
@@ -43,13 +63,11 @@ methods.runReactView = function (data) {
     GlobalStyle,
     createReduxStore,
     HeadHelmet,
+    meta,
   } = self;
-  const { view } = data;
-  //   console.log("RENDER TO STRING FUNCTION", renderToString);
-
-  // Render the component to a string
-
-  // console.log("THE HEADER", Header, Footer);
+  const { view, staticRender = false } = data;
+  const { app } = meta;
+  const { stateVendor = "" } = app;
 
   const Layout = (props) => {
     return (
@@ -72,18 +90,17 @@ methods.runReactView = function (data) {
     );
   };
 
-  const LayoutAlt = () => {
-    <nav>
-      <Link to="/test">Test Link</Link>
-    </nav>;
-  };
-  //console.log("THE ROOT", Root, Layout);
-
   // Grab the initial state from our Redux store
-  const store = createReduxStore();
-  self.getStateDataFromServer(view.match, store).then((stateData) => {
+  return new Promise(async (resolve) => {
+    const store = stateVendor === "redux" ? createReduxStore() : {};
+    let stateData = await self.getStateDataFromServer(
+      view.match,
+      store,
+      staticRender
+    );
     console.log("GOT STATE DATA", stateData);
     let html = "";
+
     try {
       html = renderToString(
         <Router ssrPath={view.match}>{REACTAPP(Root, Layout, store)}</Router>
@@ -92,21 +109,18 @@ methods.runReactView = function (data) {
       console.log("THE RENDER ERROR", error);
     }
 
-    console.log("THE HTML IN RUN REACT-VIEW", html);
-
     const finalState = store.getState();
     const helmetGenerated = HeadHelmet.renderStatic();
+    // console.log("HELMET GENERATED", helmetGenerated.title.toString());
     const fullPage = self.renderFullPage(
       html,
       finalState,
       view,
       helmetGenerated
     );
-    return self.callback(null, fullPage);
+    // console.log("THE HTML IN RUN REACT-VIEW", fullPage);
+    resolve(fullPage);
   });
-
-  //const fullPage = self.renderFullPage(html, view);
-  //   console.log("THE HTML FULL PAGE", fullPage);
 };
 
 methods.renderFullPage = function (
@@ -140,11 +154,19 @@ methods.renderFullPage = function (
     `;
 };
 
-methods.getStateDataFromServer = function (routePath, store) {
+methods.getStateDataFromServer = function (
+  routePath,
+  store,
+  staticRender = false
+) {
   const self = this;
   const routes = self.ssrRoutes;
 
+  // console.log("THE FOUND", routes);
+
   return new Promise((resolve, reject) => {
+    if (staticRender) return resolve({});
+
     let dataFetchPromises = routes.filter((route, i) => {
       if (route.path === routePath && route?.requiresData) {
         return route.requiresData(store);

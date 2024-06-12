@@ -5,6 +5,7 @@ class Build {
     this.init = methods.init;
     this.handleBuildScript = methods.handleBuildScript;
     this.doStaticSiteGeneration = methods.doStaticSiteGeneration;
+    this.getWebPackConfig = methods.getWebPackConfig;
   }
 }
 export default Build;

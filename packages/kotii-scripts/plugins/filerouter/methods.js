@@ -14,6 +14,8 @@ methods.handleFileRoutes = async function (data) {
   const pao = self.pao;
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const isExistingDir = pao.pa_isExistingDir;
+  const saveToFile = pao.pa_saveToFile;
+  const loadFileSync = pao.pa_loadFileSync;
   // console.log("HANDLE FILE ROUTES DATA", data);
   const { payload } = data;
   self.callback = data.callback;
@@ -21,12 +23,15 @@ methods.handleFileRoutes = async function (data) {
   const { path: filePaths } = payload;
   console.log("FILE PATHS", filePaths);
   const pagesSource = filePaths.appSrc;
+  const appManifest = filePaths.appManifest;
+  let manifestData = null;
   const cwd = getWorkingFolder();
   //console.log("EXECSYNC", execSync);
   //self.enableBabelRegister(cwd);
   const pagesPaths = self.getPages(
     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
   );
+  appManifest ? (manifestData = loadFileSync(appManifest)) : null;
 
   const filePath = `${cwd}/manifest.js`;
   // if (filePath) {
@@ -54,12 +59,14 @@ methods.handleFileRoutes = async function (data) {
         routesObject
       );
       console.log("THE ROUTES", reactServerRoutes);
-      if (meta || !meta)
+      if (meta || !meta) {
         return self.callback({
           message: "Routes Configured",
           resources: payload.path,
           routes: reactServerRoutes,
+          routesObject: routesObject,
         });
+      }
 
       const { lastCompsCount = 0, compsSource, compsPaths } = meta;
       const pagesPathsLen = pagesPaths.length;
@@ -143,49 +150,6 @@ methods.handleFileRoutes = async function (data) {
     .catch((err) => {
       console.log("ERR WITH IMPORT", err);
     });
-
-  // const jsFile = readFileSync(filePath).replace(/;/g, "");
-
-  //self.enableBabelRegister(filePaths.appSrc);
-  // const hasCreatedFile = await self.checkForSavedFiles();
-  // if (!hasCreatedFile) return;
-  // self.cacheData({ key: "TEST_CACHE_SAVE" }, ["TEST_CACHE_SAVING"]);
-  // self.checkForSavedFiles({ key: "TEST_CACHE_SAVE" }).then((checked) => {
-  //   console.log("SAVED CACHE", checked);
-  // });
-  // self.watchFile(
-  //   { added: false, filePath: "" },
-  //   { add: self.watchFileAddEvent, delete: self.watchFileDeleteEvent }
-  // );
-  ///console.log(maniac);
-
-  // console.log("HASCREATEDFILE", hasCreatedFile);
-  // console.log("");
-  // const pagesPaths = self.getPages(
-  //   `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
-  // );
-  // const routesObject = self.createRouterComponents(
-  //   pagesPaths,
-  //   filePaths.appSrc
-  // );
-  // self
-  //   .doImports(routesObject)
-  //   .then((completed) => {
-  //     console.log("MODULE IMPORTES SUCCESSFUL", completed);
-  //   })
-  //   .catch((err) => {
-  //     consoole.log("THERE WAS AN ERROR IMPORTING", err);
-  //   });
-
-  // const sourceCodes = self.getSourceCodes(pagesPaths);
-  // self.parseJsxToReact(sourceCodes);
-  // console.log("PAGES PATHS", pagesPaths);
-  //console.log("Routes OBject", routesObject);
-
-  // console.log(
-  //   "PROCESSED",
-  //   self.createRouterComponents(pagesPaths, data.payload.path.appSrc)
-  // );
 };
 methods.getPages = function (filesToGet) {
   const self = this;
@@ -282,7 +246,7 @@ methods.getItemPathAndFile = function (item) {
     console.log("THE ITEM", item);
     //console.log("THE LOADED FILE", loadFileSync(item));
 
-    self.doImport(item).then((imported) => {
+    self.doImport(item, true).then((imported) => {
       console.log("THE PAGE FILE IN CONTEXT EXPORTS", imported);
       const { getServerState = null } = imported;
       // if (imported.getServerState) {
@@ -466,16 +430,6 @@ methods.addToAST = function (
   source,
   isNewSource = false
 ) {
-  // console.log("addTOast gets a call");
-  // objectToAdd = [
-  //   {
-  //     path: "/todo",
-  //     componentName: "Todo",
-  //     component:
-  //       "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.js",
-  //   },
-  // ];
-
   const self = this;
   const pao = self.pao;
   const traverse = self.traverse;
@@ -489,16 +443,6 @@ methods.addToAST = function (
   const saveToFile = pao.pa_saveToFile;
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const cwd = getWorkingFolder();
-  // if (objectToAdd) {
-  //   return self.createMetaAst({
-  //     comps: ["Test", "Test2", "THIRDEYE", "FOUTHEYE"],
-  //     compsCurrentSource: "myCurrentSource",
-  //     lastCompsCount: 10,
-  //     compsPaths: ["path/1", "path/2", "path/4", "/path5"],
-  //   });
-  // }
-  //console.log("EXECSYNC", execSync);
-  //self.enableBabelRegister(cwd);
 
   const filePath = `${cwd}/build.js`;
   // const altPath = `${cwd}/build_test.js`;
@@ -507,18 +451,6 @@ methods.addToAST = function (
   let isCompsDefined = false;
   let importStrings = "";
 
-  // if (!objectToAdd && toRemove) {
-  //   return self.astDeleteNode(node, t, objectToAdd);
-  // } else if (objectToAdd) {
-  //   self.astAddNode(ast, isNewSource);
-  // }
-  // console.log("jsFile replaced", jsFile);
-  //import Todo from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/todo/index.js";
-  // console.log("THE VALUE OF TRAVERSE", traverse);
-  // if (toRemove) {
-  //   self.removeImportDeclarations(ast, toRemove);
-  //   return saveToFile(filePath, generate(ast).code);
-  // }
   traverse(ast, {
     VariableDeclaration(path) {
       // console.log("TRAVERSE ENTERS", path.container);
@@ -940,7 +872,7 @@ methods.doImports = function (toImport) {
     });
   });
 };
-methods.doImport = function (toImport) {
+methods.doImport = function (toImport, all = false) {
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
@@ -949,7 +881,7 @@ methods.doImport = function (toImport) {
   return new Promise((resolve, reject) => {
     // const manifestFile = loadFileSync(toImport);
     // resolve({ module: imported.meta });
-    loadFile(toImport)
+    loadFile(toImport, all)
       .then((imported) => {
         console.log("Module has successfully been imported:", imported);
         resolve(imported);
@@ -1267,6 +1199,7 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
       title: "REACT SERVE-SIDE RENDERING COMPONENT",
       method: "GET",
       type: "public",
+      name: route.component,
       requiresData: self.getComponentServerState(route.path, routesObject),
     };
   });
@@ -1277,9 +1210,10 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
 methods.getComponentServerState = function (path, routesObject) {
   const self = this;
 
-  console.log("THE ROUTESOBJECT", routesObject);
+  console.log("THE ROUTESOBJECT", routesObject, path);
 
   let gotServerState = routesObject.filter((route) => {
+    console.log("THE ROUTE", route);
     if (
       route?.getServerState &&
       route.path.toLowerCase() === path.toLowerCase()
