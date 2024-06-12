@@ -17,6 +17,8 @@ methods.handleBuildScript = function (data) {
         console.log("BUILD CONTEXT APP RESPONSE", data?.routesObject[0]);
         self.getWebPackConfig({ ...data, build: true }, setCall);
       },
+      build: true,
+      env: "production",
     },
   });
   return;
