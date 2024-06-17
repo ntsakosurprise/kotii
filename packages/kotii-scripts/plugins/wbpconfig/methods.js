@@ -27,14 +27,16 @@ methods.handleWebpackConfig = function (data) {
 methods.configureWebPack = function (payload, envs = null) {
   const self = this;
   const { webpack, setContextEnv } = self;
-  const webPackConfig = process.env?.ANZII_CLI_WITH_SERVER
-    ? self.webPackServerConfig
-    : self.webPackConfig;
+  const webPackConfig =
+    process.env?.ANZII_CLI_WITH_SERVER &&
+    process.env.ANZII_CLI_WITH_SERVER === "true"
+      ? self.webPackServerConfig
+      : self.webPackConfig;
   const { routes = null, contextApp, build = false } = payload;
   // console.log("THE APP CONTEXT CONFIG", payload);
   setContextEnv(contextApp, envs);
   const webpackConfigObject = webPackConfig();
-
+  console.log("PROCESS.ENV", process.env);
   console.log("THE WEBPACK CONFIG", webpackConfigObject);
   let wbpCompiler = null;
   try {
@@ -100,9 +102,11 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
   const self = this;
   const callback = self.callback;
   let wepackMiddlewares = null;
-  const serverType = process.env?.ANZII_CLI_WITH_SERVER
-    ? "config-manual"
-    : "dev-server";
+  const serverType =
+    process.env?.ANZII_CLI_WITH_SERVER &&
+    process.env.ANZII_CLI_WITH_SERVER === "true"
+      ? "config-manual"
+      : "dev-server";
   serverType === "config-manual"
     ? (wepackMiddlewares = {
         webpackDevMiddleware: self.webpackDevMiddleware,

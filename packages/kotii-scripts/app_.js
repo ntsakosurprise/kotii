@@ -1,17 +1,18 @@
 import React, { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-
 import createReduxStore from "./app_redux.js";
 import { ClientRoutes, RoutesAsServerRoutes } from "./build.js";
 import { meta } from "./manifest.js";
 import { AppProvider, useAppContext } from "./react-components/index.jsx";
+
 const App = (appWrapper = null, layout = null) => {
   const { app } = meta;
+  console.log("THE APP", app);
   let { type, stateVendor = null } = app;
   if (type !== "ssr") {
     if (stateVendor && stateVendor === "redux") {
-      const store = createReduxStore(window.__PRELOADED_STATE__);
+      const store = createReduxStore();
       return appSpaWithRedux(appWrapper, layout, store);
     }
     return appSpa(appWrapper, layout);

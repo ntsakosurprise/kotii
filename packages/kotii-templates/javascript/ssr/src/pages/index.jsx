@@ -5,9 +5,12 @@ import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
 import { FaLongArrowAltRight } from "react-icons/fa/index.js";
 import { useDispatch, useSelector } from "react-redux";
+import SearchImage from "../assets/docs_search.png";
+import StonesJPG from "../assets/stones.jpg";
 import CONFIG from "../config/environment_variables.js";
 import SVGConnections from "../shared/test.jsx";
 import * as actions from "../store/home/actions.js";
+import "../styles/index.css";
 
 const Main = styled("div")({
   display: "flex",
@@ -207,6 +210,8 @@ const Index = () => {
       <SVG>
         <SVGConnections />
       </SVG>
+      <img src={SearchImage} width={26} height={26} />
+      <img src={StonesJPG} />
     </Main>
   );
 };

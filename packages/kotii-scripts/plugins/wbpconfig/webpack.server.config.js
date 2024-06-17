@@ -1,3 +1,4 @@
+import HTMLWebpackPlugin from "html-webpack-plugin";
 import path from "path";
 import webpack from "webpack";
 
@@ -102,7 +103,7 @@ export default () => {
           use: ["style-loader", "css-loader"],
         },
         {
-          test: /\.(png|jpg|gif|svg)$/i,
+          test: /\.(png|svg|jpg|jpeg|gif)$/i,
           type: "asset/resource",
         },
         {
@@ -131,10 +132,10 @@ export default () => {
     //   },
     // },
     plugins: [
-      // new HTMLWebpackPlugin({
-      //   template: env.appIndexHtml,
-      //   filename: "index.html",
-      // }),
+      new HTMLWebpackPlugin({
+        // template: env.appIndexHtml,
+        filename: "index.html",
+      }),
       new webpack.DefinePlugin({
         "process.env": {
           ...appEnvironmentVariables,

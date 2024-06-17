@@ -14,6 +14,11 @@
   "bin": {
     "kotii-scripts": "./app.js"
   },
+  "workspaces": {
+    "nohoist": [
+      "**"
+    ]
+  },
   "scripts": {
     "lint": "eslint .",
     "start": "cross-env NODE_ENV=production node index",
@@ -61,6 +66,7 @@
     "@swc/core": "^1.3.95",
     "anzii": "file:../../../Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz",
     "arg": "^4.1.3",
+    "babel-plugin-file-loader": "^2.0.0",
     "babel-plugin-transform-remove-strict-mode": "^0.0.2",
     "bitbucket": "^2.4.2",
     "chalk": "^4.1.0",
