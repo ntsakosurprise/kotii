@@ -1,5 +1,6 @@
+import styled from "kotii-styled";
 import React from "react";
-import styled from "styled-components";
+
 const StyledSvgImage = styled("svg")({
   position: "absolute",
   // top: "120%",

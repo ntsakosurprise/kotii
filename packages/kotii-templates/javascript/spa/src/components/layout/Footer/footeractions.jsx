@@ -1,7 +1,7 @@
+import styled from "kotii-styled";
 import React from "react";
-import { FiExternalLink } from "react-icons/fi";
-import { MdExplore } from "react-icons/md";
-import styled from "styled-components";
+import { FiExternalLink } from "react-icons/fi/index.js";
+import { MdExplore } from "react-icons/md/index.js";
 
 const Items = [
   {
@@ -84,7 +84,7 @@ const FooterActionsWrapper = styled("div")({
   gap: 50,
 });
 
-const Link = styled("a")({
+const CustomLink = styled("a")({
   textDecoration: "none",
   display: "flex",
   backgroundColor: "inherit",
@@ -95,9 +95,9 @@ const getItems = () => {
   return Items.map((item, i) => {
     return (
       <ExploreItem key={i}>
-        <Link href={item.to} target="_blank">
+        <CustomLink href={item.to} target="_blank">
           {item.label.toUpperCase()}
-        </Link>
+        </CustomLink>
         <FiExternalLink
           style={{
             position: "absolute",

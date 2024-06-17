@@ -1,5 +1,5 @@
+import styled, { css, keyframes } from "kotii-styled";
 import React from "react";
-import styled, { css, keyframes } from "styled-components";
 import SVGImage from "./svgImage";
 
 const capitalizeFirstLetter = (text) => {
@@ -99,24 +99,24 @@ const xmlStyleToJs = (style) => {
   return jsStyle;
 };
 
-const downOutAnimation = keyframes` 
-0% {
-  transform: translateZ(-50px) transLateY(20px);
-  opacity: 0
-}
-40% {
-  opacity: 0.2
-}
-60%{ opacity: 0.5}
-80% {
-  transform: translateZ(-10px) transLateY(0px);
-  opacity: .8
-}
-100% {
-  transform: translateZ(0px) transLateY(0px);
-  opacity: 1
-}
-`;
+// const downOutAnimation = keyframes`
+// 0% {
+//   transform: translateZ(-50px) transLateY(20px);
+//   opacity: 0
+// }
+// 40% {
+//   opacity: 0.2
+// }
+// 60%{ opacity: 0.5}
+// 80% {
+//   transform: translateZ(-10px) transLateY(0px);
+//   opacity: .8
+// }
+// 100% {
+//   transform: translateZ(0px) transLateY(0px);
+//   opacity: 1
+// }
+// `;
 const draw = keyframes` 
     0% {
     }

@@ -1,6 +1,6 @@
+import styled, { css, keyframes } from "kotii-styled";
 import React from "react";
-import styled, { css, keyframes } from "styled-components";
-import SVGImage from "./svgImage";
+import SVGImage from "./svgImage.jsx";
 
 const capitalizeFirstLetter = (text) => {
   console.log("The text Uppercasing;;;", text);
@@ -99,10 +99,11 @@ const xmlStyleToJs = (style) => {
   return jsStyle;
 };
 
-const draw = keyframes` 
+const draw = keyframes`
     0% {
     }
-    100% {      stroke-dashoffset: 0;
+    100% {
+      stroke-dashoffset: 0;
       stroke-opacity: 1;
     }
   `;
@@ -111,7 +112,7 @@ const StyledSvg = styled("svg")({
   // top: "50%",
   // left: "50%",
   right: "30%",
-  // transform: "translate(-50%, -50%)",
+  transform: "translate(-50%, -50%)",
   "& path": {
     animation: css`
       ${draw} 2.5s infinite
