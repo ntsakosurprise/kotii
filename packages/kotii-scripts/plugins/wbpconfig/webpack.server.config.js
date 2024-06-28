@@ -22,8 +22,8 @@ export default () => {
       clean: true, // Clean build folder before emitting new bundle
       publicPath: "/",
       assetModuleFilename: (pathData, assetInfo) => {
-        console.log("THE PATH DATA", pathData.filename);
-        console.log("THE PATH INFO", assetInfo);
+        // console.log("THE PATH DATA", pathData.filename);
+        // console.log("THE PATH INFO", assetInfo);
         return `${path.basename(pathData.filename)}`;
       },
     },
