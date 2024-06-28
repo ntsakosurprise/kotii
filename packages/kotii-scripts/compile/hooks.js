@@ -41,13 +41,13 @@ let imageExtensions = [".png", ".jpg", ".jpeg"];
 export async function load(url, context, nextLoad) {
   // Take a resolved URL and return the source code to be evaluated.
   const { format, parentURL = "" } = context;
-  console.log(
-    "FORMAT.parentURL.URL",
-    format,
-    parentURL,
-    url,
-    customExtensionsRegex.test(url)
-  );
+  // console.log(
+  //   "FORMAT.parentURL.URL",
+  //   format,
+  //   parentURL,
+  //   url,
+  //   customExtensionsRegex.test(url)
+  // );
   const fileExtension = path.extname(url);
   const fileName = path.basename(url);
   // const workdir = process.cwd();
@@ -102,18 +102,37 @@ export async function load(url, context, nextLoad) {
       options.plugins = [["inline-react-svg", { filename: fileName }]];
       source = fs.readFileSync(new URL(url).pathname, { encoding: "utf-8" });
     } else if (customExtensionsRegex.test(url)) {
-      console.log("IMAGES WITH FORMAT", format, fileExtension);
+      // console.log("IMAGES WITH FORMAT", format, fileExtension);
       // options.presets = ["@babel/preset-react"];
       // options.plugins = [["babel-plugin-file-loader", { name: fileName }]];
       let newUrl = new URL(url).pathname;
-      console.log("THE NEW URL", newUrl);
-      source = fs.readFileSync(newUrl, { encoding: "utf8" });
-      console.log("THE ROAD IMAGE SOURCE", source);
+      // console.log("THE NEW URL", newUrl);
+
+      let dataURI = null;
+      if (url.indexOf(".png") >= 0 || url.indexOf(".jpg") >= 0) {
+        source = fs.readFileSync(newUrl, { encoding: "base64" });
+        // const b64 = source.toString("base64");
+        // const type = url.indexOf(".png") >= 0 ? "image/png" : "image/jpg";
+        // dataURI = `data:${type};base64,${b64}`;
+        dataURI = `/image/.png`;
+        console.log("PNG FILE AS A PATH AS URL", url, dataURI);
+        let dirname = fs.mkdirSync("");
+      } else {
+        source = fs.readFileSync(newUrl, { encoding: "utf8" });
+      }
+      // console.log("THE ROAD IMAGE SOURCE", source) ;
       return {
         format: "module",
         shortCircuit: true,
-        source: `export default ${JSON.stringify(source.toString())}`,
+        source: !dataURI
+          ? `export default ${JSON.stringify(source.toString())}`
+          : `export default ${JSON.stringify(dataURI)}`,
       };
+      // return {
+      //   format: "module",
+      //   shortCircuit: true,
+      //   source: `export default ${JSON.stringify(source.toString())}`,
+      // };
     } else {
       // console.log("PROCESSING JSX WITHOUT EXTENSION");
       options.presets = ["@babel/preset-react"];
