@@ -181,6 +181,8 @@ const PeopleList = (props) => {
 const Index = () => {
   console.log("THE ENVIRONMENT CONFIG", CONFIG.GITHUB_APP_ID);
   console.log("OUR NODE ENV", process.env.NODE_ENV);
+  console.log("OUR IMAGES: SEARCH", SearchImage);
+  console.log("OUR IMAGES: STONES", StonesJPG);
   const peopleList = useSelector((state) => {
     console.log("STATE RECEIVED", state);
     return state.homeReducer.people;
