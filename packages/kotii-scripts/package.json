@@ -80,6 +80,7 @@
     "figlet": "^1.5.0",
     "glob": "^10.3.10",
     "helmet": "^7.1.0",
+    "image-type": "^5.2.0",
     "import-glob": "^1.5.0",
     "import-jsx": "^5.0.0",
     "inquirer": "^7.3.3",

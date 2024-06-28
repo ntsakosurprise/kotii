@@ -1,0 +1,15 @@
+{
+  "plugins": [
+    ["inline-react-svg", { "filename": "fileName" }],
+    [
+      "file-loader",
+      {
+        "name": "[hash].[ext]",
+        "extensions": ["png", "jpg", "jpeg", "gif", "svg"],
+        "publicPath": "lk",
+        "outputPath": null
+      },
+      "img-file-loader-plugin"
+    ]
+  ]
+}
