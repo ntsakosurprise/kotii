@@ -1,4 +1,3 @@
-import HTMLWebpackPlugin from "html-webpack-plugin";
 import path from "path";
 import webpack from "webpack";
 
@@ -18,9 +17,15 @@ export default () => {
     stats: "none",
 
     output: {
-      filename: "[main].bundle.js",
+      filename: "[main].server.bundle.js",
       path: `${env.appBuildFolder}`, // save emitted bundle to this path or folder
       clean: true, // Clean build folder before emitting new bundle
+      publicPath: "/",
+      assetModuleFilename: (pathData, assetInfo) => {
+        console.log("THE PATH DATA", pathData.filename);
+        console.log("THE PATH INFO", assetInfo);
+        return `${path.basename(pathData.filename)}`;
+      },
     },
     //externals: {
     // react: {
@@ -132,10 +137,10 @@ export default () => {
     //   },
     // },
     plugins: [
-      new HTMLWebpackPlugin({
-        // template: env.appIndexHtml,
-        filename: "index.html",
-      }),
+      // new HTMLWebpackPlugin({
+      //   // template: env.appIndexHtml,
+      //   filename: "index.html",
+      // }),
       new webpack.DefinePlugin({
         "process.env": {
           ...appEnvironmentVariables,

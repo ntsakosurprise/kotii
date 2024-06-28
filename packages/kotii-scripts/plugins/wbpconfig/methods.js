@@ -54,6 +54,7 @@ methods.configureWebPack = function (payload, envs = null) {
           webpackConfig: webpackConfigObject,
         },
         routes
+        // domain: [{ name: 'static', set: 'public' }]
       );
     });
 
