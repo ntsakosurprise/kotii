@@ -37,7 +37,7 @@ let customExtensionsRegex = /\.(png|css|jpg|jpeg|gif)$/;
 //   "file:///Users/surprisemashele/Documents/kotii/node_modules/anzii/lib/start.js";
 let extJsx = ".jsx";
 let extSvg = ".svg";
-let fileLoaderExts = [".png", ".jpg", ".jpeg", ".css"];
+let fileLoaderExts = [".png", ".jpg", ".jpeg", ".css", ".less"];
 
 export async function load(url, context, nextLoad) {
   const { format, parentURL = "" } = context;
