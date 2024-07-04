@@ -197,8 +197,8 @@ const Index = () => {
       <Head title={"Kotii Framework Boilerplate"} />
       <Hero>
         <HeroText>
-          Edit, sav, and see your changes reflected in real-time. Get started by
-          going to:
+          Edit, save, and see your changes reflected in real-time. Get started
+          by going to:
         </HeroText>
         <Path />
         <StyledButton>
@@ -212,8 +212,8 @@ const Index = () => {
       <SVG>
         <SVGConnections />
       </SVG>
-      <img src={SearchImage} width={26} height={26} />
-      <img src={StonesJPG} width={"300"} />
+      {/* <img src={SearchImage} width={36} height={36} /> */}
+      {/* <img src={StonesJPG} width={800} /> */}
     </Main>
   );
 };
