@@ -1,4 +1,5 @@
 const methods = {};
+import { ServerStyleSheet } from "kotii-styled";
 import { Router } from "wouter";
 
 //import Footer from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/layout/Footer/component.jsx";
@@ -26,6 +27,7 @@ methods.handleReactView = function (data) {
   self.callback = data.callback;
 
   console.log("THE VIEW DATA", data);
+  console.log("ServerStyleSheet", ServerStyleSheet);
   self.runReactView(data).then((html) => {
     self.callback(null, html);
   });
@@ -101,13 +103,30 @@ methods.runReactView = function (data) {
     console.log("GOT STATE DATA", stateData);
     let html = "";
 
+    const sheet = new ServerStyleSheet();
     try {
       html = renderToString(
-        <Router ssrPath={view.match}>{REACTAPP(Root, Layout, store)}</Router>
+        sheet.collectStyles(
+          <Router ssrPath={view.match}>{REACTAPP(Root, Layout, store)}</Router>
+        )
       );
+      const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
+      self.styledTags = styleTags;
+      console.log("STYLED-COMPONENTS STYLE TAGS", styleTags);
     } catch (error) {
-      console.log("THE RENDER ERROR", error);
+      // handle error
+      console.error(error);
+    } finally {
+      sheet.seal();
     }
+
+    // try {
+    //   html = renderToString(
+    //     <Router ssrPath={view.match}>{REACTAPP(Root, Layout, store)}</Router>
+    //   );
+    // } catch (error) {
+    //   console.log("THE RENDER ERROR", error);
+    // }
 
     const finalState = store.getState();
     const helmetGenerated = HeadHelmet.renderStatic();
@@ -118,7 +137,7 @@ methods.runReactView = function (data) {
       view,
       helmetGenerated
     );
-    // console.log("THE HTML IN RUN REACT-VIEW", fullPage);
+    console.log("THE HTML IN RUN REACT-VIEW", fullPage);
     resolve(fullPage);
   });
 };
@@ -141,6 +160,7 @@ methods.renderFullPage = function (
     ${head?.title.toString()}
     ${head?.meta.toString()}
     ${head?.link.toString()}
+    ${self.styledTags}
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>

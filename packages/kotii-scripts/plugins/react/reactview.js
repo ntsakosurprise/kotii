@@ -1,17 +1,14 @@
-import methods from "./methods.js";
-
 import React from "react";
+import { renderToString } from "react-dom/server";
 // import { StaticRouter } from "react-router-dom";
 import { StaticRouter } from "react-router-dom/server.mjs";
-
-import { renderToString } from "react-dom/server";
-import { ServerApp } from "../../app_.js";
-import { meta } from "../../manifest.js";
-import { Head, HeadHelmet } from "../../react-components/index.jsx";
 // import Header from "./header.jsx";
 import serialize from "serialize-javascript";
+import { ServerApp } from "../../app_.js";
 import createReduxStore from "../../app_redux.js";
-
+import { meta } from "../../manifest.js";
+import { Head, HeadHelmet } from "../../react-components/index.jsx";
+import methods from "./methods.js";
 import {
   Footer,
   Header,
@@ -29,6 +26,7 @@ class ReactView {
     this.createReduxStore = createReduxStore;
     // this.Provider = Provider;
     this.StaticRouter = StaticRouter;
+    this.styledTags = "";
     this.REACTAPP = ServerApp;
     this.Header = Header;
     this.Footer = Footer;
