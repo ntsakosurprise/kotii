@@ -154,6 +154,7 @@ methods.getEnvVariables = function (envPath) {
 };
 methods.hookIntoWebpackCompilation = async function (compiler, configWp) {
   const self = this;
+  if (compiler) return {};
   compiler.hooks.invalid.tap("invalid", () => {
     console.log("wEBPACK is compiling our code....");
   });
