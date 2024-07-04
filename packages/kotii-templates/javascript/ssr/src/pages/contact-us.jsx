@@ -1,4 +1,5 @@
 import React from "react";
+import "../styles/color.less";
 
 const ContactUs = () => {
   console.log("THE ABOUT PAGE");
