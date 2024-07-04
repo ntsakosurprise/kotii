@@ -13,8 +13,8 @@ export default () => {
     entry: ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
     context: env.appFolder,
     mode: process.env.NODE_ENV,
-    infrastructureLogging: { level: "none" },
-    stats: "none",
+    infrastructureLogging: { level: "info" },
+    stats: true,
 
     output: {
       filename: "[main].server.bundle.js",
@@ -107,6 +107,16 @@ export default () => {
           test: /\.css$/,
           use: ["style-loader", "css-loader"],
         },
+        {
+          test: /\.less$/i,
+          use: [
+            // compiles Less to CSS
+            "style-loader",
+            "css-loader",
+            "less-loader",
+          ],
+        },
+
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
           type: "asset/resource",
