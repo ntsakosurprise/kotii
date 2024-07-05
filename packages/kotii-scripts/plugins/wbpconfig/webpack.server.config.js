@@ -116,6 +116,38 @@ export default () => {
             "less-loader",
           ],
         },
+        {
+          test: /\.s[ac]ss$/i,
+          use: [
+            // Creates `style` nodes from JS strings
+            "style-loader",
+            // Translates CSS into CommonJS
+            "css-loader",
+            // Compiles Sass to CSS
+            "sass-loader",
+          ],
+        },
+        {
+          test: /\.styl$/,
+          use: [
+            "style-loader",
+            "css-loader",
+            {
+              loader: "stylus-loader",
+              options: {
+                webpackImporter: false,
+              },
+            },
+          ],
+        },
+        {
+          test: /\.(csv|tsv)$/i,
+          use: ["csv-loader"],
+        },
+        {
+          test: /\.xml$/i,
+          use: ["xml-loader"],
+        },
 
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
