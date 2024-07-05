@@ -53,6 +53,7 @@
     "styled-components": "5.3.11"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-import-assertions": "^7.24.7",
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
     "@commitlint/prompt-cli": "^18.4.3",
