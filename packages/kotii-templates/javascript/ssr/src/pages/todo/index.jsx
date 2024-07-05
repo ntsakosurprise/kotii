@@ -1,11 +1,11 @@
 import { Head } from "kotii-scripts";
 import React from "react";
-
+import "../../styles/color.styl";
 const Todo = () => {
   return (
     <div>
       <Head title={"Todo page kotii"} />
-      <p>Im the TODO page</p>;
+      <p className="yellow">Im the TODO page</p>;
     </div>
   );
 };

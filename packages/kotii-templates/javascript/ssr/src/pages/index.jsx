@@ -9,6 +9,9 @@ import SearchImage from "../assets/docs_search.png";
 import StonesJPG from "../assets/stones.jpg";
 import CONFIG from "../config/environment_variables.js";
 import SVGConnections from "../shared/test.jsx";
+import names from "../state/places.json";
+import Reminder from "../state/reminder.csv";
+import User from "../state/user.xml";
 import * as actions from "../store/home/actions.js";
 import "../styles/index.css";
 
@@ -183,6 +186,9 @@ const Index = () => {
   console.log("OUR NODE ENV", process.env.NODE_ENV);
   console.log("OUR IMAGES: SEARCH", SearchImage);
   console.log("OUR IMAGES: STONES", StonesJPG);
+  console.log("THE CSV", Reminder);
+  console.log("USER XML", User);
+  console.log("NAMES", names);
   const peopleList = useSelector((state) => {
     console.log("STATE RECEIVED", state);
     return state.homeReducer.people;
@@ -200,6 +206,7 @@ const Index = () => {
           Edit, save, and see your changes reflected in real-time. Get started
           by going to:
         </HeroText>
+        {/* <Hero>{names[0]}</Hero> */}
         <Path />
         <StyledButton>
           <ButtonBackCard />
