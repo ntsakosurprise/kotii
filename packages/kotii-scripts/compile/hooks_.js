@@ -37,7 +37,20 @@ let customExtensionsRegex = /\.(png|css|jpg|jpeg|gif)$/;
 //   "file:///Users/surprisemashele/Documents/kotii/node_modules/anzii/lib/start.js";
 let extJsx = ".jsx";
 let extSvg = ".svg";
-let fileLoaderExts = [".png", ".jpg", ".jpeg", ".css", ".less"];
+let extJson = ".json";
+let fileLoaderExts = [
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".css",
+  ".less",
+  ".scss",
+  ".sass",
+  ".styl",
+  ".csv",
+  ".tsv",
+  ".xml",
+];
 
 export async function load(url, context, nextLoad) {
   const { format, parentURL = "" } = context;
@@ -54,7 +67,10 @@ export async function load(url, context, nextLoad) {
     let options = null;
 
     if (fileExtension === extJsx || whiteListedUrls.indexOf(url) >= 0) {
-      options = { presets: ["@babel/preset-react"] };
+      options = {
+        presets: ["@babel/preset-react"],
+        plugins: ["@babel/plugin-syntax-import-assertions"],
+      };
       source = fs.readFileSync(new URL(url).pathname, {
         encoding: "utf-8",
       });
@@ -95,6 +111,16 @@ export async function load(url, context, nextLoad) {
       format: format ? (format === "commonjs" ? "module" : format) : "module",
       shortCircuit: true,
       source: result.code,
+    };
+  } else if (fileExtension === extJson) {
+    let contents = fs.readFileSync(new URL(url).pathname, {
+      encoding: "utf-8",
+    });
+    let source = `export default ${JSON.stringify(contents)}`;
+    return {
+      format: "module",
+      shortCircuit: true,
+      source: source,
     };
   }
 
