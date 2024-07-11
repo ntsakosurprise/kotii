@@ -1,7 +1,7 @@
 {
   "name": "kotii",
   "version": "1.0.0",
-  "description": "Kotii is a react boilerplate designed to be consistent and intuitive",
+  "description": "Kotii is a react meta framework designed to be consistent and intuitive",
   "engines": {
     "node": ">=17.2.0",
     "yarn": ">=1.22.11",
@@ -18,7 +18,9 @@
     "bootstrap": "lerna bootstrap",
     "clean": "lerna run --parallel clean",
     "release": "lerna publish",
-    "start": "cd packages/kotii-scripts && NODE_OPTIONS=--import=./compile/register_hooks.cjs node app.js start",
+    "start": "cd packages/kotii-scripts && node condition.js",
+    "start:dev": "cd packages/kotii-scripts && NODE_OPTIONS=--import=./compile/register_hooks.cjs node app.js start",
+    "start:prod": "node app.js start",
     "build": "cd packages/kotii-scripts && NODE_OPTIONS=--import=./compile/register_hooks.cjs node app.js build",
     "kotii": "node --no-deprecation run_local/runKotiiCli.js",
     "commit": "commit",
@@ -64,7 +66,7 @@
     "husky": "^8.0.3",
     "jest": "^29.7.0",
     "lerna": "^5.1.8",
-    "node-sass": "^7.0.1",
+    "node-sass": "^9.0.0",
     "nx": "^14.4.2",
     "prettier": "^2.7.1",
     "ts-jest": "^29.1.1",
