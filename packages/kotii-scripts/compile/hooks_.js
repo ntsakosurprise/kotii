@@ -1,5 +1,6 @@
 import babel from "@babel/core";
 import fs from "fs";
+import { isBuiltin } from "node:module";
 import { pathToFileURL } from "node:url";
 import path from "path";
 import babelJson from "../babel.server.json" assert { type: "json" };
@@ -36,6 +37,7 @@ let customExtensionsRegex = /\.(png|css|jpg|jpeg|gif)$/;
 // let anziiPath =
 //   "file:///Users/surprisemashele/Documents/kotii/node_modules/anzii/lib/start.js";
 let extJsx = ".jsx";
+let extJS = ".js";
 let extSvg = ".svg";
 let extJson = ".json";
 let fileLoaderExts = [
@@ -51,22 +53,33 @@ let fileLoaderExts = [
   ".tsv",
   ".xml",
 ];
+let nodeModulesRegex = /node_modules/;
 
 export async function load(url, context, nextLoad) {
   const { format, parentURL = "" } = context;
 
   const fileExtension = path.extname(url);
   const fileName = path.basename(url);
+  console.log(
+    "LOAD THE FILE NAME",
+    fileName,
+    url,
+    `is node modules:${nodeModulesRegex.test(url)}, is BuiltIn: ${isBuiltin(
+      fileName
+    )}`
+  );
 
   if (
-    fileExtension === extJsx ||
-    whiteListedUrls.indexOf(url) >= 0 ||
-    fileLoaderExts.includes(fileExtension)
+    (fileExtension === extJsx ||
+      fileExtension === extJS ||
+      fileLoaderExts.includes(fileExtension)) &&
+    !nodeModulesRegex.test(url) &&
+    !isBuiltin(fileName)
   ) {
     let source = null;
     let options = null;
 
-    if (fileExtension === extJsx || whiteListedUrls.indexOf(url) >= 0) {
+    if (fileExtension === extJsx || fileExtension === extJS) {
       options = {
         presets: ["@babel/preset-react"],
         plugins: ["@babel/plugin-syntax-import-assertions"],
