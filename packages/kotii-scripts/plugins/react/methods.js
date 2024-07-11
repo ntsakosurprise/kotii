@@ -2,8 +2,6 @@ const methods = {};
 import { ServerStyleSheet } from "kotii-styled";
 import { Router } from "wouter";
 
-//import Footer from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/layout/Footer/component.jsx";
-
 methods.init = function () {
   this.adLog("React View has been initialised");
   this.listens({
