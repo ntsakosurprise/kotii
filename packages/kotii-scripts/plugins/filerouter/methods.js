@@ -33,7 +33,7 @@ methods.handleFileRoutes = async function (data) {
   );
   appManifest ? (manifestData = loadFileSync(appManifest)) : null;
 
-  const filePath = `${cwd}/manifest.js`;
+  const filePath = `${cwd}/kotii-land/dev/manifest.js`;
   // if (filePath) {
   //   console.log("IMPORT LAOD THE REQUIRED OBJECT");
   //   const manifes = require(filePath);
@@ -51,7 +51,7 @@ methods.handleFileRoutes = async function (data) {
       let manifestJS = imported;
       let meta = manifestJS.meta;
       console.log("META ", meta);
-      const buildJS = await self.doImport(`${cwd}/build.js`);
+      const buildJS = await self.doImport(`${cwd}/kotii-land/dev/build.js`);
       console.log("BUILD:JS", buildJS);
       const routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
       const reactServerRoutes = self.buildServerRoutes(
@@ -363,7 +363,9 @@ methods.parseJsxToReact = function (sourceCodes) {
           return { ...cCode, altPath, loadedFile: loadFileSync(altPath) };
         });
 
-        let readFileContent = readFileSync(`${getWorkingFolder()}/build.js`);
+        let readFileContent = readFileSync(
+          `${getWorkingFolder()}/kotii-land/dev/build.js`
+        );
         readFileContent =
           readFileContent + `const mapsOfComps = ${updatedSource}`;
         const bundleCode = self.babel.transformSync(readFileContent, {});
@@ -444,7 +446,7 @@ methods.addToAST = function (
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const cwd = getWorkingFolder();
 
-  const filePath = `${cwd}/build.js`;
+  const filePath = `${cwd}/kotii-land/dev/build.js`;
   // const altPath = `${cwd}/build_test.js`;
   const jsFile = readFileSync(filePath);
   let ast = parser.parse(jsFile, { sourceType: "module", plugins: ["jsx"] });
@@ -1011,7 +1013,7 @@ methods.createMetaAst = function (metaData) {
   const contains = pao.pa_contains;
   const cwd = getWorkingFolder();
 
-  const filePath = `${cwd}/manifest.js`;
+  const filePath = `${cwd}/kotii-land/dev/manifest.js`;
   const jsFile = readFileSync(filePath);
   let ast = parser.parse(jsFile, { sourceType: "module" });
 
