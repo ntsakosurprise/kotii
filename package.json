@@ -14,14 +14,15 @@
     ]
   },
   "scripts": {
+    "babel-transpile": "cd packages/kotii-scripts && node transpile_kotii.js",
     "build:api": "tsc -b ./tsconfig.json",
     "bootstrap": "lerna bootstrap",
     "clean": "lerna run --parallel clean",
     "release": "lerna publish",
-    "start": "cd packages/kotii-scripts && node condition.js",
+    "start": "cd packages/kotii-scripts && node kotii.cjs start",
     "start:dev": "cd packages/kotii-scripts && NODE_OPTIONS=--import=./compile/register_hooks.cjs node app.js start",
     "start:prod": "node app.js start",
-    "build": "cd packages/kotii-scripts && NODE_OPTIONS=--import=./compile/register_hooks.cjs node app.js build",
+    "build": "cd packages/kotii-scripts && node kotii.cjs build",
     "kotii": "node --no-deprecation run_local/runKotiiCli.js",
     "commit": "commit",
     "test": "npx lerna run test"
