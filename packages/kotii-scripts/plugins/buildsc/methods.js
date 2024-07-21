@@ -18,12 +18,15 @@ methods.handleBuildScript = function (data) {
       callback: (data) => {
         console.log("BUILD CONTEXT APP RESPONSE", data);
         if (data?.contextApp) {
+          console.log("WRITIING SERVER ROUTES");
+
           return self.doServerBuildGeneration({
             callback: setCall,
             targetSource: data.contextApp.appSrc,
             targetMain: data.contextApp.appFolder,
             destination: `${data.contextApp.appFolder}/build`,
             targetNodeModules: `${data.contextApp.appNodeModules}`,
+            routes: data.routes,
           });
         } else {
           self.getWebPackConfig({ ...data, build: true }, setCall);
