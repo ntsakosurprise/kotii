@@ -15,7 +15,7 @@
       {
         "name": "[hash].[ext]",
         "extensions": ["png", "jpg", "jpeg", "gif", "svg"],
-        "publicPath": "public/",
+        "publicPath": "public/img",
         "outputPath": null
       },
       "img-file-loader-plugin"
