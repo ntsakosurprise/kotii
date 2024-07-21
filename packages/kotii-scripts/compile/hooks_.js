@@ -4,7 +4,7 @@ import { isBuiltin } from "node:module";
 import { pathToFileURL } from "node:url";
 import path from "path";
 import babelJson from "../babel.server.json" assert { type: "json" };
-
+import { meta } from "../kotii-land/dev/manifest.js";
 let workdir = `${process.cwd()}`;
 let sep = path.sep;
 
@@ -53,6 +53,7 @@ let fileLoaderExts = [
   ".tsv",
   ".xml",
 ];
+let extensions = [".js", ".jsx", ".tsx", ".ts"];
 let nodeModulesRegex = /node_modules/;
 
 export async function load(url, context, nextLoad) {
@@ -60,6 +61,7 @@ export async function load(url, context, nextLoad) {
 
   const fileExtension = path.extname(url);
   const fileName = path.basename(url);
+  // console.log("THE PATH RESOLVE", path.join(workdir, "../kotii-templates"));
   console.log(
     "LOAD THE FILE NAME",
     fileName,
@@ -84,6 +86,7 @@ export async function load(url, context, nextLoad) {
         presets: ["@babel/preset-react"],
         plugins: ["@babel/plugin-syntax-import-assertions"],
       };
+      console.log("READING FILE", fileExtension);
       source = fs.readFileSync(new URL(url).pathname, {
         encoding: "utf-8",
       });
@@ -112,7 +115,7 @@ export async function load(url, context, nextLoad) {
       source = await nextLoad(url, { ...context, format });
     }
     let rawSource = typeof source === "string" ? source : source.source;
-    console.log("THE OPTIONS", options, babelJson);
+    // console.log("THE OPTIONS", options, babelJson);
     let result = fileLoaderExts.includes(fileExtension)
       ? babel.transformFileSync(source, options)
       : babel.transform(rawSource, options || babelJson);
@@ -197,6 +200,79 @@ export async function load(url, context, nextLoad) {
   //     source: result.code,
   //   };
   // }
-
+  // console.log("GOING TO DEFAULT NEXT LOAD", context);
   return nextLoad(url);
 }
+
+export async function resolve(specifier, context, nextResolve) {
+  const { parentURL = workdir } = context;
+  console.log(
+    "RESOLVE specifier",
+    specifier,
+    "IS BUILT IN",
+    isBuiltin(specifier)
+  );
+  console.log("RESOLVE context", context, meta.compsSource);
+  // console.log("NEW URL", parentURL ? new URL(specifier, parentURL) : "");
+  // console.log("RESOLVE nextResolve", nextResolve);
+
+  if (!isBuiltin(specifier) && meta.alias[specifier]) {
+    let specifierAlias = meta.alias[specifier];
+    let fileUrl = pathToFileURL(`${meta.appMain}${specifierAlias}`);
+
+    let fileUrlExt = path.extname(specifierAlias);
+    console.log("THE FILE EXTENSION", fileUrlExt);
+
+    if (!fileUrlExt.trim()) {
+      console.log("FILE EXTENSION NOT SPECIFIED", fileUrlExt);
+      let pathUrl = `${meta.appMain}${specifierAlias}`;
+      let pathUrlFileExtension = extensions.filter((ext) => {
+        if (fs.existsSync(`${pathUrl}${ext}`)) return true;
+      });
+      if (pathUrlFileExtension.length === 0) {
+        throw new Error("The specified path alias does not have related file");
+      }
+      fileUrl = `${fileUrl}${pathUrlFileExtension[0]}`;
+      console.log("THE PATH URL", pathUrl);
+    }
+    console.log("THE META SPECIFIER", specifierAlias, fileUrlExt);
+    console.log("PATH TO FILE", `${fileUrl}`);
+    // console.log("Processing PNG OR CSS", specifier);
+    // let url = new URL(specifier, parentURL);
+    // console.log("PNG URL", url.href);
+    return { url: fileUrl, shortCircuit: true };
+  }
+
+  if (!isBuiltin(specifier) && /^\/src\/pages/.test(specifier)) {
+    console.log("THE SPECIFIER FOR PAGES PATH", specifier);
+    let basePath = getPagesBasePath(specifier);
+    console.log("THE SPECIFIRE BASE PATH", basePath);
+    console.log("THE FULL PATH", `${basePath}${specifier}`);
+    console.log(
+      "THE PATH AS URL",
+      pathToFileURL(`${basePath}${specifier}`).href
+    );
+    return {
+      url: pathToFileURL(`${basePath}${specifier}`).href,
+      shortCircuit: true,
+    };
+  }
+  return nextResolve(specifier);
+  // Take an `import` or `require` specifier and resolve it to a URL.
+}
+
+const getPagesBasePath = () => {
+  let nodeModulesPath = `${path.join(workdir, "../node_modules")}`;
+  let kotiiPath = `${path.join(workdir, "..")}`;
+  console.log("KOTII NODE MODULES PATH", nodeModulesPath);
+  console.log("KOTII PATH", kotiiPath);
+  let inKotiiLand = fs.existsSync(`${kotiiPath}`);
+  let inUserLand = fs.existsSync(`${nodeModulesPath}`);
+  console.log("IS KOTII LAND", inKotiiLand, kotiiPath);
+  console.log("IS USER LAND", inUserLand, nodeModulesPath);
+  let resolvePath = inUserLand
+    ? `${path.join(nodeModulesPath, "kotii-templates/javascript/ssr")}`
+    : `${path.join(kotiiPath, "kotii-templates/javascript/ssr")}`;
+
+  return resolvePath;
+};
