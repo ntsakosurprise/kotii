@@ -1,5 +1,7 @@
 const methods = {};
+import fs from "fs";
 import { ServerStyleSheet } from "kotii-styled";
+import path from "path";
 import { Router } from "wouter";
 
 methods.init = function () {
@@ -58,9 +60,9 @@ methods.runReactView = function (data) {
     React,
     renderToString,
     REACTAPP,
-    Header,
-    Footer,
-    GlobalStyle,
+    // Header,
+    // Footer,
+    // GlobalStyle,
     createReduxStore,
     HeadHelmet,
     meta,
@@ -69,26 +71,26 @@ methods.runReactView = function (data) {
   const { app } = meta;
   const { stateVendor = "" } = app;
 
-  const Layout = (props) => {
-    return (
-      <div
-        style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
-      >
-        <Header />
-        {props.children}
-        <Footer />
-      </div>
-    );
-  };
+  // const Layout = (props) => {
+  //   return (
+  //     <div
+  //       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+  //     >
+  //       <Header />
+  //       {props.children}
+  //       <Footer />
+  //     </div>
+  //   );
+  // };
 
-  const Root = (props) => {
-    return (
-      <div>
-        <GlobalStyle />
-        {props.children}
-      </div>
-    );
-  };
+  // const Root = (props) => {
+  //   return (
+  //     <div>
+  //       <GlobalStyle />
+  //       {props.children}
+  //     </div>
+  //   );
+  // };
 
   // Grab the initial state from our Redux store
   return new Promise(async (resolve) => {
@@ -98,6 +100,10 @@ methods.runReactView = function (data) {
       store,
       staticRender
     );
+    let layoutRoot = await self.doImport(
+      `${self.meta.compsSource}/components/startup/index.jsx`
+    );
+    console.log("THE LAYOUT ROOT", layoutRoot.Layout);
     console.log("GOT STATE DATA", stateData);
     let html = "";
 
@@ -105,7 +111,21 @@ methods.runReactView = function (data) {
     try {
       html = renderToString(
         sheet.collectStyles(
-          <Router ssrPath={view.match}>{REACTAPP(Root, Layout, store)}</Router>
+          !layoutRoot ? (
+            <Router ssrPath={view.match}>{REACTAPP(null, null, store)}</Router>
+          ) : layoutRoot.Layout && layoutRoot.Root ? (
+            <Router ssrPath={view.match}>
+              {REACTAPP(layoutRoot.Root, layoutRoot.Layout, store)}
+            </Router>
+          ) : layoutRoot.Layout ? (
+            <Router ssrPath={view.match}>
+              {REACTAPP(null, layoutRoot.Layout, store)}
+            </Router>
+          ) : (
+            <Router ssrPath={view.match}>
+              {REACTAPP(layoutRoot.Root, null, store)}
+            </Router>
+          )
         )
       );
       const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
@@ -149,16 +169,20 @@ methods.renderFullPage = function (
 ) {
   const self = this;
   const { serialize } = self;
-  console.log("THE PRELOADED STATE", preloadedState);
+  const jsonStyles = fs.existsSync(`${process.cwd()}${path.sep}styles.json`)
+    ? JSON.parse(fs.readFileSync(`${process.cwd()}${path.sep}styles.json`))
+    : null;
+  let styleTags = jsonStyles ? jsonStyles.toString().replace(",", "") : "";
+  console.log("THE PRELOADED STATE", preloadedState, styleTags);
   return `
 		<!doctype html>
-		<html ${head.htmlAttributes.toString()}>
-
+		<html ${head.htmlAttributes.toString()}> 
     <head>
     ${head?.title.toString()}
     ${head?.meta.toString()}
     ${head?.link.toString()}
     ${self.styledTags}
+    ${styleTags}
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
@@ -195,6 +219,29 @@ methods.getStateDataFromServer = function (
       console.log("THE RESOLVED DATA", resolveData);
       resolve(resolveData);
     });
+  });
+};
+
+methods.doImport = function (toImport, all = false) {
+  const self = this;
+  const pao = self.pao;
+  const loadFile = pao.pa_loadFile;
+  const loadFileSync = pao.pa_loadFileSync;
+  // console.log("TIIMPORT", toImport);
+  return new Promise((resolve, reject) => {
+    // const manifestFile = loadFileSync(toImport);
+    // resolve({ module: imported.meta });
+    loadFile(toImport, all)
+      .then((imported) => {
+        console.log("Module has successfully been imported:", imported);
+        resolve(imported);
+      })
+      .catch((err) => {
+        console.log(
+          `importing module:${toImport}, has failed with an error:${err}`
+        );
+        reject(err);
+      });
   });
 };
 
