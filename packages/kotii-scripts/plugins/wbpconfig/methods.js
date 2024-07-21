@@ -45,6 +45,7 @@ methods.configureWebPack = function (payload, envs = null) {
     console.log("Webpack config error", err);
     process.exit(1);
   }
+
   if (!build)
     return self.hookIntoWebpackCompilation(wbpCompiler).then((hooked) => {
       console.log("THE CONFIG HOOK STATUS", hooked);
