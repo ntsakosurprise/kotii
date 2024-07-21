@@ -1,19 +1,19 @@
 import React from "react";
-import { renderToString } from "react-dom/server";
+import { renderToPipeableStream, renderToString } from "react-dom/server";
 // import { StaticRouter } from "react-router-dom";
 import { StaticRouter } from "react-router-dom/server.mjs";
 // import Header from "./header.jsx";
 import serialize from "serialize-javascript";
-import { ServerApp } from "../../app_.js";
-import createReduxStore from "../../app_redux.js";
-import { meta } from "../../manifest.js";
+import { ServerApp } from "../../kotii-land/dev/app_.js";
+import createReduxStore from "../../kotii-land/dev/app_redux.js";
+import { meta } from "../../kotii-land/dev/manifest.js";
 import { Head, HeadHelmet } from "../../react-components/index.jsx";
 import methods from "./methods.js";
-import {
-  Footer,
-  Header,
-} from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/layout/index.jsx";
-import { GlobalStyle } from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/globals/styles.js";
+// import {
+//   Footer,
+//   Header,
+// } from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/layout/index.jsx";
+// import { GlobalStyle } from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/globals/styles.js";
 
 /**
  * @type ReactView
@@ -28,10 +28,11 @@ class ReactView {
     this.StaticRouter = StaticRouter;
     this.styledTags = "";
     this.REACTAPP = ServerApp;
-    this.Header = Header;
-    this.Footer = Footer;
-    this.GlobalStyle = GlobalStyle;
+    // this.Header = Header;
+    // this.Footer = Footer;
+    // this.GlobalStyle = GlobalStyle;
     this.renderToString = renderToString;
+    this.renderToPipeableStream = renderToPipeableStream;
     this.serialize = serialize;
     this.Head = Head;
     this.HeadHelmet = HeadHelmet;
@@ -48,6 +49,7 @@ class ReactView {
     this.handleSsrRoutes = methods.handleSsrRoutes;
     this.getStateDataFromServer = methods.getStateDataFromServer;
     this.handleReactStaticViews = methods.handleReactStaticViews;
+    this.doImport = methods.doImport;
   }
 }
 
