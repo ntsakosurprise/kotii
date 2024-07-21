@@ -6,13 +6,13 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./app_.js",
-      "require": "./app_.js",
-      "default": "./app_.js"
+      "import": "./kotii-land/prod/app_b.js",
+      "require": "./kotii-land/prod/app_b.js",
+      "default": "./kotii-land/prod/app_b.js"
     }
   },
   "bin": {
-    "kotii-scripts": "./app.js"
+    "kotii-scripts": "./kotii.cjs"
   },
   "workspaces": {
     "nohoist": [
@@ -21,15 +21,15 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "start": "node condition.js",
+    "start": "node condition.js start",
     "start:dev": "NODE_OPTIONS=--import=./compile/register_hooks.cjs node app.js start",
-    "start:prod": "node app.js start",
+    "start:prod": "node app_prod.js start",
     "build": "NODE_OPTIONS=--import=./compile/register_hooks.cjs node app.js build",
     "start:dev:nodemon": "nodemon index",
     "postinstall": "patch-package",
     "prepublishOnly": "npm run build",
     "babel-ssr": "babel --config-file /Users/surprisemashele/Documents/kotii/packages/kotii-scripts/babel.server.json  --out-dir /Users/surprisemashele/Documents/kotii/packages/kotii-scripts/build /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src",
-    "build-ssr": "babel --config-file /Users/surprisemashele/Documents/kotii/packages/kotii-scripts/babel.server.json  --out-dir /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/build/src /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src"
+    "build-ssr": "babel --config-file /Users/surprisemashele/Documents/kotii/packages/kotii-scripts/babel.server.build.json  --out-dir /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/build/src /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src"
   },
   "keywords": [
     "scripts",
@@ -97,15 +97,11 @@
     "wouter": "^2.12.1"
   },
   "devDependencies": {
-    "babel-plugin-file-loader": "^2.0.0",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.23.2",
     "@babel/generator": "^7.23.3",
     "@babel/node": "^7.22.19",
     "@babel/parser": "^7.23.3",
-    "@babel/template": "^7.22.15",
-    "@babel/traverse": "^7.23.3",
-    "@babel/types": "^7.23.3",
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.23.2",
     "@babel/plugin-proposal-json-modules": "^7.24.7",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-syntax-import-assertions": "^7.24.7",
@@ -114,9 +110,13 @@
     "@babel/preset-env": "^7.23.2",
     "@babel/preset-react": "^7.22.15",
     "@babel/register": "^7.4.4",
+    "@babel/template": "^7.22.15",
+    "@babel/traverse": "^7.23.3",
+    "@babel/types": "^7.23.3",
     "@svgr/babel-plugin-transform-svg-component": "^8.0.0",
     "autoprefixer": "^8.6.5",
     "babel-loader": "^8.0.6",
+    "babel-plugin-file-loader": "^2.0.0",
     "babel-plugin-inline-react-svg": "^2.0.2",
     "babel-plugin-macros": "^3.1.0",
     "babel-plugin-styled-components": "^2.1.4",
@@ -135,10 +135,12 @@
     "lebab": "^3.2.3",
     "less": "^4.2.0",
     "less-loader": "^12.2.0",
+    "node-html-parser": "^6.1.13",
     "node-sass": "^9.0.0",
     "nodemon": "^2.0.15",
     "nodemon-webpack-plugin": "^4.0.8",
     "npm-run-all": "^4.1.5",
+    "papaparse": "^5.4.1",
     "prettier": "2.6.2",
     "sass-loader": "^12.6.0",
     "style-loader": "^3.3.1",
@@ -151,7 +153,8 @@
     "webpack-dev-server": "^4.15.1",
     "webpack-hot-middleware": "^2.25.4",
     "webpack-node-externals": "^2.5.2",
-    "xml-loader": "^1.2.1"
+    "xml-loader": "^1.2.1",
+    "xml2js": "^0.6.2"
   },
   "readme": "See README file",
   "readmeFilename": "README.md",
