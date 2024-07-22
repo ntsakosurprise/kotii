@@ -100,9 +100,7 @@ methods.runReactView = function (data) {
       store,
       staticRender
     );
-    let layoutRoot = await self.doImport(
-      `${self.meta.compsSource}/components/startup/index.jsx`
-    );
+    let layoutRoot = await self.doImport(`/src/components/startup/index.jsx`);
     console.log("THE LAYOUT ROOT", layoutRoot.Layout);
     console.log("GOT STATE DATA", stateData);
     let html = "";

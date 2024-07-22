@@ -99,10 +99,7 @@ methods.runReactView = function (data) {
       staticRender
     );
     let layoutRoot = await self.doImport(
-      "".concat(
-        "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/build/src",
-        "/components/startup/index.js"
-      )
+      "".concat("/src/components/startup/index.js")
     );
     console.log("THE LAYOUT ROOT", layoutRoot.Layout);
     console.log("GOT STATE DATA", stateData);
