@@ -1,14 +1,16 @@
 import path from "path";
 import webpack from "webpack";
 
-export default () => {
+export default (options) => {
   //   console.log("THE PROCESS", process.env.APPCONTEXT);
+  console.log("THE STUFF THAT IS", options);
   let env = JSON.parse(process.env.APPCONTEXT); // GET the set APPCONTEXT environment variable
   let appEnvironmentVariables = JSON.parse(process.env.APP_ENVS); // Get context app kotii environment variables
   console.log("THE APP BUILD FOLDER", env.appBuildFolder);
   console.log("WEBPACK APP ENVS", appEnvironmentVariables);
   console.log("THE SERVER CONFIG");
   console.log("THE APP BUILD FOLDER", env.appBuildFolder);
+  console.log;
   return {
     entry: ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
     context: env.appFolder,
@@ -66,6 +68,7 @@ export default () => {
         "react-router": path.resolve(
           `${env.appFolder}/node_modules/react-router`
         ),
+        "kotii-scripts": path.resolve(`${options.cwd}/kotii-land/dev/app_.js`),
       }, // Alias references to files and folders inorder to use absolute paths in your file imports
       fallback: {
         fs: false,
