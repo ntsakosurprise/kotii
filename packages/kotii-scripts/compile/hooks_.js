@@ -216,6 +216,21 @@ export async function resolve(specifier, context, nextResolve) {
   // console.log("NEW URL", parentURL ? new URL(specifier, parentURL) : "");
   // console.log("RESOLVE nextResolve", nextResolve);
 
+  let shouldTerminate = false;
+
+  shouldTerminate = resolveAliasedImports(specifier);
+  if (shouldTerminate) return shouldTerminate;
+  shouldTerminate = resolveKotiiLandImports(specifier);
+  if (shouldTerminate) return shouldTerminate;
+  shouldTerminate = resolvePagesImports(specifier);
+  if (shouldTerminate) return shouldTerminate;
+  shouldTerminate = resolveKotiiScriptsImports(specifier);
+  if (shouldTerminate) return shouldTerminate;
+  return nextResolve(specifier);
+  // Take an `import` or `require` specifier and resolve it to a URL.
+}
+
+const resolveAliasedImports = (specifier) => {
   if (!isBuiltin(specifier) && meta.alias[specifier]) {
     let specifierAlias = meta.alias[specifier];
     let fileUrl = pathToFileURL(`${meta.appMain}${specifierAlias}`);
@@ -241,9 +256,32 @@ export async function resolve(specifier, context, nextResolve) {
     // let url = new URL(specifier, parentURL);
     // console.log("PNG URL", url.href);
     return { url: fileUrl, shortCircuit: true };
+  } else {
+    return false;
   }
+};
+const resolveKotiiLandImports = (specifier) => {
+  if (!isBuiltin(specifier) && /\.kotii-land\/(pages|routes)/.test(specifier)) {
+    console.log("THE PAGES PATH KOTII LAND PATH");
+    let basePath = getPagesBasePath(specifier);
+    console.log("THE PATH BASE", basePath);
 
-  if (!isBuiltin(specifier) && /^\/src\/pages/.test(specifier)) {
+    let fullPath =
+      specifier.indexOf("pages") >= 0
+        ? path.resolve(basePath, ".kotii-land/pages.js")
+        : path.resolve(basePath, ".kotii-land/routes.js");
+    console.log("THE FULL PATH", fullPath);
+    // console.log("THE BASE PATH", workdir);
+    return {
+      url: pathToFileURL(fullPath).href,
+      shortCircuit: true,
+    };
+  } else {
+    return false;
+  }
+};
+const resolvePagesImports = (specifier) => {
+  if (!isBuiltin(specifier) && /^\/src\//.test(specifier)) {
     console.log("THE SPECIFIER FOR PAGES PATH", specifier);
     let basePath = getPagesBasePath(specifier);
     console.log("THE SPECIFIRE BASE PATH", basePath);
@@ -252,14 +290,28 @@ export async function resolve(specifier, context, nextResolve) {
       "THE PATH AS URL",
       pathToFileURL(`${basePath}${specifier}`).href
     );
+
     return {
       url: pathToFileURL(`${basePath}${specifier}`).href,
       shortCircuit: true,
     };
+  } else {
+    return false;
   }
-  return nextResolve(specifier);
-  // Take an `import` or `require` specifier and resolve it to a URL.
-}
+};
+const resolveKotiiScriptsImports = (specifier) => {
+  if (!isBuiltin(specifier) && /^kotii-scripts/.test(specifier)) {
+    console.log("THE SPECIFIER FOR KOTII-SCRIPTS PATH", specifier);
+    let kotiiExportsPath = `${workdir}${sep}kotii-land/dev/app_.js`;
+    console.log("THE PATH AS URL", pathToFileURL(kotiiExportsPath).href);
+    return {
+      url: pathToFileURL(kotiiExportsPath).href,
+      shortCircuit: true,
+    };
+  } else {
+    return false;
+  }
+};
 
 const getPagesBasePath = () => {
   let nodeModulesPath = `${path.join(workdir, "../node_modules")}`;

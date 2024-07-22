@@ -2,8 +2,9 @@ import fs from "fs";
 import { isBuiltin } from "node:module";
 import { pathToFileURL } from "node:url";
 import path from "path";
-import { meta } from "../kotii-land/dev/manifest.js";
+import { meta } from "../kotii-land/prod/manifest.js";
 let workdir = `${process.cwd()}`;
+let NODE_ENV = process.env.NODE_ENV;
 let sep = path.sep;
 
 let whiteListedUrls = [
@@ -51,7 +52,6 @@ export async function resolve(specifier, context, nextResolve) {
   if (shouldTerminate) return shouldTerminate;
   shouldTerminate = resolvePagesImports(specifier);
   if (shouldTerminate) return shouldTerminate;
-  // resolveKotiiScriptsImports(specifier);
 
   return nextResolve(specifier);
   // Take an `import` or `require` specifier and resolve it to a URL.
@@ -126,22 +126,7 @@ const resolvePagesImports = (specifier) => {
     return false;
   }
 };
-const resolveKotiiScriptsImports = (specifier) => {
-  if (!isBuiltin(specifier) && /^\/src\/pages/.test(specifier)) {
-    console.log("THE SPECIFIER FOR PAGES PATH", specifier);
-    let basePath = getPagesBasePath(specifier);
-    console.log("THE SPECIFIRE BASE PATH", basePath);
-    console.log("THE FULL PATH", `${basePath}${specifier}`);
-    console.log(
-      "THE PATH AS URL",
-      pathToFileURL(`${basePath}${specifier}`).href
-    );
-    return {
-      url: pathToFileURL(`${basePath}${specifier}`).href,
-      shortCircuit: true,
-    };
-  }
-};
+
 const getPagesBasePath = () => {
   let nodeModulesPath = `${path.join(workdir, "../node_modules")}`;
   let kotiiPath = `${path.join(workdir, "..")}`;

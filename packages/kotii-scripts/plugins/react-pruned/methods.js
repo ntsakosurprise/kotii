@@ -248,7 +248,7 @@ methods.doImport = function (toImport) {
   return new Promise((resolve, reject) => {
     // const manifestFile = loadFileSync(toImport);
     // resolve({ module: imported.meta });
-    loadFile(toImport, all)
+    loadFile(toImport, false, false)
       .then((imported) => {
         console.log("Module has successfully been imported:", imported);
         resolve(imported);
