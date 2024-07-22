@@ -99,7 +99,9 @@ methods.runReactView = function (data) {
       staticRender
     );
     let layoutRoot = await self.doImport(
-      "".concat("/src/components/startup/index.js")
+      "".concat("/src/components/startup/index.js"),
+      true,
+      false
     );
     console.log("THE LAYOUT ROOT", layoutRoot.Layout);
     console.log("GOT STATE DATA", stateData);
@@ -237,9 +239,9 @@ methods.getStateDataFromServer = function (routePath, store) {
     });
   });
 };
-methods.doImport = function (toImport) {
-  let all =
-    arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+methods.doImport = function (toImport, all = false, check = false) {
+  // let all =
+  //   arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
@@ -248,7 +250,7 @@ methods.doImport = function (toImport) {
   return new Promise((resolve, reject) => {
     // const manifestFile = loadFileSync(toImport);
     // resolve({ module: imported.meta });
-    loadFile(toImport, false, false)
+    loadFile(toImport, all, check)
       .then((imported) => {
         console.log("Module has successfully been imported:", imported);
         resolve(imported);

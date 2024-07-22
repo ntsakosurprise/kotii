@@ -100,7 +100,11 @@ methods.runReactView = function (data) {
       store,
       staticRender
     );
-    let layoutRoot = await self.doImport(`/src/components/startup/index.jsx`);
+    let layoutRoot = await self.doImport(
+      `/src/components/startup/index.jsx`,
+      true,
+      false
+    );
     console.log("THE LAYOUT ROOT", layoutRoot.Layout);
     console.log("GOT STATE DATA", stateData);
     let html = "";
@@ -220,7 +224,7 @@ methods.getStateDataFromServer = function (
   });
 };
 
-methods.doImport = function (toImport, all = false) {
+methods.doImport = function (toImport, all = false, check = true) {
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
@@ -229,7 +233,7 @@ methods.doImport = function (toImport, all = false) {
   return new Promise((resolve, reject) => {
     // const manifestFile = loadFileSync(toImport);
     // resolve({ module: imported.meta });
-    loadFile(toImport, false, false)
+    loadFile(toImport, all, check)
       .then((imported) => {
         console.log("Module has successfully been imported:", imported);
         resolve(imported);
