@@ -27,6 +27,7 @@ methods.handleBuildScript = function (data) {
             destination: `${data.contextApp.appFolder}/build`,
             targetNodeModules: `${data.contextApp.appNodeModules}`,
             routes: data.routes,
+            contextApp: data.contextApp,
           });
         } else {
           self.getWebPackConfig({ ...data, build: true }, setCall);
