@@ -1,4 +1,4 @@
-export default routes = [{
+const routes = [{
   "path": "/test",
   "alias": null,
   "view": true,
@@ -122,3 +122,4 @@ export default routes = [{
   "name": "Testing",
   "requiresData": null
 }];
+export default routes;
