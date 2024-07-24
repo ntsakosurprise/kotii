@@ -31,7 +31,7 @@ methods.handleFileRoutes = async function (data) {
   const pagesPaths = self.getPages(
     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
   );
-  appManifest ? (manifestData = loadFileSync(appManifest)) : null;
+  // appManifest ? manifestData = loadFileSync(appManifest)) : null;
 
   const filePath = `${cwd}/kotii-land/dev/manifest.js`;
   // if (filePath) {
