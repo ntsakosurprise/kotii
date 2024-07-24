@@ -21,7 +21,7 @@ methods.handleServerBuild = function (data) {
   const saveToFile = pao.pa_saveToFile;
   console.log("handling server build", data);
   const { payload } = data;
-  const { targetMain, destination, targetSource, routes } = payload;
+  const { targetMain, destination, targetSource, routes, contextApp } = payload;
   data.callback({ gotValue: "Ran" });
   const cwd = getWorkingFolder();
   if (fs.existsSync(`${cwd}/kotii-land/dev/styles.json`)) {
@@ -118,7 +118,7 @@ methods.handleServerBuild = function (data) {
         JSON.stringify(babelJson, null, 2)
       );
       self.saveRoutesInUserLand(routes).then(() => {
-        self.doKotiiLandPagesFile(destination);
+        self.doKotiiLandPagesFile(destination, { contextApp });
       });
     })
     .catch((error) => {
@@ -385,7 +385,7 @@ methods.updateJSXImportDeclarations = function (ast, state) {
   });
   return isUpdated;
 };
-methods.doKotiiLandPagesFile = function (destination, fromFile) {
+methods.doKotiiLandPagesFile = function (destination, options) {
   const self = this;
   const pao = self.pao;
   console.log("THE KOTII LAND PAGE FILE DESTINATION", destination);
@@ -426,6 +426,13 @@ methods.doKotiiLandPagesFile = function (destination, fromFile) {
     saveToFile(
       `${destination}${path.sep}.config.js`,
       self.getKotiiConfigTemplate({ public: "public" })
+    );
+    saveToFile(
+      `${madeFolder}${path.sep}app.manifest.json`,
+      JSON.stringify({
+        ...options.contextApp.appManifest,
+        buildPath: options.contextApp.appBuildFolder,
+      })
     );
   }
 };
@@ -486,7 +493,7 @@ methods.saveRoutesInUserLand = function (routes) {
     console.log("THE ROUTES PATHS BUILD", routesToPath);
     fs.writeFile(
       routesToPath,
-      `export default routes = ${JSON.stringify(routes)}`,
+      `const routes = ${JSON.stringify(routes)}; export default routes`,
       (err, succes) => {
         if (err) {
           console.log("SAVING ROUTES FAILED WITH ERR", err);
@@ -509,6 +516,54 @@ methods.saveRoutesInUserLand = function (routes) {
     );
   });
 };
+// methods.saveAppManifestInUserLand = function (appManifest, resources) {
+//   const self = this;
+//   const pao = self.pao;
+//   const traverse = self.traverse;
+//   const generate = self.generate;
+//   const parser = self.parser;
+//   const t = self.t;
+//   const execSync = self.execSync;
+//   const loadFileSync = pao.pa_loadFileSync;
+//   const loadFile = pao.pa_loadFile;
+//   const readFileSync = pao.pa_readFileSync;
+//   const saveToFile = pao.pa_saveToFile;
+//   const getWorkingFolder = pao.pa_getWorkingFolder;
+//   const cwd = getWorkingFolder();
+
+//   return new Promise((resolve, reject) => {
+//     let requiresRoutes = routes.filter((rou) => {
+//       if (rou.requiresData) {
+//         return rou;
+//       }
+//     });
+//     let routesToPath = `${cwd}${path.sep}app_routes.js`;
+//     console.log("THE ROUTES PATHS BUILD", routesToPath);
+//     fs.writeFile(
+//       routesToPath,
+//       `const routes = ${JSON.stringify(routes)}; export {routes}`,
+//       (err, succes) => {
+//         if (err) {
+//           console.log("SAVING ROUTES FAILED WITH ERR", err);
+//         }
+//         let fileContent = fs.readFileSync(routesToPath, {
+//           encoding: "utf8",
+//         });
+//         console.log("THE ROUTES PATHS BUILD AST BEFORE", routesToPath);
+//         let ast = parser.parse(fileContent, {
+//           sourceType: "module",
+//         });
+//         console.log("THE ROUTES PATHS BUILD AST", ast);
+//         self.addObjectExpressionProperty(ast, requiresRoutes);
+//         const { code: genCode } = generate(ast);
+//         // const modifiedCode = genCode;
+
+//         saveToFile(routesToPath, `${genCode}`);
+//         resolve(true);
+//       }
+//     );
+//   });
+// };
 methods.addObjectExpressionProperty = function (ast, state) {
   const self = this;
   const pao = self.pao;
