@@ -19,6 +19,7 @@ export default () => {
     output: {
       filename: "[main].bundle.js",
       path: `${env.appBuildFolder}`, // save emitted bundle to this path or folder
+      // publicPath: `${env.appAssetsPublic}`,
     },
     //externals: {
     // react: {
@@ -129,6 +130,15 @@ export default () => {
       new HTMLWebpackPlugin({
         template: env.appIndexHtml,
         filename: "index.html",
+      }),
+      // new HTMLWebpackPlugin({
+      //   // template: env.appIndexHtml,
+      //   filename: "index.html",
+      // }),
+      new webpack.DefinePlugin({
+        "process.env": {
+          ...appEnvironmentVariables,
+        },
       }),
       new webpack.HotModuleReplacementPlugin(),
     ],

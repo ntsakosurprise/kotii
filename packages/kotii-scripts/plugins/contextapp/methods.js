@@ -94,7 +94,7 @@ methods.getAppInContextResources = function (environment = false) {
       appManifest: self.checkIfIsFile(
         self.getFilePath(appFolder, "app.manifest.json")
       )
-        ? self.getFilePath(appFolder, "app.manifest.json")
+        ? loadFileSync(self.getFilePath(appFolder, "app.manifest.json"))
         : null,
     };
     console.log("THE RESOURCES", resources);

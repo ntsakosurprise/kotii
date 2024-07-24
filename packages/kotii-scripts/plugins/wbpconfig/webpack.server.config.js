@@ -1,25 +1,33 @@
 import path from "path";
 import webpack from "webpack";
 
-export default () => {
+export default (options) => {
   //   console.log("THE PROCESS", process.env.APPCONTEXT);
+  console.log("THE STUFF THAT IS", options);
   let env = JSON.parse(process.env.APPCONTEXT); // GET the set APPCONTEXT environment variable
   let appEnvironmentVariables = JSON.parse(process.env.APP_ENVS); // Get context app kotii environment variables
   console.log("THE APP BUILD FOLDER", env.appBuildFolder);
   console.log("WEBPACK APP ENVS", appEnvironmentVariables);
   console.log("THE SERVER CONFIG");
   console.log("THE APP BUILD FOLDER", env.appBuildFolder);
+  console.log;
   return {
     entry: ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
     context: env.appFolder,
     mode: process.env.NODE_ENV,
-    infrastructureLogging: { level: "none" },
-    stats: "none",
+    infrastructureLogging: { level: "info" },
+    stats: true,
 
     output: {
-      filename: "[main].bundle.js",
+      filename: "[main].server.bundle.js",
       path: `${env.appBuildFolder}`, // save emitted bundle to this path or folder
       clean: true, // Clean build folder before emitting new bundle
+      publicPath: "/",
+      assetModuleFilename: (pathData, assetInfo) => {
+        // console.log("THE PATH DATA", pathData.filename);
+        // console.log("THE PATH INFO", assetInfo);
+        return `${path.basename(pathData.filename)}`;
+      },
     },
     //externals: {
     // react: {
@@ -34,32 +42,14 @@ export default () => {
     resolve: {
       extensions: [".js", ".jsx", ".png", ".jpg"], // tell webpack to use these extenstions to resolve imported files[for importing without specifying the extension name]
       alias: {
-        Layouts: "/src/components/layout/index",
-        Pages: "/src/components/pages/index",
-        Docs: "/src/components/docs/index",
-        Markdowns: "/src/mds/",
-        Modules: "/src/modules/",
-        Startup: "/src/components/startup/index",
-        UI: "/src/components/ui/index",
-        Config: "/src/config/",
-        HOC: "/src/hoc/",
-        Hooks: "/src/hooks/index",
-        Context: "/src/context/",
-        Language: "/src/language/index",
-        AppRoutes: "/src/routes/",
-        AppModules: "/src/modules/",
-        Store: "/src/store/",
-        Utilities: "/src/utils/index",
-        Services: "/src/services/",
-        Constants: "/src/constants/",
-        Assets: "/src/assets/index",
-        AppGlobals: "/src/globals/index",
+        ...options.appManifest.aliases,
         "react-router-dom": path.resolve(
           `${env.appFolder}/node_modules/react-router-dom`
         ),
         "react-router": path.resolve(
           `${env.appFolder}/node_modules/react-router`
         ),
+        "kotii-scripts": path.resolve(`${options.cwd}/kotii-land/dev/app_.js`),
       }, // Alias references to files and folders inorder to use absolute paths in your file imports
       fallback: {
         fs: false,
@@ -102,7 +92,49 @@ export default () => {
           use: ["style-loader", "css-loader"],
         },
         {
-          test: /\.(png|jpg|gif|svg)$/i,
+          test: /\.less$/i,
+          use: [
+            // compiles Less to CSS
+            "style-loader",
+            "css-loader",
+            "less-loader",
+          ],
+        },
+        {
+          test: /\.s[ac]ss$/i,
+          use: [
+            // Creates `style` nodes from JS strings
+            "style-loader",
+            // Translates CSS into CommonJS
+            "css-loader",
+            // Compiles Sass to CSS
+            "sass-loader",
+          ],
+        },
+        {
+          test: /\.styl$/,
+          use: [
+            "style-loader",
+            "css-loader",
+            {
+              loader: "stylus-loader",
+              options: {
+                webpackImporter: false,
+              },
+            },
+          ],
+        },
+        {
+          test: /\.(csv|tsv)$/i,
+          use: ["csv-loader"],
+        },
+        {
+          test: /\.xml$/i,
+          use: ["xml-loader"],
+        },
+
+        {
+          test: /\.(png|svg|jpg|jpeg|gif)$/i,
           type: "asset/resource",
         },
         {
@@ -132,7 +164,7 @@ export default () => {
     // },
     plugins: [
       // new HTMLWebpackPlugin({
-      //   template: env.appIndexHtml,
+      //   // template: env.appIndexHtml,
       //   filename: "index.html",
       // }),
       new webpack.DefinePlugin({

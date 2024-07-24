@@ -1,7 +1,8 @@
 const methods = {};
+import fs from "fs";
+import { ServerStyleSheet } from "kotii-styled";
+import path from "path";
 import { Router } from "wouter";
-
-//import Footer from "/Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/components/layout/Footer/component.jsx";
 
 methods.init = function () {
   this.adLog("React View has been initialised");
@@ -26,6 +27,7 @@ methods.handleReactView = function (data) {
   self.callback = data.callback;
 
   console.log("THE VIEW DATA", data);
+  console.log("ServerStyleSheet", ServerStyleSheet);
   self.runReactView(data).then((html) => {
     self.callback(null, html);
   });
@@ -58,9 +60,9 @@ methods.runReactView = function (data) {
     React,
     renderToString,
     REACTAPP,
-    Header,
-    Footer,
-    GlobalStyle,
+    // Header,
+    // Footer,
+    // GlobalStyle,
     createReduxStore,
     HeadHelmet,
     meta,
@@ -69,26 +71,26 @@ methods.runReactView = function (data) {
   const { app } = meta;
   const { stateVendor = "" } = app;
 
-  const Layout = (props) => {
-    return (
-      <div
-        style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
-      >
-        <Header />
-        {props.children}
-        <Footer />
-      </div>
-    );
-  };
+  // const Layout = (props) => {
+  //   return (
+  //     <div
+  //       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+  //     >
+  //       <Header />
+  //       {props.children}
+  //       <Footer />
+  //     </div>
+  //   );
+  // };
 
-  const Root = (props) => {
-    return (
-      <div>
-        <GlobalStyle />
-        {props.children}
-      </div>
-    );
-  };
+  // const Root = (props) => {
+  //   return (
+  //     <div>
+  //       <GlobalStyle />
+  //       {props.children}
+  //     </div>
+  //   );
+  // };
 
   // Grab the initial state from our Redux store
   return new Promise(async (resolve) => {
@@ -98,16 +100,53 @@ methods.runReactView = function (data) {
       store,
       staticRender
     );
+    let layoutRoot = await self.doImport(
+      `/src/components/startup/index.jsx`,
+      true,
+      false
+    );
+    console.log("THE LAYOUT ROOT", layoutRoot.Layout);
     console.log("GOT STATE DATA", stateData);
     let html = "";
 
+    const sheet = new ServerStyleSheet();
     try {
       html = renderToString(
-        <Router ssrPath={view.match}>{REACTAPP(Root, Layout, store)}</Router>
+        sheet.collectStyles(
+          !layoutRoot ? (
+            <Router ssrPath={view.match}>{REACTAPP(null, null, store)}</Router>
+          ) : layoutRoot.Layout && layoutRoot.Root ? (
+            <Router ssrPath={view.match}>
+              {REACTAPP(layoutRoot.Root, layoutRoot.Layout, store)}
+            </Router>
+          ) : layoutRoot.Layout ? (
+            <Router ssrPath={view.match}>
+              {REACTAPP(null, layoutRoot.Layout, store)}
+            </Router>
+          ) : (
+            <Router ssrPath={view.match}>
+              {REACTAPP(layoutRoot.Root, null, store)}
+            </Router>
+          )
+        )
       );
+      const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
+      self.styledTags = styleTags;
+      console.log("STYLED-COMPONENTS STYLE TAGS", styleTags);
     } catch (error) {
-      console.log("THE RENDER ERROR", error);
+      // handle error
+      console.error(error);
+    } finally {
+      sheet.seal();
     }
+
+    // try {
+    //   html = renderToString(
+    //     <Router ssrPath={view.match}>{REACTAPP(Root, Layout, store)}</Router>
+    //   );
+    // } catch (error) {
+    //   console.log("THE RENDER ERROR", error);
+    // }
 
     const finalState = store.getState();
     const helmetGenerated = HeadHelmet.renderStatic();
@@ -118,7 +157,7 @@ methods.runReactView = function (data) {
       view,
       helmetGenerated
     );
-    // console.log("THE HTML IN RUN REACT-VIEW", fullPage);
+    console.log("THE HTML IN RUN REACT-VIEW", fullPage);
     resolve(fullPage);
   });
 };
@@ -132,22 +171,27 @@ methods.renderFullPage = function (
 ) {
   const self = this;
   const { serialize } = self;
-  console.log("THE PRELOADED STATE", preloadedState);
+  const jsonStyles = fs.existsSync(`${process.cwd()}${path.sep}styles.json`)
+    ? JSON.parse(fs.readFileSync(`${process.cwd()}${path.sep}styles.json`))
+    : null;
+  let styleTags = jsonStyles ? jsonStyles.toString().replace(",", "") : "";
+  console.log("THE PRELOADED STATE", preloadedState, styleTags);
   return `
 		<!doctype html>
-		<html ${head.htmlAttributes.toString()}>
-
+		<html ${head.htmlAttributes.toString()}> 
     <head>
     ${head?.title.toString()}
     ${head?.meta.toString()}
     ${head?.link.toString()}
+    ${self.styledTags}
+    ${styleTags}
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
 			<script>
       window.__PRELOADED_STATE__ = ${serialize(preloadedState)}
 			</script>
-			<script src="/[main].bundle.js" ></script>
+			<script src="/[main].server.bundle.js" ></script>
 
 		</body>
 		</html>
@@ -177,6 +221,29 @@ methods.getStateDataFromServer = function (
       console.log("THE RESOLVED DATA", resolveData);
       resolve(resolveData);
     });
+  });
+};
+
+methods.doImport = function (toImport, all = false, check = true) {
+  const self = this;
+  const pao = self.pao;
+  const loadFile = pao.pa_loadFile;
+  const loadFileSync = pao.pa_loadFileSync;
+  // console.log("TIIMPORT", toImport);
+  return new Promise((resolve, reject) => {
+    // const manifestFile = loadFileSync(toImport);
+    // resolve({ module: imported.meta });
+    loadFile(toImport, all, check)
+      .then((imported) => {
+        console.log("Module has successfully been imported:", imported);
+        resolve(imported);
+      })
+      .catch((err) => {
+        console.log(
+          `importing module:${toImport}, has failed with an error:${err}`
+        );
+        reject(err);
+      });
   });
 };
 

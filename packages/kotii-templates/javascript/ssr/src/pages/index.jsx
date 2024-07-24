@@ -5,9 +5,15 @@ import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
 import { FaLongArrowAltRight } from "react-icons/fa/index.js";
 import { useDispatch, useSelector } from "react-redux";
+import SearchImage from "../assets/docs_search.png";
+import StonesJPG from "../assets/stones.jpg";
 import CONFIG from "../config/environment_variables.js";
 import SVGConnections from "../shared/test.jsx";
+import names from "../state/places.json";
+import Reminder from "../state/reminder.csv";
+import User from "../state/user.xml";
 import * as actions from "../store/home/actions.js";
+import "../styles/index.css";
 
 const Main = styled("div")({
   display: "flex",
@@ -178,6 +184,11 @@ const PeopleList = (props) => {
 const Index = () => {
   console.log("THE ENVIRONMENT CONFIG", CONFIG.GITHUB_APP_ID);
   console.log("OUR NODE ENV", process.env.NODE_ENV);
+  console.log("OUR IMAGES: SEARCH", SearchImage);
+  console.log("OUR IMAGES: STONES", StonesJPG);
+  console.log("THE CSV", Reminder);
+  console.log("USER XML", User);
+  console.log("NAMES", names);
   const peopleList = useSelector((state) => {
     console.log("STATE RECEIVED", state);
     return state.homeReducer.people;
@@ -195,6 +206,7 @@ const Index = () => {
           Edit, save, and see your changes reflected in real-time. Get started
           by going to:
         </HeroText>
+        {/* <Hero>{names[0]}</Hero> */}
         <Path />
         <StyledButton>
           <ButtonBackCard />
@@ -207,6 +219,8 @@ const Index = () => {
       <SVG>
         <SVGConnections />
       </SVG>
+      {/* <img src={SearchImage} width={36} height={36} /> */}
+      {/* <img src={StonesJPG} width={800} /> */}
     </Main>
   );
 };

@@ -14,9 +14,11 @@ import Hello from "./hello/hello.js";
 import Init from "./init/index.js";
 import Interpreter from "./interpreter/index.js";
 import JsxToReact from "./jsxtoreact/index.js";
+// import ReactVeiwPruned from "./react-pruned/index.js";
 import ReactView from "./react/reactview.js";
 import ReactToJsx from "./reacttojsx/index.js";
 import Scaffold from "./scaffold/index.js";
+import ServerBuild from "./server-build/index.js";
 import Ssg from "./ssg/index.js";
 import Start from "./start/index.js";
 import Watchr from "./watchr/index.js";
@@ -38,6 +40,7 @@ export { WebpackConfig };
 export { DevServer };
 export { ContextApp };
 export { FileRouter };
+export { ServerBuild };
 export { Env };
 export default {
   Interpreter,
@@ -62,4 +65,5 @@ export default {
   ReactView,
   Ssg,
   Env,
+  ServerBuild,
 };

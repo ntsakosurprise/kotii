@@ -1,0 +1,24 @@
+{
+  "presets": [
+    "@babel/preset-react",
+    [
+      "@babel/preset-env",
+      {
+        "modules": false
+      }
+    ]
+  ],
+  "plugins": [
+    ["@babel/plugin-proposal-json-modules"],
+    [
+      "file-loader",
+      {
+        "name": "[hash].[ext]",
+        "extensions": ["png", "jpg", "jpeg", "gif", "svg"],
+        "publicPath": "public/img",
+        "outputPath": null
+      },
+      "img-file-loader-plugin"
+    ]
+  ]
+}

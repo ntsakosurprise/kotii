@@ -26,15 +26,28 @@ methods.handleWebpackConfig = function (data) {
 };
 methods.configureWebPack = function (payload, envs = null) {
   const self = this;
+  const pao = self.pao;
+  // const getWorkingDir = pao.p_getWorkingFolder;
+  const cwd = pao.pa_getWorkingFolder();
   const { webpack, setContextEnv } = self;
-  const webPackConfig = process.env?.ANZII_CLI_WITH_SERVER
-    ? self.webPackServerConfig
-    : self.webPackConfig;
-  const { routes = null, contextApp, build = false } = payload;
+  const webPackConfig =
+    process.env?.ANZII_CLI_WITH_SERVER &&
+    process.env.ANZII_CLI_WITH_SERVER === "true"
+      ? self.webPackServerConfig
+      : self.webPackConfig;
+  const {
+    routes = null,
+    contextApp,
+    build = false,
+    appManifest = null,
+  } = payload;
   // console.log("THE APP CONTEXT CONFIG", payload);
   setContextEnv(contextApp, envs);
-  const webpackConfigObject = webPackConfig();
-
+  const webpackConfigObject = webPackConfig({
+    cwd,
+    appManifest: contextApp.appManifest,
+  });
+  console.log("PROCESS.ENV", process.env);
   console.log("THE WEBPACK CONFIG", webpackConfigObject);
   let wbpCompiler = null;
   try {
@@ -43,6 +56,7 @@ methods.configureWebPack = function (payload, envs = null) {
     console.log("Webpack config error", err);
     process.exit(1);
   }
+
   if (!build)
     return self.hookIntoWebpackCompilation(wbpCompiler).then((hooked) => {
       console.log("THE CONFIG HOOK STATUS", hooked);
@@ -52,6 +66,7 @@ methods.configureWebPack = function (payload, envs = null) {
           webpackConfig: webpackConfigObject,
         },
         routes
+        // domain: [{ name: 'static', set: 'public' }]
       );
     });
 
@@ -100,9 +115,11 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
   const self = this;
   const callback = self.callback;
   let wepackMiddlewares = null;
-  const serverType = process.env?.ANZII_CLI_WITH_SERVER
-    ? "config-manual"
-    : "dev-server";
+  const serverType =
+    process.env?.ANZII_CLI_WITH_SERVER &&
+    process.env.ANZII_CLI_WITH_SERVER === "true"
+      ? "config-manual"
+      : "dev-server";
   serverType === "config-manual"
     ? (wepackMiddlewares = {
         webpackDevMiddleware: self.webpackDevMiddleware,
@@ -149,6 +166,7 @@ methods.getEnvVariables = function (envPath) {
 };
 methods.hookIntoWebpackCompilation = async function (compiler, configWp) {
   const self = this;
+  if (compiler) return {};
   compiler.hooks.invalid.tap("invalid", () => {
     console.log("wEBPACK is compiling our code....");
   });
