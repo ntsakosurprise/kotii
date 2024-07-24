@@ -4,35 +4,8 @@ import { pathToFileURL } from "node:url";
 import path from "path";
 import { meta } from "../kotii-land/prod/manifest.js";
 let workdir = `${process.cwd()}`;
-let NODE_ENV = process.env.NODE_ENV;
-let sep = path.sep;
 
-let whiteListedUrls = [
-  `${pathToFileURL(`${workdir}${sep}plugins${sep}react${sep}methods.js`)}`,
-  `${pathToFileURL(`${workdir}${sep}build.js`)}`,
-  `${pathToFileURL(`${workdir}${sep}public.js`)}`,
-  `${pathToFileURL(`${workdir}${sep}app_.js`)}`,
-];
-let customExtensionsRegex = /\.(png|css|jpg|jpeg|gif)$/;
-
-let extJS = ".js";
-let extSvg = ".svg";
-let extJson = ".json";
-let fileLoaderExts = [
-  ".png",
-  ".jpg",
-  ".jpeg",
-  ".css",
-  ".less",
-  ".scss",
-  ".sass",
-  ".styl",
-  ".csv",
-  ".tsv",
-  ".xml",
-];
 let extensions = [".js", ".jsx", ".tsx", ".ts"];
-let nodeModulesRegex = /node_modules/;
 
 export async function resolve(specifier, context, nextResolve) {
   const { parentURL = workdir } = context;
