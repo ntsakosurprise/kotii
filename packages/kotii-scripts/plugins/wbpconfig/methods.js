@@ -35,10 +35,18 @@ methods.configureWebPack = function (payload, envs = null) {
     process.env.ANZII_CLI_WITH_SERVER === "true"
       ? self.webPackServerConfig
       : self.webPackConfig;
-  const { routes = null, contextApp, build = false } = payload;
+  const {
+    routes = null,
+    contextApp,
+    build = false,
+    appManifest = null,
+  } = payload;
   // console.log("THE APP CONTEXT CONFIG", payload);
   setContextEnv(contextApp, envs);
-  const webpackConfigObject = webPackConfig({ cwd });
+  const webpackConfigObject = webPackConfig({
+    cwd,
+    appManifest: contextApp.appManifest,
+  });
   console.log("PROCESS.ENV", process.env);
   console.log("THE WEBPACK CONFIG", webpackConfigObject);
   let wbpCompiler = null;

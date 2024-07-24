@@ -1,9 +1,7 @@
-//import { createRequire } from "node:module";
-
-// import Init from "./init/index.js";
-// import Interpreter from "./interpreter/index.js";
 import ReactVeiwPruned from "./react-pruned/index.js";
+import StartProduction from "./start-production/index.js";
 
 export default {
   ReactVeiwPruned,
+  StartProduction,
 };
