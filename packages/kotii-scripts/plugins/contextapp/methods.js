@@ -96,6 +96,9 @@ methods.getAppInContextResources = function (environment = false) {
       )
         ? loadFileSync(self.getFilePath(appFolder, "app.manifest.json"))
         : null,
+      appApi: self.checkIfIsDirectory(self.getFilePath(appFolder, "api"))
+        ? self.getFilePath(appFolder, "api")
+        : null,
     };
     console.log("THE RESOURCES", resources);
     // let appFileSavePath = `${resources.appSrc}/about_.js`;
@@ -147,6 +150,24 @@ methods.checkIfIsFile = function (filePath) {
     return isFile;
   } catch (error) {
     // console.log("THE STATS THROWN", error);
+    return false;
+  }
+};
+methods.checkIfIsDirectory = function (filePath) {
+  const self = this;
+  const { fs } = self;
+  let stats;
+  console.log("DIRECTORY PATH", filePath);
+  try {
+    stats = fs.statSync(filePath);
+
+    console.log("FILE STATISTICS", stats);
+    const isDir = stats.isDirectory();
+
+    console.log("IS FILE", isDir);
+    return isDir;
+  } catch (error) {
+    console.log("THE STATS THROWN", error);
     return false;
   }
 };

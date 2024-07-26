@@ -47,6 +47,7 @@ methods.configureWebPack = function (payload, envs = null) {
     cwd,
     appManifest: contextApp.appManifest,
   });
+
   console.log("PROCESS.ENV", process.env);
   console.log("THE WEBPACK CONFIG", webpackConfigObject);
   let wbpCompiler = null;
