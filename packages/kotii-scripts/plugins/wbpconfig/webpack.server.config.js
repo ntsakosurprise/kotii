@@ -46,6 +46,7 @@ export default (options) => {
         "react-router-dom": path.resolve(
           `${env.appFolder}/node_modules/react-router-dom`
         ),
+        react: path.resolve(`${env.appFolder}/node_modules/react`),
         "react-router": path.resolve(
           `${env.appFolder}/node_modules/react-router`
         ),
