@@ -86,10 +86,26 @@ export async function load(url, context, nextLoad) {
         presets: ["@babel/preset-react"],
         plugins: ["@babel/plugin-syntax-import-assertions"],
       };
-      console.log("READING FILE", fileExtension);
-      source = fs.readFileSync(new URL(url).pathname, {
-        encoding: "utf-8",
-      });
+      console.log("READING FILE", fileExtension, url);
+      let urlInstance = new URL(url).pathname;
+      if (url.indexOf("/api/") >= 0) {
+        if (!fs.existsSync(urlInstance)) {
+          source = `export default ${JSON.stringify({ noApi: true })}`;
+          return {
+            format: "module",
+            shortCircuit: true,
+            source: source,
+          };
+        } else {
+          source = fs.readFileSync(urlInstance, {
+            encoding: "utf-8",
+          });
+        }
+      } else {
+        source = fs.readFileSync(urlInstance, {
+          encoding: "utf-8",
+        });
+      }
     } else if (fileLoaderExts.includes(fileExtension)) {
       console.log("The PNG", fileExtension);
       let pathName = new URL(url).pathname;
@@ -226,6 +242,8 @@ export async function resolve(specifier, context, nextResolve) {
   if (shouldTerminate) return shouldTerminate;
   shouldTerminate = resolveKotiiScriptsImports(specifier);
   if (shouldTerminate) return shouldTerminate;
+  shouldTerminate = resolveKotiiUserApiPlugins(specifier);
+  if (shouldTerminate) return shouldTerminate;
   return nextResolve(specifier);
   // Take an `import` or `require` specifier and resolve it to a URL.
 }
@@ -312,7 +330,22 @@ const resolveKotiiScriptsImports = (specifier) => {
     return false;
   }
 };
+const resolveKotiiUserApiPlugins = (specifier) => {
+  if (!isBuiltin(specifier) && /^\/kotii-user-api/.test(specifier)) {
+    let basePath = getPagesBasePath();
+    console.log("API PLUGINS PATH", basePath);
 
+    let fullPath = path.resolve(basePath, "api/index.js");
+    console.log("THE FULL PATH", fullPath);
+    // console.log("THE BASE PATH", workdir);
+    return {
+      url: pathToFileURL(fullPath).href,
+      shortCircuit: true,
+    };
+  } else {
+    return false;
+  }
+};
 const getPagesBasePath = () => {
   let nodeModulesPath = `${path.join(workdir, "../node_modules")}`;
   let kotiiPath = `${path.join(workdir, "..")}`;
