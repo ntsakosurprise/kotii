@@ -4,7 +4,7 @@ class Users {
   }
   init() {
     this.listens({
-      "handle-user-task": this.handleUserTask.bind(this),
+      "handle-users-task": this.handleUserTask.bind(this),
     });
   }
   handleUserTask(data) {
@@ -21,7 +21,7 @@ class Users {
       .getSavedHistory()
       .then((saved) => {
         console.log("the saved;;;", saved);
-        return self.callback(null, { message: message });
+        return self.callback(null, { actor: saved });
       })
       .catch((err) => {
         console.log("savedError;;;", err);
@@ -44,12 +44,14 @@ class Users {
       //     queries,
       //     self.multiDataRequestHandler.bind(this, resolve, reject)
       //   );
-      resolve({
-        name: "Kotii",
-        userName: "kotii-user",
-        born: 2024,
-        status: "In development",
-      });
+      resolve([
+        {
+          name: "Kotii",
+          userName: "kotii-user",
+          born: 2024,
+          status: "In development",
+        },
+      ]);
     });
   }
   multiDataRequestHandler(

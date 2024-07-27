@@ -2,7 +2,7 @@ export default [
   {
     path: "/get-users",
     method: "POST",
-    alias: "user",
+    alias: "users",
     type: "public",
   },
 
