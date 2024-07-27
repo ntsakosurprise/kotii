@@ -1,4 +1,6 @@
 const methods = {};
+import fs from "fs";
+import path from "path";
 methods.init = function () {
   console.log("Webpackconfig has been initialised");
 
@@ -66,7 +68,7 @@ methods.configureWebPack = function (payload, envs = null) {
           compiler: wbpCompiler,
           webpackConfig: webpackConfigObject,
         },
-        routes
+        { routes, api: contextApp.appApi }
         // domain: [{ name: 'static', set: 'public' }]
       );
     });
@@ -114,7 +116,10 @@ methods.setContextEnv = function (mdconfig, envs = null) {
 };
 methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
   const self = this;
+  const pao = self.pao;
   const callback = self.callback;
+  const loadFile = pao.pa_loadFile;
+
   let wepackMiddlewares = null;
   const serverType =
     process.env?.ANZII_CLI_WITH_SERVER &&
@@ -132,24 +137,54 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
   console.log("THE SERVER TYPE", serverType);
   self.emit({
     type: "take-ssr-routes",
-    data: { payload: { routes: [...anziiManualConfigs] } },
+    data: { payload: { routes: [...anziiManualConfigs.routes] } },
   });
-  self.emit({
-    type: serverType,
-    data: {
-      payload: {
-        ...webpacks,
-        wepackMiddlewares,
-        configs: {
-          router: anziiManualConfigs,
-          domain: [{ name: "static", set: "build" }],
+  if (anziiManualConfigs.api && fs.existsSync(anziiManualConfigs.api)) {
+    loadFile(`${anziiManualConfigs.api}${path.sep}.config.js`).then(
+      (config) => {
+        console.log("API PLUGIN THE CONFIG FILE", config);
+        let appConfig = {
+          ...anziiManualConfigs,
+          router: [...config.router, ...anziiManualConfigs.routes],
+        };
+        self.emit({
+          type: serverType,
+          data: {
+            payload: {
+              ...webpacks,
+              wepackMiddlewares,
+              configs: {
+                ...appConfig,
+                // router: anziiManualConfigs.routes,
+                domain: [{ name: "static", set: "build" }],
+              },
+            },
+            callback: (data) => {
+              callback(data.message);
+            },
+          },
+        });
+        // resolve(config);
+      }
+    );
+  } else {
+    self.emit({
+      type: serverType,
+      data: {
+        payload: {
+          ...webpacks,
+          wepackMiddlewares,
+          configs: {
+            router: anziiManualConfigs.routes,
+            domain: [{ name: "static", set: "build" }],
+          },
+        },
+        callback: (data) => {
+          callback(data.message);
         },
       },
-      callback: (data) => {
-        callback(data.message);
-      },
-    },
-  });
+    });
+  }
 };
 methods.getEnvVariables = function (envPath) {
   const self = this;
