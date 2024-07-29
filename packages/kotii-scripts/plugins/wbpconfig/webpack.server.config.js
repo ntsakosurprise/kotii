@@ -12,7 +12,10 @@ export default (options) => {
   console.log("THE APP BUILD FOLDER", env.appBuildFolder);
   console.log;
   return {
-    entry: ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
+    entry:
+      options?.build && options.build
+        ? env.appIndexFile
+        : ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
     context: env.appFolder,
     mode: process.env.NODE_ENV,
     infrastructureLogging: { level: "info" },
@@ -20,7 +23,10 @@ export default (options) => {
 
     output: {
       filename: "[main].server.bundle.js",
-      path: `${env.appBuildFolder}`, // save emitted bundle to this path or folder
+      path:
+        options?.build && options.build
+          ? options.staticFolder
+          : `${env.appBuildFolder}`, // save emitted bundle to this path or folder
       clean: true, // Clean build folder before emitting new bundle
       publicPath: "/",
       assetModuleFilename: (pathData, assetInfo) => {

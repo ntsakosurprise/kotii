@@ -15,7 +15,7 @@ methods.handleWebpackConfig = function (data) {
   self["callback"] = data.callback;
   const { contextApp } = data.payload;
   const { appEnv = "" } = contextApp;
-  console.log("WEBPACK DATA PAYLOAD", data.payload);
+  console.log("WEBPACK DATA PAYLOAD", data.payload.build);
   // console.log("SELF. AFTER SETTING CALLBACK", self);
   // console.log("THE NODE ENV", process.env.NODE_ENV);
   self.getEnvVariables(appEnv).then((envs) => {
@@ -32,22 +32,28 @@ methods.configureWebPack = function (payload, envs = null) {
   // const getWorkingDir = pao.p_getWorkingFolder;
   const cwd = pao.pa_getWorkingFolder();
   const { webpack, setContextEnv } = self;
+  const { routes = null, contextApp, build = false } = payload;
   const webPackConfig =
-    process.env?.ANZII_CLI_WITH_SERVER &&
-    process.env.ANZII_CLI_WITH_SERVER === "true"
+    (process.env?.ANZII_CLI_WITH_SERVER &&
+      process.env.ANZII_CLI_WITH_SERVER === "true") ||
+    build
       ? self.webPackServerConfig
       : self.webPackConfig;
-  const {
-    routes = null,
-    contextApp,
-    build = false,
-    appManifest = null,
-  } = payload;
+
   // console.log("THE APP CONTEXT CONFIG", payload);
   setContextEnv(contextApp, envs);
   const webpackConfigObject = webPackConfig({
     cwd,
     appManifest: contextApp.appManifest,
+    build: build,
+    buildFolder: `${path.resolve(
+      contextApp.appFolder,
+      contextApp.appManifest.build
+    )}`,
+    staticFolder: `${path.resolve(
+      contextApp.appFolder,
+      contextApp.appManifest.static
+    )}`,
   });
 
   console.log("PROCESS.ENV", process.env);
