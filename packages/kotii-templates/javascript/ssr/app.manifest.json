@@ -1,5 +1,7 @@
 {
   "appType": "ssra",
+  "build": "build",
+  "static": "static",
   "aliases": {
     "Layouts": "/src/components/layout/index",
     "Pages": "/src/components/pages/index",
