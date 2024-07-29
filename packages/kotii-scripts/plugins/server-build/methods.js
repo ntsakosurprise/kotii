@@ -100,10 +100,12 @@ methods.handleServerBuild = function (data) {
       // saveToFile(`${cwd}${path.sep}tempDirFiles.json`, JSON.stringify(dirs));
       // console.log("TEMP DIRS", dirs);
       // fs.rmdirSync(fullTempPath);
+      console.log("TARGET SOURCES", targetSource, "destination", destination);
+      console.log("TARGET MAIN", targetMain, "full temp", fullTempPath);
       self.syncDirectories(targetSource, `${destination}/src`);
       self.copyPublicToDist(`${targetMain}`, `${fullTempPath}`);
       self.copyPublicToDist(`${fullTempPath}`, `${destination}`);
-      self.syncDirectories(targetSource, `${destination}/src`);
+      // self.syncDirectories(targetSource, `${destination}/src`);
       fs.rmSync(fullTempPath, { recursive: true });
       self.removeJsxReferences(destination, {
         destination: `${destination}${path.sep}src`,
@@ -118,7 +120,9 @@ methods.handleServerBuild = function (data) {
         JSON.stringify(babelJson, null, 2)
       );
       self.saveRoutesInUserLand(routes).then(() => {
-        self.doKotiiLandPagesFile(destination, { contextApp });
+        self.doKotiiLandPagesFile(destination, {
+          contextApp,
+        });
       });
     })
     .catch((error) => {
@@ -192,17 +196,17 @@ methods.handleIgnores = function (root) {
   console.log("THE IGNORE STRING", absoluteIgnores);
   return absoluteIgnores;
 };
-methods.copyPublicToDist = function (from, to, ignore = null) {
+methods.copyPublicToDist = function (from, to, ignores = []) {
   const self = this;
-  let ignores = self.handleIgnores(from);
-  console.log("copying from", from, to);
+  let ignoresMerged = [...ignores, ...self.handleIgnores(from)];
+  console.log("copying from", from, to, "with merged ignores", ignoresMerged);
   fs.cpSync(from, to, {
     recursive: true,
     filter: (fi) => {
-      // console.log("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
+      console.log("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
       // if (ignores.includes(fi)) return true;
       // let thisToReturn = fi !== ignore;
-      let thisToReturn = !ignores.includes(fi);
+      let thisToReturn = !ignoresMerged.includes(fi);
       // console.log("THIS TO RETURN", thisToReturn);
       return thisToReturn;
     },
@@ -425,7 +429,9 @@ methods.doKotiiLandPagesFile = function (destination, options) {
     );
     saveToFile(
       `${destination}${path.sep}.config.js`,
-      self.getKotiiConfigTemplate({ public: "public" })
+      self.getKotiiConfigTemplate({
+        public: options.contextApp.appManifest.static,
+      })
     );
     saveToFile(
       `${madeFolder}${path.sep}app.manifest.json`,
@@ -436,7 +442,11 @@ methods.doKotiiLandPagesFile = function (destination, options) {
     );
   }
 };
-methods.syncDirectories = function (sourceDirectoryPath, destination) {
+methods.syncDirectories = function (
+  sourceDirectoryPath,
+  destination,
+  ignores = []
+) {
   let allDirectories = [];
   fs.readdirSync(sourceDirectoryPath).forEach((sourceFile) => {
     console.log("THE READDIR SOURCE FILE", sourceFile);
@@ -453,14 +463,15 @@ methods.syncDirectories = function (sourceDirectoryPath, destination) {
       fs.mkdirSync(onDestinationPath);
       fs.cpSync(`${sourceDirectoryPath}${path.sep}${dir}`, onDestinationPath, {
         recursive: true,
-        // filter: (fi) => {
-        //   // console.log("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
-        //   // if (ignores.includes(fi)) return true;
-        //   // let thisToReturn = fi !== ignore;
-        //   let thisToReturn = !ignores.includes(fi);
-        //   // console.log("THIS TO RETURN", thisToReturn);
-        //   return thisToReturn;
-        // },
+        filter: (fi) => {
+          // console.log("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
+          // if (ignores.includes(fi)) return true;
+          // let thisToReturn = fi !== ignore;
+          console.log("SYNC DIRECTORIES FILE BEING COPIED", fi);
+          let thisToReturn = !ignores.includes(fi);
+          // console.log("THIS TO RETURN", thisToReturn);
+          return thisToReturn;
+        },
       });
     }
   });
