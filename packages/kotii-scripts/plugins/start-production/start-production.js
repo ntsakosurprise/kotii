@@ -5,6 +5,8 @@ class StartProduction {
     this.init = methods.init;
     this.handleConfigIsReady = methods.handleConfigIsReady;
     this.doStartUp = methods.doStartUp;
+    this.copyFromToFolder = methods.copyFromToFolder;
+    this.createFolder = methods.createFolder;
   }
 }
 export default StartProduction;
