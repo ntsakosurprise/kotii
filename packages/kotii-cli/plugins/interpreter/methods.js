@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+const path = require("path");
 let methods = {};
 methods.init = function () {
   this.logSync("Interpreter is initialising");
@@ -19,6 +20,7 @@ methods.handleInterpreterCliInput = async function (data) {
   const arg = self.arg;
   const figlet = self.figlet;
   const chalk = self.chalk;
+
   let stopFurtherExecution = false;
 
   self.logSync("Handling send-output Cli event");
@@ -28,12 +30,23 @@ methods.handleInterpreterCliInput = async function (data) {
   const filtered = self.processOptionsAsCommands(commands.options);
   console.log("THE FILTERED", filtered);
   console.log("The cosand Flags", commands);
-  self.getTemplateResponse().then((responses) => {
-    console.log("Template Response:", responses);
-    filtered.shouldDoCommand
-      ? self[filtered.commandAlias](filtered, commands.flags)
-      : null;
-  });
+  // self.getTemplateResponse().then((responses) => {
+  //   console.log("Template Response:", responses);
+  //   let fileFolder = getRootDir(module.filename);
+  //   console.log(
+  //     "FILE FOLDER BASE",
+  //     fileFolder,
+  //     path.basename(fileFolder),
+  //     process.cwd()
+  //   );
+  //   // filtered.shouldDoCommand
+  //   //   ? self[filtered.commandAlias](filtered, commands.flags)
+  //   //   : null;
+  // });
+
+  filtered.shouldDoCommand
+    ? self[filtered.commandAlias](filtered, commands.flags)
+    : null;
 };
 
 methods.handlePromptUser = function (data) {

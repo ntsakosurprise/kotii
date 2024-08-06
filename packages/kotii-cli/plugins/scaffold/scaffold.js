@@ -37,7 +37,13 @@ class Scaffold {
     this.github = github;
     this.projectInstall = projectInstall;
     this.isOnline = isOnline;
+    this.isLocalRun = false;
     this.path = path;
+    this.packagersInstallMap = {
+      npm: "i",
+      yarn: "add",
+    };
+
     //  this.Bitbucket = Bitbucket
     //  this.octokit = new Octokit()
     this.createBasicAuth = createBasicAuth;
@@ -108,7 +114,7 @@ class Scaffold {
           message: "What type of app would you like to create?",
           choices: [
             "spa(single page application)",
-            "ssra(server side rendered application)",
+            "ssr(server side rendered application)",
             "mua(multipage application)",
           ],
         },
@@ -198,6 +204,8 @@ class Scaffold {
     this.mergeQuestions = methods.mergeQuestions;
     this.deleteMatchedQuestion = methods.deleteMatchedQuestion;
     this.doPackageJson = methods.doPackageJson;
+    this.installLocally = methods.installLocally;
+    this.runTerminal = methods.runTerminal;
   }
 }
 
