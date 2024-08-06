@@ -68,20 +68,22 @@ export async function load(url, context, nextLoad) {
     url,
     `is node modules:${nodeModulesRegex.test(url)}, is BuiltIn: ${isBuiltin(
       fileName
-    )}`
+    )}`,
+    fileExtension
   );
 
   if (
     (fileExtension === extJsx ||
       fileExtension === extJS ||
       fileLoaderExts.includes(fileExtension)) &&
-    !nodeModulesRegex.test(url) &&
     !isBuiltin(fileName)
   ) {
+    console.log("EXTENSIONS EXECUTION", fileExtension);
     let source = null;
     let options = null;
 
     if (fileExtension === extJsx || fileExtension === extJS) {
+      console.log("JSX SECTION");
       options = {
         presets: ["@babel/preset-react"],
         plugins: ["@babel/plugin-syntax-import-assertions"],
@@ -102,6 +104,7 @@ export async function load(url, context, nextLoad) {
           });
         }
       } else {
+        console.log("JSX READ FILE", fileExtension);
         source = fs.readFileSync(urlInstance, {
           encoding: "utf-8",
         });
@@ -156,77 +159,17 @@ export async function load(url, context, nextLoad) {
     };
   }
 
-  // if (
-  //   whiteListedUrls.indexOf(url) >= 0 ||
-  //   fileExtension === extJsx ||
-  //   fileExtension === extSvg ||
-  //   customExtensionsRegex.test(url)
-  // ) {
-  //   let options = {};
-  //   let source = null;
-  //   if (fileExtension === extJsx) {
-  //     // console.log("PROCESSING FOR JSX EXTENSION");
-  //     options.presets = ["@babel/preset-react"];
-  //     source = fs.readFileSync(new URL(url).pathname, { encoding: "utf-8" });
-  //     // console.log("The Resulting Source", source);
-  //   } else if (fileExtension === extSvg) {
-  //     options.presets = ["@babel/preset-react"];
-  //     options.plugins = [["inline-react-svg", { filename: fileName }]];
-  //     source = fs.readFileSync(new URL(url).pathname, { encoding: "utf-8" });
-  //   } else if (customExtensionsRegex.test(url)) {
-  //     let newUrl = new URL(url).pathname;
-
-  //     let dataURI = null;
-  //     if (url.indexOf(".png") >= 0 || url.indexOf(".jpg") >= 0) {
-  //       source = fs.readFileSync(newUrl, { encoding: "base64" });
-  //       // const b64 = source.toString("base64");
-  //       // const type = url.indexOf(".png") >= 0 ? "image/png" : "image/jpg";
-  //       // dataURI = `data:${type};base64,${b64}`;
-  //       dataURI = `/image/.png`;
-  //       console.log("PNG FILE AS A PATH AS URL", url, dataURI);
-  //       let dirname = fs.mkdirSync("");
-  //     } else {
-  //       source = fs.readFileSync(newUrl, { encoding: "utf8" });
-  //     }
-  //     // console.log("THE ROAD IMAGE SOURCE", source) ;
-  //     return {
-  //       format: "module",
-  //       shortCircuit: true,
-  //       source: !dataURI
-  //         ? `export default ${JSON.stringify(source.toString())}`
-  //         : `export default ${JSON.stringify(dataURI)}`,
-  //     };
-  //   } else {
-  //     // console.log("PROCESSING JSX WITHOUT EXTENSION");
-  //     options.presets = ["@babel/preset-react"];
-  //     source = await nextLoad(url, { ...context, format });
-  //   }
-
-  //   let rawSource = typeof source === "string" ? source : source.source;
-
-  //   const result = babel.transform(rawSource, options);
-
-  //   return {
-  //     format: format
-  //       ? format === "commonjs" && fileName !== extSvg
-  //         ? "module"
-  //         : format
-  //       : "module",
-  //     shortCircuit: true,
-  //     source: result.code,
-  //   };
-  // }
-  // console.log("GOING TO DEFAULT NEXT LOAD", context);
   return nextLoad(url);
 }
 
 export async function resolve(specifier, context, nextResolve) {
-  const { parentURL = workdir } = context;
+  // const { parentURL = workdir } = context;
   console.log(
     "RESOLVE specifier",
-    specifier,
-    "IS BUILT IN",
-    isBuiltin(specifier)
+    workdir
+    // specifier,
+    // "IS BUILT IN",
+    // isBuiltin(specifier)
   );
   console.log("RESOLVE context", context, meta.compsSource);
   // console.log("NEW URL", parentURL ? new URL(specifier, parentURL) : "");
@@ -244,6 +187,7 @@ export async function resolve(specifier, context, nextResolve) {
   if (shouldTerminate) return shouldTerminate;
   shouldTerminate = resolveKotiiUserApiPlugins(specifier);
   if (shouldTerminate) return shouldTerminate;
+  console.log("HAS NOT TERMINATED", specifier);
   return nextResolve(specifier);
   // Take an `import` or `require` specifier and resolve it to a URL.
 }
@@ -299,6 +243,7 @@ const resolveKotiiLandImports = (specifier) => {
   }
 };
 const resolvePagesImports = (specifier) => {
+  console.log("THE PAGES IMPORT", specifier);
   if (!isBuiltin(specifier) && /^\/src\//.test(specifier)) {
     console.log("THE SPECIFIER FOR PAGES PATH", specifier);
     let basePath = getPagesBasePath(specifier);
@@ -318,6 +263,11 @@ const resolvePagesImports = (specifier) => {
   }
 };
 const resolveKotiiScriptsImports = (specifier) => {
+  console.log(
+    "KOTII SCRIPTS IMPORTS",
+    specifier,
+    /^kotii-scripts/.test(specifier)
+  );
   if (!isBuiltin(specifier) && /^kotii-scripts/.test(specifier)) {
     console.log("THE SPECIFIER FOR KOTII-SCRIPTS PATH", specifier);
     let kotiiExportsPath = `${workdir}${sep}kotii-land/dev/app_.js`;

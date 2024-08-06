@@ -46,7 +46,7 @@
 
 const { register } = require("node:module");
 const { pathToFileURL } = require("node:url");
-process.env.NODE_ENV = "production";
+process.env.NODE_ENV = "development";
 const parentURL = pathToFileURL(__filename);
 if (process.env.NODE_ENV === "production") {
   console.log("REGISTER FOR PROD");
