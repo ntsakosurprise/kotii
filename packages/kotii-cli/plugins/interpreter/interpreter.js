@@ -37,6 +37,7 @@ class Interpreter {
     this.commandOptionMissing = methods.commandOptionMissing;
     this.validateStringFlags = methods.validateStringFlags;
     this.getFlagsAsTasks = methods.getFlagsAsTasks;
+    this.getTemplateResponse = methods.getTemplateResponse;
   }
 }
 

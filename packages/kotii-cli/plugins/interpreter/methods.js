@@ -28,9 +28,12 @@ methods.handleInterpreterCliInput = async function (data) {
   const filtered = self.processOptionsAsCommands(commands.options);
   console.log("THE FILTERED", filtered);
   console.log("The cosand Flags", commands);
-  filtered.shouldDoCommand
-    ? self[filtered.commandAlias](filtered, commands.flags)
-    : null;
+  self.getTemplateResponse().then((responses) => {
+    console.log("Template Response:", responses);
+    filtered.shouldDoCommand
+      ? self[filtered.commandAlias](filtered, commands.flags)
+      : null;
+  });
 };
 
 methods.handlePromptUser = function (data) {
@@ -278,10 +281,13 @@ methods.parseCommands = function () {
 methods.processOptionsAsCommands = function (options) {
   const self = this;
   const { pao, commands } = self;
+  console.log("COMMANDS FROM SELF", commands, options);
 
   const entries = Object.keys(commands).map((en, i) => en.toLowerCase());
+  console.log("ENTRIES LOWERCASED", entries);
   const command = options[0];
   const commandIndex = entries.indexOf(command);
+  console.log("COMMAND INDEX", commandIndex);
   const definedCommand = commandIndex >= 0 ? command : null;
   return {
     shouldDoCommand: definedCommand ? true : false,
@@ -526,5 +532,20 @@ methods.__old = function () {
   // 	process.exit(1)
 
   //   })
+};
+methods.getTemplateResponse = function () {
+  const self = this;
+  return new Promise((resolve, reject) => {
+    self.emit({
+      type: "get-template",
+      data: {
+        name: "spa",
+        type: "javascript",
+        callback: (templateInfo) => {
+          resolve(templateInfo);
+        },
+      },
+    });
+  });
 };
 module.exports = methods;
