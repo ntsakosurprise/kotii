@@ -18,7 +18,7 @@ const { flag } = require("arg");
  
  
  */
-
+const childProcess = require("child_process");
 const methods = {};
 
 methods.init = function () {
@@ -71,8 +71,14 @@ methods.handleScaffoldApp = function (data) {
           : { ...provideAnswers, ...mergeAnswers };
         console.log("THE PROVIDED ANSWERS", answers);
         self.infoSync(answers);
+        let appType = answers.apptype;
         answers["remote"] = null;
         answers["init"] = "yes";
+        answers["apptype"] = appType.indexOf("spa")
+          ? "spa"
+          : appType.indexOf("ssr")
+          ? "ssr"
+          : "ssra";
         self.infoSync("PROVIDED ANSWERS AFTER DELETION");
         self.infoSync(answers);
 
@@ -287,16 +293,31 @@ methods.createProjectBase = function (options, folderName, repoUrl) {
   //   const makeFolderSync = pao.pa_makeFolderSync;
   //   const getRootDir = pao.pa_getRootDir;
   const { apptype, template } = options;
+  console.log("THE APP TYPE", options);
+
+  return new Promise((resolve, reject) => {
+    //   let templatePath = `${getWorkingFolder()}${sep}packages${sep}kotii-templates${sep}${template}${sep}${apptype}`;
+    // console.log("THE TEMPLATE PATH", templatePath);
+    //let dir = {templatePath,folderName: data.commands.commands[1]}
+    let newFolder = `${getWorkingFolder()}/${folderName}`;
+
+    // return { newFolder, templatePath, folderName, repoUrl };
+    self.emit({
+      type: "get-template",
+      data: {
+        name: apptype,
+        type: template,
+        callback: (templateInfo) => {
+          console.log("THE TEMPLATE INFO ", templateInfo);
+          resolve({ newFolder, folderName, repoUrl, ...templateInfo });
+        },
+      },
+    });
+  });
 
   //   if (appType === "backend/api/web") appType = "web";
 
   //   let templatePath = `${getRootDir()}/${template}/${apptype}`;
-  let templatePath = `${getWorkingFolder()}${sep}packages${sep}kotii-templates${sep}${template}${sep}${apptype}`;
-  console.log("THE TEMPLATE PATH", templatePath);
-  //let dir = {templatePath,folderName: data.commands.commands[1]}
-  let newFolder = `${getWorkingFolder()}/${folderName}`;
-
-  return { newFolder, templatePath, folderName, repoUrl };
 };
 
 methods.buildTaskList = async function (answers, options) {
@@ -309,10 +330,7 @@ methods.buildTaskList = async function (answers, options) {
       title: "Create project folder",
       task: () => self.makeFolder(options.newFolder),
     },
-    {
-      title: "Modify package content",
-      task: () => self.doPackageJson(answers, options),
-    },
+
     {
       title: "Copy project files",
       task: () =>
@@ -321,7 +339,6 @@ methods.buildTaskList = async function (answers, options) {
           options.folderName,
           [
             "node_modules",
-            "package.json",
             "build",
             "dist",
             "webpack.config.js",
@@ -329,6 +346,14 @@ methods.buildTaskList = async function (answers, options) {
             "yarn.lock",
           ]
         ),
+    },
+    {
+      title: "Clean package json",
+      task: () => self.doPackageJson(answers, options, true),
+    },
+    {
+      title: "Modify package content",
+      task: () => self.doPackageJson(answers, options),
     },
   ];
 
@@ -350,14 +375,27 @@ methods.buildTaskList = async function (answers, options) {
       ? console.log(
           "NO_INTERNET_CONNECTION_DETECTED_ANZII-CLI_WILL_SKIP_NPM_INSTALLATION"
         )
-      : tasks.push({
+      : tasks.splice(3, 0, {
           title: "Install dependent packages",
           task: async () => {
             let output = await self.packagesInstall(
               options.newFolder,
               answers.packager
             );
+            let installed = null;
+            if (self.isLocalRun) {
+              installed = await self.installLocally(
+                [
+                  `${options.kotiiMain}/kotii-scripts-1.0.0.tgz`,
+                  `${options.kotiiMain}/kotii-styled-1.0.0.tgz`,
+                ],
+                options.newFolder,
+                answers.packager
+              );
+            }
+
             console.log("Done Installing Packages");
+            console.log(installed);
             console.log(output);
           },
         })
@@ -383,17 +421,20 @@ methods.startProjectCreation = async function (
   const self = this;
 
   let rName = repoName;
-  let options = self.createProjectBase(answers, rName, repoUrl);
 
-  self
-    .runTasks(await self.buildTaskList(answers, options))
-    .then((completedTasks) => {
-      // console.log('%s Project ready', chalk.green.bold('DONE'));
-      return self.callback({ message: "Project Ready!" });
-    })
-    .catch((e) => {
-      return self.callback({ message: e });
-    });
+  self.createProjectBase(answers, rName, repoUrl).then(async (options) => {
+    // let options = self.createProjectBase(answers, rName, repoUrl);
+    console.log("THE PACKAGE JSON OPTIONS", options);
+    self
+      .runTasks(await self.buildTaskList(answers, options))
+      .then((completedTasks) => {
+        // console.log('%s Project ready', chalk.green.bold('DONE'));
+        return self.callback({ message: "Project Ready!" });
+      })
+      .catch((e) => {
+        return self.callback({ message: e });
+      });
+  });
 };
 
 methods.isExistingDir = function (repo) {
@@ -797,14 +838,37 @@ methods.packagesInstall = function (packagesFolder, packager = null) {
     // 	  cwd: packagesFolder,
     // 	}),
 
-    const { stdout } = await projectInstall({
-      prefer: packager ? packager : "npm",
-      cwd: packagesFolder,
-    });
+    // const { stdout } = await projectInstall({
+    //   prefer: packager ? packager : "npm",
+    //   cwd: packagesFolder,
+    // });
+
+    let installResult = self.runTerminal(" ", packagesFolder, packager, [
+      "--force",
+      "--loglevel silent",
+    ]);
+    console.log("Local install results", installResult);
 
     // console.log('THE INSTALLATION OUTPUT')
     // console.log(stdout);
-    resolve(stdout);
+    resolve(installResult);
+  });
+};
+
+methods.installLocally = function (packages, folder, packager = null) {
+  return new Promise((resolve, reject) => {
+    const self = this;
+    let installations = packages.map((package) => {
+      return self.runTerminal(package, folder, packager, [
+        "--force",
+        "--loglevel silent",
+      ]);
+    });
+    console.log("MADE INSTALLATIONS", installations);
+
+    // console.log('THE INSTALLATION OUTPUT')
+    // console.log(stdout);
+    resolve(installations);
   });
 };
 
@@ -819,19 +883,50 @@ methods.makeFolder = function (filepath) {
   return makeFolderSync(filepath);
 };
 
-methods.doPackageJson = function (answers, options) {
+methods.doPackageJson = function (answers, options, deletePackage = false) {
   const self = this;
   const pao = self.pao;
   const path = self.path;
-  const loadFile = pao.pa_loadFile;
+  const loadFileSync = pao.pa_loadFileSync;
   const saveToFile = pao.pa_saveToFile;
-  const packageJson = loadFile(path.join(options.templatePath, "package.json"));
+  const getRootDir = pao.pa_getRootDir;
+  const packageJson = loadFileSync(
+    path.join(options.templatePath, "package.json")
+  );
+  console.log("THE TEMPLATES PACKAGEJSON", packageJson);
 
+  if (deletePackage) {
+    if (packageJson.dependencies["kotii-scripts"] === "*") {
+      const scriptsJson = loadFileSync(
+        path.join(options.kotiiPackages, "kotii-scripts/package.json")
+      );
+      console.log(
+        "THE SCRIPT JSON PATH",
+        path.join(options.kotiiPackages, "kotii-scripts/package.json")
+      );
+      console.log("THE SCRTIPS JSON", scriptsJson);
+      self.isLocalRun = true;
+      delete packageJson.dependencies["kotii-scripts"];
+      packageJson["devDependencies"] = { ...scriptsJson.devDependencies };
+
+      saveToFile(
+        path.join(options.newFolder, "package.json"),
+        JSON.stringify(packageJson, null, 2)
+      );
+    }
+    console.log("THE OPTIONS IN DO PACKAGE JSON", answers, options);
+
+    return;
+  }
+  let fileFolder = getRootDir(module.name);
+  console.log("FILE FOLDER BASE", path.basename(fileFolder));
   packageJson["name"] = options.folderName;
   packageJson["description"] = answers?.description ? answers.description : "";
-  packageJson.dependencies["kotii-scripts"] = answers["local-scripts"];
+  // packageJson.dependencies["kotii-scripts"] = answers["local-scripts"];
   packageJson["scripts"] = {
     start: "kotii-scripts start",
+    static: "kotii-scripts static",
+    build: "kotii-scripts build",
   };
   saveToFile(
     path.join(options.newFolder, "package.json"),
@@ -922,5 +1017,36 @@ methods.deleteMatchedQuestion = function (toDelte, groupQuestions) {
   contains(groupQuestions, toDelte)
     ? groupQuestions.splice(groupQuestions.indexOf(toDelte), 1)
     : "";
+};
+
+methods.runTerminal = function (
+  package,
+  context,
+  packager,
+  installOptions = []
+) {
+  const self = this;
+  let commandToRun = `${packager} ${self.packagersInstallMap[packager]}`;
+  let currentWorkingDirectory = context;
+  console.log(
+    "CUDRREN WORK DIR",
+    currentWorkingDirectory,
+    package,
+    commandToRun
+  );
+  console.log(
+    "COMMAND TO RUN",
+    `sudo ${commandToRun} ${package} --include dev`
+  );
+  let createdTarPath = childProcess.execSync(
+    `sudo ${commandToRun} ${package} ${installOptions.join(" ")}`,
+    {
+      stdio: "inherit",
+      cwd: `${currentWorkingDirectory}`,
+    }
+  );
+
+  console.log("THE CREATED TAR", createdTarPath);
+  return createdTarPath;
 };
 module.exports = methods;
