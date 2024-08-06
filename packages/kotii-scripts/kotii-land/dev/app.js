@@ -1,5 +1,5 @@
-import { anzii } from "anzii";
 import plugins from "../../plugins/index.js";
+import { anzii } from "/Users/surprisemashele/Documents/Development/frameworks/anzii/packages/anzii/lib/start.js";
 process.argv.push("cli");
 process.env.ANZII_CLI_WITH_SERVER = "true";
 process.env.ANZII_SHOW_CLI_LOGS = "true";
