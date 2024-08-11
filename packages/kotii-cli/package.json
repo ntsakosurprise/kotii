@@ -55,6 +55,7 @@
     "figlet": "^1.5.0",
     "inquirer": "^7.3.3",
     "is-online": "^8.5.1",
+    "isomorphic-git": "^1.27.1",
     "listr": "^0.14.3",
     "octonode": "^0.9.5",
     "open": "^9.1.0",

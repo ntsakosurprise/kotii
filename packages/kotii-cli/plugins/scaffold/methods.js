@@ -69,18 +69,20 @@ methods.handleScaffoldApp = function (data) {
         answers = provideAnswers.truthy
           ? { ...mergeAnswers }
           : { ...provideAnswers, ...mergeAnswers };
-        console.log("THE PROVIDED ANSWERS", answers);
+        console.log("THE PROVIDED ANSWERS", JSON.stringify(answers));
         self.infoSync(answers);
         let appType = answers.apptype;
         answers["remote"] = null;
         answers["init"] = "yes";
-        answers["apptype"] = appType.indexOf("spa")
-          ? "spa"
-          : appType.indexOf("ssr")
-          ? "ssr"
-          : "ssra";
+        answers["apptype"] =
+          appType.indexOf("spa") >= 0
+            ? "spa"
+            : appType.indexOf("ssr") >= 0
+            ? "ssr"
+            : "ssra";
         self.infoSync("PROVIDED ANSWERS AFTER DELETION");
         self.infoSync(answers);
+        console.log("ANSWERS AFTER", answers);
 
         if (answers.remote && answers.remote.toLowerCase().trim() === "yes") {
           if (!self.isInternetConnected)
