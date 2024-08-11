@@ -403,12 +403,12 @@ methods.buildTaskList = async function (answers, options) {
         })
     : "";
 
-  options.repoUrl && options.repoUrl.trim() !== ""
-    ? (tasks = [
-        { title: "Create remote repository", task: () => "" },
-        ...tasks,
-      ])
-    : "";
+  // options.repoUrl && options.repoUrl.trim() !== ""
+  //   ? (tasks = [
+  //       { title: "Create remote repository", task: () => "" },
+  //       ...tasks,
+  //     ])
+  //   : "";
 
   tasks.push({ title: "", task: () => true });
 
