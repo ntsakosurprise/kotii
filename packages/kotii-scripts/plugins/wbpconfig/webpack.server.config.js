@@ -1,5 +1,9 @@
 import path from "path";
+import { fileURLToPath } from "url";
 import webpack from "webpack";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default (options) => {
   //   console.log("THE PROCESS", process.env.APPCONTEXT);
@@ -10,7 +14,13 @@ export default (options) => {
   console.log("WEBPACK APP ENVS", appEnvironmentVariables);
   console.log("THE SERVER CONFIG");
   console.log("THE APP BUILD FOLDER", env.appBuildFolder);
-  console.log;
+  console.log("THE DIR_NAME", __dirname, path.resolve(__dirname, "../.."));
+  let scriptsPath = path.resolve(__dirname, "../..");
+  let scriptsWebpackResolve = path.resolve(
+    scriptsPath,
+    "kotii-land/dev/app_.js"
+  );
+
   return {
     entry:
       options?.build && options.build
@@ -45,6 +55,12 @@ export default (options) => {
     // },
     //   React: "react",
     // },
+
+    // externals: [
+    //   webpackNodeExternals({
+    //     allowlist: ["kotii-scripts"],
+    //   }),
+    // ],
     resolve: {
       extensions: [".js", ".jsx", ".png", ".jpg"], // tell webpack to use these extenstions to resolve imported files[for importing without specifying the extension name]
       alias: {
@@ -56,7 +72,7 @@ export default (options) => {
         "react-router": path.resolve(
           `${env.appFolder}/node_modules/react-router`
         ),
-        "kotii-scripts": path.resolve(`${options.cwd}/kotii-land/dev/app_.js`),
+        "kotii-scripts": path.resolve(`${scriptsWebpackResolve}`),
       }, // Alias references to files and folders inorder to use absolute paths in your file imports
       fallback: {
         fs: false,
@@ -76,7 +92,10 @@ export default (options) => {
       rules: [
         {
           test: /\.(?:js|mjs|cjs|jsx)$/,
-          exclude: /node_modules/,
+          include: [path.resolve(scriptsPath, "/")],
+          // exclude: /node_modules\/(?!(kotii-scripts)\/).*/,
+          // include: [scriptsWebpackResolve],
+          exclude: /node_modules\/(?!kotii-scripts).+/,
           use: {
             loader: "babel-loader",
             options: {
