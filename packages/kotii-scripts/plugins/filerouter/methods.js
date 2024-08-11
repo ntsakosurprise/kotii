@@ -33,7 +33,7 @@ methods.handleFileRoutes = async function (data) {
   );
   // appManifest ? manifestData = loadFileSync(appManifest)) : null;
 
-  const filePath = `${cwd}/kotii-land/dev/manifest.js`;
+  const filePath = `/kotii-land/dev/manifest.js`;
   // if (filePath) {
   //   console.log("IMPORT LAOD THE REQUIRED OBJECT");
   //   const manifes = require(filePath);
@@ -45,13 +45,17 @@ methods.handleFileRoutes = async function (data) {
   // console.log("THE PAGES routesObject", routesObject);
 
   self
-    .doImport(filePath)
+    .doImport(filePath, false, false)
     .then(async (imported) => {
       // console.log("Impored", imported.module);
       let manifestJS = imported;
       let meta = manifestJS.meta;
       console.log("META ", meta);
-      const buildJS = await self.doImport(`${cwd}/kotii-land/dev/build.js`);
+      const buildJS = await self.doImport(
+        `/kotii-land/dev/build.js`,
+        false,
+        false
+      );
       console.log("BUILD:JS", buildJS);
       const routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
       const reactServerRoutes = self.buildServerRoutes(
@@ -874,7 +878,7 @@ methods.doImports = function (toImport) {
     });
   });
 };
-methods.doImport = function (toImport, all = false) {
+methods.doImport = function (toImport, all = false, check = true) {
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
@@ -883,7 +887,7 @@ methods.doImport = function (toImport, all = false) {
   return new Promise((resolve, reject) => {
     // const manifestFile = loadFileSync(toImport);
     // resolve({ module: imported.meta });
-    loadFile(toImport, all)
+    loadFile(toImport, all, check)
       .then((imported) => {
         console.log("Module has successfully been imported:", imported);
         resolve(imported);
