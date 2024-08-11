@@ -168,13 +168,13 @@ class Scaffold {
           message: "Should this be a public or private repo?",
           choices: ["Public", "Private"],
         },
-        {
-          name: "remote",
-          type: "list",
-          message: "Should we create a remote repository for you?",
-          key: "remote",
-          choices: ["Yes", "No"],
-        },
+        // {
+        //   name: "remote",
+        //   type: "list",
+        //   message: "Should we create a remote repository for you?",
+        //   key: "remote",
+        //   choices: ["Yes", "No"],
+        // },
       ],
     };
 
