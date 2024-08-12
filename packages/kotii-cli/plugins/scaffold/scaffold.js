@@ -43,6 +43,14 @@ class Scaffold {
       npm: "i",
       yarn: "add",
     };
+    this.defaultAnswers = {
+      type: "ssr",
+      template: "javascript",
+      packager: "npm",
+      description: "A hello world application",
+      git: "yes",
+      repotype: "public",
+    };
 
     //  this.Bitbucket = Bitbucket
     //  this.octokit = new Octokit()

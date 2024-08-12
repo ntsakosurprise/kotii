@@ -36,7 +36,7 @@ methods.handleScaffoldApp = function (data) {
   const getRootDir = pao.pa_getRootDir;
   self.callback = data.callback;
   const command = data.command;
-  const { appName, commandName = null, tasks = {} } = command;
+  let { appName, commandName = null, tasks = {} } = command;
 
   //   const {
   //     git = false,
@@ -56,6 +56,9 @@ methods.handleScaffoldApp = function (data) {
     repoName = appName;
     if (self.isExistingDir(repoName))
       return self.callback({ message: "The set app name has been taken" });
+    if (tasks?.yes) {
+      tasks = { ...self.defaultAnswers, ...tasks };
+    }
 
     self
       .startQuestionnaire(self.mergeQuestions("general", tasks))
@@ -77,9 +80,9 @@ methods.handleScaffoldApp = function (data) {
         answers["apptype"] =
           appType.indexOf("spa") >= 0
             ? "spa"
-            : appType.indexOf("ssr") >= 0
+            : appType.indexOf("ssr") >= 0 || appType.indexOf("ssra") >= 0
             ? "ssr"
-            : "ssra";
+            : "ssr";
         self.infoSync("PROVIDED ANSWERS AFTER DELETION");
         self.infoSync(answers);
         console.log("ANSWERS AFTER", answers);
@@ -961,6 +964,8 @@ methods.getMoData = async function (resolve, reject, result) {
 };
 
 methods.mergeQuestions = function (qsGroup, merge) {
+  console.log("THE MERGE GROUP", qsGroup);
+  console.log("MERGE", merge);
   const self = this;
   const questions = self.questions;
   const groupQuestions = questions[qsGroup].map((qs) => qs.name);
