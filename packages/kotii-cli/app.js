@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 process.argv.push("cli");
+// const process= require('process');
+// process.removeAllListeners("warning");
+// process.addListener("warning");
 const plugins = require("./plugins/index");
 // const { anzii } = require("anzii");
 const {
