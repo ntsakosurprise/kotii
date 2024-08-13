@@ -12,8 +12,8 @@ const {
 const {
   Template,
 } = require("/Users/surprisemashele/Documents/kotii/packages/kotii-templates/dist/index.cjs");
-console.log("THE AN", plugins);
-console.log(Template);
+// console.log("THE AN", plugins);
+// console.log(Template);
 anzii({ ...plugins, Template });
 //require("anzii")(plugins);
 // console.log(anzii)

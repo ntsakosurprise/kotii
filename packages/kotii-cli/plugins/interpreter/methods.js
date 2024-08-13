@@ -29,8 +29,8 @@ methods.handleInterpreterCliInput = async function (data) {
   self.infoSync("ilog");
   const commands = self.parseCommands();
   const filtered = self.processOptionsAsCommands(commands.options);
-  console.log("THE FILTERED", filtered);
-  console.log("The cosand Flags", commands);
+  // console.log("THE FILTERED", filtered);
+  // console.log("The cosand Flags", commands);
   // self.getTemplateResponse().then((responses) => {
   //   console.log("Template Response:", responses);
   //   let fileFolder = getRootDir(module.filename);
@@ -373,8 +373,8 @@ methods.version = function () {
   const loadFileSync = pao.pa_loadFileSync;
   const getRootDir = pao.pa_getRootDir;
   let fileFolder = getRootDir(module.filename);
-  console.log("FILE FOLDER BASE", fileFolder, path.basename(fileFolder));
-  console.log("path join", path.join(fileFolder, "../../package.json"));
+  // console.log("FILE FOLDER BASE", fileFolder, path.basename(fileFolder));
+  // console.log("path join", path.join(fileFolder, "../../package.json"));
   const packageJson = loadFileSync(path.join(fileFolder, "../../package.json"));
   console.log(chalk.greenBright.bold(packageJson.version));
   // let help = `
@@ -579,7 +579,7 @@ methods.createKotiiAppCommandHelpOption = function () {
 };
 
 methods.startCommand = function () {
-  console.log("START COMMAND RAN");
+  // console.log("START COMMAND RAN");
   const self = this;
   const pao = self.pao;
   const chalk = self.chalk;
@@ -633,8 +633,8 @@ methods.parseCommands = function () {
     argv: pao.PROMPT.slice(2),
     permissive: true,
   }); // Get passed arguments from the third item in the array of passed arguments)
-  console.log("COMBINED OPTIONS", combinedOptionsAliases);
-  console.log("PARSED COMMANDS", parsedCommands);
+  // console.log("COMBINED OPTIONS", combinedOptionsAliases);
+  // console.log("PARSED COMMANDS", parsedCommands);
   let modified = { ...parsedCommands };
   let optionsLen = modified._.indexOf("cli");
   // modified._.slice(optionsLen);
@@ -648,13 +648,13 @@ methods.parseCommands = function () {
 methods.processOptionsAsCommands = function (options) {
   const self = this;
   const { pao, commands } = self;
-  console.log("COMMANDS FROM SELF", commands, options);
+  // console.log("COMMANDS FROM SELF", commands, options);
 
   const entries = Object.keys(commands).map((en, i) => en.toLowerCase());
-  console.log("ENTRIES LOWERCASED", entries);
+  // console.log("ENTRIES LOWERCASED", entries);
   const command = options[0];
   const commandIndex = entries.indexOf(command);
-  console.log("COMMAND INDEX", commandIndex);
+  // console.log("COMMAND INDEX", commandIndex);
   const definedCommand = commandIndex >= 0 ? command : null;
   return {
     shouldDoCommand: definedCommand ? true : false,
@@ -683,8 +683,8 @@ methods.capitalizeFirstLetter = function (text) {
 };
 
 methods.createApp = function (commandData, flags = []) {
-  console.log("COMMAND, OPTIONS, FLAGS", flags);
-  console.log("COMMAND OPTIONS", commandData);
+  // console.log("COMMAND, OPTIONS, FLAGS", flags);
+  // console.log("COMMAND OPTIONS", commandData);
   const self = this;
   const stringFlags = ["--type", "--template", "--packager"];
   const help = flags["--help"] ? true : false;

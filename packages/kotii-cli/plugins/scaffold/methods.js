@@ -72,7 +72,7 @@ methods.handleScaffoldApp = function (data) {
         answers = provideAnswers.truthy
           ? { ...mergeAnswers }
           : { ...provideAnswers, ...mergeAnswers };
-        console.log("THE PROVIDED ANSWERS", JSON.stringify(answers));
+        // console.log("THE PROVIDED ANSWERS", JSON.stringify(answers));
         self.infoSync(answers);
         let appType = answers.apptype;
         answers["remote"] = null;
@@ -85,7 +85,7 @@ methods.handleScaffoldApp = function (data) {
             : "ssr";
         self.infoSync("PROVIDED ANSWERS AFTER DELETION");
         self.infoSync(answers);
-        console.log("ANSWERS AFTER", answers);
+        // console.log("ANSWERS AFTER", answers);
 
         if (answers.remote && answers.remote.toLowerCase().trim() === "yes") {
           if (!self.isInternetConnected)
@@ -96,22 +96,22 @@ methods.handleScaffoldApp = function (data) {
             .startQuestionnaire({ remote: ["provider"] })
             .then((versionProvider) => {
               answers = { ...answers, ...versionProvider };
-              console.log("THE VERSION PROVIDER", versionProvider);
+              // console.log("THE VERSION PROVIDER", versionProvider);
               self
                 .getStoredUserToken({
                   version: versionProvider.provider.toLowerCase(),
                 })
                 .then((token) => {
-                  console.log("THE TOKEN RETURNED FROM GETSTOREDuSERTOKEN");
-                  console.log(token);
+                  // console.log("THE TOKEN RETURNED FROM GETSTOREDuSERTOKEN");
+                  // console.log(token);
 
                   if (token.isNotFound) {
                     self
                       .startQuestionnaire({ remote: ["username", "password"] })
                       .then((credentials) => {
-                        console.log("THE USER CREDENTIALS");
-                        console.log(credentials);
-                        console.log("answers", answers);
+                        // console.log("THE USER CREDENTIALS");
+                        // console.log(credentials);
+                        // console.log("answers", answers);
 
                         self
                           .getRemoteUserToken({
@@ -298,7 +298,7 @@ methods.createProjectBase = function (options, folderName, repoUrl) {
   //   const makeFolderSync = pao.pa_makeFolderSync;
   //   const getRootDir = pao.pa_getRootDir;
   const { apptype, template } = options;
-  console.log("THE APP TYPE", options);
+  // console.log("THE APP TYPE", options);
 
   return new Promise((resolve, reject) => {
     //   let templatePath = `${getWorkingFolder()}${sep}packages${sep}kotii-templates${sep}${template}${sep}${apptype}`;
@@ -429,7 +429,7 @@ methods.startProjectCreation = async function (
 
   self.createProjectBase(answers, rName, repoUrl).then(async (options) => {
     // let options = self.createProjectBase(answers, rName, repoUrl);
-    console.log("THE PACKAGE JSON OPTIONS", options);
+    // console.log("THE PACKAGE JSON OPTIONS", options);
     self
       .runTasks(await self.buildTaskList(answers, options))
       .then((completedTasks) => {
@@ -830,8 +830,8 @@ methods.packagesInstall = function (packagesFolder, packager = null) {
     //    console.log(self)
     const projectInstall = self.projectInstall;
 
-    console.log("After projectInstall");
-    console.log(projectInstall);
+    // console.log("After projectInstall");
+    // console.log(projectInstall);
 
     // const {options} = data
     // options && options.cli ? self.scaffoldCliApp : self.scaffoldApp
@@ -852,7 +852,7 @@ methods.packagesInstall = function (packagesFolder, packager = null) {
       "--force",
       "--loglevel silent",
     ]);
-    console.log("Local install results", installResult);
+    // console.log("Local install results", installResult);
 
     // console.log('THE INSTALLATION OUTPUT')
     // console.log(stdout);
@@ -898,18 +898,18 @@ methods.doPackageJson = function (answers, options, deletePackage = false) {
   const packageJson = loadFileSync(
     path.join(options.templatePath, "package.json")
   );
-  console.log("THE TEMPLATES PACKAGEJSON", packageJson);
+  // console.log("THE TEMPLATES PACKAGEJSON", packageJson);
 
   if (deletePackage) {
     if (packageJson.dependencies["kotii-scripts"] === "*") {
       const scriptsJson = loadFileSync(
         path.join(options.kotiiPackages, "kotii-scripts/package.json")
       );
-      console.log(
-        "THE SCRIPT JSON PATH",
-        path.join(options.kotiiPackages, "kotii-scripts/package.json")
-      );
-      console.log("THE SCRTIPS JSON", scriptsJson);
+      // console.log(
+      //   "THE SCRIPT JSON PATH",
+      //   path.join(options.kotiiPackages, "kotii-scripts/package.json")
+      // );
+      // console.log("THE SCRTIPS JSON", scriptsJson);
       self.isLocalRun = true;
       delete packageJson.dependencies["kotii-scripts"];
       packageJson["devDependencies"] = { ...scriptsJson.devDependencies };
@@ -919,12 +919,12 @@ methods.doPackageJson = function (answers, options, deletePackage = false) {
         JSON.stringify(packageJson, null, 2)
       );
     }
-    console.log("THE OPTIONS IN DO PACKAGE JSON", answers, options);
+    // console.log("THE OPTIONS IN DO PACKAGE JSON", answers, options);
 
     return;
   }
-  let fileFolder = getRootDir(module.name);
-  console.log("FILE FOLDER BASE", path.basename(fileFolder));
+  // let fileFolder = getRootDir(module.name);
+  // console.log("FILE FOLDER BASE", path.basename(fileFolder));
   packageJson["name"] = options.folderName;
   packageJson["description"] = answers?.description ? answers.description : "";
   // packageJson.dependencies["kotii-scripts"] = answers["local-scripts"];
@@ -938,7 +938,7 @@ methods.doPackageJson = function (answers, options, deletePackage = false) {
     JSON.stringify(packageJson, null, 2)
   );
 
-  console.log("THE LOADED FILE", packageJson);
+  // console.log("THE LOADED FILE", packageJson);
 
   //   return makeFolderSync(filepath);
 };
@@ -964,13 +964,13 @@ methods.getMoData = async function (resolve, reject, result) {
 };
 
 methods.mergeQuestions = function (qsGroup, merge) {
-  console.log("THE MERGE GROUP", qsGroup);
-  console.log("MERGE", merge);
+  // console.log("THE MERGE GROUP", qsGroup);
+  // console.log("MERGE", merge);
   const self = this;
   const questions = self.questions;
   const groupQuestions = questions[qsGroup].map((qs) => qs.name);
 
-  console.log("groupMap", JSON.stringify(groupQuestions));
+  // console.log("groupMap", JSON.stringify(groupQuestions));
   let initialAnswers = {};
   if (!merge) return { [qsGroup]: [...groupQuestions] };
 
@@ -1003,11 +1003,11 @@ methods.mergeQuestions = function (qsGroup, merge) {
     self.deleteMatchedQuestion(ma, groupQuestions);
   });
 
-  console.log("FOUND ANSWERS", initialAnswers);
-  console.log("FOUND QUESTIONS", groupQuestions);
-  console.log("Merge", merge);
-  console.log("isREMOTE", initialAnswers?.remote);
-  console.log("Is git", initialAnswers?.remote && !initialAnswers?.git);
+  // console.log("FOUND ANSWERS", initialAnswers);
+  // console.log("FOUND QUESTIONS", groupQuestions);
+  // console.log("Merge", merge);
+  // console.log("isREMOTE", initialAnswers?.remote);
+  // console.log("Is git", initialAnswers?.remote && !initialAnswers?.git);
   initialAnswers?.remote && !initialAnswers?.git
     ? ((initialAnswers["git"] = "yes"),
       self.deleteMatchedQuestion("git", groupQuestions))
@@ -1035,16 +1035,16 @@ methods.runTerminal = function (
   const self = this;
   let commandToRun = `${packager} ${self.packagersInstallMap[packager]}`;
   let currentWorkingDirectory = context;
-  console.log(
-    "CUDRREN WORK DIR",
-    currentWorkingDirectory,
-    package,
-    commandToRun
-  );
-  console.log(
-    "COMMAND TO RUN",
-    `sudo ${commandToRun} ${package} --include dev`
-  );
+  // console.log(
+  //   "CUDRREN WORK DIR",
+  //   currentWorkingDirectory,
+  //   package,
+  //   commandToRun
+  // );
+  // console.log(
+  //   "COMMAND TO RUN",
+  //   `sudo ${commandToRun} ${package} --include dev`
+  // );
   let createdTarPath = childProcess.execSync(
     `sudo ${commandToRun} ${package} ${installOptions.join(" ")}`,
     {
@@ -1053,7 +1053,7 @@ methods.runTerminal = function (
     }
   );
 
-  console.log("THE CREATED TAR", createdTarPath);
+  // console.log("THE CREATED TAR", createdTarPath);
   return createdTarPath;
 };
 module.exports = methods;
