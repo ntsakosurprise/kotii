@@ -1,8 +1,9 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --no-warnings
 process.argv.push("cli");
 // const process= require('process');
 // process.removeAllListeners("warning");
 // process.addListener("warning");
+process.env.SUPPRESS_NO_CONFIG_WARNING = "false";
 const plugins = require("./plugins/index");
 // const { anzii } = require("anzii");
 const {
