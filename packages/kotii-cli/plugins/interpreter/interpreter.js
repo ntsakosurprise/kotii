@@ -29,7 +29,7 @@ class Interpreter {
     this.createKotiiAppCommandHelpOption =
       methods.createKotiiAppCommandHelpOption;
     this.help = methods.help;
-    this.versionCommand = methods.versionCommand;
+    this.version = methods.version;
     this.parseCommands = methods.parseCommands;
     this.processOptionsAsCommands = methods.processOptionsAsCommands;
     this.createCommandAlias = methods.createCommandAlias;

@@ -115,6 +115,16 @@ const commands = {
       },
     ],
   },
+  version: {
+    options: [
+      {
+        option: "--version",
+        type: "boolean",
+        optionAlias: "-v",
+        description: "Displays version information",
+      },
+    ],
+  },
 };
 const stringFlagsMessages = {
   ["--type"]: {
