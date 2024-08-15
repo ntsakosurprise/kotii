@@ -19,6 +19,8 @@ const { flag } = require("arg");
  
  */
 const childProcess = require("child_process");
+const path = require("path");
+
 const methods = {};
 
 methods.init = function () {
@@ -290,7 +292,6 @@ methods.startQuestionnaire = function (queries) {
 methods.createProjectBase = function (options, folderName, repoUrl) {
   const self = this;
   const pao = self.pao;
-  const path = self.path;
   const sep = path.sep;
 
   const getWorkingFolder = pao.pa_getWorkingFolder;
@@ -304,7 +305,7 @@ methods.createProjectBase = function (options, folderName, repoUrl) {
     //   let templatePath = `${getWorkingFolder()}${sep}packages${sep}kotii-templates${sep}${template}${sep}${apptype}`;
     // console.log("THE TEMPLATE PATH", templatePath);
     //let dir = {templatePath,folderName: data.commands.commands[1]}
-    let newFolder = `${getWorkingFolder()}/${folderName}`;
+    let newFolder = `${getWorkingFolder()}${sep}${folderName}`;
 
     // return { newFolder, templatePath, folderName, repoUrl };
     self.emit({
@@ -313,7 +314,7 @@ methods.createProjectBase = function (options, folderName, repoUrl) {
         name: apptype,
         type: template,
         callback: (templateInfo) => {
-          console.log("THE TEMPLATE INFO ", templateInfo);
+          // console.log("THE TEMPLATE INFO ", templateInfo);
           resolve({ newFolder, folderName, repoUrl, ...templateInfo });
         },
       },
@@ -327,6 +328,9 @@ methods.createProjectBase = function (options, folderName, repoUrl) {
 
 methods.buildTaskList = async function (answers, options) {
   const self = this;
+  const pao = self.pao;
+  const sep = path.sep;
+  const loadFileSync = pao.pa_loadFileSync;
   //  console.log('THE OPTIONS')
   //  console.log(options)
 
@@ -387,24 +391,38 @@ methods.buildTaskList = async function (answers, options) {
               options.newFolder,
               answers.packager
             );
-            let installed = null;
-            if (self.isLocalRun) {
-              installed = await self.installLocally(
-                [
-                  `${options.kotiiMain}/kotii-scripts-1.0.0.tgz`,
-                  `${options.kotiiMain}/kotii-styled-1.0.0.tgz`,
-                ],
-                options.newFolder,
-                answers.packager
-              );
-            }
+            // let installed = null;
+            // if (self.isLocalRun) {
+            //   let kotiiScriptsPackageJson = loadFileSync(
+            //     path.join(
+            //       `${options.kotiiMain}${sep}packages${sep}kotii-scripts`,
+            //       "package.json"
+            //     )
+            //   );
+            //   let kotiiStyledPackageJson = loadFileSync(
+            //     path.join(
+            //       `${options.kotiiMain}${sep}packages${sep}kotii-styled`,
+            //       "package.json"
+            //     )
+            //   );
+            //   installed = await self.installLocally(
+            //     [
+            //       `${options.kotiiMain}${sep}kotii-scripts-${kotiiScriptsPackageJson.version}.tgz`,
+            //       `${options.kotiiMain}${sep}kotii-styled-${kotiiStyledPackageJson.version}.tgz`,
+            //     ],
+            //     options.newFolder,
+            //     answers.packager
+            //   );
+            // }
 
-            console.log("Done Installing Packages");
-            console.log(installed);
-            console.log(output);
+            // console.log("Done Installing Packages");
+            // console.log(installed);
+            // console.log(output);
           },
         })
     : "";
+
+  // console.log("THE TASKS", tasks);
 
   // options.repoUrl && options.repoUrl.trim() !== ""
   //   ? (tasks = [
@@ -413,7 +431,10 @@ methods.buildTaskList = async function (answers, options) {
   //     ])
   //   : "";
 
-  tasks.push({ title: "", task: () => true });
+  tasks.push({
+    title: "Creation Completed: Project is ready!",
+    task: () => true,
+  });
 
   return tasks;
 };
@@ -448,11 +469,12 @@ methods.isExistingDir = function (repo) {
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const getRootDir = pao.pa_getRootDir;
   const isExistingDir = pao.pa_isExistingDir;
+  const sep = path.sep;
 
   //  console.log(isExistingDir)
   //  console.log(pao)
 
-  if (isExistingDir(`${getWorkingFolder()}/${repo}`)) {
+  if (isExistingDir(`${getWorkingFolder()}${sep}${repo}`)) {
     //   console.log('THE FOLDER EXISTS')
     //   console.log(`${getWorkingFolder()}/${repo}`)
     return true;
@@ -527,8 +549,8 @@ methods.getStoredUserTokenFeedback = function (resolve, reject, result) {
             self
               .startQuestionnaire({ remote: ["username", "password"] })
               .then((answers) => {
-                console.log("Answers in getStoredConfig");
-                console.log(answers);
+                // console.log("Answers in getStoredConfig");
+                // console.log(answers);
                 return resolve({ creds: answers });
               })
               .catch((e) => {
@@ -722,7 +744,8 @@ methods.storeUserConfigs = function (data) {
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
   const { key, value } = data;
-  const config = new self.Configstore(loadFile("./package.json").name);
+  const sep = path.sep;
+  const config = new self.Configstore(loadFile(`.${sep}package.json`).name);
   config.set(key, value);
 };
 
@@ -848,7 +871,7 @@ methods.packagesInstall = function (packagesFolder, packager = null) {
     //   cwd: packagesFolder,
     // });
 
-    let installResult = self.runTerminal(" ", packagesFolder, packager, [
+    let installResult = await self.runTerminal(" ", packagesFolder, packager, [
       "--force",
       "--loglevel silent",
     ]);
@@ -857,24 +880,32 @@ methods.packagesInstall = function (packagesFolder, packager = null) {
     // console.log('THE INSTALLATION OUTPUT')
     // console.log(stdout);
     resolve(installResult);
+    // resolve(stdout);
   });
 };
 
 methods.installLocally = function (packages, folder, packager = null) {
   return new Promise((resolve, reject) => {
-    const self = this;
-    let installations = packages.map((package) => {
-      return self.runTerminal(package, folder, packager, [
-        "--force",
-        "--loglevel silent",
-      ]);
+    let installations = packages.map(async (package) => {
+      const self = this;
+      return await self.runTerminal(
+        package,
+        folder,
+        packager,
+        ["--force"],
+        "inherit"
+      );
     });
-    console.log("MADE INSTALLATIONS", installations);
-
-    // console.log('THE INSTALLATION OUTPUT')
-    // console.log(stdout);
-    resolve(installations);
+    Promise.all(installations).then((completed) => {
+      // console.log("MADE INSTALLATIONS", installations);
+      resolve(completed);
+    });
   });
+
+  //   // console.log('THE INSTALLATION OUTPUT')
+  //   // console.log(stdout);
+  //   resolve(installations);
+  // });
 };
 
 methods.makeFolder = function (filepath) {
@@ -891,7 +922,7 @@ methods.makeFolder = function (filepath) {
 methods.doPackageJson = function (answers, options, deletePackage = false) {
   const self = this;
   const pao = self.pao;
-  const path = self.path;
+  const sep = path.sep;
   const loadFileSync = pao.pa_loadFileSync;
   const saveToFile = pao.pa_saveToFile;
   const getRootDir = pao.pa_getRootDir;
@@ -903,7 +934,7 @@ methods.doPackageJson = function (answers, options, deletePackage = false) {
   if (deletePackage) {
     if (packageJson.dependencies["kotii-scripts"] === "*") {
       const scriptsJson = loadFileSync(
-        path.join(options.kotiiPackages, "kotii-scripts/package.json")
+        path.join(options.kotiiPackages, `kotii-scripts${sep}package.json`)
       );
       // console.log(
       //   "THE SCRIPT JSON PATH",
@@ -948,8 +979,10 @@ methods.runTasks = async function (toRun, dir) {
   const Listr = self.Listr;
 
   const tasks = new Listr(toRun);
-
+  console.log();
   await tasks.run();
+  console.log();
+  console.log();
   return true;
 };
 
@@ -1030,30 +1063,43 @@ methods.runTerminal = function (
   package,
   context,
   packager,
-  installOptions = []
+  installOptions = [],
+  stdIO = "ignore"
 ) {
-  const self = this;
-  let commandToRun = `${packager} ${self.packagersInstallMap[packager]}`;
-  let currentWorkingDirectory = context;
-  // console.log(
-  //   "CUDRREN WORK DIR",
-  //   currentWorkingDirectory,
-  //   package,
-  //   commandToRun
-  // );
-  // console.log(
-  //   "COMMAND TO RUN",
-  //   `sudo ${commandToRun} ${package} --include dev`
-  // );
-  let createdTarPath = childProcess.execSync(
-    `sudo ${commandToRun} ${package} ${installOptions.join(" ")}`,
-    {
-      stdio: "inherit",
-      cwd: `${currentWorkingDirectory}`,
-    }
-  );
+  return new Promise((resolve, reject) => {
+    const self = this;
+    let commandToRun = `${packager} ${self.packagersInstallMap[packager]}`;
+    let currentWorkingDirectory = context;
+    // console.log(
+    //   "CUDRREN WORK DIR",
+    //   currentWorkingDirectory,
+    //   package,
+    //   commandToRun
+    // );
+    // console.log(
+    //   "COMMAND TO RUN",
+    //   `sudo ${commandToRun} ${package} --include dev`
+    // );
 
-  // console.log("THE CREATED TAR", createdTarPath);
-  return createdTarPath;
+    childProcess.exec(
+      `sudo ${commandToRun} ${package} ${installOptions.join(" ")}`,
+      {
+        stdio: stdIO,
+        cwd: `${currentWorkingDirectory}`,
+      },
+      (err, stdout, stderr) => {
+        console.log(
+          "THE CHILD PROCESS HAS COMPLETED WITH:",
+          err,
+          stdout,
+          stderr
+        );
+        resolve(stdout);
+      }
+    );
+
+    // console.log("THE CREATED TAR", installRes);
+    // return installRes;
+  });
 };
 module.exports = methods;

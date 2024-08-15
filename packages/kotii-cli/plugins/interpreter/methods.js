@@ -372,10 +372,13 @@ methods.version = function () {
   const chalk = self.chalk;
   const loadFileSync = pao.pa_loadFileSync;
   const getRootDir = pao.pa_getRootDir;
+  const sep = path.sep;
   let fileFolder = getRootDir(module.filename);
   // console.log("FILE FOLDER BASE", fileFolder, path.basename(fileFolder));
   // console.log("path join", path.join(fileFolder, "../../package.json"));
-  const packageJson = loadFileSync(path.join(fileFolder, "../../package.json"));
+  const packageJson = loadFileSync(
+    path.join(fileFolder, `..${sep}..${sep}package.json`)
+  );
   console.log(chalk.greenBright.bold(packageJson.version));
   // let help = `
 
@@ -678,7 +681,7 @@ methods.createCommandAlias = function (command) {
   return aliasedCommand;
 };
 methods.capitalizeFirstLetter = function (text) {
-  console.log("The text Uppercasing;;;", text);
+  // console.log("The text Uppercasing;;;", text);
   return `${text.slice(0, 1).toUpperCase()}${text.slice(1)}`;
 };
 
