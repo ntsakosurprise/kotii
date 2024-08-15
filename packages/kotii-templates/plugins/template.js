@@ -19,6 +19,7 @@ class Template {
     const getRootDir = pao.pa_getRootDir;
     self.callback = data.callback;
     const { name, type } = data;
+    const sep = path.sep;
     // console.log("THE PAO", pao);
     // console.log("THE ROOT DIR", getRootDir(module.filename));
     // console.log("THE MODULE", __dirname);
@@ -34,19 +35,19 @@ class Template {
     // let workDir = getWorkingFolder();
     let thisFileDir = getRootDir(module.filename);
     let templateTypeFolder =
-      thisFileDir.indexOf("/dist") > 0
-        ? path.resolve(thisFileDir, `../${type}`)
-        : path.resolve(thisFileDir, `../${type}`);
+      thisFileDir.indexOf(`${sep}dist`) > 0
+        ? path.resolve(thisFileDir, `..${sep}${type}`)
+        : path.resolve(thisFileDir, `..${sep}${type}`);
 
     let templatePath = path.resolve(templateTypeFolder, name);
     let templatesPathRoot = path.resolve(thisFileDir, "..");
     let kotiiPackages = path.resolve(templatesPathRoot, "..");
     let kotiiMain = path.resolve(kotiiPackages, "..");
-    console.log("THE THIS FILE DIR", thisFileDir);
+    // console.log("THE THIS FILE DIR", thisFileDir);
 
-    console.log("THE DIR OUT", templatesPathRoot);
-    console.log("PACKAGES", kotiiPackages);
-    console.log("KOTII MONO", kotiiMain);
+    // console.log("THE DIR OUT", templatesPathRoot);
+    // console.log("PACKAGES", kotiiPackages);
+    // console.log("KOTII MONO", kotiiMain);
     self.callback({
       templateTypeFolder,
       templatePath,
