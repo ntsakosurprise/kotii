@@ -5,6 +5,7 @@ const Listr = require("listr");
 const simpleGit = require("simple-git");
 const pkgInstall = require("pkg-install");
 const path = require("path");
+const chalk = require("chalk");
 
 const Configstore = require("configstore");
 const Octokit = require("@octokit/rest");
@@ -31,6 +32,7 @@ class Scaffold {
     this.pao = pao;
     this.Listr = Listr;
     this.execa = execa;
+    this.chalk = chalk;
     this.Octokit = Octokit;
     this.simpleGit = simpleGit;
     this.Configstore = Configstore;
@@ -51,7 +53,6 @@ class Scaffold {
       git: "yes",
       repotype: "public",
     };
-
     //  this.Bitbucket = Bitbucket
     //  this.octokit = new Octokit()
     this.createBasicAuth = createBasicAuth;
@@ -214,6 +215,17 @@ class Scaffold {
     this.doPackageJson = methods.doPackageJson;
     this.installLocally = methods.installLocally;
     this.runTerminal = methods.runTerminal;
+    this.renderTerminalError = methods.renderTerminalError;
+    this.cancellProjectCreation = methods.cancellProjectCreation;
+    this.renderError = methods.renderError;
+    this.installationError = methods.installationError;
+    this.createFolderError = methods.createFolderError;
+    this.capitalizeFirstLetter = methods.capitalizeFirstLetter;
+    this.camelCaseText = methods.camelCaseText;
+    this.unknownError = methods.unknownError;
+    this.npmInstallationConfig = methods.npmInstallationConfig;
+    this.yarnInstallationConfig = methods.yarnInstallationConfig;
+    this.pnpmInstallationConfig = methods.pnpmInstallationConfig;
   }
 }
 
