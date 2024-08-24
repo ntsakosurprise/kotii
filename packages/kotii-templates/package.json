@@ -12,13 +12,10 @@
   "exports": {
     ".": {
       "import": "./index.js",
-      "require": "./index.js",
-      "default": "./index.js"
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.cjs"
     }
   },
-  "workspaces": [
-    "no-hoist"
-  ],
   "scripts": {
     "babel-transpile": "cd packages/kotii-scripts && node transpile_kotii.js",
     "build:api": "tsc -b ./tsconfig.json",
