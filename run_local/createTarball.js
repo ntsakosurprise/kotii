@@ -1,6 +1,6 @@
 const childProcess = require("child_process");
 module.exports = function (tarballContext = null, script) {
-  let commandToRun = `npm pack`;
+  let commandToRun = `pnpm pack`;
   let currentWorkingDirectory = !tarballContext
     ? tarballContext
     : process.cwd();
@@ -11,8 +11,8 @@ module.exports = function (tarballContext = null, script) {
     commandToRun
   );
   let createdTarPath = childProcess
-    .execSync(`${commandToRun} --workspace=${script}`, {
-      cwd: `${currentWorkingDirectory}`,
+    .execSync(`${commandToRun}`, {
+      cwd: `${currentWorkingDirectory}/packages/${script}`,
     })
     .toString()
     .trim();
