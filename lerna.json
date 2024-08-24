@@ -2,7 +2,7 @@
   "packages": ["packages/*"],
   "useNx": true,
   "version": "independent",
-  "npmClient": "yarn",
+  "npmClient": "pnpm",
   "useWorkspaces": true,
   "command": {
     "publish": {

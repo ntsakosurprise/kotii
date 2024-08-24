@@ -51,7 +51,7 @@
     "@node-loader/babel": "^2.0.1",
     "@svgr/webpack": "^8.1.0",
     "grommet": "^2.33.1",
-    "kotii-utils": "*",
+    "kotii-utils": "workspace:kotii-utils@*",
     "react-icons": "^4.11.0",
     "react-switch": "^7.0.0",
     "styled-components": "5.3.11"
