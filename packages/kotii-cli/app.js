@@ -6,13 +6,9 @@ process.argv.push("cli");
 process.env.SUPPRESS_NO_CONFIG_WARNING = "false";
 const plugins = require("./plugins/index");
 // const { anzii } = require("anzii");
-const {
-  anzii,
-} = require("/Users/surprisemashele/Documents/Development/frameworks/anzii/packages/anzii/dist/index.cjs");
+const { anzii } = require("anzii");
 
-const {
-  Template,
-} = require("/Users/surprisemashele/Documents/kotii/packages/kotii-templates/dist/index.cjs");
+const { Template } = require("kotii-templates");
 // console.log("THE AN", plugins);
 // console.log(Template);
 anzii({ ...plugins, Template });
