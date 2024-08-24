@@ -133,12 +133,12 @@ const stringFlagsMessages = {
     validKeys: ["spa", "mua", "ssr"],
   },
   ["--packager"]: {
-    invalidOption: `Provided packager for option --packager, is not a valid package manager, please use yarn, npm , or pnp`,
-    validKeys: ["npm", "pnp", "yarn"],
+    invalidOption: `Provided packager for option --packager, is not a valid package manager, please use yarn, npm , or pnpm`,
+    validKeys: ["npm", "pnpm", "yarn"],
   },
   ["--template"]: {
-    invalidOption: `Provided template for option --template, is not a valid kotii app template, please use js or ts`,
-    validKeys: ["js", "ts"],
+    invalidOption: `Provided template for option --template, is not a valid kotii app template, please use js, ts, javascript, or typescript`,
+    validKeys: ["js", "ts", "javascript", "typescript"],
   },
 };
 
