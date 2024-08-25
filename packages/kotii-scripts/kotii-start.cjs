@@ -49,6 +49,7 @@ const { pathToFileURL } = require("node:url");
 process.env.NODE_ENV = "development";
 const parentURL = pathToFileURL(__filename);
 
-console.log("THE REGISTER HOOK Dev");
-register("./compile/hooks_.js", parentURL);
-import("./kotii-land/dev/app.js");
+console.log("REGISTER FOR PROD");
+process.env.ANZII_KICK_OFF_MANUALLY = "true";
+register("./compile/hooks_prod.js", parentURL);
+import("./kotii-land/prod/app_prod.js");
