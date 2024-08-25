@@ -5,6 +5,7 @@ import Cachr from "./cachr/index.js";
 import Config from "./config/index.js";
 import Configstorer from "./configstore/index.js";
 import ContextApp from "./contextapp/index.js";
+import Dev from "./dev/index.js";
 import DevServer from "./devserver/index.js";
 import Env from "./env/env.js";
 import FileRouter from "./filerouter/index.js";
@@ -21,6 +22,7 @@ import Scaffold from "./scaffold/index.js";
 import ServerBuild from "./server-build/index.js";
 import Ssg from "./ssg/index.js";
 import Start from "./start/index.js";
+import Static from "./static/index.js";
 import Watchr from "./watchr/index.js";
 import WebpackConfig from "./wbpconfig/index.js";
 
@@ -41,7 +43,9 @@ export { DevServer };
 export { ContextApp };
 export { FileRouter };
 export { ServerBuild };
+export { Static };
 export { Env };
+export { Dev };
 export default {
   Interpreter,
   Scaffold,
@@ -66,4 +70,6 @@ export default {
   Ssg,
   Env,
   ServerBuild,
+  Static,
+  Dev,
 };
