@@ -13,16 +13,14 @@ methods.handleStaticScript = function (data) {
   self.emit({
     type: "context-app",
     data: {
-      myName: "ntsako",
       callback: (data) => {
-        // console.log("THIS DATA");
-        // console.log(self.pao);
-        console.log("WALAH", data);
-        self.getWebPackConfig(data, setCall);
+        console.log("BUILD CONTEXT APP RESPONSE", data?.routesObject[0]);
+        self.getWebPackConfig({ ...data, build: true }, setCall);
       },
+      build: true,
+      env: "production",
     },
   });
-  return;
 };
 methods.getWebPackConfig = function (dataToConfig, setCall) {
   const self = this;
@@ -31,22 +29,27 @@ methods.getWebPackConfig = function (dataToConfig, setCall) {
     data: {
       payload: dataToConfig,
       callback: (data) => {
-        console.log("THE DATA FROM WEBPACK CONFIG", data);
-        setCall("Webpack config has been called successfully");
+        self.doStaticSiteGeneration({
+          callback: setCall,
+          dataToConfig,
+          ...data,
+        });
       },
     },
   });
 };
-methods.namespace = function (data) {
+methods.doStaticSiteGeneration = function (data) {
+  console.log("DO STATIC DATA", data);
   const self = this;
-  const clientOptions = { auth: data.creds };
-  const bitbucket = new Bitbucket(clientOptions);
-  return bitbucket;
-};
-methods.api = function (data) {
-  const self = this;
-  const clientOptions = { auth: data.token };
-  const bitbucket = new Bitbucket(clientOptions);
-  return bitbucket;
+  self.emit({
+    type: "generate-static-content",
+    data: {
+      payload: { ...data },
+      callback: (gotValue) => {
+        console.log("STATIC GENERATION IS COMPLETED", gotValue);
+        data.callback({ message: "Build plugin successfully called" });
+      },
+    },
+  });
 };
 export default methods;

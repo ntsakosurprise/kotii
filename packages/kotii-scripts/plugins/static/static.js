@@ -5,6 +5,7 @@ class Static {
     this.init = methods.init;
     this.handleStaticScript = methods.handleStaticScript;
     this.getWebPackConfig = methods.getWebPackConfig;
+    this.doStaticSiteGeneration = methods.doStaticSiteGeneration;
   }
 }
 export default Static;
