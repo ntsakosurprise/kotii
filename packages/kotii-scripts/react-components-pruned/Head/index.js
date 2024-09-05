@@ -4,7 +4,7 @@ const Head = _ref => {
   let {
     title
   } = _ref;
-  return /*#__PURE__*/React.createElement(Helmet, null, /*#__PURE__*/React.createElement("title", null, "".concat(title)), /*#__PURE__*/React.createElement("meta", {
+  return /*#__PURE__*/React.createElement(Helmet, null, /*#__PURE__*/React.createElement("title", null, `${title}`), /*#__PURE__*/React.createElement("meta", {
     charset: "utf-8"
   }), /*#__PURE__*/React.createElement("link", {
     rel: "icon",
