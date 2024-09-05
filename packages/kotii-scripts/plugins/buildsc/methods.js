@@ -38,43 +38,18 @@ methods.getWebPackConfig = function (dataToConfig, options = {}, setCall) {
     data: {
       payload: dataToConfig,
       callback: (data) => {
-        console.log("BUILD: WEBPACK RUN RESULT");
-        if (options?.buildFor && options.buildFor === "ssr") {
-          self.doServerBuildGeneration({
-            callback: setCall,
-            targetSource: dataToConfig.contextApp.appSrc,
-            targetMain: dataToConfig.contextApp.appFolder,
-            destination: `${path.resolve(
-              dataToConfig.contextApp.appFolder,
-              dataToConfig.contextApp.appManifest.build
-            )}`,
-            targetNodeModules: `${dataToConfig.contextApp.appNodeModules}`,
-            routes: dataToConfig.routes,
-            contextApp: dataToConfig.contextApp,
-          });
-        } else {
-          self.doStaticSiteGeneration({
-            callback: setCall,
-            dataToConfig,
-            ...data,
-          });
-        }
-
-        // setCall("Webpack config has been called successfully");
-      },
-    },
-  });
-};
-methods.doStaticSiteGeneration = function (data) {
-  console.log("DO STATIC DATA", data);
-  const self = this;
-  self.emit({
-    type: "generate-static-content",
-    data: {
-      payload: { ...data },
-      callback: (gotValue) => {
-        console.log("STATIC GENERATION IS COMPLETED", gotValue);
-        data.callback({ message: "Build plugin successfully called" });
+        self.doServerBuildGeneration({
+          callback: setCall,
+          targetSource: dataToConfig.contextApp.appSrc,
+          targetMain: dataToConfig.contextApp.appFolder,
+          destination: `${path.resolve(
+            dataToConfig.contextApp.appFolder,
+            dataToConfig.contextApp.appManifest.build
+          )}`,
+          targetNodeModules: `${dataToConfig.contextApp.appNodeModules}`,
+          routes: dataToConfig.routes,
+          contextApp: dataToConfig.contextApp,
+        });
       },
     },
   });
