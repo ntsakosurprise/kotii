@@ -31,7 +31,9 @@ methods.handleStaticGeneration = function (data) {
       console.log("THE DIST FOLDER", DIST);
       self.copyPublicToDist(resources.appAssetsPublic, DIST, "index.html");
       self.copyPublicToDist(BUILD, DIST, "index.html");
-      fs.rmSync(`${DIST}${path.sep}index.html`);
+      fs.existsSync(`${DIST}${path.sep}index.html`)
+        ? fs.rmSync(`${DIST}${path.sep}index.html`)
+        : null;
       htmlViews.forEach((html) => {
         self.savePageToFile(
           `${DIST}${path.sep}${html.name.toLowerCase()}.html`,
@@ -113,7 +115,14 @@ methods.cleanBuildFolder = function (view, setCall) {
 methods.copyPublicToDist = function (from, to, ignore) {
   const self = this;
   console.log("copying from", from, to);
-  fs.cpSync(from, to, { recursive: true, filter: (fi) => fi !== ignore });
+  if (fs.existsSync(from)) {
+    fs.cpSync(from, to, { recursive: true, filter: (fi) => fi !== ignore });
+  } else {
+    self.infoSync(
+      `Folder:${from} does not exist, kotii will skip trying to copy from it`
+    );
+  }
+
   // {
   //   view: {
   //     match: '/',
