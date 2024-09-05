@@ -429,6 +429,8 @@ methods.buildTaskList = async function (answers, options) {
 
             let installed = null;
             if (self.isLocalRun) {
+              let fileProtocol =
+                answers.packager.toLowerCase() === "yarn" ? "file:" : "";
               let kotiiScriptsPackageJson = loadFileSync(
                 path.join(
                   `${options.kotiiMain}${sep}packages${sep}kotii-scripts`,
@@ -443,8 +445,8 @@ methods.buildTaskList = async function (answers, options) {
               );
               installed = await self.installLocally(
                 [
-                  `${options.kotiiMain}${sep}packages${sep}kotii-scripts${sep}kotii-scripts-${kotiiScriptsPackageJson.version}.tgz`,
-                  `${options.kotiiMain}${sep}packages${sep}kotii-styled${sep}kotii-styled-${kotiiStyledPackageJson.version}.tgz`,
+                  `${fileProtocol}${options.kotiiMain}${sep}packages${sep}kotii-scripts${sep}kotii-scripts-${kotiiScriptsPackageJson.version}.tgz`.trim(),
+                  `${fileProtocol}${options.kotiiMain}${sep}packages${sep}kotii-styled${sep}kotii-styled-${kotiiStyledPackageJson.version}.tgz`.trim(),
                 ],
                 options.newFolder,
                 answers.packager,
@@ -452,9 +454,9 @@ methods.buildTaskList = async function (answers, options) {
               );
             }
 
-            // console.log("Done Installing Packages");
-            // console.log(installed);
-            // console.log(output);
+            console.log("Done Installing Packages");
+            console.log(installed);
+            console.log(output);
           },
         })
     : "";
@@ -955,11 +957,12 @@ methods.packagesInstall = function (packagesFolder, packager = null, options) {
 };
 
 methods.installLocally = function (packages, folder, packager = null, options) {
-  // console.log("THE PACKAGES INSTALL LOCALLY", packages);
+  console.log("THE PACKAGES INSTALL LOCALLY", packages);
+  console.log("PACKAGES.LENGTH", packages.length);
   return new Promise((resolve, reject) => {
     let installations = packages.map(async (package) => {
       const self = this;
-      // console.log("THE PACKAGE", package);
+      console.log("THE PACKAGE", package);
       return await self.runTerminal({
         packages: package,
         context: folder,
@@ -970,7 +973,7 @@ methods.installLocally = function (packages, folder, packager = null, options) {
       });
     });
     Promise.all(installations).then((completed) => {
-      // console.log("MADE INSTALLATIONS", installations);
+      console.log("MADE INSTALLATIONS", installations);
       resolve(completed);
     });
   });
@@ -1151,13 +1154,14 @@ methods.runTerminal = function ({
   options,
 } = args) {
   return new Promise((resolve, reject) => {
-    // console.log("THE PACKAGES", packages);
+    console.log("THE PACKAGES", packages);
     const self = this;
     try {
       let commandToRun = self[`${packager}InstallationConfig`]({
         packages: packages && packages.trim() ? [packages] : null,
         options: installOptions ? installOptions : null,
       });
+      console.log("THE COMMAND TO RUN", commandToRun);
       let currentWorkingDirectory = context;
 
       // console.log(
@@ -1321,17 +1325,22 @@ methods.yarnInstallationConfig = function ({
   options = null,
 } = args) {
   const self = this;
+  console.log("YARN INSTALL", packages);
   let installString = "";
   if (packages && options) {
+    console.log("YARN INSTALL PACKAGES AND OPTIONS", options);
     installString = `yarn add ${packages.join(" ")} ${options.join(" ")}`;
     return installString;
   } else if (packages) {
+    console.log("YARN INSTALL PACKAGES");
     installString = `yarn add ${packages.join(" ")}`;
     return installString;
   } else if (options) {
+    console.log("YARN INSTALL OPTIONS", options);
     installString = `yarn install ${options.join(" ")}`;
     return installString;
   } else {
+    console.log("YARN INSTALL NO OPTIONS", options);
     installString = `yarn install`;
     return installString;
   }
