@@ -39,10 +39,11 @@ methods.doStartUp = function (data) {
   const readFileSync = pao.pa_readFileSync;
   return new Promise((resolve, reject) => {
     let nodeModulesOrUserLand = path.resolve(getWorkingDir(), "..");
-    let configFolder = "";
-    if (nodeModulesOrUserLand.indexOf("/packages") >= 0) {
-      configFolder = `${nodeModulesOrUserLand}/kotii-templates/javascript/ssr`;
-    }
+    let configFolder = getWorkingDir();
+    console.log("CONFIG FOLDER", configFolder);
+    // if (nodeModulesOrUserLand.indexOf("/packages") >= 0) {
+    //   configFolder = `${nodeModulesOrUserLand}/kotii-templates/javascript/ssr`;
+    // }
 
     let rootFiles = [];
     const files = fs.readdirSync(configFolder, { recursive: true });

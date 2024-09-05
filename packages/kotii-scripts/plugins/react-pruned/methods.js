@@ -99,7 +99,7 @@ methods.runReactView = function (data) {
       staticRender
     );
     let layoutRoot = await self.doImport(
-      "".concat("/src/components/startup/index.js"),
+      `/src/components/startup/index.js`,
       true,
       false
     );
@@ -179,39 +179,31 @@ methods.renderFullPage = function (html, preloadedState, view, head) {
     arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
   const self = this;
   const { serialize } = self;
-  const jsonStyles = fs.existsSync(
-    "".concat(process.cwd()).concat(path.sep, "styles.json")
-  )
-    ? JSON.parse(
-        fs.readFileSync(
-          "".concat(process.cwd()).concat(path.sep, "styles.json")
-        )
-      )
+  const jsonStyles = fs.existsSync(`${process.cwd()}${path.sep}styles.json`)
+    ? JSON.parse(fs.readFileSync(`${process.cwd()}${path.sep}styles.json`))
     : null;
   let styleTags = jsonStyles ? jsonStyles.toString().replace(",", "") : "";
   console.log("THE PRELOADED STATE", preloadedState, styleTags);
-  return "\n\t\t<!doctype html>\n\t\t<html "
-    .concat(head.htmlAttributes.toString(), "> \n    <head>\n    ")
-    .concat(
-      head === null || head === void 0 ? void 0 : head.title.toString(),
-      "\n    "
-    )
-    .concat(
-      head === null || head === void 0 ? void 0 : head.meta.toString(),
-      "\n    "
-    )
-    .concat(
-      head === null || head === void 0 ? void 0 : head.link.toString(),
-      "\n    "
-    )
-    .concat(self.styledTags, "\n    ")
-    .concat(styleTags, "\n    </head>\n\t\t<body ")
-    .concat(head.bodyAttributes.toString(), '>\n\t\t\t<div id="root">')
-    .concat(html, "</div>\n\t\t\t<script>\n      window.__PRELOADED_STATE__ = ")
-    .concat(
-      serialize(preloadedState),
-      '\n\t\t\t</script>\n\t\t\t<script src="/[main].server.bundle.js" ></script>\n\n\t\t</body>\n\t\t</html>\n    '
-    );
+  return `
+		<!doctype html>
+		<html ${head.htmlAttributes.toString()}> 
+    <head>
+    ${head?.title.toString()}
+    ${head?.meta.toString()}
+    ${head?.link.toString()}
+    ${self.styledTags}
+    ${styleTags}
+    </head>
+		<body ${head.bodyAttributes.toString()}>
+			<div id="root">${html}</div>
+			<script>
+      window.__PRELOADED_STATE__ = ${serialize(preloadedState)}
+			</script>
+			<script src="/[main].server.bundle.js" ></script>
+
+		</body>
+		</html>
+    `;
 };
 methods.getStateDataFromServer = function (routePath, store) {
   let staticRender =
@@ -224,12 +216,7 @@ methods.getStateDataFromServer = function (routePath, store) {
   return new Promise((resolve, reject) => {
     if (staticRender) return resolve({});
     let dataFetchPromises = routes.filter((route, i) => {
-      if (
-        route.path === routePath &&
-        route !== null &&
-        route !== void 0 &&
-        route.requiresData
-      ) {
+      if (route.path === routePath && route?.requiresData) {
         return route.requiresData(store);
       }
     });
@@ -239,9 +226,11 @@ methods.getStateDataFromServer = function (routePath, store) {
     });
   });
 };
-methods.doImport = function (toImport, all = false, check = false) {
-  // let all =
-  //   arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+methods.doImport = function (toImport) {
+  let all =
+    arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  let check =
+    arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
@@ -257,9 +246,7 @@ methods.doImport = function (toImport, all = false, check = false) {
       })
       .catch((err) => {
         console.log(
-          "importing module:"
-            .concat(toImport, ", has failed with an error:")
-            .concat(err)
+          `importing module:${toImport}, has failed with an error:${err}`
         );
         reject(err);
       });
