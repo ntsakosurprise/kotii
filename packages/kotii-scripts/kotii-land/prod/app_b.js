@@ -220,7 +220,6 @@ const ServerApp = function () {
 };
 if (import.meta.webpackHot) {
   console.log("THE META.HOT");
-
   import.meta.webpackHot.accept("./build.js", (er) => {
     console.log("THE HOT ERROR", er);
     console.log("THE CUSTOM", customHydrateRoot, userLayout, userWrapper);
