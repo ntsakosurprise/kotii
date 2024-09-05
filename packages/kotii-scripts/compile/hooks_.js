@@ -208,6 +208,27 @@ export async function resolve(specifier, context, nextResolve) {
   return nextResolve(specifier);
 }
 
+/**
+ *
+ * @param {*} specifier
+ * @returns true/false
+ * resolveAliasedImports resolves modules/paths that are aliased as defined by the
+   user in an app_manifest.json. Aliased modules help make the user's navigation of the project
+   a lot easier.
+
+   N.B Sample app.manifest.json structure: 
+
+   "aliases": {
+    "AppGlobals": "/src/globals/index",
+    "Layouts": "/src/components/layout/index",
+    "Pages": "/src/components/pages/index",
+    "Docs": "/src/components/docs/index",
+  }
+
+  import { GlobalStyle } from "AppGlobals"; // Find GlobalStyle variable using an absolute path
+  named "AppGlobals" that should resolve to the exact location of the file/module
+ 
+ */
 const resolveAliasedImports = (specifier) => {
   if (!isBuiltin(specifier) && doMeta(specifier)) {
     let specifierAlias = meta.aliases[specifier];
@@ -242,6 +263,28 @@ const resolveAliasedImports = (specifier) => {
     return false;
   }
 };
+
+/**
+ *
+ * @param {*} specifier
+ * @returns true/false
+ * resolveKotiiLandImports resolves modules that are found inside a kotii generated folder named ".kotii-land".
+ * .kotii-land is a special folder in kotii that is generated when a 'build' command is executed.
+ * kotii uses this folder to store some content needed in a production execution of a kotii-made app.
+ *
+ * To resolve modules in this folder, we check if an import specifier contains a path with .kotii-land folder.
+ *
+ * We currently look for routes and pages in this folder:
+ * routes: an app's routes
+ * pages: Contains paths of user's app pages that have been transpiled for nodejs environment.
+ *        The files that the paths contained in this file point to will be better loaded by nodejs
+ *        runtime.
+ *
+ * These files are requested/imported by kotii internally at production runtime. The pages are basically
+ * derived from a file in: /kotii-land/dev/pages.js, which its self is generated and updated automatically during
+ * development
+ *
+ */
 const resolveKotiiLandImports = (specifier) => {
   if (!isBuiltin(specifier) && /\.kotii-land\/(pages|routes)/.test(specifier)) {
     console.log("THE PAGES PATH KOTII LAND PATH");
@@ -262,6 +305,20 @@ const resolveKotiiLandImports = (specifier) => {
     return false;
   }
 };
+
+/**
+ *
+ * @param {*} specifier
+ * @returns true/false
+ * resolvePagesImports resolves a user's pages imports by checking if a specifier starts
+ * with a forward slash and followed by a 'src' text. The paths are generated and requested by
+ * kotii in both production and development runtime.
+ *
+ * This approach is not 100% reliable for our intended goal, but it works fine now because we filter
+ * all the other absolute paths that begin with /src/ as aliased imports. Nonetheless, we will have
+ * to re-look this approach and resolve the pages imports better.
+ *
+ */
 const resolvePagesImports = (specifier) => {
   console.log("THE PAGES IMPORT", specifier);
   if (!isBuiltin(specifier) && /^\/src\//.test(specifier)) {
@@ -282,6 +339,22 @@ const resolvePagesImports = (specifier) => {
     return false;
   }
 };
+/**
+ *
+ * @param {*} specifier
+ * @returns true/false
+ * resolveKotiiScriptsImports resolves imports from kotii-scripts' exports during development.
+ * kotii uses two separate files for app start up in /kotii-land/. The files are in /kotii-land/dev/ and
+ * /kotii-land/prod/ respectively.
+ *
+ * Because these files are loaded differently by nodejs, only one can be used per environment.
+ * To prevent errors that users would potentially face in both development and production environments,
+ * we decided to resolve the imports manually from dev during development
+ *
+ * In Production, kotii-scripts will expectedly export appropriate files where they are needed. It will
+ * use nodejs' default resolve hook.
+ *
+ */
 const resolveKotiiScriptsImports = (specifier) => {
   console.log(
     "KOTII SCRIPTS IMPORTS",
@@ -302,6 +375,15 @@ const resolveKotiiScriptsImports = (specifier) => {
     return false;
   }
 };
+
+/**
+ *
+ * @param {*} specifier
+ * @returns true/false
+ * resolveKotiiScriptsInternalImports resolves imports from kotii-scripts' internals during
+ * development time. This is mainly done for modules in /kotii-land
+ *
+ */
 const resolveKotiiScriptsInternalImports = (specifier) => {
   if (!isBuiltin(specifier) && /^\/kotii-land/.test(specifier)) {
     console.log("THE SPECIFIER FOR KOTII-SCRIPTS PATH", specifier);
@@ -317,6 +399,17 @@ const resolveKotiiScriptsInternalImports = (specifier) => {
     return false;
   }
 };
+
+/**
+ *
+ *
+ *
+ * @param {*} specifier
+ * @returns true/false
+ * resolveKotiiScriptsInternalImports resolves imports from kotii-scripts' internals during
+ * development time. This is mainly done for modules in /kotii-land
+ *
+ */
 const resolveKotiiUserApiPlugins = (specifier) => {
   if (!isBuiltin(specifier) && /^\/kotii-user-api/.test(specifier)) {
     let basePath = getPagesBasePath();
