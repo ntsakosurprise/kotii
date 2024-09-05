@@ -1,6 +1,6 @@
 import fs from "fs";
 import { resolve } from "path";
-let cwd = process.cwd();
+// let cwd = process.cwd();
 const scopedStylesBabelPlugin = (babel, state) => {
   return {
     visitor: {
@@ -19,7 +19,10 @@ const scopedStylesBabelPlugin = (babel, state) => {
         ) {
           let sourceValue = path.node.source.value;
 
-          manipulateStyles(resolve(`${state.appSrc}/styles`, sourceValue));
+          manipulateStyles({
+            pathToStyles: resolve(`${state.appSrc}/styles`, sourceValue),
+            cwd: state.cwd,
+          });
           return path.remove();
         }
 
@@ -33,11 +36,15 @@ const scopedStylesBabelPlugin = (babel, state) => {
           let sourceValue = path.node.source.value;
 
           if (path.node.source.value.indexOf(".styl") > 0) {
-            manipulateStyles(
-              resolve(`${state.appSrc}/src/styles`, sourceValue)
-            );
+            manipulateStyles({
+              pathToStyles: resolve(`${state.appSrc}/src/styles`, sourceValue),
+              cwd: state.cwd,
+            });
           } else {
-            manipulateStyles(resolve(`${state.appSrc}/styles`, sourceValue));
+            manipulateStyles({
+              pathToStyles: resolve(`${state.appSrc}/styles`, sourceValue),
+              cwd: state.cwd,
+            });
           }
 
           return path.remove();
@@ -47,7 +54,7 @@ const scopedStylesBabelPlugin = (babel, state) => {
   };
 };
 
-const manipulateStyles = (pathToStyles) => {
+const manipulateStyles = ({ pathToStyles, cwd } = args) => {
   console.log("MANIPULATE STYLES, PATH TO STYLES", pathToStyles);
   let styles = getStyles(pathToStyles);
   let json = null;
