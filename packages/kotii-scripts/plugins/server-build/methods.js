@@ -5,7 +5,6 @@ import os from "node:os";
 import Papa from "papaparse";
 import path, { resolve } from "path";
 import { parseString } from "xml2js";
-import { meta } from "../../kotii-land/dev/manifest.js";
 import runNpmScript from "./runNpmScript.js";
 
 methods.init = function () {
@@ -23,7 +22,9 @@ methods.handleServerBuild = function (data) {
   const { payload } = data;
   const { targetMain, destination, targetSource, routes, contextApp } = payload;
   data.callback({ gotValue: "Ran" });
-  const cwd = getWorkingFolder();
+  // const cwd = getWorkingFolder();
+  const cwd = self.kotiiScriptsPath;
+  console.log("KOTII SCRIPTS PATH", cwd);
   if (fs.existsSync(`${cwd}/kotii-land/dev/styles.json`)) {
     fs.rmSync(`${cwd}/kotii-land/dev/styles.json`);
   }
@@ -32,13 +33,15 @@ methods.handleServerBuild = function (data) {
   const babelJson = JSON.parse(readFileSync(`${cwd}/babel.server.build.json`));
   let updatedBabelJsonPlugins = babelJson.plugins;
   updatedBabelJsonPlugins.unshift([
-    "./babel-plugins/scoped-styles-plugin/index.js",
+    `${path.join(cwd, "./babel-plugins/scoped-styles-plugin/index.js")}`,
     {
       appFolder: targetMain,
       appSrc: targetSource,
+      cwd: cwd,
     },
   ]);
   babelJson.plugins = [...updatedBabelJsonPlugins];
+  console.log("BABEL JSON PLUGINS", babelJson.plugins);
   saveToFile(
     path.join(cwd, "babel.server.build.json"),
     JSON.stringify(babelJson, null, 2)
@@ -86,7 +89,7 @@ methods.handleServerBuild = function (data) {
     JSON.stringify(localPackageJson, null, 2)
   );
 
-  runNpmScript("run", "build-ssr")
+  runNpmScript({ npmCommand: "run", scriptToRun: "build-ssr", cwd: cwd })
     .then((built) => {
       let usrHomeDir = os.homedir();
       let fullTempPath = self.createDistFolder(
@@ -111,6 +114,7 @@ methods.handleServerBuild = function (data) {
         destination: `${destination}${path.sep}src`,
         targetMain,
         targetSource,
+        appManifest: contextApp.appManifest,
       });
 
       babelJson.plugins.shift();
@@ -292,6 +296,8 @@ methods.removeJsxReferences = function (sourceRoot, state) {
 methods.updateJSXImportDeclarations = function (ast, state) {
   const self = this;
   const traverse = self.traverse;
+  console.log("THE APP STATE", state);
+  const appManifest = state?.appManifest;
   // let removedImportsIds = [];
 
   let isUpdated = false;
@@ -320,6 +326,7 @@ methods.updateJSXImportDeclarations = function (ast, state) {
           `${state.destination}`,
           importSpecifier.substr(importSpecifier.indexOf("/") + 1).trim()
         );
+        console.log("THE ABSOLUTE PATH", absoluteFilePath);
         let contents = fs.readFileSync(absoluteFilePath, {
           encoding: "utf-8",
         });
@@ -370,11 +377,11 @@ methods.updateJSXImportDeclarations = function (ast, state) {
       if (
         !/^(\.+)/.test(path.node.source.value) &&
         !isBuiltin(path.node.source.value) &&
-        meta.alias[path.node.source.value]
+        appManifest.aliases[path.node.source.value]
       ) {
         console.log("SOURCE NOT RELATIVE", path.node.source.value);
-        path.node.source.value = `${meta.appMain}${
-          meta.alias[path.node.source.value]
+        path.node.source.value = `${
+          appManifest.aliases[path.node.source.value]
         }.js`;
         isUpdated = true;
       }
@@ -399,7 +406,8 @@ methods.doKotiiLandPagesFile = function (destination, options) {
   const readFileSync = pao.pa_readFileSync;
   const saveToFile = pao.pa_saveToFile;
   const getWorkingFolder = pao.pa_getWorkingFolder;
-  const cwd = getWorkingFolder();
+  // const cwd = getWorkingFolder();
+  const cwd = self.kotiiScriptsPath;
 
   const jsFile = readFileSync(`${cwd}${path.sep}kotii-land/dev/pages.js`);
   console.log(
@@ -492,7 +500,8 @@ methods.saveRoutesInUserLand = function (routes) {
   const readFileSync = pao.pa_readFileSync;
   const saveToFile = pao.pa_saveToFile;
   const getWorkingFolder = pao.pa_getWorkingFolder;
-  const cwd = getWorkingFolder();
+  // const cwd = getWorkingFolder();
+  const cwd = self.kotiiScriptsPath;
 
   return new Promise((resolve, reject) => {
     let requiresRoutes = routes.filter((rou) => {

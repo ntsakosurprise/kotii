@@ -1,11 +1,11 @@
 import chalk from "chalk";
 import { exec } from "child_process";
-export default function (
+export default function ({
   npmCommand = "run",
   scriptToRun = "build-ssr",
   options = "",
-  cwd = process.cwd()
-) {
+  cwd = process.cwd(),
+} = args) {
   return new Promise((resolve, reject) => {
     let terminalOptions =
       options instanceof Array ? options.join(" ") : options.trim();
