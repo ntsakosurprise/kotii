@@ -1,10 +1,12 @@
+import fs from "fs";
+import path from "path";
 import React, { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { AppProvider, useAppContext } from "../../react-components/index.jsx";
 import createReduxStore from "./app_redux.js";
 import { ClientRoutes, RoutesAsServerRoutes } from "./build.js";
-import { meta } from "./manifest.js";
+// import { meta } from "./manifest.js";
 let hydrateInvokes = 0;
 let userWrapper = null;
 let userLayout = null;
@@ -15,33 +17,50 @@ let customHydrateRoot = null;
 const App = (appWrapper = null, layout = null) => {
   userWrapper = appWrapper;
   userLayout = layout;
-  const { app } = meta;
-  console.log("THE APP", app);
+  const app = process.env.KOTII_APP_META;
+
+  console.log("THE PROCESS.BROWSER.ENVS", process.env);
+  // const existsMeta = fs.existsSync(
+  //   `${kotiiAppCwd}${path.sep}app.manifest.json`
+  // );
+  // if (!existsMeta)
+  //   throw new Error("This project is missing app.manifest.json, please add it");
+  // const meta = JSON.parse(
+  //   fs.readFileSync(`${kotiiAppCwd}${path.sep}app.manifest.json`)
+  // );
+  // const { app } = meta;
+  // console.log("THE APP", app);
   let { type, stateVendor = null } = app;
   if (type !== "ssr") {
     console.log("NOT SSR", stateVendor);
     if (stateVendor && stateVendor === "redux") {
       const store = createReduxStore();
-      return appSpaWithRedux(appWrapper, layout, store);
+      return appSpaWithRedux({ appWrapper, layout, store });
     }
-    return appSpa(appWrapper, layout);
+    return appSpa({ appWrapper, layout });
   } else {
     if (stateVendor && stateVendor === "redux") {
       console.log("TYPE IS SSR");
       const store = createReduxStore(window.__PRELOADED_STATE__);
-      return appWithRedux(appWrapper, layout, store);
+      return appWithRedux({ appWrapper, layout, store });
     }
-    return appNormal(appWrapper, layout);
+    return appNormal({ appWrapper, layout });
   }
 };
-const appWithRedux = (appWrapper, layout, store, isServer = false) => {
+const appWithRedux = ({
+  appWrapper,
+  layout,
+  store,
+  isServer = false,
+  goodies = null,
+} = props) => {
   console.log("APP WITH REDUX", appWrapper, layout, store, isServer);
   if (isServer) {
     console.log("IT IS RENDERING FOR SERVER", isServer);
     return (
       <Provider store={store}>
         <AppProvider appWrapper={appWrapper} layout={layout}>
-          <AppGeneric isServer={true} />
+          <AppGeneric isServer={true} goodies={goodies} />
         </AppProvider>
       </Provider>
     );
@@ -87,12 +106,16 @@ const appWithRedux = (appWrapper, layout, store, isServer = false) => {
 
 const AppGeneric = (props) => {
   const { appWrapper } = useAppContext();
-  const { isServer = false } = props;
+  const { isServer = false, goodies = {} } = props;
   const AppWrapper = appWrapper;
 
   return appWrapper ? (
     <AppWrapper>
-      {!isServer ? <ClientRoutes /> : <RoutesAsServerRoutes />}
+      {!isServer ? (
+        <ClientRoutes goodies={goodies} />
+      ) : (
+        <RoutesAsServerRoutes goodies={goodies} />
+      )}
     </AppWrapper>
   ) : !isServer ? (
     <ClientRoutes />
@@ -101,7 +124,7 @@ const AppGeneric = (props) => {
   );
 };
 
-const appNormal = (appWrapper, layout, isServer = false) => {
+const appNormal = ({ appWrapper, layout, isServer = false } = props) => {
   console.log("APP NORMARL IS RUNNING");
   if (isServer) {
     return (
@@ -119,7 +142,7 @@ const appNormal = (appWrapper, layout, isServer = false) => {
   );
 };
 
-const appSpa = (appWrapper, layout) => {
+const appSpa = ({ appWrapper, layout } = props) => {
   console.log("APP SPA IS RUNNING");
 
   const root = createRoot(document.getElementById("root"));
@@ -132,7 +155,7 @@ const appSpa = (appWrapper, layout) => {
   );
 };
 
-const appSpaWithRedux = (appWrapper, layout, store) => {
+const appSpaWithRedux = ({ appWrapper, layout, store } = props) => {
   console.log("APP SPA WITH REDUX RUNNING");
 
   const root = createRoot(document.getElementById("root"));
@@ -147,20 +170,31 @@ const appSpaWithRedux = (appWrapper, layout, store) => {
   );
 };
 
-const ServerApp = (
+const ServerApp = ({
   appWrapper = null,
   layout = null,
-  storeFromSource = null
-) => {
+  goodies = null,
+  storeFromSource = null,
+} = props) => {
+  console.log("THE GOODIES FROM SERVER", goodies);
   const store = !storeFromSource ? createReduxStore() : storeFromSource;
+  const existsMeta = fs.existsSync(
+    `${process.cwd()}${path.sep}app.manifest.json`
+  );
+  if (!existsMeta)
+    throw new Error("This project is missing app.manifest.json, please add it");
+  const meta = JSON.parse(
+    fs.readFileSync(`${process.cwd()}${path.sep}app.manifest.json`)
+  );
 
   const { app } = meta;
   const { stateVendor = null } = app;
+  console.log("SERVER META", meta);
 
   if (stateVendor && stateVendor === "redux") {
-    return appWithRedux(appWrapper, layout, store, true);
+    return appWithRedux({ appWrapper, layout, store, isServer: true, goodies });
   }
-  return appNormal(appWrapper, layout, true);
+  return appNormal({ appWrapper, layout, isServer: true, goodies });
 };
 
 if (import.meta.webpackHot) {

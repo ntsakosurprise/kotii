@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import React, { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { Provider } from "react-redux";
@@ -7,7 +9,7 @@ import {
 } from "../../react-components-pruned/index.js";
 import createReduxStore from "./app_redux.js";
 import { ClientRoutes, RoutesAsServerRoutes } from "./build_b.js";
-import { meta } from "./manifest.js";
+// import { meta } from "./manifest.js";
 let hydrateInvokes = 0;
 let userWrapper = null;
 let userLayout = null;
@@ -20,6 +22,14 @@ const App = function () {
     arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
   userWrapper = appWrapper;
   userLayout = layout;
+  const existsMeta = fs.existsSync(
+    `${process.cwd()}${path.sep}app.manifest.json`
+  );
+  if (!existsMeta)
+    throw new Error("This project is missing app.manifest.json, please add it");
+  const meta = JSON.parse(
+    fs.readFileSync(`${process.cwd()}${path.sep}app.manifest.json`)
+  );
   const { app } = meta;
   console.log("THE APP", app);
   let { type, stateVendor = null } = app;
@@ -211,6 +221,14 @@ const ServerApp = function () {
   let storeFromSource =
     arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
   const store = !storeFromSource ? createReduxStore() : storeFromSource;
+  const existsMeta = fs.existsSync(
+    `${process.cwd()}${path.sep}app.manifest.json`
+  );
+  if (!existsMeta)
+    throw new Error("This project is missing app.manifest.json, please add it");
+  const meta = JSON.parse(
+    fs.readFileSync(`${process.cwd()}${path.sep}app.manifest.json`)
+  );
   const { app } = meta;
   const { stateVendor = null } = app;
   if (stateVendor && stateVendor === "redux") {
