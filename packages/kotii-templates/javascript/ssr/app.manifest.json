@@ -1,5 +1,8 @@
 {
-  "appType": "ssra",
+  "app": {
+    "type": "ssr",
+    "stateVendor": "redux"
+  },
   "build": "build",
   "static": "static",
   "aliases": {
