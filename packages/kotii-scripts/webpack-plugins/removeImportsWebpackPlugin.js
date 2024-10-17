@@ -12,14 +12,14 @@ class RemoveImportsWebpackPlugin{
     removeImportSpecifiers=[]
     importRemoved = false
     constructor(options){
-        console.log("REMOVE IMPORT OPTIONS", options)
+        
         this.removeFilePath = options.removeFilePath
         this.removeImportSpecifiers = options.removeFileSpecifiers
     }
     apply(compiler){
       
         compiler.hooks.done.tap("RemoveImportsWebpackPlugin",()=>{
-            console.log("THE REMOVE IMPORT LOG")
+            console.log("PLUGIN:: REMOVEIMPORTS")
             if(this.importRemoved) return
             this.importRemoved = true
             let removeImportSpecifiers = this.removeImportSpecifiers
