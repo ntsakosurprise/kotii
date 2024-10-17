@@ -69,7 +69,7 @@ methods.getAppInContextResources = function (environment = false) {
       appEnv: self.getEnvFilePath(appFolder),
       appFolder: self.getFilePath(appFolder, "."),
       appIndexFile: self.getFilePath(appFolder, "src/index.js"),
-      appPagesFolder: self.getFilePath(appFolder, "src/components/pages"),
+      appPagesFolder: self.getFilePath(appFolder, "src/pages"),
       appSrc: self.getFilePath(appFolder, "src"),
       appTsConfig: self.getFilePath(appFolder, "tsconfig.ts"),
       appJsConfig: self.getFilePath(appFolder, "tsconfig.js"),
