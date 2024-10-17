@@ -8,6 +8,8 @@ class Watchr {
     this.handleWatch = methods.handleWatch;
     this.handleStopWatching = methods.handleStopWatching;
     this.watchFiles = methods.watchFiles;
+    this.closeFileWatch = methods.closeFileWatch;
+    this.watched = null;
   }
 }
 export default Watchr;
