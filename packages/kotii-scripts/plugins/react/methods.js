@@ -105,27 +105,51 @@ methods.runReactView = function (data) {
       true,
       false
     );
+    if (!self.comps) {
+      self.comps = await self.doImport(`/kotii-land/dev/pages.js`, true, false);
+    }
+
     console.log("THE LAYOUT ROOT", layoutRoot.Layout);
     console.log("GOT STATE DATA", stateData);
+    console.log("THE SELF COMPS", self.comps);
+    //   appWrapper = null,
+    // layout = null,
+    // goodies=null,
+    // storeFromSource = null}=props
     let html = "";
 
     const sheet = new ServerStyleSheet();
+    let goodies = self.comps;
     try {
       html = renderToString(
         sheet.collectStyles(
           !layoutRoot ? (
-            <Router ssrPath={view.match}>{REACTAPP(null, null, store)}</Router>
+            <Router ssrPath={view.match}>
+              {REACTAPP({ storeFromSource: store, goodies })}
+            </Router>
           ) : layoutRoot.Layout && layoutRoot.Root ? (
             <Router ssrPath={view.match}>
-              {REACTAPP(layoutRoot.Root, layoutRoot.Layout, store)}
+              {REACTAPP({
+                appWrapper: layoutRoot.Root,
+                layout: layoutRoot.Layout,
+                storeFromSource: store,
+                goodies,
+              })}
             </Router>
           ) : layoutRoot.Layout ? (
             <Router ssrPath={view.match}>
-              {REACTAPP(null, layoutRoot.Layout, store)}
+              {REACTAPP({
+                layout: layoutRoot.Layout,
+                storeFromSource: store,
+                goodies,
+              })}
             </Router>
           ) : (
             <Router ssrPath={view.match}>
-              {REACTAPP(layoutRoot.Root, null, store)}
+              {REACTAPP({
+                appWrapper: layoutRoot.Root,
+                storeFromSource: store,
+              })}
             </Router>
           )
         )
