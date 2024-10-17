@@ -7,6 +7,7 @@ methods.init = function () {
 
   this.listens({
     "create-file-routes": this.handleFileRoutes.bind(this),
+    "remove-pages-import": this.handleRemovePagesImport.bind(this),
   });
 };
 methods.handleFileRoutes = async function (data) {
@@ -26,8 +27,10 @@ methods.handleFileRoutes = async function (data) {
   const appManifest = filePaths.appManifest;
   let manifestData = null;
   const cwd = getWorkingFolder();
+  // !self.kotiiUtils ? await self.emit({ type: "get-kotii-utils" }) : "";
   //console.log("EXECSYNC", execSync);
   //self.enableBabelRegister(cwd);
+
   const pagesPaths = self.getPages(
     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
   );
@@ -51,110 +54,283 @@ methods.handleFileRoutes = async function (data) {
       let manifestJS = imported;
       let meta = manifestJS.meta;
       console.log("META ", meta);
-      const buildJS = await self.doImport(
-        `/kotii-land/dev/build.js`,
-        false,
-        false
-      );
-      console.log("BUILD:JS", buildJS);
-      const routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
-      const reactServerRoutes = self.buildServerRoutes(
-        buildJS.routes,
-        routesObject
-      );
-      console.log("THE ROUTES", reactServerRoutes);
-      if (meta || !meta) {
-        return self.callback({
-          message: "Routes Configured",
-          resources: payload.path,
-          routes: reactServerRoutes,
-          routesObject: routesObject,
-        });
-      }
+      // const buildJS = await self.doImport(
+      //   `/kotii-land/dev/pages.js?fresh=true`,
+      //   false,
+      //   false
+      // );
+
+      let routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
+
+      let sendToRequestor = {
+        message: "Routes Configured",
+        resources: payload.path,
+        routes: self.buildServerRoutes(routesObject),
+      };
 
       const { lastCompsCount = 0, compsSource, compsPaths } = meta;
       const pagesPathsLen = pagesPaths.length;
-      let renamesToAdd = [];
-      let renamesToRemove = [];
-      // console.log("META", lastCompsCount, compsSource);
-      // if (!imported || imported) return;
 
-      if (lastCompsCount === 0 || !compsSource || compsPaths.length === 0) {
-        const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
-        return self.addToAST(routesObject, pagesPaths, null, pagesSource);
-      }
+      console.log("THE SEND TO:", sendToRequestor);
 
-      if (compsSource !== pagesSource) {
-        const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
-        return self.addToAST(routesObject, pagesPaths, null, pagesSource, true);
-      }
-      if (lastCompsCount === pagesPathsLen) {
-        pagesPaths.forEach((pPath) => {
-          if (compsPaths.indexOf(pPath) < 0) renamesToAdd.push(pPath);
+      if (
+        lastCompsCount === 0 ||
+        !compsSource ||
+        compsPaths.length === 0 ||
+        compsSource !== pagesSource
+      ) {
+        self.addToAST({
+          objectToAdd: routesObject,
+          pagesPaths,
+          source: pagesSource,
+          isNewSource: compsSource !== pagesSource,
         });
-        compsPaths.forEach((pPath) => {
-          if (pagesPaths.indexOf(pPath) < 0) renamesToRemove.push(pPath);
-        });
-        if (renamesToAdd.length === 0 && renamesToRemove.length === 0) {
-          console.log(
-            "AST NODE NO NEED UPDATED REQUIRED",
-            compsSource,
-            lastCompsCount
-          );
-          self.callback({
-            message: "Routes Configured",
-            resources: payload.path,
-          });
-          return;
-        }
-        if (renamesToAdd.length > 0 && renamesToRemove.length > 0) {
-          const routesObject = self.getRoutesHelper(renamesToAdd, pagesSource);
-          self.addToAST(routesObject, pagesPaths, renamesToRemove, pagesSource);
-        } else if (renamesToAdd.length > 0) {
-          console.log("AST NODE RENAMES TO ADD", renamesToAdd);
-          const routesObject = self.getRoutesHelper(renamesToAdd, pagesSource);
-          self.addToAST(routesObject, pagesPaths, null, pagesSource);
-        } else if (renamesToRemove.length > 0) {
-          self.addToAST(null, pagesPaths, toRemove, pagesSource);
-        }
-      } else if (lastCompsCount < pagesPathsLen) {
-        console.log("AST NODE lastCompsCount");
-        let toAdd = [];
-        let toRemove = [];
-        pagesPaths.forEach((pPath) => {
-          if (compsPaths.indexOf(pPath) < 0) toAdd.push(pPath);
-        });
-        compsPaths.forEach((pPath) => {
-          if (pagesPaths.indexOf(pPath) < 0) toRemove.push(pPath);
-        });
-        console.log("TO ADD", toAdd);
-        console.log("TO RENAME", toRemove);
-        const routesObject = self.getRoutesHelper(toAdd, pagesSource);
-
-        if (toRemove.length > 0) {
-          console.log("ABOUT TO PROCESS WITH REMOVE");
-          self.addToAST(routesObject, pagesPaths, toRemove, pagesSource);
-        } else {
-          console.log("ABOUT TO PROCESS WITHOUT REMOVE");
-          self.addToAST(routesObject, pagesPaths, null, pagesSource);
-        }
-        // ? self.addToAST(routesObject, pagesPaths, toRemove, pagesSource)
-        // : self.addToAST(routesObject, pagesPaths, null, pagesSource);
+        return self.callback(sendToRequestor);
       } else {
-        console.log("AST NODE:: REMOVING");
-        let toRemove = [];
-        compsPaths.forEach((pPath) => {
-          if (pagesPaths.indexOf(pPath) < 0) toRemove.push(pPath);
+        self.addOrRemoveByAST({
+          pagesPaths,
+          compsPaths,
+          pagesSource,
+          routesObject,
+          compsPagesEqual: lastCompsCount === pagesPathsLen,
         });
-        console.log("TO REMOVE", toRemove);
-        // const routesObject = self.getRoutesHelper(toAdd, pagesSource);
-        self.addToAST(null, pagesPaths, toRemove, pagesSource);
+        return self.callback(sendToRequestor);
       }
     })
     .catch((err) => {
-      console.log("ERR WITH IMPORT", err);
+      console.log("MANIFEST.JS: ERROR IMPORTING MANIFEST-JS", err);
     });
 };
+methods.handleRemovePagesImport = async function (data) {
+  const self = this;
+  const pao = self.pao;
+  const getWorkingFolder = pao.pa_getWorkingFolder;
+  const isExistingDir = pao.pa_isExistingDir;
+  const saveToFile = pao.pa_saveToFile;
+  const loadFileSync = pao.pa_loadFileSync;
+  const parser = self.parser;
+  // console.log("HANDLE FILE ROUTES DATA", data);
+  const readFileSync = pao.pa_readFileSync;
+  const cwd = getWorkingFolder();
+
+  const buildPath = `${cwd}/node_modules/kotii-scripts/kotii-land/dev/build.js`;
+  const buildPathFile = readFileSync(buildPath);
+  const buildAst = parser.parse(buildPathFile, {
+    sourceType: "module",
+    plugins: ["jsx"],
+  });
+
+  self.removeImportDeclarations(buildAst, ["./pages.js"]);
+
+  const generateBuildAst = generate(buildAst).code;
+
+  let newFileContent = `${generateBuildAst}`;
+  saveToFile(buildPath, newFileContent);
+  data.callback();
+};
+
+methods.addOrRemoveByAST = function ({
+  routesObject,
+  pagesPaths,
+  compsPaths,
+  pagesSource,
+  compsPagesEqual = false,
+} = props) {
+  const self = this;
+
+  let toRemove = [];
+  let toAdd = [];
+
+  pagesPaths.forEach((pPath) => {
+    if (compsPaths.indexOf(pPath) < 0) toAdd.push(pPath);
+  });
+  compsPaths.forEach((pPath) => {
+    if (pagesPaths.indexOf(pPath) < 0) toRemove.push(pPath);
+  });
+  console.log("RENAMES: PAGES LESS.TO REMOVE", toRemove);
+  if (compsPagesEqual && toRemove.length === 0 && toAdd.length === 0) {
+    self.addImportLineToBuildJs();
+  } else if (toRemove.length > 0 && toAdd.length > 0) {
+    self.addToAST({
+      objectToAdd: self.getAstRoutes(routesObject, toAdd),
+      pagesPaths,
+      toRemove: toRemove,
+      source: pagesSource,
+    });
+  } else if (toRemove.length > 0) {
+    console.log("ABOUT TO PROCESS WITH REMOVE");
+    self.addToAST({
+      // objectToAdd: routesObject,
+      pagesPaths,
+      toRemove: toRemove,
+      source: pagesSource,
+    });
+  } else {
+    console.log("ABOUT TO PROCESS WITHOUT REMOVE");
+    // routesObject = self.getRoutesHelper(toAdd, pagesSource);
+    self.addToAST({
+      objectToAdd: self.getAstRoutes(routesObject, toAdd),
+      pagesPaths,
+      source: pagesSource,
+    });
+  }
+};
+// methods.handleFileRoutes = async function (data) {
+//   const self = this;
+//   const pao = self.pao;
+//   const getWorkingFolder = pao.pa_getWorkingFolder;
+//   const isExistingDir = pao.pa_isExistingDir;
+//   const saveToFile = pao.pa_saveToFile;
+//   const loadFileSync = pao.pa_loadFileSync;
+//   // console.log("HANDLE FILE ROUTES DATA", data);
+//   const { payload } = data;
+//   self.callback = data.callback;
+
+//   const { path: filePaths } = payload;
+//   console.log("FILE PATHS", filePaths);
+//   const pagesSource = filePaths.appSrc;
+//   const appManifest = filePaths.appManifest;
+//   let manifestData = null;
+//   const cwd = getWorkingFolder();
+//   //console.log("EXECSYNC", execSync);
+//   //self.enableBabelRegister(cwd);
+//   const pagesPaths = self.getPages(
+//     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
+//   );
+//   // appManifest ? manifestData = loadFileSync(appManifest)) : null;
+
+//   const filePath = `/kotii-land/dev/manifest.js`;
+//   // if (filePath) {
+//   //   console.log("IMPORT LAOD THE REQUIRED OBJECT");
+//   //   const manifes = require(filePath);
+//   //   console.log("IMPORT LOAD THE REQUIRE WITH ", manifes);
+//   //   return;
+//   // }
+
+//   // const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
+//   // console.log("THE PAGES routesObject", routesObject);
+
+//   self
+//     .doImport(filePath, false, false)
+//     .then(async (imported) => {
+//       // console.log("Impored", imported.module);
+//       let manifestJS = imported;
+//       let meta = manifestJS.meta;
+//       console.log("META ", meta);
+//       const buildJS = await self.doImport(
+//         `/kotii-land/dev/pages.js`,
+//         false,
+//         false
+//       );
+//       console.log("BUILD:JS", buildJS);
+//       const routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
+//       const reactServerRoutes = self.buildServerRoutes(
+//         buildJS.routes,
+//         routesObject
+//       );
+//       let sendToRequestor = {
+//         message: "Routes Configured",
+//         resources: payload.path,
+//         routes: reactServerRoutes,
+//         routesObject: routesObject,
+//       };
+//       console.log("THE ROUTES", reactServerRoutes);
+//       // if (meta || !meta) {
+//       //   return self.callback({
+//       //     message: "Routes Configured",
+//       //     resources: payload.path,
+//       //     routes: reactServerRoutes,
+//       //     routesObject: routesObject,
+//       //   });
+//       // }
+
+//       const { lastCompsCount = 0, compsSource, compsPaths } = meta;
+//       const pagesPathsLen = pagesPaths.length;
+//       let renamesToAdd = [];
+//       let renamesToRemove = [];
+//       // console.log("META", lastCompsCount, compsSource);
+//       // if (!imported || imported) return;
+
+//       if (lastCompsCount === 0 || !compsSource || compsPaths.length === 0) {
+//         const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
+//         self.addToAST(routesObject, pagesPaths, null, pagesSource);
+//         return self.callback(sendToRequestor);
+//       }
+
+//       if (compsSource !== pagesSource) {
+//         const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
+//         self.addToAST(routesObject, pagesPaths, null, pagesSource, true);
+//         return self.callback(sendToRequestor);
+//       }
+//       if (lastCompsCount === pagesPathsLen) {
+//         pagesPaths.forEach((pPath) => {
+//           if (compsPaths.indexOf(pPath) < 0) renamesToAdd.push(pPath);
+//         });
+//         compsPaths.forEach((pPath) => {
+//           if (pagesPaths.indexOf(pPath) < 0) renamesToRemove.push(pPath);
+//         });
+//         if (renamesToAdd.length === 0 && renamesToRemove.length === 0) {
+//           console.log(
+//             "AST NODE NO NEED UPDATED REQUIRED",
+//             compsSource,
+//             lastCompsCount
+//           );
+//           self.callback({
+//             message: "Routes Configured",
+//             resources: payload.path,
+//           });
+//           return;
+//         }
+//         if (renamesToAdd.length > 0 && renamesToRemove.length > 0) {
+//           const routesObject = self.getRoutesHelper(renamesToAdd, pagesSource);
+//           self.addToAST(routesObject, pagesPaths, renamesToRemove, pagesSource);
+//         } else if (renamesToAdd.length > 0) {
+//           console.log("AST NODE RENAMES TO ADD", renamesToAdd);
+//           const routesObject = self.getRoutesHelper(renamesToAdd, pagesSource);
+//           self.addToAST(routesObject, pagesPaths, null, pagesSource);
+//         } else if (renamesToRemove.length > 0) {
+//           self.addToAST(null, pagesPaths, toRemove, pagesSource);
+//         }
+//       } else if (lastCompsCount < pagesPathsLen) {
+//         console.log("AST NODE lastCompsCount");
+//         let toAdd = [];
+//         let toRemove = [];
+//         pagesPaths.forEach((pPath) => {
+//           if (compsPaths.indexOf(pPath) < 0) toAdd.push(pPath);
+//         });
+//         compsPaths.forEach((pPath) => {
+//           if (pagesPaths.indexOf(pPath) < 0) toRemove.push(pPath);
+//         });
+//         console.log("TO ADD", toAdd);
+//         console.log("TO RENAME", toRemove);
+//         const routesObject = self.getRoutesHelper(toAdd, pagesSource);
+
+//         if (toRemove.length > 0) {
+//           console.log("ABOUT TO PROCESS WITH REMOVE");
+//           self.addToAST(routesObject, pagesPaths, toRemove, pagesSource);
+//         } else {
+//           console.log("ABOUT TO PROCESS WITHOUT REMOVE");
+//           self.addToAST(routesObject, pagesPaths, null, pagesSource);
+//         }
+//         // ? self.addToAST(routesObject, pagesPaths, toRemove, pagesSource)
+//         // : self.addToAST(routesObject, pagesPaths, null, pagesSource);
+//         return self.callback(sendToRequestor);
+//       } else {
+//         console.log("AST NODE:: REMOVING");
+//         let toRemove = [];
+//         compsPaths.forEach((pPath) => {
+//           if (pagesPaths.indexOf(pPath) < 0) toRemove.push(pPath);
+//         });
+//         console.log("TO REMOVE", toRemove);
+//         // const routesObject = self.getRoutesHelper(toAdd, pagesSource);
+//         self.addToAST(null, pagesPaths, toRemove, pagesSource);
+//         return self.callback(sendToRequestor);
+//       }
+//     })
+//     .catch((err) => {
+//       console.log("ERR WITH IMPORT", err);
+//     });
+// };
 methods.getPages = function (filesToGet) {
   const self = this;
   console.log("FILETS TO GET", filesToGet);
@@ -269,6 +445,8 @@ methods.getItemPathAndFile = function (item) {
                 camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
               ),
         component: item,
+        componentPath: item,
+        componentRaw: imported.default,
         getServerState,
       });
     });
@@ -429,13 +607,13 @@ methods.enableBabelRegister = function (babelCWD) {
     // ],
   });
 };
-methods.addToAST = function (
+methods.addToAST = function ({
   objectToAdd = null,
   pagesPaths,
   toRemove = null,
   source,
-  isNewSource = false
-) {
+  isNewSource = false,
+} = args) {
   const self = this;
   const pao = self.pao;
   const traverse = self.traverse;
@@ -450,7 +628,9 @@ methods.addToAST = function (
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const cwd = getWorkingFolder();
 
-  const filePath = `${cwd}/kotii-land/dev/build.js`;
+  const filePath = `${cwd}/node_modules/kotii-scripts/kotii-land/dev/pages.js`;
+
+  console.log("KOTTILAND FILE PATH", filePath);
   // const altPath = `${cwd}/build_test.js`;
   const jsFile = readFileSync(filePath);
   let ast = parser.parse(jsFile, { sourceType: "module", plugins: ["jsx"] });
@@ -546,6 +726,9 @@ methods.addToAST = function (
     filePath,
     !importStrings ? modifiedCode : `${importStrings} ${modifiedCode}`
   );
+
+  // if (!isCompsDefined || Object.keys(isCompsDefined).length <= 0)
+  self.addImportLineToBuildJs();
   self.createMetaAst({
     comps: [],
     compsSource: source,
@@ -969,11 +1152,31 @@ methods.insertImportDeclarations = function (
   //   },
   // };
 };
+methods.insertIdentifierImportDeclarations = function (imports) {
+  const self = this;
+
+  const generate = self.generate;
+
+  const parser = self.parser;
+
+  let importString = imports.map((im, i) => {
+    return `import {${im.ids.join(",")}} from "${im.source}";`;
+  });
+
+  let joinedString = `${importString.join("")}`;
+  console.log("ASTY JOINED ID STRING", joinedString);
+  let ast = parser.parse(joinedString, { sourceType: "module" });
+  let modifiedCode = generate(ast).code;
+  console.log("ASTY CODE ID THE IMPOT STRINGS", importString);
+  console.log("ASTY CODE ID", modifiedCode);
+  console.log();
+  return modifiedCode;
+};
 methods.removeImportDeclarations = function (
   ast,
   toRemove,
-  routesNode,
-  compsNode
+  routesNode = null,
+  compsNode = null
 ) {
   const self = this;
   const pao = self.pao;
@@ -995,12 +1198,41 @@ methods.removeImportDeclarations = function (
       if (toRemove.indexOf(path.node.source.value) >= 0) {
         let local = path.node.specifiers[0]?.local.name;
         removedImportsIds.push(local);
-        self.astDeleteNode(routesNode, compsNode, local);
+        if (routesNode) self.astDeleteNode(routesNode, compsNode, local);
         path.remove();
       }
     },
   });
   console.log("AST NODE TO BE REMOVED IS", removedImportsIds);
+};
+
+methods.addImportLineToBuildJs = function () {
+  const self = this;
+  const pao = self.pao;
+  const generate = self.generate;
+  const parser = self.parser;
+  const readFileSync = pao.pa_readFileSync;
+  const saveToFile = pao.pa_saveToFile;
+  const getWorkingFolder = pao.pa_getWorkingFolder;
+  const cwd = getWorkingFolder();
+
+  const buildPath = `${cwd}/node_modules/kotii-scripts/kotii-land/dev/build.js`;
+  const buildPathFile = readFileSync(buildPath);
+  let buildAst = parser.parse(buildPathFile, {
+    sourceType: "module",
+    plugins: ["jsx"],
+  });
+
+  console.log("AST FOR BUILD.JS");
+  const generateBuildAst = generate(buildAst).code;
+  const buildImportString = self.insertIdentifierImportDeclarations([
+    {
+      source: "./pages.js",
+      ids: ["routes", "comps"],
+    },
+  ]);
+  let newFileContent = `${buildImportString} ${generateBuildAst}`;
+  saveToFile(buildPath, newFileContent);
 };
 
 methods.createMetaAst = function (metaData) {
@@ -1017,7 +1249,7 @@ methods.createMetaAst = function (metaData) {
   const contains = pao.pa_contains;
   const cwd = getWorkingFolder();
 
-  const filePath = `${cwd}/kotii-land/dev/manifest.js`;
+  const filePath = `${cwd}/node_modules/kotii-scripts/kotii-land/dev/manifest.js`;
   const jsFile = readFileSync(filePath);
   let ast = parser.parse(jsFile, { sourceType: "module" });
 
@@ -1193,7 +1425,7 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
   const self = this;
 
   console.log("THe routes source", routesSource);
-  console.log("THE ROUTESOBJECT", routesObject);
+  // console.log("THE ROUTESOBJECT", routesObject);
 
   let builtRoutes = routesSource.map((route) => {
     return {
@@ -1205,8 +1437,10 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
       title: "REACT SERVE-SIDE RENDERING COMPONENT",
       method: "GET",
       type: "public",
-      name: route.component,
-      requiresData: self.getComponentServerState(route.path, routesObject),
+      // name: route.component,
+      name: route.componentName,
+      // requiresData: self.getComponentServerState(route.path, routesObject),
+      requiresData: false,
     };
   });
   // console.log("ROUTES BUILT", builtRoutes);
@@ -1233,6 +1467,17 @@ methods.getComponentServerState = function (path, routesObject) {
   console.log("THE ACTUAL DATA GOT SERVER STATE", gotServerState);
   // console.log("ROUTES BUILT", builtRoutes);
   return gotServerState.length > 0 ? gotServerState[0].getServerState : null;
+};
+
+methods.getAstRoutes = function (routesObject, renamesToAdd) {
+  let astRoutes = routesObject.filter((ro) => {
+    let itemArray = renamesToAdd.filter((routePath) => {
+      if (ro.componentPath === routePath) return true;
+    });
+    return itemArray.length > 0 ? itemArray[0] : false;
+  });
+  console.log("THE AST ROUTES", astRoutes);
+  return astRoutes;
 };
 
 export default methods;

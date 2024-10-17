@@ -22,6 +22,7 @@ class Env {
         // console.log("the saved;;;");
         let kotiiEnvs = {};
         let kotiiEnvsStringified = {};
+
         let filteredKotiiVariables = Object.keys(process.env).filter(
           (envID) => {
             if (self.KOTTI_ENV_REGEX.test(envID)) return true;
