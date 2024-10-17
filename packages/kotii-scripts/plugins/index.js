@@ -21,6 +21,7 @@ import ReactToJsx from "./reacttojsx/index.js";
 import Scaffold from "./scaffold/index.js";
 import ScriptsUtils from "./scripts-util/scripts-util.js";
 import ServerBuild from "./server-build/index.js";
+import ServerSentEvents from "./server-sent-events/index.js";
 import Ssg from "./ssg/index.js";
 import Start from "./start/index.js";
 import Static from "./static/index.js";
@@ -48,6 +49,7 @@ export { Static };
 export { Env };
 export { Dev };
 export { ScriptsUtils };
+export { ServerSentEvents };
 export default {
   Interpreter,
   Scaffold,
@@ -75,4 +77,5 @@ export default {
   ServerBuild,
   Static,
   Dev,
+  ServerSentEvents,
 };
