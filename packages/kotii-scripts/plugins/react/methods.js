@@ -215,7 +215,7 @@ methods.renderFullPage = function (
 			<script>
       window.__PRELOADED_STATE__ = ${serialize(preloadedState)}
 			</script>
-			<script src="/[main].server.bundle.js" ></script>
+			<script src="/server.bundle.js" ></script>
 
 		</body>
 		</html>
