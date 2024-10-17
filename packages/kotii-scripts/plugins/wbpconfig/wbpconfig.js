@@ -12,9 +12,12 @@ class WebpackConfig {
     this.pao = pao;
     this.webPackConfig = webPackConfig;
     this.webPackServerConfig = webPackServerConfig;
+    this.addedEmptyFiles = null;
     this.webpack = webpack;
     this.webpackDevMiddleware = webpackDevMiddleware;
     this.webpackHotMiddleware = webpackHotMiddleware;
+    this.fileIsAddOrDelProcessed = false;
+    this.lastAddOrDelFile = "";
     this.init = methods.init;
     this.handleWebpackConfig = methods.handleWebpackConfig;
     this.configureWebPack = methods.configureWebPack;
@@ -24,6 +27,14 @@ class WebpackConfig {
     this.hookIntoWebpackCompilation = methods.hookIntoWebpackCompilation;
     this.getEnvVariables = methods.getEnvVariables;
     this.removePagesImport = methods.removePagesImport;
+    this.testRunFromWebpack = methods.testRunFromWebpack;
+    this.watchFile = methods.watchFile;
+    this.notifyClient = methods.notifyClient;
+    this.closeFileWatch = methods.closeFileWatch;
+    this.closeWatcher = () => {
+      console.log("PLUGIN:: DEFAULT FUN RUN");
+    };
+    this.restartSever = methods.restartSever;
   }
 }
 export default WebpackConfig;

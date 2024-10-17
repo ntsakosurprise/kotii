@@ -59,6 +59,10 @@ methods.configureWebPack = function (payload, envs = null) {
       contextApp.appFolder,
       contextApp.appManifest.static
     )}`,
+    pagesFolder: contextApp.appPagesFolder,
+    runOnComplete: self.testRunFromWebpack.bind(self),
+    closeWatcher: self.closeWatcher.bind(self),
+    notifyClient: self.notifyClient.bind(self),
   });
 
   console.log("PROCESS.ENV", process.env);
@@ -130,6 +134,18 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
   const pao = self.pao;
   const callback = self.callback;
   const loadFile = pao.pa_loadFile;
+  const serverEventsConnectionRoute = {
+    path: "/subscribe-to-events",
+    method: "GET",
+    alias: "serversentevents",
+    type: "public",
+  };
+  const reinitateSocket = {
+    path: "/re-initiate-socket/:reinitiate",
+    method: "GET",
+    alias: "serversentevents",
+    type: "public",
+  };
 
   let wepackMiddlewares = null;
   const serverType =
@@ -187,7 +203,7 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
           wepackMiddlewares,
 
           configs: {
-            router: anziiManualConfigs.routes,
+            router: [...anziiManualConfigs.routes],
             domain: [{ name: "static", set: "build" }],
           },
         },
@@ -237,6 +253,128 @@ methods.removePagesImport = function () {
         console.log("KOTII HAS REMOVED PAGES IMPORT");
       },
     },
+  });
+};
+
+methods.testRunFromWebpack = function (watchPath, runStatus) {
+  const self = this;
+  console.log("TEST RUN FROM WEBPACK", self.removePagesImport, watchPath);
+  self.watchFile(watchPath, {
+    add: (addPath, stats) => {
+      // let stats = null
+      // stats = fs.statSync(addPath);
+      console.log("WATCHR:: ADD FILE STATS", addPath, stats);
+      // if(stats.size > 0){
+      //   self.restartSever(addPath,"add", runStatus )
+      // }else{
+
+      // }
+
+      // if(!self.fileIsAddOrDelProcessed){
+      //   self.fileIsAddOrDelProcessed = true
+      //   self.restartSever(addPath, runStatus)
+      // }else{
+      //   self.fileIsAddOrDelProcessed = false
+      // }
+
+      if (stats.size > 0) {
+        console.log("FILE SIZE IS BIGGER THAN ZERO, NO RESTART");
+        self.restartSever(addPath, runStatus);
+      } else {
+        console.log("FILE SIZE IS ZERO, NO RESTART");
+        if (!self.addedEmptyFiles) {
+          self.addedEmptyFiles = [addPath];
+        } else {
+          self.addedEmptyFiles.push(addPath);
+        }
+      }
+
+      // self.notifyClient()
+    },
+    delete: (addPath, stats) => {
+      console.log("WATCHR:: DELETE FILE STATS", addPath, stats);
+      self.restartSever(addPath, "delete", runStatus);
+      // if(!self.fileIsAddOrDelProcessed){
+      //   self.fileIsAddOrDelProcessed = true
+      //   self.restartSever(addPath, runStatus)
+      // }else{
+      //   self.fileIsAddOrDelProcessed = false
+      // }
+    },
+    change: (addPath, stats) => {
+      if (self.addedEmptyFiles && self.addedEmptyFiles.includes(addPath)) {
+        if (self.addedEmptyFiles.length === 1) {
+          self.addedEmptyFiles = null;
+          self.restartSever(addPath, "changeEmpyFile");
+        } else {
+          console.log(
+            "WATCHR:: ONCHANGE MANY FILES",
+            self.addedEmptyFiles,
+            self.addedEmptyFiles.indexOf(addPath)
+          );
+          self.splice(self.addedEmptyFiles.indexOf(addPath), 1);
+        }
+      }
+    },
+  });
+};
+methods.notifyClient = function () {
+  const self = this;
+
+  // axios.get("http://localhost:8004/re-initiate-socket/renitiate").then(response => {
+  // 	self.pao.pa_wiLog('THE REQUEST HAS SUCCEEDED TO CAREERJET')
+  // 	self.pao.pa_wiLog(response.data)
+
+  //   }).catch(err => {reject(err);});
+  self.emit({
+    type: "send-event-to-client",
+    data: {
+      payload: {
+        event: { name: "kotii-client-reload", content: { user: "Ntsako" } },
+      },
+      callback: (data = null) => {
+        console.log("SERVER SENT EVENT SENT");
+        console.log("Event has been successfully sent to client", data);
+        // process.exit(1)
+      },
+    },
+  });
+};
+
+methods.watchFile = function (data, events, options = null) {
+  const self = this;
+  // const { watched, persistent = true, ignored = null, events = null } = payload;
+  self.emit({
+    type: "watch-target",
+    data: {
+      payload: { watched: data, events },
+      callback: (data) => {
+        console.log("File watch set", data);
+        self.closeWatcher = data.closeWatcher;
+      },
+    },
+  });
+};
+
+methods.restartSever = function (addPath, eventType = "", runStatus = null) {
+  const self = this;
+
+  console.log(`PLUGIN:: WATCHR:: FILE ${eventType} event`, addPath, runStatus);
+  process.env.CUSTOM_RESTART = true;
+  process.env.ANZII_OPEN_BROWSER = "false";
+  console.log(
+    "PLUGIN:: THE PROCESS.ENV.PORT",
+    JSON.stringify(process.env.PORT)
+  );
+  console.log("PLUGIN:: THE WATCHER ADD", process.env.PORT);
+
+  self.closeWatcher(() => {
+    console.log(
+      "ADD EVENT CLOSING WATCHER BEFORE RESTART",
+      JSON.stringify(process.env.PORT)
+    );
+    // await killPortProcess(process.env.PORT)
+    process.exit(1);
   });
 };
 export default methods;

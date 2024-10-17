@@ -1,7 +1,12 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import webpack from "webpack";
-import { RemoveImportsWebpackPlugin } from "../../webpack-plugins/index.js";
+import {
+  DeleteFilesWebpackPlugin,
+  FinishCompilationOnErrorWebpackPlugin,
+  RemoveImportsWebpackPlugin,
+  WatchOwnFilesWebpackPlugin,
+} from "../../webpack-plugins/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,17 +28,24 @@ export default (options) => {
   );
 
   return {
+    // entry:{
+    //   server: options?.build && options.build
+    //   ? env.appIndexFile
+    //   : ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
+    //   "kotii-client": `${scriptsPath}/client-tools/index.js`
+    // },
     entry:
       options?.build && options.build
         ? env.appIndexFile
         : ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
+
     context: env.appFolder,
     mode: process.env.NODE_ENV,
-    infrastructureLogging: { level: "info" },
+    infrastructureLogging: { debug: true },
     stats: true,
 
     output: {
-      filename: "[main].server.bundle.js",
+      filename: "server.bundle.js",
       path:
         options?.build && options.build
           ? options.staticFolder
@@ -41,8 +53,8 @@ export default (options) => {
       clean: true, // Clean build folder before emitting new bundle
       publicPath: "/",
       assetModuleFilename: (pathData, assetInfo) => {
-        // console.log("THE PATH DATA", pathData.filename);
-        // console.log("THE PATH INFO", assetInfo);
+        console.log("THE PATH DATA", pathData.filename);
+        //console.log("THE PATH INFO", assetInfo);
         return `${path.basename(pathData.filename)}`;
       },
     },
@@ -164,9 +176,10 @@ export default (options) => {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
           loader: "file-loader",
           options: {
-            name: "[hash].[ext]",
-            extensions: ["png", "jpg", "jpeg", "gif", "svg"],
-            publicPath: "public/img",
+            // name: "[hash].[ext]",
+            name: "[name].[ext]",
+            // extensions: ["png", "jpg", "jpeg", "gif", "svg"],
+            // publicPath: "public/img",
             // outputPath: null,
           },
         },
@@ -200,9 +213,20 @@ export default (options) => {
       //   // template: env.appIndexHtml,
       //   filename: "index.html",
       // }),
+      new DeleteFilesWebpackPlugin({
+        deleteFolder: options.buildFolder,
+      }),
+      new FinishCompilationOnErrorWebpackPlugin({
+        closeWatcher: options.closeWatcher,
+      }),
       new RemoveImportsWebpackPlugin({
         removeFilePath: `${scriptsPath}/kotii-land/dev/build.js`,
         removeFileSpecifiers: ["./pages.js"],
+      }),
+      new WatchOwnFilesWebpackPlugin({
+        filesToWatch: `${options.pagesFolder}`,
+        runOnComplete: options.runOnComplete,
+        notifyClient: options.notifyClient,
       }),
       new webpack.DefinePlugin({
         "process.env": {
