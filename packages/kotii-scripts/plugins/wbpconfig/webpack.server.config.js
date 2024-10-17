@@ -1,6 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import webpack from "webpack";
+import { RemoveImportsWebpackPlugin } from "../../webpack-plugins/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -161,7 +162,13 @@ export default (options) => {
 
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
-          type: "asset/resource",
+          loader: "file-loader",
+          options: {
+            name: "[hash].[ext]",
+            extensions: ["png", "jpg", "jpeg", "gif", "svg"],
+            publicPath: "public/img",
+            // outputPath: null,
+          },
         },
         {
           test: /\.m?js?x$/,
@@ -193,6 +200,10 @@ export default (options) => {
       //   // template: env.appIndexHtml,
       //   filename: "index.html",
       // }),
+      new RemoveImportsWebpackPlugin({
+        removeFilePath: `${scriptsPath}/kotii-land/dev/build.js`,
+        removeFileSpecifiers: ["./pages.js"],
+      }),
       new webpack.DefinePlugin({
         "process.env": {
           ...appEnvironmentVariables,

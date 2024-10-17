@@ -23,6 +23,7 @@ class WebpackConfig {
     this.configureDevServer = methods.configureDevServer;
     this.hookIntoWebpackCompilation = methods.hookIntoWebpackCompilation;
     this.getEnvVariables = methods.getEnvVariables;
+    this.removePagesImport = methods.removePagesImport;
   }
 }
 export default WebpackConfig;

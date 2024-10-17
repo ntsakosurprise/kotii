@@ -19,7 +19,7 @@ methods.handleWebpackConfig = function (data) {
   // console.log("SELF. AFTER SETTING CALLBACK", self);
   // console.log("THE NODE ENV", process.env.NODE_ENV);
   self.getEnvVariables(appEnv).then((envs) => {
-    // console.log("THE ENVS", envs);
+    console.log("THE ENVS", envs);
     self.configureWebPack(data.payload, envs);
   });
 
@@ -41,6 +41,11 @@ methods.configureWebPack = function (payload, envs = null) {
       : self.webPackConfig;
 
   // console.log("THE APP CONTEXT CONFIG", payload);
+
+  envs.stringified["KOTII_APP_META"] = JSON.stringify(
+    contextApp.appManifest.app
+  );
+  console.log("THE APP ENVS", envs);
   setContextEnv(contextApp, envs);
   const webpackConfigObject = webPackConfig({
     cwd,
@@ -180,6 +185,7 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
         payload: {
           ...webpacks,
           wepackMiddlewares,
+
           configs: {
             router: anziiManualConfigs.routes,
             domain: [{ name: "static", set: "build" }],
@@ -199,6 +205,7 @@ methods.getEnvVariables = function (envPath) {
       type: "get-env-variables",
       data: {
         envPath: envPath,
+        meta: "",
         callback: (envVariables) => {
           resolve(envVariables);
         },
@@ -217,5 +224,19 @@ methods.hookIntoWebpackCompilation = async function (compiler, configWp) {
     console.log(stats);
   });
   return true;
+};
+
+methods.removePagesImport = function () {
+  console.log("REMOVE GETS A CALL");
+  const self = this;
+
+  self.emit({
+    type: "remove-pages-import",
+    data: {
+      callback: () => {
+        console.log("KOTII HAS REMOVED PAGES IMPORT");
+      },
+    },
+  });
 };
 export default methods;
