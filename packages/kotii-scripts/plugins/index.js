@@ -19,6 +19,7 @@ import JsxToReact from "./jsxtoreact/index.js";
 import ReactView from "./react/reactview.js";
 import ReactToJsx from "./reacttojsx/index.js";
 import Scaffold from "./scaffold/index.js";
+import ScriptsUtils from "./scripts-util/scripts-util.js";
 import ServerBuild from "./server-build/index.js";
 import Ssg from "./ssg/index.js";
 import Start from "./start/index.js";
@@ -46,6 +47,7 @@ export { ServerBuild };
 export { Static };
 export { Env };
 export { Dev };
+export { ScriptsUtils };
 export default {
   Interpreter,
   Scaffold,
@@ -57,6 +59,7 @@ export default {
   Config,
   Build,
   Init,
+  ScriptsUtils,
   WebpackConfig,
   DevServer,
   ContextApp,
