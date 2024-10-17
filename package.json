@@ -8,18 +8,14 @@
     "npm": ">=8.19.2"
   },
   "private": true,
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
-  },
   "scripts": {
     "babel-transpile": "cd packages/kotii-scripts && node transpile_kotii.js",
     "build:api": "tsc -b ./tsconfig.json",
     "bootstrap": "lerna bootstrap",
     "clean": "lerna run --parallel clean",
     "release": "lerna publish",
-    "start": "cd packages/kotii-scripts && node kotii.cjs start",
+    "dev": "cd packages/kotii-scripts && node kotii.cjs dev",
+    "start": "cd packages/kotii-scripts && node kotii-start.cjs start",
     "start:dev": "cd packages/kotii-scripts && NODE_OPTIONS=--import=./compile/register_hooks.cjs node app.js start",
     "start:prod": "node app.js start",
     "build": "cd packages/kotii-scripts && node kotii.cjs build",
@@ -47,10 +43,11 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@yarnpkg/parsers": "^3.0.0",
-    "anzii": "file:../Development/frameworks/anzii/packages/anzii/anzii-7.0.0.tgz",
+    "anzii": "file:../Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz",
     "babel-register-esm": "^1.2.5",
     "cjstoesm": "^2.1.2",
     "cross-spawn": "^7.0.3",
+    "patch-package": "^8.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "styled-components": "5.3.11"
@@ -67,7 +64,6 @@
     "husky": "^8.0.3",
     "jest": "^29.7.0",
     "lerna": "^5.1.8",
-    "node-sass": "^9.0.0",
     "nx": "^14.4.2",
     "prettier": "^2.7.1",
     "ts-jest": "^29.1.1",

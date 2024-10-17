@@ -8,7 +8,7 @@ methods.init = function () {
   this.listens({
     "handle-react-view": this.handleReactView.bind(this),
     "take-ssr-routes": this.handleSsrRoutes.bind(this),
-    "handle-react-static": this.handleReactStaticViews.bind(this),
+    "handle-react-static": this.handleReactStaticViews.bind(this)
   });
 };
 methods.handleSsrRoutes = function (data) {
@@ -24,7 +24,7 @@ methods.handleReactView = function (data) {
   self.callback = data.callback;
   console.log("THE VIEW DATA", data);
   console.log("ServerStyleSheet", ServerStyleSheet);
-  self.runReactView(data).then((html) => {
+  self.runReactView(data).then(html => {
     self.callback(null, html);
   });
 };
@@ -33,21 +33,23 @@ methods.handleReactStaticViews = function (data) {
   // console.log("Static Views");
   self.callback = data.callback;
   console.log("THE VIEW DATA", data);
-  const { views } = data;
-  let mappedPromises = views.map(async (view) => {
+  const {
+    views
+  } = data;
+  let mappedPromises = views.map(async view => {
     let gotHtmlView = await self.runReactView({
       view: {
-        match: view.path,
+        match: view.path
       },
-      staticRender: true,
+      staticRender: true
     });
     // console.log("THE GOT HTML VIEW", gotHtmlView, view.name);
     return {
       content: gotHtmlView,
-      name: view.name,
+      name: view.name
     };
   });
-  Promise.all(mappedPromises).then((htmlViews) => {
+  Promise.all(mappedPromises).then(htmlViews => {
     // console.log("ALL VIEWS PROMISES MAPPED", htmlViews);
     self.callback(htmlViews);
   });
@@ -63,11 +65,18 @@ methods.runReactView = function (data) {
     // GlobalStyle,
     createReduxStore,
     HeadHelmet,
-    meta,
+    meta
   } = self;
-  const { view, staticRender = false } = data;
-  const { app } = meta;
-  const { stateVendor = "" } = app;
+  const {
+    view,
+    staticRender = false
+  } = data;
+  const {
+    app
+  } = meta;
+  const {
+    stateVendor = ""
+  } = app;
 
   // const Layout = (props) => {
   //   return (
@@ -91,58 +100,24 @@ methods.runReactView = function (data) {
   // };
 
   // Grab the initial state from our Redux store
-  return new Promise(async (resolve) => {
+  return new Promise(async resolve => {
     const store = stateVendor === "redux" ? createReduxStore() : {};
-    let stateData = await self.getStateDataFromServer(
-      view.match,
-      store,
-      staticRender
-    );
-    let layoutRoot = await self.doImport(
-      "".concat("/src/components/startup/index.js"),
-      true,
-      false
-    );
+    let stateData = await self.getStateDataFromServer(view.match, store, staticRender);
+    let layoutRoot = await self.doImport(`/src/components/startup/index.jsx`, true, false);
     console.log("THE LAYOUT ROOT", layoutRoot.Layout);
     console.log("GOT STATE DATA", stateData);
     let html = "";
     const sheet = new ServerStyleSheet();
     try {
-      html = renderToString(
-        sheet.collectStyles(
-          !layoutRoot
-            ? /*#__PURE__*/ React.createElement(
-                Router,
-                {
-                  ssrPath: view.match,
-                },
-                REACTAPP(null, null, store)
-              )
-            : layoutRoot.Layout && layoutRoot.Root
-            ? /*#__PURE__*/ React.createElement(
-                Router,
-                {
-                  ssrPath: view.match,
-                },
-                REACTAPP(layoutRoot.Root, layoutRoot.Layout, store)
-              )
-            : layoutRoot.Layout
-            ? /*#__PURE__*/ React.createElement(
-                Router,
-                {
-                  ssrPath: view.match,
-                },
-                REACTAPP(null, layoutRoot.Layout, store)
-              )
-            : /*#__PURE__*/ React.createElement(
-                Router,
-                {
-                  ssrPath: view.match,
-                },
-                REACTAPP(layoutRoot.Root, null, store)
-              )
-        )
-      );
+      html = renderToString(sheet.collectStyles(!layoutRoot ? /*#__PURE__*/React.createElement(Router, {
+        ssrPath: view.match
+      }, REACTAPP(null, null, store)) : layoutRoot.Layout && layoutRoot.Root ? /*#__PURE__*/React.createElement(Router, {
+        ssrPath: view.match
+      }, REACTAPP(layoutRoot.Root, layoutRoot.Layout, store)) : layoutRoot.Layout ? /*#__PURE__*/React.createElement(Router, {
+        ssrPath: view.match
+      }, REACTAPP(null, layoutRoot.Layout, store)) : /*#__PURE__*/React.createElement(Router, {
+        ssrPath: view.match
+      }, REACTAPP(layoutRoot.Root, null, store))));
       const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
       self.styledTags = styleTags;
       console.log("STYLED-COMPONENTS STYLE TAGS", styleTags);
@@ -164,58 +139,43 @@ methods.runReactView = function (data) {
     const finalState = store.getState();
     const helmetGenerated = HeadHelmet.renderStatic();
     // console.log("HELMET GENERATED", helmetGenerated.title.toString());
-    const fullPage = self.renderFullPage(
-      html,
-      finalState,
-      view,
-      helmetGenerated
-    );
+    const fullPage = self.renderFullPage(html, finalState, view, helmetGenerated);
     console.log("THE HTML IN RUN REACT-VIEW", fullPage);
     resolve(fullPage);
   });
 };
 methods.renderFullPage = function (html, preloadedState, view, head) {
-  let scripts =
-    arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
+  let scripts = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
   const self = this;
-  const { serialize } = self;
-  const jsonStyles = fs.existsSync(
-    "".concat(process.cwd()).concat(path.sep, "styles.json")
-  )
-    ? JSON.parse(
-        fs.readFileSync(
-          "".concat(process.cwd()).concat(path.sep, "styles.json")
-        )
-      )
-    : null;
+  const {
+    serialize
+  } = self;
+  const jsonStyles = fs.existsSync(`${process.cwd()}${path.sep}styles.json`) ? JSON.parse(fs.readFileSync(`${process.cwd()}${path.sep}styles.json`)) : null;
   let styleTags = jsonStyles ? jsonStyles.toString().replace(",", "") : "";
   console.log("THE PRELOADED STATE", preloadedState, styleTags);
-  return "\n\t\t<!doctype html>\n\t\t<html "
-    .concat(head.htmlAttributes.toString(), "> \n    <head>\n    ")
-    .concat(
-      head === null || head === void 0 ? void 0 : head.title.toString(),
-      "\n    "
-    )
-    .concat(
-      head === null || head === void 0 ? void 0 : head.meta.toString(),
-      "\n    "
-    )
-    .concat(
-      head === null || head === void 0 ? void 0 : head.link.toString(),
-      "\n    "
-    )
-    .concat(self.styledTags, "\n    ")
-    .concat(styleTags, "\n    </head>\n\t\t<body ")
-    .concat(head.bodyAttributes.toString(), '>\n\t\t\t<div id="root">')
-    .concat(html, "</div>\n\t\t\t<script>\n      window.__PRELOADED_STATE__ = ")
-    .concat(
-      serialize(preloadedState),
-      '\n\t\t\t</script>\n\t\t\t<script src="/[main].server.bundle.js" ></script>\n\n\t\t</body>\n\t\t</html>\n    '
-    );
+  return `
+		<!doctype html>
+		<html ${head.htmlAttributes.toString()}> 
+    <head>
+    ${head?.title.toString()}
+    ${head?.meta.toString()}
+    ${head?.link.toString()}
+    ${self.styledTags}
+    ${styleTags}
+    </head>
+		<body ${head.bodyAttributes.toString()}>
+			<div id="root">${html}</div>
+			<script>
+      window.__PRELOADED_STATE__ = ${serialize(preloadedState)}
+			</script>
+			<script src="/[main].server.bundle.js" ></script>
+
+		</body>
+		</html>
+    `;
 };
 methods.getStateDataFromServer = function (routePath, store) {
-  let staticRender =
-    arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  let staticRender = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
   const self = this;
   const routes = self.ssrRoutes;
 
@@ -224,24 +184,19 @@ methods.getStateDataFromServer = function (routePath, store) {
   return new Promise((resolve, reject) => {
     if (staticRender) return resolve({});
     let dataFetchPromises = routes.filter((route, i) => {
-      if (
-        route.path === routePath &&
-        route !== null &&
-        route !== void 0 &&
-        route.requiresData
-      ) {
+      if (route.path === routePath && route?.requiresData) {
         return route.requiresData(store);
       }
     });
-    Promise.all(dataFetchPromises).then((resolveData) => {
+    Promise.all(dataFetchPromises).then(resolveData => {
       console.log("THE RESOLVED DATA", resolveData);
       resolve(resolveData);
     });
   });
 };
-methods.doImport = function (toImport, all = false, check = false) {
-  // let all =
-  //   arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+methods.doImport = function (toImport) {
+  let all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  let check = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
@@ -250,19 +205,13 @@ methods.doImport = function (toImport, all = false, check = false) {
   return new Promise((resolve, reject) => {
     // const manifestFile = loadFileSync(toImport);
     // resolve({ module: imported.meta });
-    loadFile(toImport, all, check)
-      .then((imported) => {
-        console.log("Module has successfully been imported:", imported);
-        resolve(imported);
-      })
-      .catch((err) => {
-        console.log(
-          "importing module:"
-            .concat(toImport, ", has failed with an error:")
-            .concat(err)
-        );
-        reject(err);
-      });
+    loadFile(toImport, all, check).then(imported => {
+      console.log("Module has successfully been imported:", imported);
+      resolve(imported);
+    }).catch(err => {
+      console.log(`importing module:${toImport}, has failed with an error:${err}`);
+      reject(err);
+    });
   });
 };
 

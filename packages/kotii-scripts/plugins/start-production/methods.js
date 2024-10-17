@@ -39,10 +39,11 @@ methods.doStartUp = function (data) {
   const readFileSync = pao.pa_readFileSync;
   return new Promise((resolve, reject) => {
     let nodeModulesOrUserLand = path.resolve(getWorkingDir(), "..");
-    let configFolder = "";
-    if (nodeModulesOrUserLand.indexOf("/packages") >= 0) {
-      configFolder = `${nodeModulesOrUserLand}/kotii-templates/javascript/ssr`;
-    }
+    let configFolder = getWorkingDir();
+    console.log("CONFIG FOLDER", configFolder);
+    // if (nodeModulesOrUserLand.indexOf("/packages") >= 0) {
+    //   configFolder = `${nodeModulesOrUserLand}/kotii-templates/javascript/ssr`;
+    // }
 
     let rootFiles = [];
     const files = fs.readdirSync(configFolder, { recursive: true });
@@ -64,27 +65,84 @@ methods.doStartUp = function (data) {
       }
     }
 
+    let rootStats = rootFiles[0];
     console.log("GETTING THE WORKING DIR", configFolder);
     console.log("THE FILES", files);
     console.log("THE ROOT FILES", rootFiles);
     if (rootFiles.length > 0) {
-      loadFile(`${rootFiles[0].buildRoot}${path.sep}.config.js`).then(
-        (config) => {
-          let domain = config.domain;
-          domain.forEach((doma) => {
-            if (doma.name === "static") {
-              doma.set = `${rootFiles[0].buildRoot}/${doma.set}`;
+      loadFile(`${rootStats.buildRoot}${path.sep}.config.js`).then((config) => {
+        let domain = config.domain;
+        // let buildPath = "";
+        // let toFolder = "";
+        // domain.forEach((doma) => {
+        //   if (doma.name === "static") {
+        //     toFolder = path.resolve(getWorkingDir(), `${doma.set}`);
+        //     buildPath = `${rootStats.buildRoot}/${doma.set}`;
+        //     // doma.set = `${rootFiles[0].buildRoot}/${doma.set}`;
+        //   }
+        // });
+        // delete config.domain;
+        // let configMod = {
+        //   ...config,
+        //   domain: domain,
+        // };
+        // console.log("THE CONFIG FILE", configMod);
+        // console.log("THE TO FOLDER", toFolder);
+        // let madeFolder = self.createFolder(toFolder);
+        // self.copyFromToFolder(buildPath, madeFolder);
+
+        domain.forEach((doma) => {
+          if (doma.name === "static") {
+            doma.set = `${rootFiles[0].buildRoot}/${doma.set}`;
+            doma.absolute = true;
+          }
+        });
+        let pathApiRoot = path.resolve(rootStats.buildRoot, "api");
+        let pathApiConfig = path.resolve(rootStats.buildRoot, "api/.config.js");
+        if (fs.existsSync(pathApiRoot) && fs.existsSync(pathApiConfig)) {
+          loadFile(`${rootStats.buildRoot}${path.sep}api/.config.js`).then(
+            (apiConfig) => {
+              console.log("API CONFIG", apiConfig);
+              let appConfig = {
+                ...config,
+                ...apiConfig,
+                router: [...apiConfig.router, ...config.router],
+              };
+              resolve(appConfig);
             }
-          });
-          let configMod = {
-            ...config,
-            domain: domain,
-          };
-          console.log("THE CONFIG FILE", configMod);
+          );
+        } else {
           resolve(config);
         }
-      );
+      });
     }
+  });
+};
+
+methods.createFolder = function (filepath) {
+  const self = this;
+  const pao = self.pao;
+  const makeFolderSync = pao.pa_makeFolderSync;
+  const isExistingDir = pao.pa_isExistingDir;
+  if (isExistingDir(filepath)) fs.rmSync(filepath, { recursive: true });
+  makeFolderSync(filepath);
+  return filepath;
+};
+
+methods.copyFromToFolder = function (from, to, ignores = []) {
+  const self = this;
+
+  console.log("copying from", from, to);
+  fs.cpSync(from, to, {
+    recursive: true,
+    filter: (fi) => {
+      // console.log("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
+      // if (ignores.includes(fi)) return true;
+      // let thisToReturn = fi !== ignore;
+      let thisToReturn = !ignores.includes(fi);
+      // console.log("THIS TO RETURN", thisToReturn);
+      return thisToReturn;
+    },
   });
 };
 

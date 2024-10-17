@@ -9,8 +9,6 @@
  
  */
 
-const { flag } = require("arg");
-
 /**
  * The methods container file for Scaffold plugin. Methods files in anzii
  * ecosystem's plugins are usually created to prevent clutter in the plugin's
@@ -18,6 +16,11 @@ const { flag } = require("arg");
  
  
  */
+const childProcess = require("child_process");
+const path = require("path");
+const fs = require("fs");
+const ScaffoldError = require("./error-handler.js");
+const SCAFFOLD_ERRORS = require("./constants.js");
 
 const methods = {};
 
@@ -34,9 +37,10 @@ methods.handleScaffoldApp = function (data) {
   const createFolderContent = pao.pa_createFolderContent;
   const makeFolderSync = pao.pa_makeFolderSync;
   const getRootDir = pao.pa_getRootDir;
+  const chalk = self.chalk;
   self.callback = data.callback;
   const command = data.command;
-  const { appName, commandName = null, tasks = {} } = command;
+  let { appName, commandName = null, tasks = {} } = command;
 
   //   const {
   //     git = false,
@@ -54,8 +58,20 @@ methods.handleScaffoldApp = function (data) {
 
   if (commandName) {
     repoName = appName;
-    if (self.isExistingDir(repoName))
-      return self.callback({ message: "The set app name has been taken" });
+    if (self.isExistingDir(repoName)) {
+      console.log();
+      console.log(
+        `${chalk.red.bold("Error:")} The app name: ${chalk.cyan.bold(
+          repoName
+        )} already exists.`
+      );
+      console.log();
+      console.log(`${chalk.yellow.bold("Please try a different name")}`);
+      return self.callback({ message: "" });
+    }
+    if (tasks?.yes) {
+      tasks = { ...self.defaultAnswers, ...tasks };
+    }
 
     self
       .startQuestionnaire(self.mergeQuestions("general", tasks))
@@ -69,12 +85,20 @@ methods.handleScaffoldApp = function (data) {
         answers = provideAnswers.truthy
           ? { ...mergeAnswers }
           : { ...provideAnswers, ...mergeAnswers };
-        console.log("THE PROVIDED ANSWERS", answers);
+        // console.log("THE PROVIDED ANSWERS", JSON.stringify(answers));
         self.infoSync(answers);
+        let appType = answers.apptype;
         answers["remote"] = null;
         answers["init"] = "yes";
+        answers["apptype"] =
+          appType.indexOf("spa") >= 0
+            ? "spa"
+            : appType.indexOf("ssr") >= 0 || appType.indexOf("ssra") >= 0
+            ? "ssr"
+            : "ssr";
         self.infoSync("PROVIDED ANSWERS AFTER DELETION");
         self.infoSync(answers);
+        // console.log("ANSWERS AFTER", answers);
 
         if (answers.remote && answers.remote.toLowerCase().trim() === "yes") {
           if (!self.isInternetConnected)
@@ -85,22 +109,22 @@ methods.handleScaffoldApp = function (data) {
             .startQuestionnaire({ remote: ["provider"] })
             .then((versionProvider) => {
               answers = { ...answers, ...versionProvider };
-              console.log("THE VERSION PROVIDER", versionProvider);
+              // console.log("THE VERSION PROVIDER", versionProvider);
               self
                 .getStoredUserToken({
                   version: versionProvider.provider.toLowerCase(),
                 })
                 .then((token) => {
-                  console.log("THE TOKEN RETURNED FROM GETSTOREDuSERTOKEN");
-                  console.log(token);
+                  // console.log("THE TOKEN RETURNED FROM GETSTOREDuSERTOKEN");
+                  // console.log(token);
 
                   if (token.isNotFound) {
                     self
                       .startQuestionnaire({ remote: ["username", "password"] })
                       .then((credentials) => {
-                        console.log("THE USER CREDENTIALS");
-                        console.log(credentials);
-                        console.log("answers", answers);
+                        // console.log("THE USER CREDENTIALS");
+                        // console.log(credentials);
+                        // console.log("answers", answers);
 
                         self
                           .getRemoteUserToken({
@@ -279,7 +303,6 @@ methods.startQuestionnaire = function (queries) {
 methods.createProjectBase = function (options, folderName, repoUrl) {
   const self = this;
   const pao = self.pao;
-  const path = self.path;
   const sep = path.sep;
 
   const getWorkingFolder = pao.pa_getWorkingFolder;
@@ -287,20 +310,53 @@ methods.createProjectBase = function (options, folderName, repoUrl) {
   //   const makeFolderSync = pao.pa_makeFolderSync;
   //   const getRootDir = pao.pa_getRootDir;
   const { apptype, template } = options;
+  // console.log("THE APP TYPE", options);
+
+  return new Promise((resolve, reject) => {
+    //   let templatePath = `${getWorkingFolder()}${sep}packages${sep}kotii-templates${sep}${template}${sep}${apptype}`;
+    // console.log("THE TEMPLATE PATH", templatePath);
+    //let dir = {templatePath,folderName: data.commands.commands[1]}
+    let newFolder = `${getWorkingFolder()}${sep}${folderName}`;
+
+    // return { newFolder, templatePath, folderName, repoUrl };
+    self.emit({
+      type: "get-template",
+      data: {
+        name: apptype,
+        type: template,
+        callback: (templateInfo) => {
+          // console.log("THE TEMPLATE INFO ", templateInfo);
+          // console.log("THE GET TEMPLATE", options);
+          let kotiiMain = options["local-scripts"]
+            ? options["local-scripts"]
+            : null;
+          let kotiiPackages = kotiiMain
+            ? path.join(kotiiMain, "./packages")
+            : null;
+
+          resolve({
+            newFolder,
+            folderName,
+            repoUrl,
+            ...templateInfo,
+            kotiiMain,
+            kotiiPackages,
+          });
+        },
+      },
+    });
+  });
 
   //   if (appType === "backend/api/web") appType = "web";
 
   //   let templatePath = `${getRootDir()}/${template}/${apptype}`;
-  let templatePath = `${getWorkingFolder()}${sep}packages${sep}kotii-templates${sep}${template}${sep}${apptype}`;
-  console.log("THE TEMPLATE PATH", templatePath);
-  //let dir = {templatePath,folderName: data.commands.commands[1]}
-  let newFolder = `${getWorkingFolder()}/${folderName}`;
-
-  return { newFolder, templatePath, folderName, repoUrl };
 };
 
 methods.buildTaskList = async function (answers, options) {
   const self = this;
+  const pao = self.pao;
+  const sep = path.sep;
+  const loadFileSync = pao.pa_loadFileSync;
   //  console.log('THE OPTIONS')
   //  console.log(options)
 
@@ -309,10 +365,7 @@ methods.buildTaskList = async function (answers, options) {
       title: "Create project folder",
       task: () => self.makeFolder(options.newFolder),
     },
-    {
-      title: "Modify package content",
-      task: () => self.doPackageJson(answers, options),
-    },
+
     {
       title: "Copy project files",
       task: () =>
@@ -321,7 +374,6 @@ methods.buildTaskList = async function (answers, options) {
           options.folderName,
           [
             "node_modules",
-            "package.json",
             "build",
             "dist",
             "webpack.config.js",
@@ -329,6 +381,14 @@ methods.buildTaskList = async function (answers, options) {
             "yarn.lock",
           ]
         ),
+    },
+    {
+      title: "Clean package json",
+      task: () => self.doPackageJson(answers, options, true),
+    },
+    {
+      title: "Modify package content",
+      task: () => self.doPackageJson(answers, options),
     },
   ];
 
@@ -350,27 +410,70 @@ methods.buildTaskList = async function (answers, options) {
       ? console.log(
           "NO_INTERNET_CONNECTION_DETECTED_ANZII-CLI_WILL_SKIP_NPM_INSTALLATION"
         )
-      : tasks.push({
+      : tasks.splice(3, 0, {
           title: "Install dependent packages",
           task: async () => {
             let output = await self.packagesInstall(
               options.newFolder,
-              answers.packager
+              answers.packager,
+              options
             );
+
+            if (output?.errored) {
+              throw new ScaffoldError({
+                message: "Dependecy installation failed",
+                type: SCAFFOLD_ERRORS.INSTALLATION_ERROR,
+                extendedError: { ...output.extendedError },
+              });
+            }
+
+            let installed = null;
+            if (self.isLocalRun) {
+              let fileProtocol =
+                answers.packager.toLowerCase() === "yarn" ? "file:" : "";
+              let kotiiScriptsPackageJson = loadFileSync(
+                path.join(
+                  `${options.kotiiMain}${sep}packages${sep}kotii-scripts`,
+                  "package.json"
+                )
+              );
+              let kotiiStyledPackageJson = loadFileSync(
+                path.join(
+                  `${options.kotiiMain}${sep}packages${sep}kotii-styled`,
+                  "package.json"
+                )
+              );
+              installed = await self.installLocally(
+                [
+                  `${fileProtocol}${options.kotiiMain}${sep}packages${sep}kotii-scripts${sep}kotii-scripts-${kotiiScriptsPackageJson.version}.tgz`.trim(),
+                  `${fileProtocol}${options.kotiiMain}${sep}packages${sep}kotii-styled${sep}kotii-styled-${kotiiStyledPackageJson.version}.tgz`.trim(),
+                ],
+                options.newFolder,
+                answers.packager,
+                options
+              );
+            }
+
             console.log("Done Installing Packages");
+            console.log(installed);
             console.log(output);
           },
         })
     : "";
 
-  options.repoUrl && options.repoUrl.trim() !== ""
-    ? (tasks = [
-        { title: "Create remote repository", task: () => "" },
-        ...tasks,
-      ])
-    : "";
+  // console.log("THE TASKS", tasks);
 
-  tasks.push({ title: "", task: () => true });
+  // options.repoUrl && options.repoUrl.trim() !== ""
+  //   ? (tasks = [
+  //       { title: "Create remote repository", task: () => "" },
+  //       ...tasks,
+  //     ])
+  //   : "";
+
+  tasks.push({
+    title: "Finalize Project creation",
+    task: () => true,
+  });
 
   return tasks;
 };
@@ -381,19 +484,50 @@ methods.startProjectCreation = async function (
   repoUrl = null
 ) {
   const self = this;
+  const chalk = self.chalk;
 
   let rName = repoName;
-  let options = self.createProjectBase(answers, rName, repoUrl);
 
-  self
-    .runTasks(await self.buildTaskList(answers, options))
-    .then((completedTasks) => {
-      // console.log('%s Project ready', chalk.green.bold('DONE'));
-      return self.callback({ message: "Project Ready!" });
-    })
-    .catch((e) => {
-      return self.callback({ message: e });
-    });
+  self.createProjectBase(answers, rName, repoUrl).then(async (options) => {
+    // let options = self.createProjectBase(answers, rName, repoUrl);
+    // console.log("THE PACKAGE JSON OPTIONS", options);
+    self
+      .runTasks(await self.buildTaskList(answers, options), {
+        appName: options.folderName,
+        userPath: options.newFolder,
+      })
+      .then(() => {
+        console.log();
+        console.log("%s Project created and ready!", chalk.green.bold("DONE!"));
+        console.log();
+        console.log(
+          `To run your new app: ${chalk.green.bold(
+            options.folderName
+          )}, please type the the following on your terminal:`
+        );
+        console.log();
+        console.log(`cd ${options.folderName}`);
+        console.log(`${answers.packager} run dev`);
+        console.log();
+        console.log(`${chalk.green.bold("Happy Coding!")}`);
+        console.log();
+        return self.callback({ message: "" });
+      })
+      .catch(async (e) => {
+        console.log("Running Tasks has failed", e);
+        self.renderError(
+          {
+            customMessage: e.message,
+            type: e.type,
+            code: "error",
+            message: e.extendedError.message,
+            cmd: e.extendedError.cmd,
+          },
+          options
+        );
+        return self.callback({ message: "" });
+      });
+  });
 };
 
 methods.isExistingDir = function (repo) {
@@ -402,11 +536,12 @@ methods.isExistingDir = function (repo) {
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const getRootDir = pao.pa_getRootDir;
   const isExistingDir = pao.pa_isExistingDir;
+  const sep = path.sep;
 
   //  console.log(isExistingDir)
   //  console.log(pao)
 
-  if (isExistingDir(`${getWorkingFolder()}/${repo}`)) {
+  if (isExistingDir(`${getWorkingFolder()}${sep}${repo}`)) {
     //   console.log('THE FOLDER EXISTS')
     //   console.log(`${getWorkingFolder()}/${repo}`)
     return true;
@@ -481,8 +616,8 @@ methods.getStoredUserTokenFeedback = function (resolve, reject, result) {
             self
               .startQuestionnaire({ remote: ["username", "password"] })
               .then((answers) => {
-                console.log("Answers in getStoredConfig");
-                console.log(answers);
+                // console.log("Answers in getStoredConfig");
+                // console.log(answers);
                 return resolve({ creds: answers });
               })
               .catch((e) => {
@@ -676,7 +811,8 @@ methods.storeUserConfigs = function (data) {
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
   const { key, value } = data;
-  const config = new self.Configstore(loadFile("./package.json").name);
+  const sep = path.sep;
+  const config = new self.Configstore(loadFile(`.${sep}package.json`).name);
   config.set(key, value);
 };
 
@@ -778,14 +914,14 @@ methods.gitInit = function (initFolder, remoteUrl = null) {
   });
 };
 
-methods.packagesInstall = function (packagesFolder, packager = null) {
+methods.packagesInstall = function (packagesFolder, packager = null, options) {
   return new Promise(async (resolve, reject) => {
     const self = this;
     //    console.log(self)
     const projectInstall = self.projectInstall;
 
-    console.log("After projectInstall");
-    console.log(projectInstall);
+    // console.log("After projectInstall");
+    // console.log(projectInstall);
 
     // const {options} = data
     // options && options.cli ? self.scaffoldCliApp : self.scaffoldApp
@@ -797,15 +933,55 @@ methods.packagesInstall = function (packagesFolder, packager = null) {
     // 	  cwd: packagesFolder,
     // 	}),
 
-    const { stdout } = await projectInstall({
-      prefer: packager ? packager : "npm",
-      cwd: packagesFolder,
+    // const { stdout } = await projectInstall({
+    //   prefer: packager ? packager : "npm",
+    //   cwd: packagesFolder,
+    // });
+
+    let installResult = await self.runTerminal({
+      context: packagesFolder,
+      packager,
+      installOptions:
+        packager === "npm" ? ["--force", "--loglevel silent"] : null,
+      options,
     });
+    resolve(installResult);
+
+    // console.log("Local install results", installResult);
 
     // console.log('THE INSTALLATION OUTPUT')
     // console.log(stdout);
-    resolve(stdout);
+
+    // resolve(stdout);
   });
+};
+
+methods.installLocally = function (packages, folder, packager = null, options) {
+  console.log("THE PACKAGES INSTALL LOCALLY", packages);
+  console.log("PACKAGES.LENGTH", packages.length);
+  return new Promise((resolve, reject) => {
+    let installations = packages.map(async (package) => {
+      const self = this;
+      console.log("THE PACKAGE", package);
+      return await self.runTerminal({
+        packages: package,
+        context: folder,
+        packager,
+        options,
+        installOptions: packager === "npm" ? ["--force"] : null,
+        stdIO: "inherit",
+      });
+    });
+    Promise.all(installations).then((completed) => {
+      console.log("MADE INSTALLATIONS", installations);
+      resolve(completed);
+    });
+  });
+
+  //   // console.log('THE INSTALLATION OUTPUT')
+  //   // console.log(stdout);
+  //   resolve(installations);
+  // });
 };
 
 methods.makeFolder = function (filepath) {
@@ -819,36 +995,79 @@ methods.makeFolder = function (filepath) {
   return makeFolderSync(filepath);
 };
 
-methods.doPackageJson = function (answers, options) {
+methods.doPackageJson = function (answers, options, deletePackage = false) {
   const self = this;
   const pao = self.pao;
-  const path = self.path;
-  const loadFile = pao.pa_loadFile;
+  const sep = path.sep;
+  const loadFileSync = pao.pa_loadFileSync;
   const saveToFile = pao.pa_saveToFile;
-  const packageJson = loadFile(path.join(options.templatePath, "package.json"));
+  const getRootDir = pao.pa_getRootDir;
+  const packageJson = loadFileSync(
+    path.join(options.templatePath, "package.json")
+  );
+  // console.log("THE TEMPLATES PACKAGEJSON", packageJson);
 
+  if (deletePackage) {
+    // console.log("DELETE PACKAGE", packageJson);
+    if (packageJson.dependencies["kotii-scripts"].indexOf("file") >= 0) {
+      // console.log("Index of ZERO", options);
+      const scriptsJson = loadFileSync(
+        path.join(options.kotiiPackages, `kotii-scripts${sep}package.json`)
+      );
+      // console.log(
+      //   "THE SCRIPT JSON PATH",
+      //   path.join(options.kotiiPackages, "kotii-scripts/package.json")
+      // );
+      // console.log("THE SCRTIPS JSON", scriptsJson);
+      self.isLocalRun = true;
+      delete packageJson.dependencies["kotii-scripts"];
+      packageJson["devDependencies"] = { ...scriptsJson.devDependencies };
+
+      saveToFile(
+        path.join(options.newFolder, "package.json"),
+        JSON.stringify(packageJson, null, 2)
+      );
+    }
+    //   // console.log("THE OPTIONS IN DO PACKAGE JSON", answers, options);
+
+    return;
+  }
+  // let fileFolder = getRootDir(module.name);
+  // console.log("FILE FOLDER BASE", path.basename(fileFolder));
   packageJson["name"] = options.folderName;
   packageJson["description"] = answers?.description ? answers.description : "";
-  packageJson.dependencies["kotii-scripts"] = answers["local-scripts"];
+  // packageJson.dependencies["kotii-scripts"] = answers["local-scripts"];
   packageJson["scripts"] = {
-    start: "kotii-scripts start",
+    dev: "kotii dev",
+    start: "kotii start",
+    static: "kotii static",
+    build: "kotii build",
   };
   saveToFile(
     path.join(options.newFolder, "package.json"),
     JSON.stringify(packageJson, null, 2)
   );
 
-  console.log("THE LOADED FILE", packageJson);
+  // console.log("THE LOADED FILE", packageJson);
 
   //   return makeFolderSync(filepath);
 };
 
-methods.runTasks = async function (toRun, dir) {
+methods.runTasks = async function (toRun, info) {
   const self = this;
   const Listr = self.Listr;
+  const chalk = self.chalk;
 
   const tasks = new Listr(toRun);
 
+  console.log();
+  console.log(
+    `Creating app: ${chalk.cyan.bold(info.appName)} in: ${chalk.cyan.bold(
+      info.userPath
+    )}`
+  );
+
+  console.log();
   await tasks.run();
   return true;
 };
@@ -864,11 +1083,13 @@ methods.getMoData = async function (resolve, reject, result) {
 };
 
 methods.mergeQuestions = function (qsGroup, merge) {
+  // console.log("THE MERGE GROUP", qsGroup);
+  // console.log("MERGE", merge);
   const self = this;
   const questions = self.questions;
   const groupQuestions = questions[qsGroup].map((qs) => qs.name);
 
-  console.log("groupMap", JSON.stringify(groupQuestions));
+  // console.log("groupMap", JSON.stringify(groupQuestions));
   let initialAnswers = {};
   if (!merge) return { [qsGroup]: [...groupQuestions] };
 
@@ -901,11 +1122,11 @@ methods.mergeQuestions = function (qsGroup, merge) {
     self.deleteMatchedQuestion(ma, groupQuestions);
   });
 
-  console.log("FOUND ANSWERS", initialAnswers);
-  console.log("FOUND QUESTIONS", groupQuestions);
-  console.log("Merge", merge);
-  console.log("isREMOTE", initialAnswers?.remote);
-  console.log("Is git", initialAnswers?.remote && !initialAnswers?.git);
+  // console.log("FOUND ANSWERS", initialAnswers);
+  // console.log("FOUND QUESTIONS", groupQuestions);
+  // console.log("Merge", merge);
+  // console.log("isREMOTE", initialAnswers?.remote);
+  // console.log("Is git", initialAnswers?.remote && !initialAnswers?.git);
   initialAnswers?.remote && !initialAnswers?.git
     ? ((initialAnswers["git"] = "yes"),
       self.deleteMatchedQuestion("git", groupQuestions))
@@ -922,5 +1143,226 @@ methods.deleteMatchedQuestion = function (toDelte, groupQuestions) {
   contains(groupQuestions, toDelte)
     ? groupQuestions.splice(groupQuestions.indexOf(toDelte), 1)
     : "";
+};
+
+methods.runTerminal = function ({
+  packages,
+  context,
+  packager,
+  installOptions = [],
+  stdIO = "ignore",
+  options,
+} = args) {
+  return new Promise((resolve, reject) => {
+    console.log("THE PACKAGES", packages);
+    const self = this;
+    try {
+      let commandToRun = self[`${packager}InstallationConfig`]({
+        packages: packages && packages.trim() ? [packages] : null,
+        options: installOptions ? installOptions : null,
+      });
+      console.log("THE COMMAND TO RUN", commandToRun);
+      let currentWorkingDirectory = context;
+
+      // console.log(
+      //   "CUDRREN WORK DIR",
+      //   currentWorkingDirectory,
+      //   package,
+      //   commandToRun
+      // );
+      // console.log(
+      //   "COMMAND TO RUN",
+      //   `sudo ${commandToRun} ${package} --include dev`
+      // );
+
+      childProcess.exec(
+        `${commandToRun}`,
+        {
+          stdio: stdIO,
+          cwd: `${currentWorkingDirectory}`,
+        },
+        (err, stdout, stderr) => {
+          // console.log("THE CHILD PROCESS HAS COMPLETED WITH:", err);
+          if (err) {
+            // self.renderTerminalError(err, options);
+            // console.log()
+            resolve({
+              errored: true,
+              extendedError: { ...err, message: `${err}` },
+            });
+          } else {
+            resolve(stdout);
+          }
+        }
+      );
+    } catch (error) {
+      console.log("THE TRY EERROR", error);
+      resolve({
+        errored: true,
+        extendedError: { ...error, message: `${error}` },
+      });
+    }
+
+    // console.log("THE CREATED TAR", installRes);
+    // return installRes;
+  });
+};
+methods.renderTerminalError = async function (err, options) {
+  // console.log("RENDER TERMINAL ERROR OPTIONS", options);
+  const self = this;
+  const chalk = self.chalk;
+  const Listr = self.Listr;
+  const tasks = new Listr([
+    {
+      title: "Delete made folder and generated files",
+      task: () => self.cancellProjectCreation(options.newFolder),
+    },
+    {
+      title: "Finishing up clean-up",
+      task: () => {
+        fs.existsSync(options.newFolder);
+      },
+    },
+  ]);
+
+  // console.log("ERROR MESSAGE", err.message);
+  // console.log("ERROR JSON", JSON.stringify(err));
+  console.log();
+  console.log(
+    `${err.cmd ? "Command:" : "Action"}${chalk.cyan.bold(
+      err?.cmd || ""
+    )} has failed with error: ${chalk.red.bold(err.message)}`
+  );
+  console.log();
+  console.log(
+    `Kotii will cancell creation of project: ${chalk.red.bold("newMetta")} `
+  );
+  await tasks.run();
+  console.log();
+  console.log(
+    `Project creation of: ${chalk.cyan.bold(
+      options.folderName
+    )} has been ${chalk.red("cancelled")}`
+  );
+  console.log();
+  process.exit(1);
+};
+methods.cancellProjectCreation = function (userPath) {
+  fs.rmSync(userPath, { recursive: true, force: true });
+  return true;
+};
+
+methods.renderError = function (err, options) {
+  const self = this;
+  if (SCAFFOLD_ERRORS[err.type.toUpperCase()]) {
+    self[self.camelCaseText(err.type.toUpperCase(), "_")](err, options);
+  } else {
+    self[SCAFFOLD_ERRORS["UNKNOWN_ERROR"]](err, options);
+  }
+};
+
+methods.installationError = async function (err, options) {
+  const self = this;
+  await self.renderTerminalError(err, options);
+};
+
+methods.unknownError = async function (err, options) {
+  const self = this;
+  console.log("UNKNOW ERROR TEST");
+};
+methods.createFolderError = async function () {
+  const self = this;
+  await self.renderTerminalError(err, options);
+};
+methods.capitalizeFirstLetter = function (text) {
+  const self = this;
+  return `${text.slice(0, 1).toUpperCase()}${text.slice(1)}`;
+};
+methods.camelCaseText = function (text, delimeter) {
+  const self = this;
+  if (!text || !delimeter) {
+    throw new Error("Please provide text and delimeter to camel case");
+  } else {
+    let camelCased = text
+      .split(delimeter)
+      .map((piece, index) => {
+        if (index > 0) {
+          return self.capitalizeFirstLetter(piece.toLowerCase());
+        } else {
+          return piece.toLowerCase();
+        }
+      })
+      .join("");
+
+    return camelCased;
+
+    //  let camelCased =
+    //  return
+  }
+};
+methods.npmInstallationConfig = function ({
+  packages = null,
+  options = null,
+} = args) {
+  const self = this;
+  let installString = "";
+  if (packages && options) {
+    installString = `npm i ${packages.join(" ")} ${options.join(" ")}`;
+    return installString;
+  } else if (packages) {
+    installString = `npm i ${packages.join(" ")}`;
+    return installString;
+  } else if (options) {
+    installString = `npm i ${options.join(" ")}`;
+    return installString;
+  } else {
+    installString = `npm i ${packages.join(" ")}`;
+    return installString;
+  }
+};
+methods.yarnInstallationConfig = function ({
+  packages = null,
+  options = null,
+} = args) {
+  const self = this;
+  console.log("YARN INSTALL", packages);
+  let installString = "";
+  if (packages && options) {
+    console.log("YARN INSTALL PACKAGES AND OPTIONS", options);
+    installString = `yarn add ${packages.join(" ")} ${options.join(" ")}`;
+    return installString;
+  } else if (packages) {
+    console.log("YARN INSTALL PACKAGES");
+    installString = `yarn add ${packages.join(" ")}`;
+    return installString;
+  } else if (options) {
+    console.log("YARN INSTALL OPTIONS", options);
+    installString = `yarn install ${options.join(" ")}`;
+    return installString;
+  } else {
+    console.log("YARN INSTALL NO OPTIONS", options);
+    installString = `yarn install`;
+    return installString;
+  }
+};
+methods.pnpmInstallationConfig = function ({
+  packages = null,
+  options = null,
+} = args) {
+  const self = this;
+  let installString = "";
+  if (packages && options) {
+    installString = `pnpm add ${packages.join(" ")} ${options.join(" ")}`;
+    return installString;
+  } else if (packages) {
+    installString = `pnpm add ${packages.join(" ")}`;
+    return installString;
+  } else if (options) {
+    installString = `pnpm install ${options.join(" ")}`;
+    return installString;
+  } else {
+    installString = `pnpm install`;
+    return installString;
+  }
 };
 module.exports = methods;

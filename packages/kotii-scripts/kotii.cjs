@@ -46,10 +46,15 @@
 
 const { register } = require("node:module");
 const { pathToFileURL } = require("node:url");
-process.env.NODE_ENV = "production";
+process.env.NODE_ENV = "development";
 const parentURL = pathToFileURL(__filename);
-if (process.env.NODE_ENV === "production") {
-  console.log("REGISTER FOR PROD");
+const cli = require("./cli.cjs");
+const { parseScriptArguments } = cli;
+
+const commandToRun = parseScriptArguments()[0];
+
+if (commandToRun === "start") {
+  console.log("RUNNING SCRIPT:", commandToRun);
   process.env.ANZII_KICK_OFF_MANUALLY = "true";
   register("./compile/hooks_prod.js", parentURL);
   import("./kotii-land/prod/app_prod.js");

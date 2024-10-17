@@ -1,5 +1,10 @@
 {
-  "appType": "ssra",
+  "app": {
+    "type": "ssr",
+    "stateVendor": "redux"
+  },
+  "build": "build",
+  "static": "static",
   "aliases": {
     "Layouts": "/src/components/layout/index",
     "Pages": "/src/components/pages/index",

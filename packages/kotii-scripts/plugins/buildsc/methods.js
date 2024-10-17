@@ -1,4 +1,5 @@
 const methods = {};
+import path from "path";
 methods.init = function () {
   this.listens({
     build: this.handleBuildScript.bind(this),
@@ -15,57 +16,40 @@ methods.handleBuildScript = function (data) {
   self.emit({
     type: "context-app",
     data: {
-      callback: (data) => {
-        console.log("BUILD CONTEXT APP RESPONSE", data);
-        if (data?.contextApp) {
-          console.log("WRITIING SERVER ROUTES");
-
-          return self.doServerBuildGeneration({
-            callback: setCall,
-            targetSource: data.contextApp.appSrc,
-            targetMain: data.contextApp.appFolder,
-            destination: `${data.contextApp.appFolder}/build`,
-            targetNodeModules: `${data.contextApp.appNodeModules}`,
-            routes: data.routes,
-            contextApp: data.contextApp,
-          });
-        } else {
-          self.getWebPackConfig({ ...data, build: true }, setCall);
-        }
-      },
       build: true,
       env: "production",
+      callback: (data) => {
+        console.log("BUILD CONTEXT APP RESPONSE", data);
+
+        self.getWebPackConfig(
+          { ...data, build: true },
+          { buildFor: "ssr" },
+          setCall
+        );
+      },
     },
   });
   return;
 };
-methods.getWebPackConfig = function (dataToConfig, setCall) {
+methods.getWebPackConfig = function (dataToConfig, options = {}, setCall) {
   const self = this;
   self.emit({
     type: "webpack-config",
     data: {
       payload: dataToConfig,
       callback: (data) => {
-        self.doStaticSiteGeneration({
+        self.doServerBuildGeneration({
           callback: setCall,
-          dataToConfig,
-          ...data,
+          targetSource: dataToConfig.contextApp.appSrc,
+          targetMain: dataToConfig.contextApp.appFolder,
+          destination: `${path.resolve(
+            dataToConfig.contextApp.appFolder,
+            dataToConfig.contextApp.appManifest.build
+          )}`,
+          targetNodeModules: `${dataToConfig.contextApp.appNodeModules}`,
+          routes: dataToConfig.routes,
+          contextApp: dataToConfig.contextApp,
         });
-        // setCall("Webpack config has been called successfully");
-      },
-    },
-  });
-};
-methods.doStaticSiteGeneration = function (data) {
-  console.log("DO STATIC DATA", data);
-  const self = this;
-  self.emit({
-    type: "generate-static-content",
-    data: {
-      payload: { ...data },
-      callback: (gotValue) => {
-        console.log("STATIC GENERATION IS COMPLETED", gotValue);
-        data.callback({ message: "Build plugin successfully called" });
       },
     },
   });

@@ -69,7 +69,7 @@ methods.getAppInContextResources = function (environment = false) {
       appEnv: self.getEnvFilePath(appFolder),
       appFolder: self.getFilePath(appFolder, "."),
       appIndexFile: self.getFilePath(appFolder, "src/index.js"),
-      appPagesFolder: self.getFilePath(appFolder, "src/components/pages"),
+      appPagesFolder: self.getFilePath(appFolder, "src/pages"),
       appSrc: self.getFilePath(appFolder, "src"),
       appTsConfig: self.getFilePath(appFolder, "tsconfig.ts"),
       appJsConfig: self.getFilePath(appFolder, "tsconfig.js"),
@@ -95,6 +95,9 @@ methods.getAppInContextResources = function (environment = false) {
         self.getFilePath(appFolder, "app.manifest.json")
       )
         ? loadFileSync(self.getFilePath(appFolder, "app.manifest.json"))
+        : null,
+      appApi: self.checkIfIsDirectory(self.getFilePath(appFolder, "api"))
+        ? self.getFilePath(appFolder, "api")
         : null,
     };
     console.log("THE RESOURCES", resources);
@@ -147,6 +150,24 @@ methods.checkIfIsFile = function (filePath) {
     return isFile;
   } catch (error) {
     // console.log("THE STATS THROWN", error);
+    return false;
+  }
+};
+methods.checkIfIsDirectory = function (filePath) {
+  const self = this;
+  const { fs } = self;
+  let stats;
+  console.log("DIRECTORY PATH", filePath);
+  try {
+    stats = fs.statSync(filePath);
+
+    console.log("FILE STATISTICS", stats);
+    const isDir = stats.isDirectory();
+
+    console.log("IS FILE", isDir);
+    return isDir;
+  } catch (error) {
+    console.log("THE STATS THROWN", error);
     return false;
   }
 };

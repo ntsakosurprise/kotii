@@ -24,6 +24,7 @@ class ReactView {
     this.ssrRoutes = null;
     this.React = React;
     this.createReduxStore = createReduxStore;
+    this.comps = null;
     // this.Provider = Provider;
     this.StaticRouter = StaticRouter;
     this.styledTags = "";

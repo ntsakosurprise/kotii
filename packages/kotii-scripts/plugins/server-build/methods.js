@@ -5,7 +5,6 @@ import os from "node:os";
 import Papa from "papaparse";
 import path, { resolve } from "path";
 import { parseString } from "xml2js";
-import { meta } from "../../kotii-land/dev/manifest.js";
 import runNpmScript from "./runNpmScript.js";
 
 methods.init = function () {
@@ -23,7 +22,9 @@ methods.handleServerBuild = function (data) {
   const { payload } = data;
   const { targetMain, destination, targetSource, routes, contextApp } = payload;
   data.callback({ gotValue: "Ran" });
-  const cwd = getWorkingFolder();
+  // const cwd = getWorkingFolder();
+  const cwd = self.kotiiScriptsPath;
+  console.log("KOTII SCRIPTS PATH", cwd);
   if (fs.existsSync(`${cwd}/kotii-land/dev/styles.json`)) {
     fs.rmSync(`${cwd}/kotii-land/dev/styles.json`);
   }
@@ -32,13 +33,15 @@ methods.handleServerBuild = function (data) {
   const babelJson = JSON.parse(readFileSync(`${cwd}/babel.server.build.json`));
   let updatedBabelJsonPlugins = babelJson.plugins;
   updatedBabelJsonPlugins.unshift([
-    "./babel-plugins/scoped-styles-plugin/index.js",
+    `${path.join(cwd, "./babel-plugins/scoped-styles-plugin/index.js")}`,
     {
       appFolder: targetMain,
       appSrc: targetSource,
+      cwd: cwd,
     },
   ]);
   babelJson.plugins = [...updatedBabelJsonPlugins];
+  console.log("BABEL JSON PLUGINS", babelJson.plugins);
   saveToFile(
     path.join(cwd, "babel.server.build.json"),
     JSON.stringify(babelJson, null, 2)
@@ -86,7 +89,7 @@ methods.handleServerBuild = function (data) {
     JSON.stringify(localPackageJson, null, 2)
   );
 
-  runNpmScript("run", "build-ssr")
+  runNpmScript({ npmCommand: "run", scriptToRun: "build-ssr", cwd: cwd })
     .then((built) => {
       let usrHomeDir = os.homedir();
       let fullTempPath = self.createDistFolder(
@@ -100,15 +103,18 @@ methods.handleServerBuild = function (data) {
       // saveToFile(`${cwd}${path.sep}tempDirFiles.json`, JSON.stringify(dirs));
       // console.log("TEMP DIRS", dirs);
       // fs.rmdirSync(fullTempPath);
+      console.log("TARGET SOURCES", targetSource, "destination", destination);
+      console.log("TARGET MAIN", targetMain, "full temp", fullTempPath);
       self.syncDirectories(targetSource, `${destination}/src`);
       self.copyPublicToDist(`${targetMain}`, `${fullTempPath}`);
       self.copyPublicToDist(`${fullTempPath}`, `${destination}`);
-      self.syncDirectories(targetSource, `${destination}/src`);
+      // self.syncDirectories(targetSource, `${destination}/src`);
       fs.rmSync(fullTempPath, { recursive: true });
       self.removeJsxReferences(destination, {
         destination: `${destination}${path.sep}src`,
         targetMain,
         targetSource,
+        appManifest: contextApp.appManifest,
       });
 
       babelJson.plugins.shift();
@@ -118,7 +124,9 @@ methods.handleServerBuild = function (data) {
         JSON.stringify(babelJson, null, 2)
       );
       self.saveRoutesInUserLand(routes).then(() => {
-        self.doKotiiLandPagesFile(destination, { contextApp });
+        self.doKotiiLandPagesFile(destination, {
+          contextApp,
+        });
       });
     })
     .catch((error) => {
@@ -192,17 +200,17 @@ methods.handleIgnores = function (root) {
   console.log("THE IGNORE STRING", absoluteIgnores);
   return absoluteIgnores;
 };
-methods.copyPublicToDist = function (from, to, ignore = null) {
+methods.copyPublicToDist = function (from, to, ignores = []) {
   const self = this;
-  let ignores = self.handleIgnores(from);
-  console.log("copying from", from, to);
+  let ignoresMerged = [...ignores, ...self.handleIgnores(from)];
+  console.log("copying from", from, to, "with merged ignores", ignoresMerged);
   fs.cpSync(from, to, {
     recursive: true,
     filter: (fi) => {
-      // console.log("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
+      console.log("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
       // if (ignores.includes(fi)) return true;
       // let thisToReturn = fi !== ignore;
-      let thisToReturn = !ignores.includes(fi);
+      let thisToReturn = !ignoresMerged.includes(fi);
       // console.log("THIS TO RETURN", thisToReturn);
       return thisToReturn;
     },
@@ -288,6 +296,8 @@ methods.removeJsxReferences = function (sourceRoot, state) {
 methods.updateJSXImportDeclarations = function (ast, state) {
   const self = this;
   const traverse = self.traverse;
+  console.log("THE APP STATE", state);
+  const appManifest = state?.appManifest;
   // let removedImportsIds = [];
 
   let isUpdated = false;
@@ -316,6 +326,7 @@ methods.updateJSXImportDeclarations = function (ast, state) {
           `${state.destination}`,
           importSpecifier.substr(importSpecifier.indexOf("/") + 1).trim()
         );
+        console.log("THE ABSOLUTE PATH", absoluteFilePath);
         let contents = fs.readFileSync(absoluteFilePath, {
           encoding: "utf-8",
         });
@@ -366,11 +377,11 @@ methods.updateJSXImportDeclarations = function (ast, state) {
       if (
         !/^(\.+)/.test(path.node.source.value) &&
         !isBuiltin(path.node.source.value) &&
-        meta.alias[path.node.source.value]
+        appManifest.aliases[path.node.source.value]
       ) {
         console.log("SOURCE NOT RELATIVE", path.node.source.value);
-        path.node.source.value = `${meta.appMain}${
-          meta.alias[path.node.source.value]
+        path.node.source.value = `${
+          appManifest.aliases[path.node.source.value]
         }.js`;
         isUpdated = true;
       }
@@ -395,7 +406,8 @@ methods.doKotiiLandPagesFile = function (destination, options) {
   const readFileSync = pao.pa_readFileSync;
   const saveToFile = pao.pa_saveToFile;
   const getWorkingFolder = pao.pa_getWorkingFolder;
-  const cwd = getWorkingFolder();
+  // const cwd = getWorkingFolder();
+  const cwd = self.kotiiScriptsPath;
 
   const jsFile = readFileSync(`${cwd}${path.sep}kotii-land/dev/pages.js`);
   console.log(
@@ -425,7 +437,9 @@ methods.doKotiiLandPagesFile = function (destination, options) {
     );
     saveToFile(
       `${destination}${path.sep}.config.js`,
-      self.getKotiiConfigTemplate({ public: "public" })
+      self.getKotiiConfigTemplate({
+        public: options.contextApp.appManifest.static,
+      })
     );
     saveToFile(
       `${madeFolder}${path.sep}app.manifest.json`,
@@ -436,7 +450,11 @@ methods.doKotiiLandPagesFile = function (destination, options) {
     );
   }
 };
-methods.syncDirectories = function (sourceDirectoryPath, destination) {
+methods.syncDirectories = function (
+  sourceDirectoryPath,
+  destination,
+  ignores = []
+) {
   let allDirectories = [];
   fs.readdirSync(sourceDirectoryPath).forEach((sourceFile) => {
     console.log("THE READDIR SOURCE FILE", sourceFile);
@@ -453,14 +471,15 @@ methods.syncDirectories = function (sourceDirectoryPath, destination) {
       fs.mkdirSync(onDestinationPath);
       fs.cpSync(`${sourceDirectoryPath}${path.sep}${dir}`, onDestinationPath, {
         recursive: true,
-        // filter: (fi) => {
-        //   // console.log("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
-        //   // if (ignores.includes(fi)) return true;
-        //   // let thisToReturn = fi !== ignore;
-        //   let thisToReturn = !ignores.includes(fi);
-        //   // console.log("THIS TO RETURN", thisToReturn);
-        //   return thisToReturn;
-        // },
+        filter: (fi) => {
+          // console.log("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
+          // if (ignores.includes(fi)) return true;
+          // let thisToReturn = fi !== ignore;
+          console.log("SYNC DIRECTORIES FILE BEING COPIED", fi);
+          let thisToReturn = !ignores.includes(fi);
+          // console.log("THIS TO RETURN", thisToReturn);
+          return thisToReturn;
+        },
       });
     }
   });
@@ -481,7 +500,8 @@ methods.saveRoutesInUserLand = function (routes) {
   const readFileSync = pao.pa_readFileSync;
   const saveToFile = pao.pa_saveToFile;
   const getWorkingFolder = pao.pa_getWorkingFolder;
-  const cwd = getWorkingFolder();
+  // const cwd = getWorkingFolder();
+  const cwd = self.kotiiScriptsPath;
 
   return new Promise((resolve, reject) => {
     let requiresRoutes = routes.filter((rou) => {

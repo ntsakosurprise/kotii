@@ -1,7 +1,8 @@
 import React from "react";
 import { Route, Router, Switch as Routes } from "wouter";
 import { useAppContext } from "../../react-components/index.jsx";
-import { comps, routes } from "./pages.js";
+
+// import { comps, routes, getPagesTools } from "./pages.js";
 
 // const comps = {
 //   Test,
@@ -81,8 +82,10 @@ const Wrapper = (props) => {
     </div>
   );
 };
-
-const ClientRoutes = () => {
+const ClientRoutes = (props) => {
+  console.log("THE CLIENT PROPS", props);
+  let astRoutes = typeof routes === "undefined" ? [] : routes;
+  let astComps = typeof comps === "undefined" ? {} : comps;
   const { layout } = useAppContext();
   // const AppWrapper = props.wrapper;
   // console.log("THE CLIENT ROUTES", layout);
@@ -91,14 +94,13 @@ const ClientRoutes = () => {
     : () => {
         return <></>;
       };
-
   return (
     <Router>
       <Layout>
         <Routes>
-          {routes.map((r, index) => {
+          {astRoutes.map((r, index) => {
             console.log("THE COMPONENT");
-            let Component = comps[r.component];
+            let Component = astComps[r.component];
             const ComponentWrapped = () => {
               return (
                 <Wrapper>
@@ -136,8 +138,13 @@ const ClientRoutes = () => {
     </Router>
   );
 };
-
-const RoutesAsServerRoutes = () => {
+const RoutesAsServerRoutes = (props) => {
+  console.log("Server Goodies", props);
+  const { goodies = {} } = props;
+  // const {routes=[], comps={}} = goodies
+  const gRoutes = goodies?.routes || [];
+  const gComps = goodies?.comps || {};
+  console.log("THE ROUTES IN SERVER", gRoutes);
   const { layout } = useAppContext();
   const Layout = layout
     ? layout
@@ -149,9 +156,9 @@ const RoutesAsServerRoutes = () => {
   return (
     <Layout>
       <Routes>
-        {routes.map((r, index) => {
-          let Component = comps[r.component];
-
+        {gRoutes.map((r, index) => {
+          console.log("CURRENT SERVER ROUTE", r, gComps[r.component]);
+          let Component = gComps[r.component];
           let ComponentWrapped = () => {
             return (
               <Wrapper>
@@ -159,7 +166,6 @@ const RoutesAsServerRoutes = () => {
               </Wrapper>
             );
           };
-
           return (
             <Route key={index} path={r.path} component={ComponentWrapped} />
           );
@@ -168,6 +174,7 @@ const RoutesAsServerRoutes = () => {
     </Layout>
   );
 };
+
 // export { RoutesAsServerRoutes, routes };
 // export default ClientRoutes;
-export { RoutesAsServerRoutes, routes, ClientRoutes };
+export { RoutesAsServerRoutes, ClientRoutes };

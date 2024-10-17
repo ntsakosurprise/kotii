@@ -77,7 +77,9 @@ const Wrapper = props => {
     }
   }, props.children);
 };
-const ClientRoutes = () => {
+const ClientRoutes = async () => {
+  const tested = await testRun();
+  console.log("THE TESTED", tested);
   const {
     layout
   } = useAppContext();
@@ -117,7 +119,9 @@ const ClientRoutes = () => {
     });
   }))));
 };
-const RoutesAsServerRoutes = () => {
+const RoutesAsServerRoutes = async () => {
+  const tested = await testRun();
+  console.log("THE TESTED", tested);
   const {
     layout
   } = useAppContext();
@@ -137,6 +141,13 @@ const RoutesAsServerRoutes = () => {
       component: ComponentWrapped
     });
   })));
+};
+const testRun = () => {
+  return Promise((resolve, reject) => {
+    resolve({
+      name: "test"
+    });
+  });
 };
 // export { RoutesAsServerRoutes, routes };
 // export default ClientRoutes;

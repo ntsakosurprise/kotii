@@ -1,5 +1,15 @@
 import path from "path";
+import { fileURLToPath } from "url";
 import webpack from "webpack";
+import {
+  DeleteFilesWebpackPlugin,
+  FinishCompilationOnErrorWebpackPlugin,
+  RemoveImportsWebpackPlugin,
+  WatchOwnFilesWebpackPlugin,
+} from "../../webpack-plugins/index.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default (options) => {
   //   console.log("THE PROCESS", process.env.APPCONTEXT);
@@ -10,22 +20,41 @@ export default (options) => {
   console.log("WEBPACK APP ENVS", appEnvironmentVariables);
   console.log("THE SERVER CONFIG");
   console.log("THE APP BUILD FOLDER", env.appBuildFolder);
-  console.log;
+  console.log("THE DIR_NAME", __dirname, path.resolve(__dirname, "../.."));
+  let scriptsPath = path.resolve(__dirname, "../..");
+  let scriptsWebpackResolve = path.resolve(
+    scriptsPath,
+    "kotii-land/dev/app_.js"
+  );
+
   return {
-    entry: ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
+    // entry:{
+    //   server: options?.build && options.build
+    //   ? env.appIndexFile
+    //   : ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
+    //   "kotii-client": `${scriptsPath}/client-tools/index.js`
+    // },
+    entry:
+      options?.build && options.build
+        ? env.appIndexFile
+        : ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
+
     context: env.appFolder,
     mode: process.env.NODE_ENV,
-    infrastructureLogging: { level: "info" },
+    infrastructureLogging: { debug: true },
     stats: true,
 
     output: {
-      filename: "[main].server.bundle.js",
-      path: `${env.appBuildFolder}`, // save emitted bundle to this path or folder
+      filename: "server.bundle.js",
+      path:
+        options?.build && options.build
+          ? options.staticFolder
+          : `${env.appBuildFolder}`, // save emitted bundle to this path or folder
       clean: true, // Clean build folder before emitting new bundle
       publicPath: "/",
       assetModuleFilename: (pathData, assetInfo) => {
-        // console.log("THE PATH DATA", pathData.filename);
-        // console.log("THE PATH INFO", assetInfo);
+        console.log("THE PATH DATA", pathData.filename);
+        //console.log("THE PATH INFO", assetInfo);
         return `${path.basename(pathData.filename)}`;
       },
     },
@@ -39,6 +68,12 @@ export default (options) => {
     // },
     //   React: "react",
     // },
+
+    // externals: [
+    //   webpackNodeExternals({
+    //     allowlist: ["kotii-scripts"],
+    //   }),
+    // ],
     resolve: {
       extensions: [".js", ".jsx", ".png", ".jpg"], // tell webpack to use these extenstions to resolve imported files[for importing without specifying the extension name]
       alias: {
@@ -46,10 +81,11 @@ export default (options) => {
         "react-router-dom": path.resolve(
           `${env.appFolder}/node_modules/react-router-dom`
         ),
+        react: path.resolve(`${env.appFolder}/node_modules/react`),
         "react-router": path.resolve(
           `${env.appFolder}/node_modules/react-router`
         ),
-        "kotii-scripts": path.resolve(`${options.cwd}/kotii-land/dev/app_.js`),
+        "kotii-scripts": path.resolve(`${scriptsWebpackResolve}`),
       }, // Alias references to files and folders inorder to use absolute paths in your file imports
       fallback: {
         fs: false,
@@ -69,7 +105,10 @@ export default (options) => {
       rules: [
         {
           test: /\.(?:js|mjs|cjs|jsx)$/,
-          exclude: /node_modules/,
+          include: [path.resolve(scriptsPath, "/")],
+          // exclude: /node_modules\/(?!(kotii-scripts)\/).*/,
+          // include: [scriptsWebpackResolve],
+          exclude: /node_modules\/(?!kotii-scripts).+/,
           use: {
             loader: "babel-loader",
             options: {
@@ -135,7 +174,14 @@ export default (options) => {
 
         {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
-          type: "asset/resource",
+          loader: "file-loader",
+          options: {
+            // name: "[hash].[ext]",
+            name: "[name].[ext]",
+            // extensions: ["png", "jpg", "jpeg", "gif", "svg"],
+            // publicPath: "public/img",
+            // outputPath: null,
+          },
         },
         {
           test: /\.m?js?x$/,
@@ -167,6 +213,21 @@ export default (options) => {
       //   // template: env.appIndexHtml,
       //   filename: "index.html",
       // }),
+      new DeleteFilesWebpackPlugin({
+        deleteFolder: options.buildFolder,
+      }),
+      new FinishCompilationOnErrorWebpackPlugin({
+        closeWatcher: options.closeWatcher,
+      }),
+      new RemoveImportsWebpackPlugin({
+        removeFilePath: `${scriptsPath}/kotii-land/dev/build.js`,
+        removeFileSpecifiers: ["./pages.js"],
+      }),
+      new WatchOwnFilesWebpackPlugin({
+        filesToWatch: `${options.pagesFolder}`,
+        runOnComplete: options.runOnComplete,
+        notifyClient: options.notifyClient,
+      }),
       new webpack.DefinePlugin({
         "process.env": {
           ...appEnvironmentVariables,

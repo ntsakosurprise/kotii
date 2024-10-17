@@ -14,11 +14,10 @@
   },
   "dependencies": {
     "glob": "^10.3.10",
+    "kotii-scripts": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-scripts/kotii-scripts-1.0.0.tgz",
     "react-icons": "^4.11.0",
     "react-markdown": "^8.0.0",
     "react-router-dom": "^6.20.1",
-    "styled-components": "^6.1.1",
-    "kotii-scripts": "*",
-    "kotii-templates": "*"
+    "styled-components": "^6.1.1"
   }
 }

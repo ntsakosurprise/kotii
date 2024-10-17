@@ -30,6 +30,7 @@ class FileRouter {
     this.Switch = Switch;
     this.fs = fs;
     this.path = path;
+    this.kotiiUtils = null;
     // this.require = require;
     this.parser = parser;
     this.traverse = traverse.default;
@@ -74,6 +75,12 @@ class FileRouter {
     this.merge = methods.merge;
     this.buildServerRoutes = methods.buildServerRoutes;
     this.getComponentServerState = methods.getComponentServerState;
+    this.insertIdentifierImportDeclarations =
+      methods.insertIdentifierImportDeclarations;
+    this.getAstRoutes = methods.getAstRoutes;
+    this.handleRemovePagesImport = methods.handleRemovePagesImport;
+    this.addImportLineToBuildJs = methods.addImportLineToBuildJs;
+    this.addOrRemoveByAST = methods.addOrRemoveByAST;
   }
 }
 export default FileRouter;
