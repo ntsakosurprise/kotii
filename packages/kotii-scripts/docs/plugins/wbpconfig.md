@@ -1,54 +1,58 @@
-# Dev
+# Wbpconfig
 
 <h2><strong>What it is?</strong></h2>
 
-<p>This is a plugin that interprets command line input. The ability to process command line inputs is based on some emitted event. The event is emitted by anziiJS' framework. AnziiJS emits this event for any command line program. A program is marked as a command line if the progam's main file contains an A statement</p>
+<p>This is a plugin that is tasked with running webpack operations. It creates configurations, initiates webpack instances, hook plugins to webpack, and many other webpack goodies.</p>
 
 <h2><strong>Events It Listens To?</Strong></h2>
 
-- dev
+- webpack-config
 
 <h2><strong>Event Handlers for each event</Strong></h2>
 
-- handleDevScript
+- webpack-config
 
 # **What it does**
 
-- It registers a listener to listen to dev events
+- It registers a listener to listen to webpack-config events
 
 ## **What each of the event-handlers does**
 
-### **_handleDevScript_**
+### **_handleWebpackConfig_**
 
-    This event handler takes
+- It retrieves data from the event object
+- It extracts project resource from the data object
+- It then processes environment variables by calling `getEnvVariables()`
+- `getEnvVariables()` function emits an event to [env](./env.md) plugin to get environment variables
+- It then calls `configureWebPack()` function to begin webpack configurations
 
-- It asks [contextapp](./contextapp.md) plugin to provide it with data it needs to run the in development mode
-- It takes receives the data from context-app
-- It takes the received data and hand it over to [wbpconfig](./wbpconfig.md) plugin
+### **_configureWebPack_**
 
-> **NOTE:** <br>
-> A target-argument is a string that has a special meaning in
-> the program. There are currently 4 arguments that it looks for, namely; _dev_, _start_,_build_, _static_. <br><br>
-> A handler can be a function defined under interpreter plugin or another plugin that is initiated by the interpreter <br><br>
+- It retrieves config data
+- It retrieves a webpackConfig config function based on weather we are running server side rendering or otherwise
+- It then adds a special kotiiJS environment variable name `KOTII_APP_META` to `env` object
+- It then attaches environment variables to the current process by calling `setContextEnv()`
+- It then calls `webpackConfig()` function to create a webpack config. It passes all the needed data to this function
+- It then creates webpack compiler from the created config object above
+- It then calls a function to hook into webpack
+- It then calls `configDevServer()` function if the command is not for _build_
+- It then just runs webpack compiler if command is _build_
+- It finally notifies the emitting source that requested task has been completed
 
-### The Four Target-Arguments
+### **_configDevServer_**
 
-- dev: for dev execution of kotii
-- start: for production run of kotii
-- build: for building kotii app for production
-- static: for static generation of kotii apps
+- It checks the server type, **_NOTE_** server types can be ssr or spa
+- It retrieves webpack middlewares if server type is ssr
+- It then emits a `take-ssr-routes` event to share routes with interested parties
+- It then checks if there's an api folder in user's project
+- It then loads `.config.js` file from the api folder
+- It then merges api routes and views routes
+- It then emits a `config-manual` event to anziiJS and passing to it routes information and webpack configurations
 
-### **_handlePromptUser_**
+### **_ANZIIJS_**
 
-- It receives data contained in an event object
-- It extracts the message from the data object of the event
-- It prompts(display/print) the message on the screen
-- It awaits user input to the printed message
-- It then calls back the event emitter with the input from the user
-
-# How It works
-
-- It creates
-- On beforeCompile event, it goes to the folder, read the files contained to a variable
-- It then filters the files to determine if they fit the criteria of the files to be deleted
-- It then finally deletes the files and exit.
+- It will extract the event data from the emitter of `config-manual`
+- It will then set up the webpack midddlewares, both webpack-hot-middleware and webpack-dev-middlewares
+- It will then set up everything else including routes, static folders, request handlers, etc
+- It will then start-up a server and begin listening for requests
+- It will then handle request for both api and views(react components)
