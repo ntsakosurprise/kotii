@@ -406,8 +406,16 @@ const resolveKotiiScriptsInternalImports = (specifier) => {
  *
  * @param {*} specifier
  * @returns true/false
- * resolveKotiiScriptsInternalImports resolves imports from kotii-scripts' internals during
- * development time. This is mainly done for modules in /kotii-land
+ * resolveKotiiUserApiPlugins resolves imports for user api resources. Kotii requires that users
+ * create an `api` folder, this folder is used to define the plugins used as backend for the app(for apps tht require backend)
+ * This enables the user's app to handle both requests for views and data under one source.
+ * The imports are made internally by kotii to the user's `api` folder. Kotii uses dynamic import to try
+ * to find a possible existence of the `api` folder.
+ *
+ * Pre-fixing the path with /kotii-user-api/ ensures that during import, kotii-js's custom resolver
+ * can detect that the folder being loaded is meant to load files from a user's /api/** folder if
+ * it exists. It replaces the string /kotii-user-api/plugins with /api/index.js that is relevant to
+ * the current user's enviroment.
  *
  */
 const resolveKotiiUserApiPlugins = (specifier) => {
@@ -426,6 +434,16 @@ const resolveKotiiUserApiPlugins = (specifier) => {
     return false;
   }
 };
+
+/**
+ *
+ * @returns
+ * getPagesBasePath this function simply checks to see if we are in node_modules path or kotii path.
+ * node_modules path will imply that we are using the base of our paths as user's project, while
+ * the kotii path imply that we are using kotii-scripts's folder root as our base.
+ *
+ */
+
 const getPagesBasePath = () => {
   let nodeModulesPath = `${path.join(workdir, "node_modules")}`;
   let kotiiPath = `${path.join(workdir, "..")}`;
@@ -442,6 +460,14 @@ const getPagesBasePath = () => {
   return resolvePath;
 };
 
+/**
+ *
+ * @param {*} specifier
+ * @returns
+ * doMeta checks for the existance of meta key from an app.manifest.json. The meta key is an object that
+ * contains information about the user's project configurations. This configuration may include `aliases`
+ * key that maps a name and an absolute path that should be resolved to some file(s)
+ */
 const doMeta = (specifier) => {
   if (!meta) {
     let metaPath = path.resolve(workdir, "app.manifest.json");
