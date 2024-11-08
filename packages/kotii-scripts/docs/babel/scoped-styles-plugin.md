@@ -6,7 +6,7 @@
 
 <h2><strong>Why was it created?</Strong></h2>
 
-<p>This plugin was created as a solution to a problem that started when we enabled a <i><strong>writeToDist</strong></i> flag of webpack-dev-middleware. The middleware wrote files to the build folder, but it was unable to delete old update files that were no longer needed. The middleware has a feature to filter the files, but that still failed, and as a result, came the creation of this plugin</p>
+<p>This plugin was created to process styles file formats that cannot natively be loaded by nodejs. This plugin registers its self to babeljs to act as the processor of these files during build outside of webpack. This enables us the ability to hydrate styles. It also allows us to convert .xml and .csv documents to javascript objects that easily be rendered both client and serverside</p>
 
 ## **How It works**
 
