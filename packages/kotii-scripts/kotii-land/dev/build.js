@@ -2,72 +2,6 @@ import React from "react";
 import { Route, Router, Switch as Routes } from "wouter";
 import { useAppContext } from "../../react-components/index.jsx";
 
-// import { comps, routes, getPagesTools } from "./pages.js";
-
-// const comps = {
-//   Test,
-//   Privacy,
-//   Home,
-//   Faqs,
-//   ContactUs,
-//   About,
-//   Todo,
-//   Pos,
-//   Slug,
-//   Connection,
-//   Testing,
-// };
-// const routes = [
-//   {
-//     path: "/test",
-//     component: "Test",
-//   },
-//   {
-//     path: "/privacy",
-//     component: "Privacy",
-//   },
-//   {
-//     path: "/",
-//     component: "Home",
-//   },
-//   {
-//     path: "/faqs",
-//     component: "Faqs",
-//   },
-//   {
-//     path: "/contact-us",
-//     component: "ContactUs",
-//   },
-//   {
-//     path: "/about",
-//     component: "About",
-//   },
-//   {
-//     path: "/todo",
-//     component: "Todo",
-//   },
-//   {
-//     path: "/pos",
-//     component: "Pos",
-//   },
-//   {
-//     path: "/pos/:slug",
-//     component: "Slug",
-//   },
-//   {
-//     path: "/connection",
-//     component: "Connection",
-//   },
-//   {
-//     path: "/testing",
-//     component: "Testing",
-//   },
-//   // {
-//   //   path: "/test.jsxxxx",
-//   //   component: "Test.jsxxxx",
-//   // },
-// ];
-
 const Wrapper = (props) => {
   //const Component = props.component;
   return (
@@ -108,18 +42,6 @@ const ClientRoutes = (props) => {
                 </Wrapper>
               );
             };
-            // console.log("FUNCTION TO RENDER", funcToRender)
-            // return (
-            //   <Wrapper key={index}>
-            //     <Public
-            //       {...props}
-            //       exact
-            //       path={r.path}
-            //       component={component}
-            //       key={index}
-            //     />
-            //   </Wrapper>
-            // );
 
             return (
               <Route
@@ -152,7 +74,6 @@ const RoutesAsServerRoutes = (props) => {
         return <></>;
       };
 
-  // if (!Layout || Layout) return <div>My react component</div>;
   return (
     <Layout>
       <Routes>
