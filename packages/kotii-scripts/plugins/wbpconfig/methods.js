@@ -63,6 +63,7 @@ methods.configureWebPack = function (payload, envs = null) {
     runOnComplete: self.testRunFromWebpack.bind(self),
     closeWatcher: self.closeWatcher.bind(self),
     notifyClient: self.notifyClient.bind(self),
+    isProjectPNPM: contextApp.appPnpmPkgr,
   });
 
   console.log("PROCESS.ENV", process.env);

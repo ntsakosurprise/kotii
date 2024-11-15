@@ -99,6 +99,11 @@ methods.getAppInContextResources = function (environment = false) {
       appApi: self.checkIfIsDirectory(self.getFilePath(appFolder, "api"))
         ? self.getFilePath(appFolder, "api")
         : null,
+      appPnpmPkgr: self.checkIfIsFile(
+        self.getFilePath(appFolder, "pnpm-lock.yaml")
+      )
+        ? true
+        : null,
     };
     console.log("THE RESOURCES", resources);
     // let appFileSavePath = `${resources.appSrc}/about_.js`;
