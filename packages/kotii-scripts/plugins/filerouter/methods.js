@@ -1,6 +1,5 @@
 const methods = {};
-import { createRequire } from "node:module";
-const require = createRequire(import.meta.url);
+import { kotiiKotiiLandPath } from "../../kotii_paths.js";
 
 methods.init = function () {
   console.log("Filerouter has been initialised");
@@ -113,7 +112,8 @@ methods.handleRemovePagesImport = async function (data) {
   const readFileSync = pao.pa_readFileSync;
   const cwd = getWorkingFolder();
 
-  const buildPath = `${cwd}/node_modules/kotii-scripts/kotii-land/dev/build.js`;
+  const buildPath = `${kotiiKotiiLandPath}/dev/build.js`;
+
   const buildPathFile = readFileSync(buildPath);
   const buildAst = parser.parse(buildPathFile, {
     sourceType: "module",
@@ -628,7 +628,9 @@ methods.addToAST = function ({
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const cwd = getWorkingFolder();
 
-  const filePath = `${cwd}/node_modules/kotii-scripts/kotii-land/dev/pages.js`;
+  const filePath = `${kotiiKotiiLandPath}/dev/pages.js`;
+
+  console.log("THE BUILD PATH CWD", cwd, filePath);
 
   console.log("KOTTILAND FILE PATH", filePath);
   // const altPath = `${cwd}/build_test.js`;
@@ -1216,7 +1218,7 @@ methods.addImportLineToBuildJs = function () {
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const cwd = getWorkingFolder();
 
-  const buildPath = `${cwd}/node_modules/kotii-scripts/kotii-land/dev/build.js`;
+  const buildPath = `${kotiiKotiiLandPath}/dev/build.js`;
   const buildPathFile = readFileSync(buildPath);
   let buildAst = parser.parse(buildPathFile, {
     sourceType: "module",
@@ -1224,6 +1226,7 @@ methods.addImportLineToBuildJs = function () {
   });
 
   console.log("AST FOR BUILD.JS");
+  self.removeImportDeclarations(buildAst, ["./pages.js"]);
   const generateBuildAst = generate(buildAst).code;
   const buildImportString = self.insertIdentifierImportDeclarations([
     {
@@ -1249,7 +1252,7 @@ methods.createMetaAst = function (metaData) {
   const contains = pao.pa_contains;
   const cwd = getWorkingFolder();
 
-  const filePath = `${cwd}/node_modules/kotii-scripts/kotii-land/dev/manifest.js`;
+  const filePath = `${kotiiKotiiLandPath}/dev/manifest.js`;
   const jsFile = readFileSync(filePath);
   let ast = parser.parse(jsFile, { sourceType: "module" });
 

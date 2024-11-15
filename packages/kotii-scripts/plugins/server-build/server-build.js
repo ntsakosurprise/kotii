@@ -3,12 +3,7 @@ import parser from "@babel/parser";
 import template from "@babel/template";
 import traverse from "@babel/traverse";
 import * as t from "@babel/types";
-import path from "path";
-import { fileURLToPath } from "url";
 import methods from "./methods.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 class ServerBuild {
   constructor(pao) {
@@ -18,7 +13,7 @@ class ServerBuild {
     this.t = t;
     this.template = template.default;
     this.generate = generate.default;
-    this.kotiiScriptsPath = path.join(__dirname, "..", "..");
+    // this.kotiiScriptsPath = path.join(__dirname, "..", "..");
 
     this.init = methods.init;
     this.handleServerBuild = methods.handleServerBuild;
