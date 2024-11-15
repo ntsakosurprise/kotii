@@ -1,10 +1,11 @@
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import webpack from "webpack";
 import {
   DeleteFilesWebpackPlugin,
   FinishCompilationOnErrorWebpackPlugin,
-  RemoveImportsWebpackPlugin,
+  HookToLoaderResolutionWebpackPlugin,
   WatchOwnFilesWebpackPlugin,
 } from "../../webpack-plugins/index.js";
 
@@ -25,6 +26,16 @@ export default (options) => {
   let scriptsWebpackResolve = path.resolve(
     scriptsPath,
     "kotii-land/dev/app_.js"
+  );
+  console.log(
+    "WEBPACK KOTII RESOLVE",
+    scriptsPath,
+    scriptsWebpackResolve,
+    fs.existsSync(scriptsWebpackResolve)
+  );
+  console.log(
+    "WEBPACK KOTII RESOLVE path.join",
+    path.resolve(`${scriptsWebpackResolve}`)
   );
 
   return {
@@ -100,15 +111,26 @@ export default (options) => {
 
         // "crypto": false,
       }, // Add these as polyfills for use in the browser, webpack no longer auto-polyfills them
+      modules: [
+        process.cwd(),
+        env.appFolder,
+        path.join(process.cwd(), "node_modules"),
+        path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
+      ],
     },
     module: {
       rules: [
         {
           test: /\.(?:js|mjs|cjs|jsx)$/,
-          include: [path.resolve(scriptsPath, "/")],
+          include: [
+            process.cwd(),
+            env.appFolder,
+            path.join(process.cwd(), "node_modules"),
+            path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
+          ],
           // exclude: /node_modules\/(?!(kotii-scripts)\/).*/,
           // include: [scriptsWebpackResolve],
-          exclude: /node_modules\/(?!kotii-scripts).+/,
+          // exclude: /node_modules\/(?!kotii-scripts).+/,
           use: {
             loader: "babel-loader",
             options: {
@@ -216,24 +238,27 @@ export default (options) => {
       new DeleteFilesWebpackPlugin({
         deleteFolder: options.buildFolder,
       }),
+      new HookToLoaderResolutionWebpackPlugin(),
+
       new FinishCompilationOnErrorWebpackPlugin({
         closeWatcher: options.closeWatcher,
-      }),
-      new RemoveImportsWebpackPlugin({
-        removeFilePath: `${scriptsPath}/kotii-land/dev/build.js`,
-        removeFileSpecifiers: ["./pages.js"],
       }),
       new WatchOwnFilesWebpackPlugin({
         filesToWatch: `${options.pagesFolder}`,
         runOnComplete: options.runOnComplete,
         notifyClient: options.notifyClient,
       }),
+      // new GetStatsWebpackPlugin({ writeFilePath: env.appBuildFolder }),
       new webpack.DefinePlugin({
         "process.env": {
           ...appEnvironmentVariables,
         },
       }),
       new webpack.HotModuleReplacementPlugin(),
+      // new RemoveImportsWebpackPlugin({
+      //   removeFilePath: `${scriptsPath}/kotii-land/dev/build.js`,
+      //   removeFileSpecifiers: ["./pages.js"],
+      // }),
     ],
   };
 };
