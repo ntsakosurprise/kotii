@@ -326,7 +326,7 @@ methods.createProjectBase = function (options, folderName, repoUrl) {
         type: template,
         callback: (templateInfo) => {
           // console.log("THE TEMPLATE INFO ", templateInfo);
-          // console.log("THE GET TEMPLATE", options);
+          console.log("THE GET TEMPLATE", options);
           let kotiiMain = options["local-scripts"]
             ? options["local-scripts"]
             : null;
@@ -490,7 +490,7 @@ methods.startProjectCreation = async function (
 
   self.createProjectBase(answers, rName, repoUrl).then(async (options) => {
     // let options = self.createProjectBase(answers, rName, repoUrl);
-    // console.log("THE PACKAGE JSON OPTIONS", options);
+    console.log("THE PACKAGE JSON OPTIONS from CREATEPROJECT BASE", options);
     self
       .runTasks(await self.buildTaskList(answers, options), {
         appName: options.folderName,
