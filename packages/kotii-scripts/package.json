@@ -166,6 +166,7 @@
     "react-components/",
     "react-components-pruned/",
     "kotii.cjs",
+    "kotii_paths.js",
     "cli.cjs",
     "README.md",
     "CONTRIBUTING.md",
