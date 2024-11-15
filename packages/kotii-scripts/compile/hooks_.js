@@ -4,6 +4,7 @@ import { isBuiltin } from "node:module";
 import { pathToFileURL } from "node:url";
 import path from "path";
 import babelJson from "../babel.server.json" assert { type: "json" };
+import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
 let meta = null;
 let workdir = `${process.cwd()}`;
 let sep = path.sep;
@@ -114,7 +115,13 @@ export async function load(url, context, nextLoad) {
           url.split("/").includes("kotii-scripts") &&
           url.indexOf("/kotii-scripts/node_modules") < 0
         ) {
-          console.log("IS NODE MODULES AND KOTII");
+          console.log(
+            "IS NODE MODULES AND KOTII",
+            fileName,
+            fileExtension,
+            url,
+            urlInstance
+          );
 
           source = fs.readFileSync(urlInstance, {
             encoding: "utf-8",
@@ -362,13 +369,24 @@ const resolveKotiiScriptsImports = (specifier) => {
     /^kotii-scripts/.test(specifier)
   );
   if (!isBuiltin(specifier) && /^kotii-scripts/.test(specifier)) {
-    console.log("THE SPECIFIER FOR KOTII-SCRIPTS PATH", specifier);
-    let kotiiExportsPath = fs.existsSync(path.join(workdir, "node_modules"))
-      ? path.join(workdir, "node_modules/kotii-scripts/kotii-land/dev/app_.js")
-      : `${workdir}${sep}kotii-land/dev/app_.js/`;
-    console.log("THE PATH AS URL", pathToFileURL(kotiiExportsPath).href);
+    // let kotiiExportsPath = fs.existsSync(path.join(workdir, "node_modules"))
+    //   ? path.join(workdir, "node_modules/kotii-scripts/kotii-land/dev/app_.js")
+    //   : `${workdir}${sep}kotii-land/dev/app_.js/`;
+
+    // console.log("THE PATH AS URL", pathToFileURL(kotiiExportsPath).href);
+    let kotiiExportsPath = `${kotiiKotiiLandPath}/dev/app_.js`;
+    let urlLized = pathToFileURL(kotiiExportsPath).href;
+    console.log(
+      "THE SPECIFIER FOR KOTII-SCRIPTS PATH",
+      "KOTII-SCRIPTS IMPORTS",
+      specifier,
+      "EXPORTS PATH",
+      kotiiExportsPath,
+      "URLIZED",
+      urlLized
+    );
     return {
-      url: pathToFileURL(kotiiExportsPath).href,
+      url: urlLized,
       shortCircuit: true,
     };
   } else {
@@ -386,13 +404,25 @@ const resolveKotiiScriptsImports = (specifier) => {
  */
 const resolveKotiiScriptsInternalImports = (specifier) => {
   if (!isBuiltin(specifier) && /^\/kotii-land/.test(specifier)) {
-    console.log("THE SPECIFIER FOR KOTII-SCRIPTS PATH", specifier);
-    let kotiiExportsPath = fs.existsSync(path.join(workdir, "node_modules"))
-      ? path.join(workdir, `node_modules/kotii-scripts/${specifier}`)
-      : `${workdir}${sep}kotii-land/dev/app_.js/`;
-    console.log("THE PATH AS URL", pathToFileURL(kotiiExportsPath).href);
+    // console.log("THE SPECIFIER FOR KOTII-SCRIPTS PATH", specifier);
+    // let kotiiExportsPath = fs.existsSync(path.join(workdir, "node_modules"))
+    //   ? path.join(workdir, `node_modules/kotii-scripts/${specifier}`)
+    //   : `${workdir}${sep}kotii-land/dev/app_.js/`;
+    // console.log("THE PATH AS URL", pathToFileURL(kotiiExportsPath).href);
+
+    let kotiiExportsPath = `${kotiiRootPath}${specifier}`;
+    let urlLized = pathToFileURL(kotiiExportsPath).href;
+    console.log(
+      "THE SPECIFIER FOR KOTII-SCRIPTS PATH",
+      "KOTII-LAND IMPORTS",
+      specifier,
+      "EXPORTS PATH",
+      kotiiExportsPath,
+      "URLIZED",
+      urlLized
+    );
     return {
-      url: pathToFileURL(kotiiExportsPath).href,
+      url: urlLized,
       shortCircuit: true,
     };
   } else {
