@@ -1,12 +1,13 @@
 /* eslint-disable react/prop-types */
+import { images } from "Assets";
 import { Head } from "kotii-scripts";
 import styled from "kotii-styled";
 import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
 import { FaLongArrowAltRight } from "react-icons/fa/index.js";
 import { useDispatch, useSelector } from "react-redux";
-import SearchImage from "../assets/docs_search.png";
-import StonesJPG from "../assets/stones.jpg";
+// import SearchImage from "../assets/docs_search.png";
+// import StonesJPG from "../assets/stones.jpg";
 import CONFIG from "../config/environment_variables.js";
 import SVGConnections from "../shared/test.jsx";
 import names from "../state/places.json";
@@ -184,8 +185,8 @@ const PeopleList = (props) => {
 const Index = () => {
   console.log("THE ENVIRONMENT CONFIG", CONFIG.GITHUB_APP_ID);
   console.log("OUR NODE ENV", process.env.NODE_ENV);
-  console.log("OUR IMAGES: SEARCH", SearchImage);
-  console.log("OUR IMAGES: STONES", StonesJPG);
+  console.log("OUR IMAGES: SEARCH", images.SearchImage);
+  console.log("OUR IMAGES: STONES", images.StonesJPG);
   console.log("THE CSV", Reminder);
   console.log("USER XML", User);
   console.log("NAMES", names);
@@ -219,8 +220,8 @@ const Index = () => {
       <SVG>
         <SVGConnections />
       </SVG>
-      <img src={SearchImage} width={36} height={36} />
-      <img src={StonesJPG} width={800} />
+      <img src={images.SearchImage} width={36} height={36} />
+      <img src={images.StonesJPG} width={800} />
     </Main>
   );
 };
