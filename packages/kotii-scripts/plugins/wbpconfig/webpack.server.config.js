@@ -21,6 +21,7 @@ export default (options) => {
   console.log("WEBPACK APP ENVS", appEnvironmentVariables);
   console.log("THE SERVER CONFIG");
   console.log("THE APP BUILD FOLDER", env.appBuildFolder);
+  console.log("PNPM STATUS", options.isProjectPNPM);
   console.log("THE DIR_NAME", __dirname, path.resolve(__dirname, "../.."));
   let scriptsPath = path.resolve(__dirname, "../..");
   let scriptsWebpackResolve = path.resolve(
@@ -37,6 +38,7 @@ export default (options) => {
     "WEBPACK KOTII RESOLVE path.join",
     path.resolve(`${scriptsWebpackResolve}`)
   );
+  const { isProjectPNPM = false } = options;
 
   return {
     // entry:{
@@ -111,26 +113,30 @@ export default (options) => {
 
         // "crypto": false,
       }, // Add these as polyfills for use in the browser, webpack no longer auto-polyfills them
-      modules: [
-        process.cwd(),
-        env.appFolder,
-        path.join(process.cwd(), "node_modules"),
-        path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
-      ],
+      modules: !isProjectPNPM
+        ? ["node_modules"]
+        : [
+            process.cwd(),
+            path.join(process.cwd(), "node_modules"),
+            path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
+          ],
     },
     module: {
       rules: [
         {
           test: /\.(?:js|mjs|cjs|jsx)$/,
-          include: [
-            process.cwd(),
-            env.appFolder,
-            path.join(process.cwd(), "node_modules"),
-            path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
-          ],
+          include: !isProjectPNPM
+            ? [path.resolve(scriptsPath, "/")]
+            : [
+                process.cwd(),
+                path.join(process.cwd(), "node_modules"),
+                path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
+              ],
           // exclude: /node_modules\/(?!(kotii-scripts)\/).*/,
           // include: [scriptsWebpackResolve],
-          // exclude: /node_modules\/(?!kotii-scripts).+/,
+          exclude: !isProjectPNPM
+            ? /node_modules\/(?!kotii-scripts).+/
+            : /node_modules\/\.pnpm\/node_modules\/(?!kotii-scripts)/,
           use: {
             loader: "babel-loader",
             options: {
