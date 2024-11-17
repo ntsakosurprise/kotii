@@ -219,8 +219,8 @@ const Index = () => {
       <SVG>
         <SVGConnections />
       </SVG>
-      {/* <img src={SearchImage} width={36} height={36} /> */}
-      {/* <img src={StonesJPG} width={800} /> */}
+      <img src={SearchImage} width={36} height={36} />
+      <img src={StonesJPG} width={800} />
     </Main>
   );
 };
