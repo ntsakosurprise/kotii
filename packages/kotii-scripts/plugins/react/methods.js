@@ -3,6 +3,7 @@ import fs from "fs";
 import { ServerStyleSheet } from "kotii-styled";
 import path from "path";
 import { Router } from "wouter";
+import { kotiiKotiiLandPath } from "../../kotii_paths.js";
 
 methods.init = function () {
   this.adLog("React View has been initialised");
@@ -195,8 +196,12 @@ methods.renderFullPage = function (
 ) {
   const self = this;
   const { serialize } = self;
-  const jsonStyles = fs.existsSync(`${process.cwd()}${path.sep}styles.json`)
-    ? JSON.parse(fs.readFileSync(`${process.cwd()}${path.sep}styles.json`))
+  const jsonStyles = fs.existsSync(
+    `${kotiiKotiiLandPath}${path.sep}dev/styles.json`
+  )
+    ? JSON.parse(
+        fs.readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`)
+      )
     : null;
   let styleTags = jsonStyles ? jsonStyles.toString().replace(",", "") : "";
   console.log("THE PRELOADED STATE", preloadedState, styleTags);
