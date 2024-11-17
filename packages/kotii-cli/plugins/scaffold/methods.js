@@ -369,18 +369,14 @@ methods.buildTaskList = async function (answers, options) {
     {
       title: "Copy project files",
       task: () =>
-        self.pao.pa_createFolderContent(
-          options.templatePath,
-          options.folderName,
-          [
-            "node_modules",
-            "build",
-            "dist",
-            "webpack.config.js",
-            ".babelrc",
-            "yarn.lock",
-          ]
-        ),
+        self.copyFiles(options.templatePath, options.folderName, [
+          "node_modules",
+          "build",
+          "dist",
+          "webpack.config.js",
+          ".babelrc",
+          "yarn.lock",
+        ]),
     },
     {
       title: "Clean package json",
@@ -1364,5 +1360,52 @@ methods.pnpmInstallationConfig = function ({
     installString = `pnpm install`;
     return installString;
   }
+};
+methods.copyFiles = function (sourcePath, savePath, ignore = null) {
+  console.log("CREATE FOLDER CONTENT SOURCE", sourcePath, savePath, ignore);
+  const self = this;
+  const contains = self.pao.pa_contains;
+  const CURR_DIR = process.cwd();
+  const filesToCreate = fs.readdirSync(sourcePath);
+  console.log("THE CURRENT DIR", CURR_DIR);
+  console.log("THE FILES", filesToCreate);
+  // console.log("CREATE FOLDER CONTENT CURR_DI",CURR_DIR)
+  // console.log("CREATE FOLDER CONTENT FILES TO CREATE", filesToCreate)
+  // console.log("CREATE FOLDER CONTENT FILES TO IGNORE", ignore)
+  filesToCreate.forEach((file) => {
+    console.log("THE FILE", file);
+    const origFilePath = `${sourcePath}/${file}`;
+    console.log("THE ORIGINAL FILE PATH", origFilePath);
+    // console.log("CREATE FOLDER CONTENT Original File pATH", origFilePath)
+    // Get file statitics
+    const stats = fs.statSync(origFilePath);
+    let skip = false;
+    if (stats.isFile()) {
+      // let fileBaseName = path.basename(origFilePath)
+      // console.log("CREATE FOLDER CONTENT writepath pATH", fileBaseName)
+      // console.log("CREATE FOLDER CONTENT file", file)
+      if (ignore && contains(ignore, file)) skip = true;
+      if (!skip) {
+        // const contents = fs.readFileSync(origFilePath, "utf8");
+        // const writePath = `${CURR_DIR}/${savePath}/${file}`;
+        // // console.log("CREATE FOLDER CONTENT writepath pATH", origFilePath)
+        // fs.writeFileSync(writePath, contents, "utf8");
+        console.log("Saving file");
+        fs.copyFileSync(origFilePath, `${savePath}/${file}`);
+      }
+    } else if (stats.isDirectory()) {
+      // console.log("THE FOLDER", file)
+      if (ignore && contains(ignore, file)) skip = true;
+      if (!skip) {
+        fs.mkdirSync(`${CURR_DIR}/${savePath}/${file}`);
+        // recursive call
+        self.copyFiles(`${sourcePath}/${file}`, `${savePath}/${file}`);
+        // self.p_createFolderContent(
+        //   `${sourcePath}/${file}`,
+        //   `${savePath}/${file}`
+        // );
+      }
+    }
+  });
 };
 module.exports = methods;

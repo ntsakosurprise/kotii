@@ -226,6 +226,7 @@ class Scaffold {
     this.npmInstallationConfig = methods.npmInstallationConfig;
     this.yarnInstallationConfig = methods.yarnInstallationConfig;
     this.pnpmInstallationConfig = methods.pnpmInstallationConfig;
+    this.copyFiles = methods.copyFiles;
   }
 }
 
