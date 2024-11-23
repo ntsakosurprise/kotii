@@ -170,18 +170,36 @@ const SVG = styled("div")({
   position: "relative",
 });
 
-const PeopleList = (props) => {
+// const PeopleList = (props) => {
+//   console.log("THE PROPS TO PEOPLE COMP", props);
+//   if (props.people.length > 0)
+//     return (
+//       <ul>
+//         {props.people.map((person, i) => {
+//           return <li key={i}>{person}</li>;
+//         })}
+//       </ul>
+//     );
+//   return null;
+// };
+const UserComp = (props) => {
   console.log("THE PROPS TO PEOPLE COMP", props);
-  if (props.people.length > 0)
+  if (props?.user)
     return (
-      <ul>
-        {props.people.map((person, i) => {
-          return <li key={i}>{person}</li>;
-        })}
-      </ul>
+      <div>
+        name: {props.user.name}
+        <br />
+        username: {props.user.userName}
+        <br />
+        born: {props.user.born}
+        <br />
+        status: {props.user.status}
+        <br />
+      </div>
     );
   return null;
 };
+
 const Index = () => {
   console.log("THE ENVIRONMENT CONFIG", CONFIG.GITHUB_APP_ID);
   console.log("OUR NODE ENV", process.env.NODE_ENV);
@@ -190,13 +208,22 @@ const Index = () => {
   console.log("THE CSV", Reminder);
   console.log("USER XML", User);
   console.log("NAMES", names);
-  const peopleList = useSelector((state) => {
+  // const peopleList = useSelector((state) => {
+  //   console.log("STATE RECEIVED", state);
+  //   return state.homeReducer.people;
+  // });
+  const user = useSelector((state) => {
     console.log("STATE RECEIVED", state);
-    return state.homeReducer.people;
+    return state.homeReducer.user;
   });
   const dispatch = useDispatch();
-  const doList = () => {
-    if (peopleList.length <= 0) dispatch(actions.showPeopleList());
+  // const doList = () => {
+  //   if (peopleList.length <= 0) dispatch(actions.showPeopleList());
+  //   dispatch(actions.hidePeopleList());
+  // };
+
+  const doUser = () => {
+    if (!user) dispatch(actions.showUser());
     dispatch(actions.hidePeopleList());
   };
   return (
@@ -211,10 +238,12 @@ const Index = () => {
         <Path />
         <StyledButton>
           <ButtonBackCard />
-          <ButtonFrontCard onClick={doList}>Learn More </ButtonFrontCard>
+          {/* <ButtonFrontCard onClick={doList}>Learn More </ButtonFrontCard> */}
+          <ButtonFrontCard>Learn More </ButtonFrontCard>
         </StyledButton>
 
-        {peopleList ? <PeopleList people={peopleList} /> : null}
+        {/* {peopleList ? <PeopleList people={peopleList} /> : null} */}
+        {user ? <UserComp user={user} /> : null}
         {/* <img src={connectionsSvg} width={50} alt="connections svg" /> */}
       </Hero>
       <SVG>
@@ -226,8 +255,12 @@ const Index = () => {
   );
 };
 
+// export const getServerState = (store) => {
+//   return store.dispatch(actions.showPeopleList());
+// };
+
 export const getServerState = (store) => {
-  return store.dispatch(actions.showPeopleList());
+  return store.dispatch(actions.showUser());
 };
 
 export default Index;
