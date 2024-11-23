@@ -5,6 +5,8 @@ export const homeReducer = (state = actionProps, action) => {
   switch (action.type) {
     case types.SHOW_PEOPLE_LIST:
       return { ...state, ...action.payload };
+    case types.SHOW_USER:
+      return { ...state, ...action.payload };
     case types.HIDE_PEOPLE_LIST:
       return { ...state, ...action.payload };
     default:
