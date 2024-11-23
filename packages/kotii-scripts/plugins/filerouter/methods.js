@@ -1443,7 +1443,7 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
       // name: route.component,
       name: route.componentName,
       // requiresData: self.getComponentServerState(route.path, routesObject),
-      requiresData: false,
+      requiresData: route.getServerState,
     };
   });
   // console.log("ROUTES BUILT", builtRoutes);
