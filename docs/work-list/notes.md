@@ -13,3 +13,5 @@
 - Fix file-loader install on fresh install of kotiiJS
 - Find a way for a better installation of kotiiJS dependecies when doing local installations for testing(We will check the differenct package managers and how they deal with this)
 - Fix nodejs styles hydration
+- Add a pull-request on anziiJS framework.<br><br>
+  > **NOTE** The pull request should be able to address an issue with anziiJS crashing with `Error: cannot set headers after headers have been sent to client`. Our discovery showed that this happened when anziiJS started processing another request while another one is in progress. <br> It just so happened that the second one overriden the req-res objects of the first one, and by the time the first one tries to send a response, it happened that it sent it on the `res` object of the second request, which then resulted in the error mentioned above. What we have currently is temporary solution. We will work with anziiJS team to find a better, permanent solution.

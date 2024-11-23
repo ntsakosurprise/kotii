@@ -4,9 +4,9 @@
 
 ### Cosmetics
 
-- Properly set up file paths on different plugins for kotii, eg; in Filerouter,
-- Configure source to support proper installations by package managers
-- Configure images in the framework
+- `Properly set up file paths on different plugins for kotii, eg; in Filerouter`,
+- `Configure source to support proper installations by package managers`
+- `Configure images in the framework`
 - Add functionality for static generator to fetch data from api
 - Set SPA to be handled by kotiijs server
 - Clean-up custom nodejs loaders
@@ -22,10 +22,12 @@
 - Optimize the system
 - Add logging strategy[Explore react logging]
 - Configure source maps
-- Support htts on a local server
-- Add support for fonts
-- Hydrate other assets like css, etc
+- Support https on a local server
+- `Add support for fonts`
+- `Hydrate other assets like css, etc`
 - Add support for protected routes or views
+- Generate kotii production build
+- Generate kotii static site
 
 ### Features
 
