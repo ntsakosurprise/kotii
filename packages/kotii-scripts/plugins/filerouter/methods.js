@@ -65,6 +65,7 @@ methods.handleFileRoutes = async function (data) {
         message: "Routes Configured",
         resources: payload.path,
         routes: self.buildServerRoutes(routesObject),
+        isDomainCreated: meta?.isDomainCreated || false,
       };
 
       const { lastCompsCount = 0, compsSource, compsPaths } = meta;
@@ -736,6 +737,7 @@ methods.addToAST = function ({
     compsSource: source,
     lastCompsCount: pagesPaths.length,
     compsPaths: [...pagesPaths],
+    isDomainCreated: true,
   });
   //self.cacheData(self.keys.CACHE_ROUTES_PATHS_KEY, pagesPaths);
   // self.cacheData(self.keys.SAVE_FILES_KEY, { added: [], deleted: [] });

@@ -32,7 +32,13 @@ methods.configureWebPack = function (payload, envs = null) {
   // const getWorkingDir = pao.p_getWorkingFolder;
   const cwd = pao.pa_getWorkingFolder();
   const { webpack, setContextEnv } = self;
-  const { routes = null, contextApp, build = false } = payload;
+  const {
+    routes = null,
+    contextApp,
+    build = false,
+    isDomainCreated = false,
+  } = payload;
+  const { useCustomDomain = false, useHttps = false } = contextApp.appManifest;
   const webPackConfig =
     (process.env?.ANZII_CLI_WITH_SERVER &&
       process.env.ANZII_CLI_WITH_SERVER === "true") ||
@@ -46,6 +52,9 @@ methods.configureWebPack = function (payload, envs = null) {
     contextApp.appManifest.app
   );
   console.log("THE APP ENVS", envs);
+  if (!isDomainCreated && useCustomDomain) {
+    if (useHttps) process.env["ANZII_APP_USE_HTTPS"] = true;
+  }
   setContextEnv(contextApp, envs);
   const webpackConfigObject = webPackConfig({
     cwd,
@@ -376,6 +385,20 @@ methods.restartSever = function (addPath, eventType = "", runStatus = null) {
     );
     // await killPortProcess(process.env.PORT)
     process.exit(1);
+  });
+};
+methods.configureDomainOnceOff = function (data, events, options = null) {
+  const self = this;
+  // const { watched, persistent = true, ignored = null, events = null } = payload;
+  self.emit({
+    type: "watch-target",
+    data: {
+      payload: { watched: data, events },
+      callback: (data) => {
+        console.log("File watch set", data);
+        self.closeWatcher = data.closeWatcher;
+      },
+    },
   });
 };
 export default methods;
