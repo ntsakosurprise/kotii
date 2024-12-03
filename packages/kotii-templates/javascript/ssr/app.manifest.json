@@ -3,6 +3,8 @@
     "type": "ssr",
     "stateVendor": "redux"
   },
+  "useHttps": true,
+  "useDomain": true,
   "build": "build",
   "static": "static",
   "aliases": {
