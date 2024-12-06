@@ -15,7 +15,7 @@ methods.handleWebpackConfig = function (data) {
   // console.log("SELF BEFORE", self);
   self["callback"] = data.callback;
   const loadFile = self.pao.pa_loadFile;
-  const { contextApp, isDomainCreated = false } = data.payload;
+  const { contextApp } = data.payload;
   const { appEnv = "" } = contextApp;
   const { useCustomDomain = false, useHttps = false } = contextApp.appManifest;
   console.log("WEBPACK DATA PAYLOAD", data.payload.build);
@@ -42,13 +42,21 @@ methods.handleWebpackConfig = function (data) {
           .createSSLCertificate(config, `${kotiiKotiiLandPath}/openssl.conf`)
           .then((certs) => {
             console.log("THE APP CERTS", certs);
-            self.addDomainToHost(contextApp.appName).then((addedHost) => {
-              console.log("THE ADDED HOST", addedHost);
-              self.getEnvVariables(appEnv).then((envs) => {
-                console.log("THE ENVS", config);
-                self.configureWebPack(data.payload, envs, config);
+            self
+              .addDomainToHost(`${contextApp.appName}.com`)
+              .then((addedHost) => {
+                console.log("THE ADDED HOST", addedHost);
+                let certDomainConfig = {
+                  certs: certs.filesOutputPaths,
+                  host: addedHost.domainName,
+                  useCustomDomain,
+                  useHttps,
+                };
+                self.getEnvVariables(appEnv).then((envs) => {
+                  console.log("THE ENVS", config);
+                  self.configureWebPack(data.payload, envs, certDomainConfig);
+                });
               });
-            });
           });
       }
     );
@@ -125,7 +133,8 @@ methods.configureWebPack = function (
           compiler: wbpCompiler,
           webpackConfig: webpackConfigObject,
         },
-        { routes, api: contextApp.appApi }
+        { routes, api: contextApp.appApi },
+        certDomainConfig
 
         // domain: [{ name: 'static', set: 'public' }]
       );
@@ -172,7 +181,11 @@ methods.setContextEnv = function (mdconfig, envs = null) {
     }
   }
 };
-methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
+methods.configureDevServer = function (
+  webpacks,
+  anziiManualConfigs = null,
+  domainHostConfig = null
+) {
   const self = this;
   const pao = self.pao;
   const callback = self.callback;
@@ -227,6 +240,15 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
                 ...appConfig,
                 // router: anziiManualConfigs.routes,
                 domain: [{ name: "static", set: "build" }],
+                server: {
+                  useHttps: domainHostConfig.useHttps,
+                  useCustomDomain: domainHostConfig.useCustomDomain,
+                  domainName: domainHostConfig.host,
+                  appOpts: {
+                    key: fs.readFileSync(domainHostConfig.key),
+                    cert: fs.readFileSync(domainHostConfig.certificate),
+                  },
+                },
               },
             },
             callback: (data) => {
@@ -248,6 +270,15 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
           configs: {
             router: [...anziiManualConfigs.routes],
             domain: [{ name: "static", set: "build" }],
+            server: {
+              useHttps: domainHostConfig?.useHttps,
+              useCustomDomain: domainHostConfig?.useCustomDomain,
+              domainName: domainHostConfig?.host,
+              appOpts: {
+                key: fs.readFileSync(domainHostConfig.key),
+                cert: fs.readFileSync(domainHostConfig.certificate),
+              },
+            },
           },
         },
         callback: (data) => {
