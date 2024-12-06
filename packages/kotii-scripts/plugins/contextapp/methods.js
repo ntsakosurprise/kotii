@@ -70,6 +70,7 @@ methods.getAppInContextResources = function (environment = false) {
       appEnv: self.getEnvFilePath(appFolder),
       appFolder: self.getFilePath(appFolder, "."),
       appName: appFolderSplit[appFolder.length - 1],
+      appSsl: self.getFilePath(appFolder, "ssl"),
       appIndexFile: self.getFilePath(appFolder, "src/index.js"),
       appPagesFolder: self.getFilePath(appFolder, "src/pages"),
       appSrc: self.getFilePath(appFolder, "src"),
