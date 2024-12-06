@@ -3,7 +3,7 @@
     {
       "action": "generate-rsa",
       "options": {
-        "outputPath": "generated-key.pem",
+        "outputPath": "ssl/generated-key.pem",
         "text": true,
         "keyBitsLength": 2048
       }
@@ -14,8 +14,8 @@
         "new": true,
         "sha256": true,
         "text": true,
-        "key-source": "generated-key.pem",
-        "outputPath": "generated-csr.csr"
+        "key-source": "ssl/generated-key.pem",
+        "outputPath": "ssl/generated-csr.csr"
       }
     },
     {
@@ -25,9 +25,9 @@
         "sha256": true,
         "text": true,
         "days": 31,
-        "key-source": "generated-key.pem",
-        "input-source": "generated-csr.csr",
-        "outputPath": "generated-certificate.pem"
+        "key-source": "ssl/generated-key.pem",
+        "input-source": "ssl/generated-csr.csr",
+        "outputPath": "ssl/generated-certificate.pem"
       }
     }
   ]
