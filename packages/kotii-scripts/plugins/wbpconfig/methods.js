@@ -21,33 +21,37 @@ methods.handleWebpackConfig = function (data) {
   console.log("WEBPACK DATA PAYLOAD", data.payload.build);
   // console.log("SELF. AFTER SETTING CALLBACK", self);
   // console.log("THE NODE ENV", process.env.NODE_ENV);
-  if (!isDomainCreated && useCustomDomain) {
-    if (
-      !self.checkIfIsFile(
-        path.resolve(contextApp.appFolder, "certsConfig.json")
-      )
-    ) {
-      throw new Error(
-        "App is set to use https, but certs.json file is not yet defined"
-      );
-    } else {
-      if (useHttps) process.env["ANZII_APP_USE_HTTPS"] = true;
-      loadFile(path.resolve(contextApp.appFolder, "certsConfig.json")).then(
-        (sslConfig) => {
-          let config = JSON.parse(sslConfig);
-          self
-            .createSSLCertificate(config, `${kotiiKotiiLandPath}/openssl.conf`)
-            .then((certs) => {
-              self.addDomainToHost(contextApp.appName).then((addedHost) => {
-                self.getEnvVariables(appEnv).then((envs) => {
-                  console.log("THE ENVS", config);
-                  self.configureWebPack(data.payload, envs, config);
-                });
+  if (!fs.existsSync(contextApp.appSsl) && useHttps) {
+    // if (
+    //   !self.checkIfIsFile(
+    //     path.resolve(contextApp.appFolder, "certsConfig.json")
+    //   )
+    // ) {
+    //   throw new Error(
+    //     "App is set to use https, but certs.json file is not yet defined"
+    //   );
+    // } else {
+
+    // }
+    fs.mkdirSync(contextApp.appSsl);
+    if (useHttps) process.env["ANZII_APP_USE_HTTPS"] = true;
+    loadFile(path.resolve(kotiiKotiiLandPath, "certsConfig.json")).then(
+      (sslConfig) => {
+        let config = JSON.parse(sslConfig);
+        self
+          .createSSLCertificate(config, `${kotiiKotiiLandPath}/openssl.conf`)
+          .then((certs) => {
+            console.log("THE APP CERTS", certs);
+            self.addDomainToHost(contextApp.appName).then((addedHost) => {
+              console.log("THE ADDED HOST", addedHost);
+              self.getEnvVariables(appEnv).then((envs) => {
+                console.log("THE ENVS", config);
+                self.configureWebPack(data.payload, envs, config);
               });
             });
-        }
-      );
-    }
+          });
+      }
+    );
   } else {
     self.getEnvVariables(appEnv).then((envs) => {
       console.log("THE ENVS", envs);
