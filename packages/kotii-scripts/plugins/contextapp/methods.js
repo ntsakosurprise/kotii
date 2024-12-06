@@ -65,9 +65,11 @@ methods.getAppInContextResources = function (environment = false) {
     console.log("THE APP CONFIG", isPackageNameKotii);
     console.log("THE TEMPLATE FOLDER", templateFolder);
     console.log("THE TEMPLATE app FOLDER", appFolder);
+    let appFolderSplit = appFolder.split("/");
     const resources = {
       appEnv: self.getEnvFilePath(appFolder),
       appFolder: self.getFilePath(appFolder, "."),
+      appName: appFolderSplit[appFolder.length - 1],
       appIndexFile: self.getFilePath(appFolder, "src/index.js"),
       appPagesFolder: self.getFilePath(appFolder, "src/pages"),
       appSrc: self.getFilePath(appFolder, "src"),
