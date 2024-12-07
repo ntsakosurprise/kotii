@@ -37,7 +37,7 @@ class WebpackConfig {
     this.restartSever = methods.restartSever;
     this.checkIfIsFile = methods.checkIfIsFile;
     this.createSSLCertificate = methods.createSSLCertificate;
-    this.addDomainToHost = methods;
+    this.addDomainToHost = methods.addDomainToHost;
   }
 }
 export default WebpackConfig;

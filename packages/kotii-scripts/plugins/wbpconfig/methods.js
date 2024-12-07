@@ -35,8 +35,8 @@ methods.handleWebpackConfig = function (data) {
     // }
     fs.mkdirSync(contextApp.appSsl);
     if (useHttps) process.env["ANZII_APP_USE_HTTPS"] = true;
-    loadFile(path.resolve(kotiiKotiiLandPath, "certsConfig.json")).then(
-      (sslConfig) => {
+    loadFile(path.resolve(kotiiKotiiLandPath, ".certsConfig.json"))
+      .then((sslConfig) => {
         let config = JSON.parse(sslConfig);
         self
           .createSSLCertificate(config, `${kotiiKotiiLandPath}/openssl.conf`)
@@ -58,8 +58,10 @@ methods.handleWebpackConfig = function (data) {
                 });
               });
           });
-      }
-    );
+      })
+      .catch((err) => {
+        console.log("An error occured loading file", err);
+      });
   } else {
     self.getEnvVariables(appEnv).then((envs) => {
       console.log("THE ENVS", envs);
@@ -245,8 +247,8 @@ methods.configureDevServer = function (
                   useCustomDomain: domainHostConfig.useCustomDomain,
                   domainName: domainHostConfig.host,
                   appOpts: {
-                    key: fs.readFileSync(domainHostConfig.key),
-                    cert: fs.readFileSync(domainHostConfig.certificate),
+                    key: fs.readFileSync(domainHostConfig.certs.key),
+                    cert: fs.readFileSync(domainHostConfig.certs.certificate),
                   },
                 },
               },
