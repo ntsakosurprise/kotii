@@ -66,10 +66,11 @@ methods.getAppInContextResources = function (environment = false) {
     console.log("THE TEMPLATE FOLDER", templateFolder);
     console.log("THE TEMPLATE app FOLDER", appFolder);
     let appFolderSplit = appFolder.split("/");
+    console.log("THE");
     const resources = {
       appEnv: self.getEnvFilePath(appFolder),
       appFolder: self.getFilePath(appFolder, "."),
-      appName: appFolderSplit[appFolder.length - 1],
+      appName: appFolderSplit[appFolderSplit.length - 1],
       appSsl: self.getFilePath(appFolder, "ssl"),
       appIndexFile: self.getFilePath(appFolder, "src/index.js"),
       appPagesFolder: self.getFilePath(appFolder, "src/pages"),
