@@ -1,14 +1,14 @@
 /* eslint-disable react/prop-types */
 import { images } from "Assets";
+// import SearchImage from "../assets/docs_search.png";
+// import StonesJPG from "../assets/stones.jpg";
+import { CONFIG } from "Config";
 import { Head } from "kotii-scripts";
 import styled from "kotii-styled";
 import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
 import { FaLongArrowAltRight } from "react-icons/fa/index.js";
 import { useDispatch, useSelector } from "react-redux";
-// import SearchImage from "../assets/docs_search.png";
-// import StonesJPG from "../assets/stones.jpg";
-import CONFIG from "../config/environment_variables.js";
 import SVGConnections from "../shared/test.jsx";
 import names from "../state/places.json";
 import Reminder from "../state/reminder.csv";

@@ -4,7 +4,8 @@
     "stateVendor": "redux"
   },
   "useHttps": true,
-  "useDomain": true,
+  "useCustomDomain": true,
+  "useSetPort": true,
   "build": "build",
   "static": "static",
   "aliases": {
@@ -15,7 +16,7 @@
     "Modules": "/src/modules/",
     "Startup": "/src/components/startup/index",
     "UI": "/src/components/ui/index",
-    "Config": "/src/config/",
+    "Config": "/src/config/index",
     "HOC": "/src/hoc/",
     "Hooks": "/src/hooks/index",
     "Context": "/src/context/",
