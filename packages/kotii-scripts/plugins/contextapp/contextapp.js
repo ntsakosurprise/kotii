@@ -25,6 +25,7 @@ class ContextApp {
     this.setNodeEnv = methods.setNodeEnv;
     this.getEnvFilePath = methods.getEnvFilePath;
     this.checkIfIsDirectory = methods.checkIfIsDirectory;
+    this.getAvailablePort = methods.getAvailablePort;
   }
 }
 export default ContextApp;

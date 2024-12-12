@@ -1,4 +1,7 @@
 /* eslint-disable no-unused-vars */
+import detectPort from "detect-port";
+import portFinder from "portfinder";
+
 const methods = {};
 methods.init = function () {
   // console.log('Bitbucket has been initialised')
@@ -13,8 +16,20 @@ methods.handleContextApp = function (data) {
   const self = this;
   const { build = false } = data;
 
-  self.getAppInContextResources(build).then((appInfo) => {
+  self.getAppInContextResources(build).then(async (appInfo) => {
     console.log("CONTEXT APP:", appInfo);
+
+    if (appInfo.path.appManifest?.useSetPort) {
+      if (!process.env.PORT) {
+        throw new Error(
+          "appManifest config's useSetPort property indicates that the app should strictly set Port, but the PORT environment variable is not set. Please set the port."
+        );
+      } else {
+        await self.getAvailablePort(process.env?.PORT, true);
+      }
+    } else {
+      await self.getAvailablePort(process.env?.PORT || 8000);
+    }
 
     data.callback({
       message: "Context app plugin successfully called",
@@ -267,5 +282,48 @@ methods.getEnvFilePath = function (basePath) {
   } else {
     return null;
   }
+};
+
+methods.getAvailablePort = function (port = 3000, useStrictPort = false) {
+  const self = this;
+  self.infoSync(`User preffered port: ${port}`);
+  return new Promise((resolve, reject) => {
+    detectPort(port)
+      .then((gotPort) => {
+        console.log("THE GOT PORT", gotPort);
+        console.log("THE CHECKED PORT", port);
+        console.log("THE TYPEOF PORT", typeof port);
+        console.log("THE TYPEOF GOT PORT", typeof gotPort.toString());
+        console.log("THE GOT PORT EQUALS PORT", gotPort === port);
+
+        if (gotPort.toString() === port) {
+          process.env["PORT"] = gotPort;
+          resolve(gotPort);
+        } else {
+          console.log("SEARCHING FOR OPEN PORT");
+          portFinder
+            .getPortPromise()
+            .then((openPort) => {
+              if (useStrictPort) {
+                throw new Error(
+                  "Specified port is in use, please try to set another port"
+                );
+              }
+              self.infoSync(
+                `Specified port: ${port} is in use, anzii will resort to port:${openPort}`
+              );
+              process.env["PORT"] = openPort;
+              resolve(openPort);
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        }
+      })
+      .catch((err) => {
+        console.log("Therw was an error trying to get a port", err);
+        reject(err);
+      });
+  });
 };
 export default methods;
