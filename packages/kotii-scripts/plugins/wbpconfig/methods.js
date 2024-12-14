@@ -284,6 +284,7 @@ methods.configureDevServer = function (
                 ...appConfig,
                 // router: anziiManualConfigs.routes,
                 domain: [{ name: "static", set: "build" }],
+                cluster: { workers: 1, spawn: false },
                 server: serverConfig,
               },
             },
@@ -306,6 +307,7 @@ methods.configureDevServer = function (
           configs: {
             router: [...anziiManualConfigs.routes],
             domain: [{ name: "static", set: "build" }],
+            cluster: { workers: 1, spawn: false },
             server: serverConfig,
           },
         },

@@ -9,7 +9,8 @@ export const showPeopleList = () => {
 };
 export const showUser = () => {
   return async (dispatch) => {
-    const url = `${JSON.stringify(CONFIG.APP_URL)}/get-users`;
+    console.log("THE CONFIG", CONFIG);
+    const url = `${CONFIG.APP_URL}/get-users`;
     try {
       const response = await fetch(url, { method: "POST" });
       if (!response.ok) {
