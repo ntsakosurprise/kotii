@@ -175,6 +175,7 @@
     "README.md",
     "CONTRIBUTING.md",
     "LICENSE",
+    "preloads.cjs",
     "package.json"
   ],
   "browser": {
