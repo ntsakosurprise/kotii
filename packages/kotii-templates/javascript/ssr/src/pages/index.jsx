@@ -1,13 +1,14 @@
 /* eslint-disable react/prop-types */
+import { images } from "Assets";
+// import SearchImage from "../assets/docs_search.png";
+// import StonesJPG from "../assets/stones.jpg";
+import { CONFIG } from "Config";
 import { Head } from "kotii-scripts";
 import styled from "kotii-styled";
 import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
 import { FaLongArrowAltRight } from "react-icons/fa/index.js";
 import { useDispatch, useSelector } from "react-redux";
-import SearchImage from "../assets/docs_search.png";
-import StonesJPG from "../assets/stones.jpg";
-import CONFIG from "../config/environment_variables.js";
 import SVGConnections from "../shared/test.jsx";
 import names from "../state/places.json";
 import Reminder from "../state/reminder.csv";
@@ -169,33 +170,60 @@ const SVG = styled("div")({
   position: "relative",
 });
 
-const PeopleList = (props) => {
+// const PeopleList = (props) => {
+//   console.log("THE PROPS TO PEOPLE COMP", props);
+//   if (props.people.length > 0)
+//     return (
+//       <ul>
+//         {props.people.map((person, i) => {
+//           return <li key={i}>{person}</li>;
+//         })}
+//       </ul>
+//     );
+//   return null;
+// };
+const UserComp = (props) => {
   console.log("THE PROPS TO PEOPLE COMP", props);
-  if (props.people.length > 0)
+  if (props?.user)
     return (
-      <ul>
-        {props.people.map((person, i) => {
-          return <li key={i}>{person}</li>;
-        })}
-      </ul>
+      <div>
+        name: {props.user.name}
+        <br />
+        username: {props.user.userName}
+        <br />
+        born: {props.user.born}
+        <br />
+        status: {props.user.status}
+        <br />
+      </div>
     );
   return null;
 };
+
 const Index = () => {
   console.log("THE ENVIRONMENT CONFIG", CONFIG.GITHUB_APP_ID);
   console.log("OUR NODE ENV", process.env.NODE_ENV);
-  console.log("OUR IMAGES: SEARCH", SearchImage);
-  console.log("OUR IMAGES: STONES", StonesJPG);
+  console.log("OUR IMAGES: SEARCH", images.SearchImage);
+  console.log("OUR IMAGES: STONES", images.StonesJPG);
   console.log("THE CSV", Reminder);
   console.log("USER XML", User);
   console.log("NAMES", names);
-  const peopleList = useSelector((state) => {
+  // const peopleList = useSelector((state) => {
+  //   console.log("STATE RECEIVED", state);
+  //   return state.homeReducer.people;
+  // });
+  const user = useSelector((state) => {
     console.log("STATE RECEIVED", state);
-    return state.homeReducer.people;
+    return state.homeReducer.user;
   });
   const dispatch = useDispatch();
-  const doList = () => {
-    if (peopleList.length <= 0) dispatch(actions.showPeopleList());
+  // const doList = () => {
+  //   if (peopleList.length <= 0) dispatch(actions.showPeopleList());
+  //   dispatch(actions.hidePeopleList());
+  // };
+
+  const doUser = () => {
+    if (!user) dispatch(actions.showUser());
     dispatch(actions.hidePeopleList());
   };
   return (
@@ -210,23 +238,29 @@ const Index = () => {
         <Path />
         <StyledButton>
           <ButtonBackCard />
-          <ButtonFrontCard onClick={doList}>Learn More </ButtonFrontCard>
+          {/* <ButtonFrontCard onClick={doList}>Learn More </ButtonFrontCard> */}
+          <ButtonFrontCard>Learn More </ButtonFrontCard>
         </StyledButton>
 
-        {peopleList ? <PeopleList people={peopleList} /> : null}
+        {/* {peopleList ? <PeopleList people={peopleList} /> : null} */}
+        {user ? <UserComp user={user} /> : null}
         {/* <img src={connectionsSvg} width={50} alt="connections svg" /> */}
       </Hero>
       <SVG>
         <SVGConnections />
       </SVG>
-      {/* <img src={SearchImage} width={36} height={36} /> */}
-      {/* <img src={StonesJPG} width={800} /> */}
+      <img src={images.SearchImage} width={36} height={36} />
+      <img src={images.StonesJPG} width={800} />
     </Main>
   );
 };
 
+// export const getServerState = (store) => {
+//   return store.dispatch(actions.showPeopleList());
+// };
+
 export const getServerState = (store) => {
-  return store.dispatch(actions.showPeopleList());
+  return store.dispatch(actions.showUser());
 };
 
 export default Index;

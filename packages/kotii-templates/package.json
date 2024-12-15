@@ -47,7 +47,7 @@
     ]
   },
   "dependencies": {
-    "anzii": "^7.1.0"
+    "anzii": "file:/Users/surprisemashele/Documents/Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz"
   },
   "files": [
     "dist/",

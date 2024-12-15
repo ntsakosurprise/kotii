@@ -24,4 +24,8 @@ const Faqs = () => {
   );
 };
 
+export const getStatic = (store) => {
+  return store.dispatch(actions.showUser());
+};
+
 export default Faqs;

@@ -35,6 +35,9 @@ class WebpackConfig {
       console.log("PLUGIN:: DEFAULT FUN RUN");
     };
     this.restartSever = methods.restartSever;
+    this.checkIfIsFile = methods.checkIfIsFile;
+    this.createSSLCertificate = methods.createSSLCertificate;
+    this.addDomainToHost = methods.addDomainToHost;
   }
 }
 export default WebpackConfig;

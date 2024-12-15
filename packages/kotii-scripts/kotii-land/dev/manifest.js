@@ -8,5 +8,6 @@ const meta = {
     type: "ssr",
     stateVendor: "redux",
   },
+  isDomainCreated: false,
 };
 export { meta };

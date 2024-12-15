@@ -46,6 +46,7 @@
 
 const { register } = require("node:module");
 const { pathToFileURL } = require("node:url");
+const { getAndSetEnvironmentVariables } = require("./preloads.cjs");
 process.env.NODE_ENV = "development";
 const parentURL = pathToFileURL(__filename);
 const cli = require("./cli.cjs");
@@ -61,5 +62,6 @@ if (commandToRun === "start") {
 } else {
   console.log("THE REGISTER HOOK Dev");
   register("./compile/hooks_.js", parentURL);
+  getAndSetEnvironmentVariables();
   import("./kotii-land/dev/app.js");
 }

@@ -16,7 +16,7 @@ class Template {
     const self = this;
     const pao = self.pao;
     const getWorkingFolder = pao.pa_getWorkingFolder;
-    const getRootDir = pao.pa_getRootDir;
+    // const getRootDir = pao.pa_getRootDir;
     self.callback = data.callback;
     const { name, type } = data;
     const sep = path.sep;
@@ -33,7 +33,20 @@ class Template {
     }
     // console.log("THE WORKING FOLDER", getWorkingFolder());
     // let workDir = getWorkingFolder();
-    let thisFileDir = getRootDir(module.filename);
+    // console.log("MODULE.FILENAME", getRootDir);
+    console.log("MODULE.FILENAME", module.filename);
+    console.log(
+      "MODULE.FILENAME Greater",
+      module.filename.indexOf(`${sep}dist`) > 0
+    );
+    console.log(
+      "MODULE.FILENAME Greater equal zero",
+      module.filename.indexOf(`${sep}dist`) >= 0
+    );
+    // console.log("MODULE.FILENAME FOLDER", pao.pa_getRootDir(module.filename));
+    // let thisFileDir = getRootDir(module.filename);
+    let thisFileDir = path.dirname(module.filename);
+    console.log("MODULE.FILENAME: thisFileDir", thisFileDir);
     let templateTypeFolder =
       thisFileDir.indexOf(`${sep}dist`) > 0
         ? path.resolve(thisFileDir, `..${sep}${type}`)

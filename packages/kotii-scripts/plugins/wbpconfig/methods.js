@@ -1,6 +1,8 @@
 const methods = {};
 import fs from "fs";
 import path from "path";
+import { kotiiKotiiLandPath } from "../../kotii_paths.js";
+
 methods.init = function () {
   console.log("Webpackconfig has been initialised");
 
@@ -13,26 +15,115 @@ methods.handleWebpackConfig = function (data) {
   const self = this;
   // console.log("SELF BEFORE", self);
   self["callback"] = data.callback;
+  const loadFile = self.pao.pa_loadFile;
   const { contextApp } = data.payload;
   const { appEnv = "" } = contextApp;
+  const { useCustomDomain = false, useHttps = false } = contextApp.appManifest;
   console.log("WEBPACK DATA PAYLOAD", data.payload.build);
   // console.log("SELF. AFTER SETTING CALLBACK", self);
   // console.log("THE NODE ENV", process.env.NODE_ENV);
-  self.getEnvVariables(appEnv).then((envs) => {
-    console.log("THE ENVS", envs);
-    self.configureWebPack(data.payload, envs);
-  });
+  if (!fs.existsSync(contextApp.appSsl) && useHttps) {
+    // if (
+    //   !self.checkIfIsFile(
+    //     path.resolve(contextApp.appFolder, "certsConfig.json")
+    //   )
+    // ) {
+    //   throw new Error(
+    //     "App is set to use https, but certs.json file is not yet defined"
+    //   );
+    // } else {
 
-  // data.callback({ message: "Webpack plugin successfully called" });
+    // }
+    fs.mkdirSync(contextApp.appSsl);
+    process.env["ANZII_APP_USE_HTTPS"] = true;
+    process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+    loadFile(path.resolve(kotiiKotiiLandPath, ".certsConfig.json"))
+      .then((sslConfig) => {
+        let config = JSON.parse(sslConfig);
+        self
+          .createSSLCertificate(config, `${kotiiKotiiLandPath}/openssl.conf`)
+          .then((certs) => {
+            console.log("THE APP CERTS", certs);
+            self
+              .addDomainToHost(`${contextApp.appName}.com`)
+              .then((addedHost) => {
+                let server = {
+                  useHttps,
+                  useCustomDomain,
+                  useAvailablePort: false,
+                  domainName: addedHost.domainName,
+                  appOpts: {
+                    key: certs.filesOutputPaths.key,
+                    cert: certs.filesOutputPaths.key,
+                  },
+                };
+                server["APP_URL"] = `${useHttps ? "https" : "http"}://${
+                  server.domainName
+                }:${process.env.PORT}`;
+
+                self.getEnvVariables(appEnv).then((envs) => {
+                  console.log("THE ENVS", config);
+                  self.configureWebPack(data.payload, envs, server);
+                });
+              });
+          });
+      })
+      .catch((err) => {
+        console.log("An error occured loading file", err);
+      });
+  } else {
+    let server = {
+      useHttps,
+      useCustomDomain,
+      useAvailablePort: false,
+      domainName: useCustomDomain ? `${contextApp.appName}.com` : "localhost",
+    };
+    useCustomDomain
+      ? (server["appOpts"] = {
+          key: fs.readFileSync(
+            path.resolve(process.cwd(), "ssl/generated-key.pem")
+          ),
+          cert: fs.readFileSync(
+            path.resolve(process.cwd(), "ssl/generated-certificate.pem")
+          ),
+        })
+      : null;
+    server["APP_URL"] = `${useHttps ? "https" : "http"}://${
+      server.domainName
+    }:${process.env.PORT}`;
+    if (useHttps) {
+      process.env["ANZII_APP_USE_HTTPS"] = true;
+      process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+    }
+
+    self.getEnvVariables(appEnv).then((envs) => {
+      console.log("THE ENVS", envs);
+      self.configureWebPack(data.payload, envs, server);
+    });
+  }
+
   return;
 };
-methods.configureWebPack = function (payload, envs = null) {
+methods.handleSystemAppUrl = function (data) {
+  console.log("HandleSystemAppurl", data);
+  const self = this;
+  // console.log("SELF BEFORE", self);
+  self["callback"] = data.callback;
+  process.env["KOTII_APP_URL"] = JSON.stringify(data.App_URL);
+  // console.log("THE NODE ENV", process.env.NODE_ENV);
+};
+methods.configureWebPack = function (
+  payload,
+  envs = null,
+  certDomainConfig = null
+) {
   const self = this;
   const pao = self.pao;
   // const getWorkingDir = pao.p_getWorkingFolder;
   const cwd = pao.pa_getWorkingFolder();
   const { webpack, setContextEnv } = self;
   const { routes = null, contextApp, build = false } = payload;
+
   const webPackConfig =
     (process.env?.ANZII_CLI_WITH_SERVER &&
       process.env.ANZII_CLI_WITH_SERVER === "true") ||
@@ -41,11 +132,13 @@ methods.configureWebPack = function (payload, envs = null) {
       : self.webPackConfig;
 
   // console.log("THE APP CONTEXT CONFIG", payload);
-
+  process.env["KOTII_APP_URL"] = JSON.stringify(certDomainConfig.APP_URL);
   envs.stringified["KOTII_APP_META"] = JSON.stringify(
     contextApp.appManifest.app
   );
+
   console.log("THE APP ENVS", envs);
+
   setContextEnv(contextApp, envs);
   const webpackConfigObject = webPackConfig({
     cwd,
@@ -63,6 +156,7 @@ methods.configureWebPack = function (payload, envs = null) {
     runOnComplete: self.testRunFromWebpack.bind(self),
     closeWatcher: self.closeWatcher.bind(self),
     notifyClient: self.notifyClient.bind(self),
+    isProjectPNPM: contextApp.appPnpmPkgr,
   });
 
   console.log("PROCESS.ENV", process.env);
@@ -83,7 +177,9 @@ methods.configureWebPack = function (payload, envs = null) {
           compiler: wbpCompiler,
           webpackConfig: webpackConfigObject,
         },
-        { routes, api: contextApp.appApi }
+        { routes, api: contextApp.appApi },
+        certDomainConfig
+
         // domain: [{ name: 'static', set: 'public' }]
       );
     });
@@ -129,7 +225,11 @@ methods.setContextEnv = function (mdconfig, envs = null) {
     }
   }
 };
-methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
+methods.configureDevServer = function (
+  webpacks,
+  anziiManualConfigs = null,
+  serverConfig = null
+) {
   const self = this;
   const pao = self.pao;
   const callback = self.callback;
@@ -184,6 +284,8 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
                 ...appConfig,
                 // router: anziiManualConfigs.routes,
                 domain: [{ name: "static", set: "build" }],
+                cluster: { workers: 1, spawn: false },
+                server: serverConfig,
               },
             },
             callback: (data) => {
@@ -205,6 +307,8 @@ methods.configureDevServer = function (webpacks, anziiManualConfigs = null) {
           configs: {
             router: [...anziiManualConfigs.routes],
             domain: [{ name: "static", set: "build" }],
+            cluster: { workers: 1, spawn: false },
+            server: serverConfig,
           },
         },
         callback: (data) => {
@@ -377,4 +481,71 @@ methods.restartSever = function (addPath, eventType = "", runStatus = null) {
     process.exit(1);
   });
 };
+methods.configureDomainOnceOff = function (data, events, options = null) {
+  const self = this;
+  // const { watched, persistent = true, ignored = null, events = null } = payload;
+  self.emit({
+    type: "watch-target",
+    data: {
+      payload: { watched: data, events },
+      callback: (data) => {
+        console.log("File watch set", data);
+        self.closeWatcher = data.closeWatcher;
+      },
+    },
+  });
+};
+methods.checkIfIsFile = function (filePath) {
+  const self = this;
+  const { fs } = self;
+  let stats;
+  try {
+    stats = fs.statSync(filePath);
+    // console.log("FILE STATISTICS", stats);
+    const isFile = stats.isFile();
+    // console.log("IS FILE", isFile);
+    return isFile;
+  } catch (error) {
+    // console.log("THE STATS THROWN", error);
+    return false;
+  }
+};
+methods.createSSLCertificate = function (config, sslConfigPath) {
+  const self = this;
+
+  return new Promise((resolve, reject) => {
+    // add-host-domain
+    self.emit({
+      type: "create-ssl-certificate",
+      data: {
+        payload: {
+          config,
+          sslConfigPath,
+        },
+        callback: (data) => {
+          resolve(data);
+        },
+      },
+    });
+  });
+};
+methods.addDomainToHost = function (domain) {
+  const self = this;
+
+  return new Promise((resolve, reject) => {
+    // add-host-domain
+    self.emit({
+      type: "add-host-domain",
+      data: {
+        payload: {
+          domainName: domain,
+        },
+        callback: (data) => {
+          resolve(data);
+        },
+      },
+    });
+  });
+};
+
 export default methods;

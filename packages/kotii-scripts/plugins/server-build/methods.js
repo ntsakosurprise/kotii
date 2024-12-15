@@ -5,6 +5,7 @@ import os from "node:os";
 import Papa from "papaparse";
 import path, { resolve } from "path";
 import { parseString } from "xml2js";
+import { kotiiKotiiLandPath, kotiiRootPath } from "../../kotii_paths.js";
 import runNpmScript from "./runNpmScript.js";
 
 methods.init = function () {
@@ -23,27 +24,34 @@ methods.handleServerBuild = function (data) {
   const { targetMain, destination, targetSource, routes, contextApp } = payload;
   data.callback({ gotValue: "Ran" });
   // const cwd = getWorkingFolder();
-  const cwd = self.kotiiScriptsPath;
-  console.log("KOTII SCRIPTS PATH", cwd);
-  if (fs.existsSync(`${cwd}/kotii-land/dev/styles.json`)) {
-    fs.rmSync(`${cwd}/kotii-land/dev/styles.json`);
+  // const cwd = self.kotiiScriptsPath;
+  console.log("KOTII SCRIPTS PATH", kotiiRootPath);
+  if (fs.existsSync(`${kotiiKotiiLandPath}/dev/styles.json`)) {
+    fs.rmSync(`${kotiiKotiiLandPath}/dev/styles.json`);
   }
 
-  const localPackageJson = JSON.parse(readFileSync(`${cwd}/package.json`));
-  const babelJson = JSON.parse(readFileSync(`${cwd}/babel.server.build.json`));
+  const localPackageJson = JSON.parse(
+    readFileSync(`${kotiiRootPath}/package.json`)
+  );
+  const babelJson = JSON.parse(
+    readFileSync(`${kotiiRootPath}/babel.server.build.json`)
+  );
   let updatedBabelJsonPlugins = babelJson.plugins;
   updatedBabelJsonPlugins.unshift([
-    `${path.join(cwd, "./babel-plugins/scoped-styles-plugin/index.js")}`,
+    `${path.join(
+      kotiiRootPath,
+      "./babel-plugins/scoped-styles-plugin/index.js"
+    )}`,
     {
       appFolder: targetMain,
       appSrc: targetSource,
-      cwd: cwd,
+      cwd: kotiiRootPath,
     },
   ]);
   babelJson.plugins = [...updatedBabelJsonPlugins];
   console.log("BABEL JSON PLUGINS", babelJson.plugins);
   saveToFile(
-    path.join(cwd, "babel.server.build.json"),
+    path.join(kotiiRootPath, "babel.server.build.json"),
     JSON.stringify(babelJson, null, 2)
   );
   // const kottiBabelRc = JSON.parse(readFileSync(`${cwd}/babel.server.json`));
@@ -75,7 +83,7 @@ methods.handleServerBuild = function (data) {
   console.log("THE LOCAL PACKAGE.JSON", localPackageJson);
   localPackageJson["scripts"] = {
     ...localPackageJson.scripts,
-    "build-ssr": `babel --config-file ${cwd}/babel.server.build.json  --out-dir ${destination}${path.sep}src ${targetSource}`,
+    "build-ssr": `babel --config-file ${kotiiRootPath}/babel.server.build.json  --out-dir ${destination}${path.sep}src ${targetSource}`,
     // "babel-ssr": `babel ${data.payload.targetSource} --out-dir ${data.payload.destination}`,
   };
 
@@ -85,11 +93,15 @@ methods.handleServerBuild = function (data) {
   // );
 
   saveToFile(
-    path.join(cwd, "package.json"),
+    path.join(kotiiRootPath, "package.json"),
     JSON.stringify(localPackageJson, null, 2)
   );
 
-  runNpmScript({ npmCommand: "run", scriptToRun: "build-ssr", cwd: cwd })
+  runNpmScript({
+    npmCommand: "run",
+    scriptToRun: "build-ssr",
+    cwd: kotiiRootPath,
+  })
     .then((built) => {
       let usrHomeDir = os.homedir();
       let fullTempPath = self.createDistFolder(
@@ -120,7 +132,7 @@ methods.handleServerBuild = function (data) {
       babelJson.plugins.shift();
 
       saveToFile(
-        path.join(cwd, "babel.server.build.json"),
+        path.join(kotiiRootPath, "babel.server.build.json"),
         JSON.stringify(babelJson, null, 2)
       );
       self.saveRoutesInUserLand(routes).then(() => {
@@ -409,10 +421,10 @@ methods.doKotiiLandPagesFile = function (destination, options) {
   // const cwd = getWorkingFolder();
   const cwd = self.kotiiScriptsPath;
 
-  const jsFile = readFileSync(`${cwd}${path.sep}kotii-land/dev/pages.js`);
+  const jsFile = readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/pages.js`);
   console.log(
     "THE SOURCE FILE PATH",
-    `${cwd}${path.sep}kotii-land/dev/pages.js`
+    `${kotiiKotiiLandPath}${path.sep}dev/pages.js`
   );
   let ast = parser.parse(jsFile, {
     sourceType: "module",
@@ -432,7 +444,7 @@ methods.doKotiiLandPagesFile = function (destination, options) {
     );
     saveToFile(`${madeFolder}${path.sep}pages.js`, `${genCode}`);
     fs.copyFileSync(
-      `${cwd}${path.sep}app_routes.js`,
+      `${kotiiRootPath}${path.sep}app_routes.js`,
       `${madeFolder}${path.sep}routes.js`
     );
     saveToFile(
@@ -501,7 +513,6 @@ methods.saveRoutesInUserLand = function (routes) {
   const saveToFile = pao.pa_saveToFile;
   const getWorkingFolder = pao.pa_getWorkingFolder;
   // const cwd = getWorkingFolder();
-  const cwd = self.kotiiScriptsPath;
 
   return new Promise((resolve, reject) => {
     let requiresRoutes = routes.filter((rou) => {
@@ -509,7 +520,7 @@ methods.saveRoutesInUserLand = function (routes) {
         return rou;
       }
     });
-    let routesToPath = `${cwd}${path.sep}app_routes.js`;
+    let routesToPath = `${kotiiKotiiLandPath}${path.sep}app_routes.js`;
     console.log("THE ROUTES PATHS BUILD", routesToPath);
     fs.writeFile(
       routesToPath,

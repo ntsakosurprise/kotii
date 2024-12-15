@@ -12,7 +12,7 @@ class RemoveImportsWebpackPlugin {
     this.removeImportSpecifiers = options.removeFileSpecifiers;
   }
   apply(compiler) {
-    compiler.hooks.done.tap("RemoveImportsWebpackPlugin", () => {
+    compiler.hooks.afterCompile.tap("RemoveImportsWebpackPlugin", () => {
       console.log("PLUGIN:: REMOVEIMPORTS");
       if (this.importRemoved) return;
       this.importRemoved = true;

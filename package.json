@@ -43,7 +43,7 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@yarnpkg/parsers": "^3.0.0",
-    "anzii": "file:../Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz",
+    "anzii": "file:/Users/surprisemashele/Documents/Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz",
     "babel-register-esm": "^1.2.5",
     "cjstoesm": "^2.1.2",
     "cross-spawn": "^7.0.3",
