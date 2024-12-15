@@ -9,8 +9,9 @@ export const showPeopleList = () => {
 };
 export const showUser = () => {
   return async (dispatch) => {
-    console.log("THE CONFIG", CONFIG);
-    const url = `${CONFIG.APP_URL}/get-users`;
+    const url = !CONFIG.APP_URL
+      ? `${JSON.parse(process.env.KOTII_APP_URL)}/get-users`
+      : `${CONFIG.APP_URL}/get-users`;
     try {
       const response = await fetch(url, { method: "POST" });
       if (!response.ok) {
