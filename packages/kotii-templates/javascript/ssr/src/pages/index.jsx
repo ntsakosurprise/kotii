@@ -3,7 +3,7 @@ import { images } from "Assets";
 // import SearchImage from "../assets/docs_search.png";
 // import StonesJPG from "../assets/stones.jpg";
 import { CONFIG } from "Config";
-import { Head } from "kotii-scripts";
+import { Head, Hooks } from "kotii-scripts";
 import styled from "kotii-styled";
 import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
@@ -15,6 +15,8 @@ import Reminder from "../state/reminder.csv";
 import User from "../state/user.xml";
 import * as actions from "../store/home/actions.js";
 import "../styles/index.css";
+
+const { useUniversalEffect } = Hooks;
 
 const Main = styled("div")({
   display: "flex",
@@ -212,6 +214,20 @@ const Index = () => {
   //   console.log("STATE RECEIVED", state);
   //   return state.homeReducer.people;
   // });
+  const [data, error] = useUniversalEffect(async () => {
+    const url = !CONFIG.APP_URL
+      ? `${JSON.parse(process.env.KOTII_APP_URL)}/get-users`
+      : `${CONFIG.APP_URL}/get-users`;
+    try {
+      const response = await fetch(url, { method: "POST" });
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+
+      const json = await response.json();
+      console.log("rESPONSE AS JSON", json);
+    } catch (error) {}
+  }, []);
   const user = useSelector((state) => {
     console.log("STATE RECEIVED", state);
     return state.homeReducer.user;
