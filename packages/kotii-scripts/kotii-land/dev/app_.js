@@ -206,6 +206,6 @@ if (import.meta.webpackHot) {
   });
 }
 
-export { Head } from "../../react-components/index.jsx";
+export { Head, Hooks } from "../../react-components/index.jsx";
 export { ServerApp };
 export default App;
