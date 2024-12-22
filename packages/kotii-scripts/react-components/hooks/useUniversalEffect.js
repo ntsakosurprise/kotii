@@ -27,18 +27,3 @@ export const useUniversalEffect = async (effect = null, dependencies = []) => {
   }, dependencies);
   return [effectState, effectErrorState];
 };
-
-const promisefyEffect = (effect) => {
-  return new Promise((resolve, reject) => {
-    effect()
-      .then((result) => {
-        resolve({ data: result, error: null });
-      })
-      .catch((err) => {
-        reject({
-          data: null,
-          error: err,
-        });
-      });
-  });
-};
