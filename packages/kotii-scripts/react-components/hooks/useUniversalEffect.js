@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 const dataObject = {};
 
 export const useUniversalEffect = async (effect = null, dependencies = []) => {
@@ -17,13 +17,24 @@ export const useUniversalEffect = async (effect = null, dependencies = []) => {
     return [effectDataObject.data, effectDataObject.error];
   }
 
-  useEffect(() => {
-    if (effectState || effectErrorState) {
-      return;
-    }
-    // effect().then(()=>{
-
-    // }).catc();
-  }, dependencies);
+  effect()
+    .then((data) => {
+      console.log("THE EFFECT RE-RERUNS");
+      setEffectState(data);
+      if (updaters.length > 0) runUpdaters(updaters);
+    })
+    .catch((err) => {
+      console.log("THE EFFECT RE-RERUNS: Error", err);
+      setErrorState(err);
+      if (updaters.length > 0) runUpdaters(updaters);
+    });
   return [effectState, effectErrorState];
+};
+
+const runUpdaters = (updaters) => {
+  console.log("Updaters", updaters);
+  updaters.forEach((updater) => {
+    console.log("Updaters: updater", updater);
+    updater();
+  });
 };
