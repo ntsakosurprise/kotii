@@ -1,2 +1,2 @@
-import useUniversalEffect from "./useUniversalEffect.js";
+import { useUniversalEffect } from "./useUniversalEffect.js";
 export { useUniversalEffect };
