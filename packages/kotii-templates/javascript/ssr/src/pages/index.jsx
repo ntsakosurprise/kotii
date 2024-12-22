@@ -16,6 +16,7 @@ import User from "../state/user.xml";
 import * as actions from "../store/home/actions.js";
 import "../styles/index.css";
 
+console.log("THE HOOKS UNIVERSAL", Hooks);
 const { useUniversalEffect } = Hooks;
 
 const Main = styled("div")({
@@ -214,20 +215,34 @@ const Index = () => {
   //   console.log("STATE RECEIVED", state);
   //   return state.homeReducer.people;
   // });
-  const [data, error] = useUniversalEffect(async () => {
-    const url = !CONFIG.APP_URL
-      ? `${JSON.parse(process.env.KOTII_APP_URL)}/get-users`
-      : `${CONFIG.APP_URL}/get-users`;
-    try {
-      const response = await fetch(url, { method: "POST" });
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-      }
+  const [data, error] = useUniversalEffect(() => {
+    return new Promise(async (resolve, reject) => {
+      const url = !CONFIG.APP_URL
+        ? `${JSON.parse(process.env.KOTII_APP_URL)}/get-portfolio`
+        : `${CONFIG.APP_URL}/get-users`;
+      try {
+        fetch(url, { method: "GET" })
+          .then((res) => {
+            return res.json();
+          })
+          .then((result) => {
+            resolve(result);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+        // if (!response.ok) {
+        //   throw new Error(`Response status: ${response.status}`);
+        // }
 
-      const json = await response.json();
-      console.log("rESPONSE AS JSON", json);
-    } catch (error) {}
+        // const json = await response.json();
+        // console.log("rESPONSE AS JSON", json);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }, []);
+
   const user = useSelector((state) => {
     console.log("STATE RECEIVED", state);
     return state.homeReducer.user;
@@ -242,6 +257,7 @@ const Index = () => {
     if (!user) dispatch(actions.showUser());
     dispatch(actions.hidePeopleList());
   };
+  console.log("User data from useUniversalEffect", data, error);
   return (
     <Main>
       <Head title={"Kotii Framework Boilerplate"} />
@@ -260,6 +276,7 @@ const Index = () => {
 
         {/* {peopleList ? <PeopleList people={peopleList} /> : null} */}
         {user ? <UserComp user={user} /> : null}
+        <p>The effect DATA: {data?.age || "nothing"}</p>
         {/* <img src={connectionsSvg} width={50} alt="connections svg" /> */}
       </Hero>
       <SVG>
