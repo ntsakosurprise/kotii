@@ -5,6 +5,12 @@ export default [
     alias: "users",
     type: "public",
   },
+  {
+    path: "/get-portfolio",
+    method: "GET",
+    alias: "portfolio",
+    type: "public",
+  },
 
   //   {
   //     path: "/test",

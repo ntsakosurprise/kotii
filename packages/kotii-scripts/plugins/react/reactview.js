@@ -29,6 +29,8 @@ class ReactView {
     this.StaticRouter = StaticRouter;
     this.styledTags = "";
     this.REACTAPP = ServerApp;
+
+    this.effectsData = {};
     // this.Header = Header;
     // this.Footer = Footer;
     // this.GlobalStyle = GlobalStyle;
@@ -51,6 +53,9 @@ class ReactView {
     this.getStateDataFromServer = methods.getStateDataFromServer;
     this.handleReactStaticViews = methods.handleReactStaticViews;
     this.doImport = methods.doImport;
+    this.runComponentEffects = methods.runComponentEffects;
+    this.getEffectsRouteList = methods.getEffectsRouteList;
+    this.includeScripts = methods.includeScripts;
   }
 }
 

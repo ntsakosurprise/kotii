@@ -19,16 +19,18 @@ methods.handleContextApp = function (data) {
   self.getAppInContextResources(build).then(async (appInfo) => {
     console.log("CONTEXT APP:", appInfo);
 
-    if (appInfo.path.appManifest?.useSetPort) {
-      if (!process.env.PORT) {
-        throw new Error(
-          "appManifest config's useSetPort property indicates that the app should strictly set Port, but the PORT environment variable is not set. Please set the port."
-        );
+    if (!build) {
+      if (appInfo.path.appManifest?.useSetPort) {
+        if (!process.env.PORT) {
+          throw new Error(
+            "appManifest config's useSetPort property indicates that the app should strictly set Port, but the PORT environment variable is not set. Please set the port."
+          );
+        } else {
+          await self.getAvailablePort(process.env?.PORT, true);
+        }
       } else {
-        await self.getAvailablePort(process.env?.PORT, true);
+        await self.getAvailablePort(process.env?.PORT || 8000);
       }
-    } else {
-      await self.getAvailablePort(process.env?.PORT || 8000);
     }
 
     data.callback({

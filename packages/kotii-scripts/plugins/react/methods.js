@@ -26,6 +26,7 @@ methods.handleReactView = function (data) {
   self.adLog("Handling ReactView Event");
   self.adLog(data);
   self.callback = data.callback;
+  self.effectsData = {};
 
   console.log("THE VIEW DATA", data);
   console.log("ServerStyleSheet", ServerStyleSheet);
@@ -38,12 +39,14 @@ methods.handleReactStaticViews = function (data) {
   const self = this;
   // console.log("Static Views");
   self.callback = data.callback;
+  self.effectsData = {};
 
   console.log("THE VIEW DATA", data);
   const { views } = data;
   let mappedPromises = views.map(async (view) => {
     let gotHtmlView = await self.runReactView({
       view: { match: view.path },
+      route: view,
       staticRender: true,
     });
     // console.log("THE GOT HTML VIEW", gotHtmlView, view.name);
@@ -68,7 +71,7 @@ methods.runReactView = function (data) {
     HeadHelmet,
     meta,
   } = self;
-  const { view, staticRender = false } = data;
+  const { view, staticRender = false, route = null } = data;
   const { app } = meta;
   const { stateVendor = "" } = app;
 
@@ -96,11 +99,20 @@ methods.runReactView = function (data) {
   // Grab the initial state from our Redux store
   return new Promise(async (resolve) => {
     const store = stateVendor === "redux" ? createReduxStore() : {};
-    let stateData = await self.getStateDataFromServer(
-      view.match,
+    let stateData = await self.getStateDataFromServer({
+      routePath: view.match,
       store,
-      staticRender
-    );
+      staticRender,
+      route,
+    });
+    if (!staticRender) {
+      await self.runComponentEffects(view.match);
+    } else {
+      if (route && route.hasEffectsToRun) {
+        await self.runComponentEffects(view.match, route);
+      }
+    }
+
     let layoutRoot = await self.doImport(
       `/src/components/startup/index.jsx`,
       true,
@@ -109,6 +121,8 @@ methods.runReactView = function (data) {
     if (!self.comps) {
       self.comps = await self.doImport(`/kotii-land/dev/pages.js`, true, false);
     }
+
+    let effectsStore = self.effectsData;
 
     console.log("THE LAYOUT ROOT", layoutRoot.Layout);
     console.log("GOT STATE DATA", stateData);
@@ -126,7 +140,7 @@ methods.runReactView = function (data) {
         sheet.collectStyles(
           !layoutRoot ? (
             <Router ssrPath={view.match}>
-              {REACTAPP({ storeFromSource: store, goodies })}
+              {REACTAPP({ storeFromSource: store, goodies, effectsStore })}
             </Router>
           ) : layoutRoot.Layout && layoutRoot.Root ? (
             <Router ssrPath={view.match}>
@@ -135,6 +149,7 @@ methods.runReactView = function (data) {
                 layout: layoutRoot.Layout,
                 storeFromSource: store,
                 goodies,
+                effectsStore,
               })}
             </Router>
           ) : layoutRoot.Layout ? (
@@ -143,6 +158,7 @@ methods.runReactView = function (data) {
                 layout: layoutRoot.Layout,
                 storeFromSource: store,
                 goodies,
+                effectsStore,
               })}
             </Router>
           ) : (
@@ -150,6 +166,7 @@ methods.runReactView = function (data) {
               {REACTAPP({
                 appWrapper: layoutRoot.Root,
                 storeFromSource: store,
+                effectsStore,
               })}
             </Router>
           )
@@ -176,26 +193,27 @@ methods.runReactView = function (data) {
     const finalState = store.getState();
     const helmetGenerated = HeadHelmet.renderStatic();
     // console.log("HELMET GENERATED", helmetGenerated.title.toString());
-    const fullPage = self.renderFullPage(
+    const fullPage = self.renderFullPage({
       html,
-      finalState,
+      preloadedState: finalState,
+      staticRender,
       view,
-      helmetGenerated
-    );
+      head: helmetGenerated,
+    });
     console.log("THE HTML IN RUN REACT-VIEW", fullPage);
     resolve(fullPage);
   });
 };
 
-methods.renderFullPage = function (
+methods.renderFullPage = function ({
   html,
   preloadedState,
+  staticRender,
   view,
   head,
-  scripts = []
-) {
+  scripts = [],
+} = props) {
   const self = this;
-  const { serialize } = self;
   const jsonStyles = fs.existsSync(
     `${kotiiKotiiLandPath}${path.sep}dev/styles.json`
   )
@@ -203,7 +221,7 @@ methods.renderFullPage = function (
         fs.readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`)
       )
     : null;
-  let styleTags = jsonStyles ? jsonStyles.toString().replace(",", "") : "";
+  let styleTags = jsonStyles ? jsonStyles.toString().replaceAll(",", " ") : "";
   console.log("THE PRELOADED STATE", preloadedState, styleTags);
   return `
 		<!doctype html>
@@ -217,29 +235,40 @@ methods.renderFullPage = function (
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
-			<script>
-      window.__PRELOADED_STATE__ = ${serialize(preloadedState)}
-			</script>
-			<script src="/server.bundle.js" ></script>
-
+			${!staticRender ? self.includeScripts(preloadedState) : null}
+			
 		</body>
 		</html>
     `;
 };
 
-methods.getStateDataFromServer = function (
+methods.includeScripts = function (preloadedState) {
+  const self = this;
+  const { serialize } = self;
+  return `
+   <script>
+     window.__PRELOADED_STATE__ = ${serialize(preloadedState)}
+     window.__KOTII_EFFECTS_STATE__ = ${serialize(
+       JSON.stringify(self.effectsData)
+     )}
+    
+   </script>
+   <script src="/server.bundle.js" ></script>
+  `;
+};
+
+methods.getStateDataFromServer = function ({
   routePath,
   store,
-  staticRender = false
-) {
+  staticRender = false,
+  route,
+} = props) {
   const self = this;
-  const routes = self.ssrRoutes;
+  const routes = !staticRender ? self.ssrRoutes : [route];
 
   // console.log("THE FOUND", routes);
 
   return new Promise((resolve, reject) => {
-    if (staticRender) return resolve({});
-
     let dataFetchPromises = routes.filter((route, i) => {
       if (route.path === routePath && route?.requiresData) {
         return route.requiresData(store);
@@ -253,6 +282,93 @@ methods.getStateDataFromServer = function (
   });
 };
 
+methods.runComponentEffects = function (routePath, specialRoute = null) {
+  const self = this;
+  const routes = !specialRoute ? self.ssrRoutes : [specialRoute];
+  const effect_id_prefix = "kotii_eff_id_";
+
+  // console.log("THE FOUND", routes);
+
+  return new Promise((resolve, reject) => {
+    let effectsRoute = self.getEffectsRouteList(routes, routePath);
+    if (!effectsRoute) return resolve(true);
+
+    console.log("THE EFFECTS ROUTE", effectsRoute);
+    let effectsToRun =
+      effectsRoute.effectsToRun instanceof Array
+        ? effectsRoute.effectsToRun
+        : [effectsRoute.effectsToRun];
+    let routeId = effectsRoute.name;
+    console.log("THE EFFECTS TO RUN", effectsToRun);
+
+    let effectsPromises = effectsToRun.map((effectToRun, ID) => {
+      let effectID = `${effect_id_prefix}${ID + 1}`;
+      return new Promise((resolve, reject) => {
+        effectToRun()
+          .then((data) => {
+            console.log("Kotii effect react:data", data);
+
+            if (!self.effectsData["effectsCount"]) {
+              self.effectsData["effectsCount"] = ID + 1;
+            } else {
+              self.effectsData["effectsCount"] = ID + 1;
+            }
+
+            if (!self.effectsData["componentName"])
+              self.effectsData["componentName"] = routeId;
+            if (!self.effectsData[routeId]) self.effectsData[routeId] = {};
+            // self.effectsData[routeId][effectID] = data
+            if (!self.effectsData[routeId]["data"]) {
+              self.effectsData[routeId]["data"] = {};
+              self.effectsData[routeId].data[effectID] = {
+                userData: data,
+                isFirstTimeRun: true,
+              };
+              // self.effectsData.data[routeId] = data
+              console.log("Kotii effect react: self.effects", self.effectsData);
+            } else {
+              self.effectsData[routeId].data[effectID] = {
+                userData: data,
+                isFirstTimeRun: true,
+              };
+            }
+            resolve(true);
+          })
+          .catch((err) => {
+            console.log("Kotii effect react:err", err);
+            if (!self.effectsData[routeId]) self.effectsData[routeId] = {};
+            if (!self.effectsData[routeId]["errors"]) {
+              self.effectsData[routeId]["errors"] = {};
+              self.effectsData[routeId].errors[effectID] = {
+                error: err,
+                isFirstTimeRun: true,
+              };
+            } else {
+              self.effectsData[routeId].errors[effectID] = {
+                error: err,
+                isFirstTimeRun: true,
+              };
+            }
+            resolve(true);
+          });
+      });
+    });
+    console.log("THE EFFECTS PROMISES", effectsPromises);
+
+    Promise.all(effectsPromises).then((resolveData) => {
+      console.log("THE RESOLVED EFFECTS DATA", resolveData);
+      resolve(resolveData);
+    });
+  });
+};
+methods.getEffectsRouteList = function (routes, routePath) {
+  let effectsRouteList = [];
+  effectsRouteList = routes.filter((route) => {
+    if (route.path === routePath && route?.hasEffectsToRun) return true;
+  });
+
+  return effectsRouteList.length > 0 ? effectsRouteList[0] : null;
+};
 methods.doImport = function (toImport, all = false, check = true) {
   const self = this;
   const pao = self.pao;
