@@ -21,16 +21,7 @@ const App = (appWrapper = null, layout = null) => {
   const effectsStore = JSON.parse(window.__KOTII_EFFECTS_STATE__);
 
   console.log("THE PROCESS.BROWSER.ENVS", process.env);
-  // const existsMeta = fs.existsSync(
-  //   `${kotiiAppCwd}${path.sep}app.manifest.json`
-  // );
-  // if (!existsMeta)
-  //   throw new Error("This project is missing app.manifest.json, please add it");
-  // const meta = JSON.parse(
-  //   fs.readFileSync(`${kotiiAppCwd}${path.sep}app.manifest.json`)
-  // );
-  // const { app } = meta;
-  // console.log("THE APP", app);
+
   let { type, stateVendor = null } = app;
   if (type !== "ssr") {
     console.log("NOT SSR", stateVendor);
@@ -256,6 +247,6 @@ if (import.meta.webpackHot) {
   });
 }
 
-export { Head, Hooks } from "../../react-components/index.jsx";
+export { Head, useUniversalEffect } from "../../react-components/index.jsx";
 export { ServerApp };
 export default App;
