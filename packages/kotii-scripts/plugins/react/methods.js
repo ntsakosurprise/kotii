@@ -293,6 +293,12 @@ methods.runComponentEffects = function (routePath) {
           .then((data) => {
             console.log("Kotii effect react:data", data);
 
+            if (!self.effectsData["effectsCount"]) {
+              self.effectsData["effectsCount"] = ID + 1;
+            } else {
+              self.effectsData["effectsCount"] = ID + 1;
+            }
+
             if (!self.effectsData["componentName"])
               self.effectsData["componentName"] = routeId;
             if (!self.effectsData[routeId]) self.effectsData[routeId] = {};
