@@ -16,10 +16,10 @@ export const useUniversalEffect = (
   console.log("THE EFFECTS RESOURCES", effectResources);
   const { data = {}, errors = {} } = effectResources;
   console.log("THE EFFECTS DATA ERRORS", data, errors);
-  const { userData = null } = data[effectID];
-  const { error = null } = errors[effectID];
-  const thisEffectErrors = error ? error || null : null;
-  const thisEffectData = userData ? userData || null : null;
+  const currentEffectData = data[effectID] ? data[effectID] : null;
+  const currentEffecterror = errors[effectID] ? errors[effectID] : null;
+  const thisEffectData = currentEffectData ? currentEffectData.userData : null;
+  const thisEffectErrors = currentEffecterror ? currentEffecterror.error : null;
   const [effectState, setEffectState] = useState(thisEffectData);
   const [effectErrorState, setErrorState] = useState(thisEffectErrors);
   if (!effect) {
@@ -52,12 +52,12 @@ export const useUniversalEffect = (
   }
 
   useEffect(() => {
-    if (effectState && data[effectID].isFirstTimeRun) {
-      data[effectID].isFirstTimeRun = false;
+    if (effectState && currentEffectData.isFirstTimeRun) {
+      currentEffectData.isFirstTimeRun = false;
       if (updaters.length > 0) runUpdaters(updaters);
       return;
-    } else if (effectErrorState && errors[effectID].isFirstTimeRun) {
-      errors[effectID].isFirstTimeRun = false;
+    } else if (effectErrorState && currentEffecterror.isFirstTimeRun) {
+      currentEffecterror.isFirstTimeRun = false;
       if (updaters.length > 0) runUpdaters(updaters);
       return;
     }
