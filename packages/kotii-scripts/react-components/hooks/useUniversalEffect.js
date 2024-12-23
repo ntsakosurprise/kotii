@@ -14,10 +14,12 @@ export const useUniversalEffect = (
   const { componentName, effectsCount } = effectsStore;
   const effectResources = effectsStore[componentName];
   console.log("THE EFFECTS RESOURCES", effectResources);
-  const { data, errors = null } = effectResources;
+  const { data = {}, errors = {} } = effectResources;
   console.log("THE EFFECTS DATA ERRORS", data, errors);
-  const thisEffectErrors = errors ? errors[effectID] || null : null;
-  const thisEffectData = data ? data[effectID] || null : null;
+  const { userData = null } = data[effectID];
+  const { error = null } = errors[effectID];
+  const thisEffectErrors = error ? error || null : null;
+  const thisEffectData = userData ? userData || null : null;
   const [effectState, setEffectState] = useState(thisEffectData);
   const [effectErrorState, setErrorState] = useState(thisEffectErrors);
   if (!effect) {
@@ -50,19 +52,16 @@ export const useUniversalEffect = (
   }
 
   useEffect(() => {
-    if (effectsStore.isFirstTimeRun) {
-      console.log("First Time Run on the ");
-    } else {
-      console.log("HOOKS RUNS ON CLIENT OR THIRD RUN");
-    }
-    if ((effectState || effectErrorState) && effectsStore.isFirstTimeRun) {
-      console.log("HOOK");
-
-      effectsStore.isFirstTimeRun = false;
+    if (effectState && data[effectID].isFirstTimeRun) {
+      data[effectID].isFirstTimeRun = false;
       if (updaters.length > 0) runUpdaters(updaters);
-
+      return;
+    } else if (effectErrorState && errors[effectID].isFirstTimeRun) {
+      errors[effectID].isFirstTimeRun = false;
+      if (updaters.length > 0) runUpdaters(updaters);
       return;
     }
+
     effect()
       .then((data) => {
         console.log("THE EFFECT RE-RERUNS");
