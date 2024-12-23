@@ -1,7 +1,10 @@
+import { useAppContext } from "kotii-scripts";
 import { useState } from "react";
-const dataObject = {};
+const effect_id_prefix = "kotii_eff_id_";
+let currentEffectID = 1;
 
 export const useUniversalEffect = async (effect = null, dependencies = []) => {
+  const effectStore = useAppContext();
   const [effectState, setEffectState] = useState(null);
   const [effectErrorState, setErrorState] = useState(null);
   if (!effect) {
