@@ -54,6 +54,8 @@ class ReactView {
     this.handleReactStaticViews = methods.handleReactStaticViews;
     this.doImport = methods.doImport;
     this.runComponentEffects = methods.runComponentEffects;
+    this.getEffectsRouteList = methods.getEffectsRouteList;
+    this.includeScripts = methods.includeScripts;
   }
 }
 

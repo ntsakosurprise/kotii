@@ -46,6 +46,7 @@ methods.handleReactStaticViews = function (data) {
   let mappedPromises = views.map(async (view) => {
     let gotHtmlView = await self.runReactView({
       view: { match: view.path },
+      route: view,
       staticRender: true,
     });
     // console.log("THE GOT HTML VIEW", gotHtmlView, view.name);
@@ -70,7 +71,7 @@ methods.runReactView = function (data) {
     HeadHelmet,
     meta,
   } = self;
-  const { view, staticRender = false } = data;
+  const { view, staticRender = false, route = null } = data;
   const { app } = meta;
   const { stateVendor = "" } = app;
 
@@ -103,7 +104,13 @@ methods.runReactView = function (data) {
       store,
       staticRender
     );
-    await self.runComponentEffects(view.match);
+    if (!staticRender) {
+      await self.runComponentEffects(view.match);
+    } else {
+      if (route && route.hasEffectsToRun) {
+        await self.runComponentEffects(view.match, route);
+      }
+    }
 
     let layoutRoot = await self.doImport(
       `/src/components/startup/index.jsx`,
@@ -185,26 +192,27 @@ methods.runReactView = function (data) {
     const finalState = store.getState();
     const helmetGenerated = HeadHelmet.renderStatic();
     // console.log("HELMET GENERATED", helmetGenerated.title.toString());
-    const fullPage = self.renderFullPage(
+    const fullPage = self.renderFullPage({
       html,
-      finalState,
+      preloadedState: finalState,
+      staticRender,
       view,
-      helmetGenerated
-    );
+      head: helmetGenerated,
+    });
     console.log("THE HTML IN RUN REACT-VIEW", fullPage);
     resolve(fullPage);
   });
 };
 
-methods.renderFullPage = function (
+methods.renderFullPage = function ({
   html,
   preloadedState,
+  staticRender,
   view,
   head,
-  scripts = []
-) {
+  scripts = [],
+} = props) {
   const self = this;
-  const { serialize } = self;
   const jsonStyles = fs.existsSync(
     `${kotiiKotiiLandPath}${path.sep}dev/styles.json`
   )
@@ -212,7 +220,7 @@ methods.renderFullPage = function (
         fs.readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`)
       )
     : null;
-  let styleTags = jsonStyles ? jsonStyles.toString().replace(",", "") : "";
+  let styleTags = jsonStyles ? jsonStyles.toString().replaceAll(",", " ") : "";
   console.log("THE PRELOADED STATE", preloadedState, styleTags);
   return `
 		<!doctype html>
@@ -226,17 +234,26 @@ methods.renderFullPage = function (
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
-			<script>
-      window.__PRELOADED_STATE__ = ${serialize(preloadedState)}
-      window.__KOTII_EFFECTS_STATE__ = ${serialize(
-        JSON.stringify(self.effectsData)
-      )}
-			</script>
-			<script src="/server.bundle.js" ></script>
-
+			${!staticRender ? self.includeScripts(preloadedState) : null}
+			
 		</body>
 		</html>
     `;
+};
+
+methods.includeScripts = function (preloadedState) {
+  const self = this;
+  const { serialize } = self;
+  return `
+   <script>
+     window.__PRELOADED_STATE__ = ${serialize(preloadedState)}
+     window.__KOTII_EFFECTS_STATE__ = ${serialize(
+       JSON.stringify(self.effectsData)
+     )}
+    
+   </script>
+   <script src="/server.bundle.js" ></script>
+  `;
 };
 
 methods.getStateDataFromServer = function (
@@ -265,19 +282,17 @@ methods.getStateDataFromServer = function (
   });
 };
 
-methods.runComponentEffects = function (routePath) {
+methods.runComponentEffects = function (routePath, specialRoute = null) {
   const self = this;
-  const routes = self.ssrRoutes;
+  const routes = !specialRoute ? self.ssrRoutes : [specialRoute];
   const effect_id_prefix = "kotii_eff_id_";
 
   // console.log("THE FOUND", routes);
 
   return new Promise((resolve, reject) => {
-    let effectsRouteList = routes.filter((route) => {
-      if (route.path === routePath && route?.hasEffectsToRun) return true;
-    });
-    console.log("THE EFFECTS ROUTE LIST", effectsRouteList);
-    let effectsRoute = effectsRouteList[0];
+    let effectsRoute = self.getEffectsRouteList(routes, routePath);
+    if (!effectsRoute) return resolve(true);
+
     console.log("THE EFFECTS ROUTE", effectsRoute);
     let effectsToRun =
       effectsRoute.effectsToRun instanceof Array
@@ -346,7 +361,14 @@ methods.runComponentEffects = function (routePath) {
     });
   });
 };
+methods.getEffectsRouteList = function (routes, routePath) {
+  let effectsRouteList = [];
+  effectsRouteList = routes.filter((route) => {
+    if (route.path === routePath && route?.hasEffectsToRun) return true;
+  });
 
+  return effectsRouteList.length > 0 ? effectsRouteList[0] : null;
+};
 methods.doImport = function (toImport, all = false, check = true) {
   const self = this;
   const pao = self.pao;
