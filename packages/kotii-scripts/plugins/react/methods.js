@@ -307,14 +307,14 @@ methods.runComponentEffects = function (routePath) {
               self.effectsData[routeId]["data"] = {};
               self.effectsData[routeId].data[effectID] = {
                 userData: data,
-                isFirstTimeRun: run,
+                isFirstTimeRun: true,
               };
               // self.effectsData.data[routeId] = data
               console.log("Kotii effect react: self.effects", self.effectsData);
             } else {
               self.effectsData[routeId].data[effectID] = {
                 userData: data,
-                isFirstTimeRun: run,
+                isFirstTimeRun: true,
               };
             }
             resolve(true);
