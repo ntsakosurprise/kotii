@@ -1,8 +1,7 @@
-import { Head, Hooks } from "kotii-scripts";
+import { Head, useUniversalEffect } from "kotii-scripts";
 // import { CONFIG } from "Config";
 import React, { useState } from "react";
 
-const { useUniversalEffect } = Hooks;
 const Faqs = () => {
   const [isLoading, setLoadState] = useState(true);
   const [count, setCount] = useState(0);

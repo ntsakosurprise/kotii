@@ -3,7 +3,7 @@ import { images } from "Assets";
 // import SearchImage from "../assets/docs_search.png";
 // import StonesJPG from "../assets/stones.jpg";
 import { CONFIG } from "Config";
-import { Head, Hooks } from "kotii-scripts";
+import { Head, useUniversalEffect } from "kotii-scripts";
 import styled from "kotii-styled";
 import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
@@ -15,9 +15,6 @@ import Reminder from "../state/reminder.csv";
 import User from "../state/user.xml";
 import * as actions from "../store/home/actions.js";
 import "../styles/index.css";
-
-console.log("THE HOOKS UNIVERSAL", Hooks);
-const { useUniversalEffect } = Hooks;
 
 const Main = styled("div")({
   display: "flex",
