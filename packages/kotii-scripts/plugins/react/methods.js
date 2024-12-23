@@ -99,11 +99,12 @@ methods.runReactView = function (data) {
   // Grab the initial state from our Redux store
   return new Promise(async (resolve) => {
     const store = stateVendor === "redux" ? createReduxStore() : {};
-    let stateData = await self.getStateDataFromServer(
-      view.match,
+    let stateData = await self.getStateDataFromServer({
+      routePath: view.match,
       store,
-      staticRender
-    );
+      staticRender,
+      route,
+    });
     if (!staticRender) {
       await self.runComponentEffects(view.match);
     } else {
@@ -256,19 +257,18 @@ methods.includeScripts = function (preloadedState) {
   `;
 };
 
-methods.getStateDataFromServer = function (
+methods.getStateDataFromServer = function ({
   routePath,
   store,
-  staticRender = false
-) {
+  staticRender = false,
+  route,
+} = props) {
   const self = this;
-  const routes = self.ssrRoutes;
+  const routes = !staticRender ? self.ssrRoutes : [route];
 
   // console.log("THE FOUND", routes);
 
   return new Promise((resolve, reject) => {
-    if (staticRender) return resolve({});
-
     let dataFetchPromises = routes.filter((route, i) => {
       if (route.path === routePath && route?.requiresData) {
         return route.requiresData(store);
