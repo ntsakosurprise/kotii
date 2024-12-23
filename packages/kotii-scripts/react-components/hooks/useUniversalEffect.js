@@ -11,7 +11,7 @@ export const useUniversalEffect = (
   const effectID = `${effect_id_prefix}${currentEffectID}`;
   const { effectsStore = null } = useAppContext();
   console.log("THE EFFECTS STORE", effectsStore);
-  const { componentName } = effectsStore;
+  const { componentName, effectsCount } = effectsStore;
   const effectResources = effectsStore[componentName];
   console.log("THE EFFECTS RESOURCES", effectResources);
   const { data, errors = null } = effectResources;
@@ -35,16 +35,8 @@ export const useUniversalEffect = (
       "useUniversalEffect requires both dependecies and updaters to be an array"
     );
   }
-  if (!data[`${effect_id_prefix}${currentEffectID + 1}`]) {
-    currentEffectID = 1;
-  } else {
-    currentEffectID++;
-  }
-  resetOrIncrementEffectCounter(
-    `${effect_id_prefix}${currentEffectID + 1}`,
-    data,
-    errors
-  );
+
+  resetOrIncrementEffectCounter(effectsCount);
 
   if (typeof window === "undefined") {
     console.log(
@@ -95,24 +87,10 @@ const runUpdaters = (updaters) => {
   });
 };
 
-const resetOrIncrementEffectCounter = (effectKey, data, error) => {
-  if (data && error) {
-    if (!data[effectKey] || !error[effectKey]) {
-      currentEffectID = 1;
-    } else {
-      currentEffectID++;
-    }
-  } else if (data) {
-    if (!data[effectKey]) {
-      currentEffectID = 1;
-    } else {
-      currentEffectID++;
-    }
-  } else if (error) {
-    if (!error[effectKey]) {
-      currentEffectID = 1;
-    } else {
-      currentEffectID++;
-    }
+const resetOrIncrementEffectCounter = (count) => {
+  if (currentEffectID + 1 > count) {
+    currentEffectID = 1;
+  } else {
+    currentEffectID++;
   }
 };
