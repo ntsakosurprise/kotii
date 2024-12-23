@@ -429,7 +429,7 @@ methods.getItemPathAndFile = function (item) {
 
     self.doImport(item, true).then((imported) => {
       console.log("THE PAGE FILE IN CONTEXT EXPORTS", imported);
-      const { getServerState = null } = imported;
+      const { getServerState = null, universalEffects = null } = imported;
       // if (imported.getServerState) {
       //   console.log(
       //     "THE GETSERVERSTATE METHOD",
@@ -449,6 +449,7 @@ methods.getItemPathAndFile = function (item) {
         componentPath: item,
         componentRaw: imported.default,
         getServerState,
+        universalEffects,
       });
     });
   });
@@ -1442,10 +1443,10 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
       title: "REACT SERVE-SIDE RENDERING COMPONENT",
       method: "GET",
       type: "public",
-      // name: route.component,
       name: route.componentName,
-      // requiresData: self.getComponentServerState(route.path, routesObject),
       requiresData: route.getServerState,
+      hasEffectsToRun: route.universalEffects ? true : false,
+      effectsToRun: route.universalEffects,
     };
   });
   // console.log("ROUTES BUILT", builtRoutes);
