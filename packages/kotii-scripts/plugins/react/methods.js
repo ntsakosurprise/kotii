@@ -305,11 +305,17 @@ methods.runComponentEffects = function (routePath) {
             // self.effectsData[routeId][effectID] = data
             if (!self.effectsData[routeId]["data"]) {
               self.effectsData[routeId]["data"] = {};
-              self.effectsData[routeId].data[effectID] = data;
+              self.effectsData[routeId].data[effectID] = {
+                userData: data,
+                isFirstTimeRun: run,
+              };
               // self.effectsData.data[routeId] = data
               console.log("Kotii effect react: self.effects", self.effectsData);
             } else {
-              self.effectsData[routeId].data[effectID] = data;
+              self.effectsData[routeId].data[effectID] = {
+                userData: data,
+                isFirstTimeRun: run,
+              };
             }
             resolve(true);
           })
@@ -318,9 +324,15 @@ methods.runComponentEffects = function (routePath) {
             if (!self.effectsData[routeId]) self.effectsData[routeId] = {};
             if (!self.effectsData[routeId]["errors"]) {
               self.effectsData[routeId]["errors"] = {};
-              self.effectsData[routeId].errors[effectID] = err;
+              self.effectsData[routeId].errors[effectID] = {
+                error: err,
+                isFirstTimeRun: true,
+              };
             } else {
-              self.effectsData[routeId].errors[effectID] = err;
+              self.effectsData[routeId].errors[effectID] = {
+                error: err,
+                isFirstTimeRun: true,
+              };
             }
             resolve(true);
           });
