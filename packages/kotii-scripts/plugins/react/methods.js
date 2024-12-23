@@ -228,6 +228,9 @@ methods.renderFullPage = function (
 			<div id="root">${html}</div>
 			<script>
       window.__PRELOADED_STATE__ = ${serialize(preloadedState)}
+      window.__KOTII_EFFECTS_STATE__ = ${serialize(
+        JSON.stringify(self.effectsData)
+      )}
 			</script>
 			<script src="/server.bundle.js" ></script>
 
