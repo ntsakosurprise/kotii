@@ -247,6 +247,10 @@ if (import.meta.webpackHot) {
   });
 }
 
-export { Head, useUniversalEffect } from "../../react-components/index.jsx";
+export {
+  Head,
+  useAppContext,
+  useUniversalEffect,
+} from "../../react-components/index.jsx";
 export { ServerApp };
 export default App;
