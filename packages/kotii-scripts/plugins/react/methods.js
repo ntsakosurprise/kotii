@@ -101,6 +101,8 @@ methods.runReactView = function (data) {
       store,
       staticRender
     );
+    await self.runComponentEffects(view.match);
+
     let layoutRoot = await self.doImport(
       `/src/components/startup/index.jsx`,
       true,
@@ -109,6 +111,8 @@ methods.runReactView = function (data) {
     if (!self.comps) {
       self.comps = await self.doImport(`/kotii-land/dev/pages.js`, true, false);
     }
+
+    let effectsStore = self.effectsData;
 
     console.log("THE LAYOUT ROOT", layoutRoot.Layout);
     console.log("GOT STATE DATA", stateData);
@@ -126,7 +130,7 @@ methods.runReactView = function (data) {
         sheet.collectStyles(
           !layoutRoot ? (
             <Router ssrPath={view.match}>
-              {REACTAPP({ storeFromSource: store, goodies })}
+              {REACTAPP({ storeFromSource: store, goodies, effectsStore })}
             </Router>
           ) : layoutRoot.Layout && layoutRoot.Root ? (
             <Router ssrPath={view.match}>
@@ -135,6 +139,7 @@ methods.runReactView = function (data) {
                 layout: layoutRoot.Layout,
                 storeFromSource: store,
                 goodies,
+                effectsStore,
               })}
             </Router>
           ) : layoutRoot.Layout ? (
@@ -143,6 +148,7 @@ methods.runReactView = function (data) {
                 layout: layoutRoot.Layout,
                 storeFromSource: store,
                 goodies,
+                effectsStore,
               })}
             </Router>
           ) : (
@@ -150,6 +156,7 @@ methods.runReactView = function (data) {
               {REACTAPP({
                 appWrapper: layoutRoot.Root,
                 storeFromSource: store,
+                effectsStore,
               })}
             </Router>
           )
