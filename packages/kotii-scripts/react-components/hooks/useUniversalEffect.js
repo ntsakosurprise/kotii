@@ -40,6 +40,11 @@ export const useUniversalEffect = (
   } else {
     currentEffectID++;
   }
+  resetOrIncrementEffectCounter(
+    `${effect_id_prefix}${currentEffectID + 1}`,
+    data,
+    errors
+  );
 
   if (typeof window === "undefined") {
     console.log(
@@ -88,4 +93,26 @@ const runUpdaters = (updaters) => {
     console.log("Updaters: updater", updater);
     updater();
   });
+};
+
+const resetOrIncrementEffectCounter = (effectKey, data, error) => {
+  if (data && error) {
+    if (!data[effectKey] || !error[effectKey]) {
+      currentEffectID = 1;
+    } else {
+      currentEffectID++;
+    }
+  } else if (data) {
+    if (!data[effectKey]) {
+      currentEffectID = 1;
+    } else {
+      currentEffectID++;
+    }
+  } else if (error) {
+    if (!error[effectKey]) {
+      currentEffectID = 1;
+    } else {
+      currentEffectID++;
+    }
+  }
 };
