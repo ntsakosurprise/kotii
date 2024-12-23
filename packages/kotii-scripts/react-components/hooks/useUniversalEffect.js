@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 const effect_id_prefix = "kotii_eff_id_";
 let currentEffectID = 1;
 
-export const useUniversalEffect = async (
+export const useUniversalEffect = (
   effect = null,
   dependencies = [],
   updaters = []
@@ -25,7 +25,16 @@ export const useUniversalEffect = async (
       "useUniversalEfffect requires atleast an effect to be executed"
     );
   }
-
+  if (typeof effect !== "function") {
+    throw new Error(
+      "useUniversalEffect requires effect argument to be of type: function"
+    );
+  }
+  if (!(dependencies instanceof Array) && !(updaters instanceof Array)) {
+    throw new Error(
+      "useUniversalEffect requires both dependecies and updaters to be an array"
+    );
+  }
   if (!data[`${effect_id_prefix}${currentEffectID + 1}`]) {
     currentEffectID = 1;
   } else {
