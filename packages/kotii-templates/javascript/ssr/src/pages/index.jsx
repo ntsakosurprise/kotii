@@ -212,33 +212,8 @@ const Index = () => {
   //   console.log("STATE RECEIVED", state);
   //   return state.homeReducer.people;
   // });
-  const [data, error] = useUniversalEffect(() => {
-    return new Promise(async (resolve, reject) => {
-      const url = !CONFIG.APP_URL
-        ? `${JSON.parse(process.env.KOTII_APP_URL)}/get-portfolio`
-        : `${CONFIG.APP_URL}/get-users`;
-      try {
-        fetch(url, { method: "GET" })
-          .then((res) => {
-            return res.json();
-          })
-          .then((result) => {
-            resolve(result);
-          })
-          .catch((err) => {
-            reject(err);
-          });
-        // if (!response.ok) {
-        //   throw new Error(`Response status: ${response.status}`);
-        // }
-
-        // const json = await response.json();
-        // console.log("rESPONSE AS JSON", json);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }, []);
+  const [data, error] = useUniversalEffect(runAsEffect, []);
+  const [dataTwo, errorTwo] = useUniversalEffect(getRandomNum, []);
 
   const user = useSelector((state) => {
     console.log("STATE RECEIVED", state);
@@ -273,7 +248,8 @@ const Index = () => {
 
         {/* {peopleList ? <PeopleList people={peopleList} /> : null} */}
         {user ? <UserComp user={user} /> : null}
-        <p>The effect DATA: {data?.age || "nothing"}</p>
+        <p>The effect DATA: {data?.actor?.age || "nothing"}</p>
+        <p>The effect DATA: {dataTwo?.actor?.age || "nothing"}</p>
         {/* <img src={connectionsSvg} width={50} alt="connections svg" /> */}
       </Hero>
       <SVG>
@@ -292,5 +268,85 @@ const Index = () => {
 export const getServerState = (store) => {
   return store.dispatch(actions.showUser());
 };
+const runAsEffect = () => {
+  return new Promise((resolve) => {
+    resolve({
+      actor: {
+        type: "Personal website",
+        age: `${Math.floor(Math.random() * 50)} years`,
+        owner: "Ntsako Surprise",
+        author: "Wix",
+        WeeklyViews: 5,
+      },
+    });
+  });
+
+  // return new Promise(async (resolve, reject) => {
+  //   const url = !CONFIG.APP_URL
+  //     ? `${JSON.parse(process.env.KOTII_APP_URL)}/get-portfolio`
+  //     : `${CONFIG.APP_URL}/get-users`;
+  //   try {
+  //     fetch(url, { method: "GET" })
+  //       .then((res) => {
+  //         return res.json();
+  //       })
+  //       .then((result) => {
+  //         resolve(result);
+  //       })
+  //       .catch((err) => {
+  //         reject(err);
+  //       });
+  //     // if (!response.ok) {
+  //     //   throw new Error(`Response status: ${response.status}`);
+  //     // }
+
+  //     // const json = await response.json();
+  //     // console.log("rESPONSE AS JSON", json);
+  //   } catch (error) {
+  //     reject(error);
+  //   }
+  // });
+};
+const getRandomNum = () => {
+  return new Promise((resolve) => {
+    resolve({
+      actor: {
+        type: "Personal website",
+        age: `${Math.floor(Math.random() * 50)} years`,
+        owner: "Ntsako Surprise",
+        author: "Wix",
+        WeeklyViews: 5,
+      },
+    });
+  });
+
+  // return new Promise(async (resolve, reject) => {
+  //   const url = !CONFIG.APP_URL
+  //     ? `${JSON.parse(process.env.KOTII_APP_URL)}/get-portfolio`
+  //     : `${CONFIG.APP_URL}/get-users`;
+  //   try {
+  //     fetch(url, { method: "GET" })
+  //       .then((res) => {
+  //         return res.json();
+  //       })
+  //       .then((result) => {
+  //         resolve(result);
+  //       })
+  //       .catch((err) => {
+  //         reject(err);
+  //       });
+  //     // if (!response.ok) {
+  //     //   throw new Error(`Response status: ${response.status}`);
+  //     // }
+
+  //     // const json = await response.json();
+  //     // console.log("rESPONSE AS JSON", json);
+  //   } catch (error) {
+  //     reject(error);
+  //   }
+  // });
+};
+
+export const universalEffects = [runAsEffect, getRandomNum];
 
 export default Index;
