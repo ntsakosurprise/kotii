@@ -4,6 +4,7 @@ const effect_id_prefix = "kotii_eff_id_";
 let currentEffectID = 1;
 
 export const useUniversalEffect = async (effect = null, dependencies = []) => {
+  const effectID = `${effect_id_prefix}${currentEffectID}`;
   const effectStore = useAppContext();
   const [effectState, setEffectState] = useState(null);
   const [effectErrorState, setErrorState] = useState(null);
