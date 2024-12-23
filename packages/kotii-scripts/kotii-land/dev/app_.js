@@ -18,6 +18,7 @@ const App = (appWrapper = null, layout = null) => {
   userWrapper = appWrapper;
   userLayout = layout;
   const app = process.env.KOTII_APP_META;
+  const effectsStore = JSON.parse(window.__KOTII_EFFECTS_STATE__);
 
   console.log("THE PROCESS.BROWSER.ENVS", process.env);
   // const existsMeta = fs.existsSync(
@@ -35,16 +36,16 @@ const App = (appWrapper = null, layout = null) => {
     console.log("NOT SSR", stateVendor);
     if (stateVendor && stateVendor === "redux") {
       const store = createReduxStore();
-      return appSpaWithRedux({ appWrapper, layout, store });
+      return appSpaWithRedux({ appWrapper, layout, store, effectsStore });
     }
-    return appSpa({ appWrapper, layout });
+    return appSpa({ appWrapper, layout, effectsStore });
   } else {
     if (stateVendor && stateVendor === "redux") {
       console.log("TYPE IS SSR");
       const store = createReduxStore(window.__PRELOADED_STATE__);
-      return appWithRedux({ appWrapper, layout, store });
+      return appWithRedux({ appWrapper, layout, store, effectsStore });
     }
-    return appNormal({ appWrapper, layout });
+    return appNormal({ appWrapper, layout, effectsStore });
   }
 };
 const appWithRedux = ({
@@ -53,13 +54,18 @@ const appWithRedux = ({
   store,
   isServer = false,
   goodies = null,
+  effectsStore,
 } = props) => {
   console.log("APP WITH REDUX", appWrapper, layout, store, isServer);
   if (isServer) {
     console.log("IT IS RENDERING FOR SERVER", isServer);
     return (
       <Provider store={store}>
-        <AppProvider appWrapper={appWrapper} layout={layout}>
+        <AppProvider
+          appWrapper={appWrapper}
+          layout={layout}
+          effectsStore={effectsStore}
+        >
           <AppGeneric isServer={true} goodies={goodies} />
         </AppProvider>
       </Provider>
@@ -82,7 +88,11 @@ const appWithRedux = ({
   if (customHydrateRoot) {
     return customHydrateRoot.render(
       <Provider store={store}>
-        <AppProvider appWrapper={appWrapper} layout={layout}>
+        <AppProvider
+          appWrapper={appWrapper}
+          layout={layout}
+          effectsStore={effectsStore}
+        >
           <AppGeneric />
         </AppProvider>
       </Provider>
@@ -91,7 +101,11 @@ const appWithRedux = ({
     customHydrateRoot = hydrateRoot(
       container,
       <Provider store={store}>
-        <AppProvider appWrapper={appWrapper} layout={layout}>
+        <AppProvider
+          appWrapper={appWrapper}
+          layout={layout}
+          effectsStore={effectsStore}
+        >
           <AppGeneric />
         </AppProvider>
       </Provider>
@@ -124,11 +138,20 @@ const AppGeneric = (props) => {
   );
 };
 
-const appNormal = ({ appWrapper, layout, isServer = false } = props) => {
+const appNormal = ({
+  appWrapper,
+  layout,
+  isServer = false,
+  effectsStore,
+} = props) => {
   console.log("APP NORMARL IS RUNNING");
   if (isServer) {
     return (
-      <AppProvider appWrapper={appWrapper} layout={layout}>
+      <AppProvider
+        appWrapper={appWrapper}
+        layout={layout}
+        effectsStore={effectsStore}
+      >
         <AppGeneric />
       </AppProvider>
     );
@@ -136,13 +159,17 @@ const appNormal = ({ appWrapper, layout, isServer = false } = props) => {
   container = !container ? document.getElementById("root") : container;
   hydrateRoot(
     document.getElementById("root"),
-    <AppProvider appWrapper={appWrapper} layout={layout}>
+    <AppProvider
+      appWrapper={appWrapper}
+      layout={layout}
+      effectsStore={effectsStore}
+    >
       <AppGeneric />
     </AppProvider>
   );
 };
 
-const appSpa = ({ appWrapper, layout } = props) => {
+const appSpa = ({ appWrapper, layout, effectsStore } = props) => {
   console.log("APP SPA IS RUNNING");
 
   const root = createRoot(document.getElementById("root"));
@@ -155,14 +182,23 @@ const appSpa = ({ appWrapper, layout } = props) => {
   );
 };
 
-const appSpaWithRedux = ({ appWrapper, layout, store } = props) => {
+const appSpaWithRedux = ({
+  appWrapper,
+  layout,
+  store,
+  effectsStore,
+} = props) => {
   console.log("APP SPA WITH REDUX RUNNING");
 
   const root = createRoot(document.getElementById("root"));
   root.render(
     <StrictMode>
       <Provider store={store}>
-        <AppProvider appWrapper={appWrapper} layout={layout}>
+        <AppProvider
+          appWrapper={appWrapper}
+          layout={layout}
+          effectsStore={effectsStore}
+        >
           <AppGeneric />
         </AppProvider>
       </Provider>
@@ -175,6 +211,7 @@ const ServerApp = ({
   layout = null,
   goodies = null,
   storeFromSource = null,
+  effectsStore,
 } = props) => {
   console.log("THE GOODIES FROM SERVER", goodies);
   const store = !storeFromSource ? createReduxStore() : storeFromSource;
@@ -192,9 +229,22 @@ const ServerApp = ({
   console.log("SERVER META", meta);
 
   if (stateVendor && stateVendor === "redux") {
-    return appWithRedux({ appWrapper, layout, store, isServer: true, goodies });
+    return appWithRedux({
+      appWrapper,
+      layout,
+      store,
+      isServer: true,
+      goodies,
+      effectsStore,
+    });
   }
-  return appNormal({ appWrapper, layout, isServer: true, goodies });
+  return appNormal({
+    appWrapper,
+    layout,
+    isServer: true,
+    goodies,
+    effectsStore,
+  });
 };
 
 if (import.meta.webpackHot) {
