@@ -253,6 +253,70 @@ methods.getStateDataFromServer = function (
   });
 };
 
+methods.runComponentEffects = function (routePath) {
+  const self = this;
+  const routes = self.ssrRoutes;
+  const effect_id_prefix = "kotii_eff_id_";
+
+  // console.log("THE FOUND", routes);
+
+  return new Promise((resolve, reject) => {
+    let effectsRouteList = routes.filter((route) => {
+      if (route.path === routePath && route?.hasEffectsToRun) return true;
+    });
+    console.log("THE EFFECTS ROUTE LIST", effectsRouteList);
+    let effectsRoute = effectsRouteList[0];
+    console.log("THE EFFECTS ROUTE", effectsRoute);
+    let effectsToRun =
+      effectsRoute.effectsToRun instanceof Array
+        ? effectsRoute.effectsToRun
+        : [effectsRoute.effectsToRun];
+    let routeId = effectsRoute.name;
+    console.log("THE EFFECTS TO RUN", effectsToRun);
+
+    let effectsPromises = effectsToRun.map((effectToRun, ID) => {
+      let effectID = `${effect_id_prefix}${ID + 1}`;
+      return new Promise((resolve, reject) => {
+        effectToRun()
+          .then((data) => {
+            console.log("Kotii effect react:data", data);
+
+            if (!self.effectsData["componentName"])
+              self.effectsData["componentName"] = routeId;
+            if (!self.effectsData[routeId]) self.effectsData[routeId] = {};
+            // self.effectsData[routeId][effectID] = data
+            if (!self.effectsData[routeId]["data"]) {
+              self.effectsData[routeId]["data"] = {};
+              self.effectsData[routeId].data[effectID] = data;
+              // self.effectsData.data[routeId] = data
+              console.log("Kotii effect react: self.effects", self.effectsData);
+            } else {
+              self.effectsData[routeId].data[effectID] = data;
+            }
+            resolve(true);
+          })
+          .catch((err) => {
+            console.log("Kotii effect react:err", err);
+            if (!self.effectsData[routeId]) self.effectsData[routeId] = {};
+            if (!self.effectsData[routeId]["errors"]) {
+              self.effectsData[routeId]["errors"] = {};
+              self.effectsData[routeId].errors[effectID] = err;
+            } else {
+              self.effectsData[routeId].errors[effectID] = err;
+            }
+            resolve(true);
+          });
+      });
+    });
+    console.log("THE EFFECTS PROMISES", effectsPromises);
+
+    Promise.all(effectsPromises).then((resolveData) => {
+      console.log("THE RESOLVED EFFECTS DATA", resolveData);
+      resolve(resolveData);
+    });
+  });
+};
+
 methods.doImport = function (toImport, all = false, check = true) {
   const self = this;
   const pao = self.pao;
