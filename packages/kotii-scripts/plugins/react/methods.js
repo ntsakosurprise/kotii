@@ -26,6 +26,7 @@ methods.handleReactView = function (data) {
   self.adLog("Handling ReactView Event");
   self.adLog(data);
   self.callback = data.callback;
+  self.effectsData = {};
 
   console.log("THE VIEW DATA", data);
   console.log("ServerStyleSheet", ServerStyleSheet);
@@ -38,6 +39,7 @@ methods.handleReactStaticViews = function (data) {
   const self = this;
   // console.log("Static Views");
   self.callback = data.callback;
+  self.effectsData = {};
 
   console.log("THE VIEW DATA", data);
   const { views } = data;
