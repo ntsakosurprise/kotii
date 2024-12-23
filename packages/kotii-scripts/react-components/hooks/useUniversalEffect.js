@@ -16,14 +16,20 @@ export const useUniversalEffect = async (
   console.log("THE EFFECTS RESOURCES", effectResources);
   const { data, errors = null } = effectResources;
   console.log("THE EFFECTS DATA ERRORS", data, errors);
-  const thisEffectErros = errors ? errors[effectID] || null : null;
+  const thisEffectErrors = errors ? errors[effectID] || null : null;
   const thisEffectData = data ? data[effectID] || null : null;
   const [effectState, setEffectState] = useState(thisEffectData);
-  const [effectErrorState, setErrorState] = useState(thisEffectErros);
+  const [effectErrorState, setErrorState] = useState(thisEffectErrors);
   if (!effect) {
     throw new Error(
       "useUniversalEfffect requires atleast an effect to be executed"
     );
+  }
+
+  if (!data[`${effect_id_prefix}${currentEffectID + 1}`]) {
+    currentEffectID = 1;
+  } else {
+    currentEffectID++;
   }
 
   if (typeof window === "undefined") {
@@ -33,7 +39,7 @@ export const useUniversalEffect = async (
       "component name",
       componentName
     );
-    if (thisEffectErros) return [null, thisEffectErros];
+    if (thisEffectErrors) return [null, thisEffectErrors];
     return [thisEffectData, null];
   }
 
