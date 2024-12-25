@@ -4,11 +4,18 @@ class KOLogger {
   debugas = {};
   debugasy = ["events", "start-up", "pages", "config"];
 
-  constructor() {
-    this.debugasy.forEach((debugr, i) => {
-      console.log("KOLogger initializing;;;", `kotii:${debugr}`);
-      this.debugas[debugr] = debug(`kotii:${debugr}`);
-    });
+  constructor(appName = "kotii", nameSpaces = null) {
+    if (!nameSpaces) {
+      this.debugasy.forEach((debugr, i) => {
+        console.log("KOLogger initializing;;;", `${appName}:${debugr}`);
+        this.debugas[debugr] = debug(`kotii:${debugr}`);
+      });
+    } else {
+      nameSpaces.forEach((debugr, i) => {
+        console.log("KOLogger initializing;;;", `${appName}:${debugr}`);
+        this.debugas[debugr] = debug(`kotii:${debugr}`);
+      });
+    }
   }
   log = (scope, message) => {
     const self = this;
@@ -38,4 +45,5 @@ class KOLogger {
 }
 
 const logger = new KOLogger();
-export { logger, KOLogger };
+const { log, events } = logger;
+export { logger, KOLogger, log, events };
