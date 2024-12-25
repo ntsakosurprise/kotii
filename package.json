@@ -47,6 +47,7 @@
     "babel-register-esm": "^1.2.5",
     "cjstoesm": "^2.1.2",
     "cross-spawn": "^7.0.3",
+    "kotii-logger": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-logger/kotii-logger-1.0.0.tgz",
     "patch-package": "^8.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
