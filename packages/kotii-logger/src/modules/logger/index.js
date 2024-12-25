@@ -3,19 +3,17 @@ import debug from "debug";
 class KOLogger {
   debugus = {};
   debugNameSpaces = ["events", "start-up", "pages", "config"];
+  createNameSpacesDebug = null;
+  appName = "";
 
   constructor(appName = "kotii", nameSpaces = null) {
-    let initializeDebug = debug("KOLogger:initializing");
+    this.appName = appName;
+    this.createNameSpacesDebug = debug("KOLogger:namespaces");
+
     if (!nameSpaces) {
-      this.debugNameSpaces.forEach((debugr, i) => {
-        initializeDebug("Creating debug namespace=>", `${appName}:${debugr}`);
-        this.debugus[debugr] = debug(`kotii:${debugr}`);
-      });
+      this.createNameSpaces(this.debugNameSpaces);
     } else {
-      nameSpaces.forEach((debugr, i) => {
-        initializeDebug("Creating debug namespace=>", `${appName}:${debugr}`);
-        this.debugus[debugr] = debug(`kotii:${debugr}`);
-      });
+      this.createNameSpaces(nameSpaces);
     }
   }
   log = (scope, message) => {
@@ -42,6 +40,20 @@ class KOLogger {
     if (!debugrr.enabled) debugrr.enabled = true;
     debugrr(message);
     return true;
+  };
+  setNameSpaces = (namespaces) => {
+    this.createNameSpaces(namespaces);
+  };
+  createNameSpaces = (nameSpaces) => {
+    nameSpaces.forEach((debugr, i) => {
+      this.createNamespaceDebug(
+        "Creating debug namespace=>",
+        `${this.appName}:${debugr}`
+      );
+      this.debugus[debugr] = debug(`kotii:${debugr}`);
+      this.debugus[debugr].enabled = true;
+      this.debugus[debugr].useColors = true;
+    });
   };
 }
 
