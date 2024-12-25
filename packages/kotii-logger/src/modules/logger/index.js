@@ -1,28 +1,29 @@
 import debug from "debug";
 
 class KOLogger {
-  debugas = {};
-  debugasy = ["events", "start-up", "pages", "config"];
+  debugus = {};
+  debugNameSpaces = ["events", "start-up", "pages", "config"];
 
   constructor(appName = "kotii", nameSpaces = null) {
+    let initializeDebug = debug("KOLogger:initializing");
     if (!nameSpaces) {
-      this.debugasy.forEach((debugr, i) => {
-        console.log("KOLogger initializing;;;", `${appName}:${debugr}`);
-        this.debugas[debugr] = debug(`kotii:${debugr}`);
+      this.debugNameSpaces.forEach((debugr, i) => {
+        initializeDebug("Creating debug namespace=>", `${appName}:${debugr}`);
+        this.debugus[debugr] = debug(`kotii:${debugr}`);
       });
     } else {
       nameSpaces.forEach((debugr, i) => {
-        console.log("KOLogger initializing;;;", `${appName}:${debugr}`);
-        this.debugas[debugr] = debug(`kotii:${debugr}`);
+        initializeDebug("Creating debug namespace=>", `${appName}:${debugr}`);
+        this.debugus[debugr] = debug(`kotii:${debugr}`);
       });
     }
   }
   log = (scope, message) => {
     const self = this;
-    console.log("THE DEBUGAS;;;", self.debugas);
+    console.log("THE debugus;;;", self.debugus);
     console.log("THE SCOPE", scope);
     console.log(">>> PROCESS", process.env);
-    if (self.debugas[scope]) return self[scope](scope, message);
+    if (self.debugus[scope]) return self[scope](scope, message);
     console.log(message);
     const msg = debug("kotii:log");
     console.log(">>> PROCESS", process.env);
@@ -37,7 +38,7 @@ class KOLogger {
 
   events = (debugr, message) => {
     const self = this;
-    const debugrr = self.debugas[debugr];
+    const debugrr = self.debugus[debugr];
     if (!debugrr.enabled) debugrr.enabled = true;
     debugrr(message);
     return true;
