@@ -3,8 +3,13 @@
   "version": "1.0.0",
   "description": "A simple logger to log organize logs on the browser",
   "license": "MIT",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.cjs"
+    }
+  },
   "directories": {
     "lib": "lib",
     "test": "__tests__"
