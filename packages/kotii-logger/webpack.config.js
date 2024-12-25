@@ -75,12 +75,4 @@ module.exports = {
       "process.env": JSON.stringify(process.env),
     }),
   ],
-
-  // plugins: [
-  //   new HTMLWebpackPlugin({
-  //     template: __dirname + "/public/index.html",
-  //     filename: "index.html",
-  //     inject: "body",
-  //   }),
-  // ],
 };
