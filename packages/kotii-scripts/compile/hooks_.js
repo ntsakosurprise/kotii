@@ -1,5 +1,6 @@
 import babel from "@babel/core";
 import fs from "fs";
+import { logger } from "kotii-logger";
 import { isBuiltin } from "node:module";
 import { pathToFileURL } from "node:url";
 import path from "path";
@@ -185,7 +186,7 @@ export async function load(url, context, nextLoad) {
 
 export async function resolve(specifier, context, nextResolve) {
   // const { parentURL = workdir } = context;
-  console.log(
+  logger.log(
     "RESOLVE specifier",
     specifier
     // specifier,
