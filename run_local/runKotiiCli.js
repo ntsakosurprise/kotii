@@ -15,6 +15,7 @@ const madeTarballs = createTarballs(packagesPath, [
   "kotii-scripts",
   "kotii-styled",
   "kotii-templates",
+  "kotii-logger",
 ]);
 console.log("MADE TARBALLS", madeTarballs);
 // const nodeScriptPath = path.join(packagesPath, "kotii-cli");
