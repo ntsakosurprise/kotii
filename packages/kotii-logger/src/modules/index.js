@@ -1,3 +1,3 @@
-import { KOLogger, logger } from "./logger/index.js";
+import { KOLogger, loggas, logger } from "./logger/index.js";
 
-export { logger, KOLogger };
+export { logger, KOLogger, loggas };

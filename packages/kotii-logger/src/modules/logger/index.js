@@ -60,7 +60,6 @@ class KOLogger {
           log: debug(`kotii:${debugr.namespace}`),
         };
       }
-      console.log("THE DEBUGS", this.debugus);
 
       this.debugus[debugrID].log.enabled = true;
       this.debugus[debugrID].log.useColors = true;
