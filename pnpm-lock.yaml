@@ -35,9 +35,6 @@ importers:
       cross-spawn:
         specifier: ^7.0.3
         version: 7.0.3
-      kotii-logger:
-        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-logger/kotii-logger-1.0.0.tgz
-        version: file:packages/kotii-logger/kotii-logger-1.0.0.tgz
       patch-package:
         specifier: ^8.0.0
         version: 8.0.0
@@ -8138,7 +8135,7 @@ packages:
     engines: {node: '>= 8'}
 
   kotii-logger@file:packages/kotii-logger/kotii-logger-1.0.0.tgz:
-    resolution: {integrity: sha512-ereCr3c6xzkdOrsyIHGYXb/F8TvYTlOONVc9zMKsp9xEWt1/3nlrAWuwDHr+HC+jBgT9GN6SirOg54o8oShC2Q==, tarball: file:packages/kotii-logger/kotii-logger-1.0.0.tgz}
+    resolution: {integrity: sha512-DfcoX/xLHm/NKb2UAsS2r6Hf3J2gbWUgcMZ4YIkwPI2lntt07nkZ6rxK6UpG3cvnnuvD4rumLa+2KLe/lJrJnA==, tarball: file:packages/kotii-logger/kotii-logger-1.0.0.tgz}
     version: 1.0.0
 
   kotii-styled@file:packages/kotii-styled/kotii-styled-1.0.0.tgz:
