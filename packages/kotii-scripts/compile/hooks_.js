@@ -1,14 +1,19 @@
 import babel from "@babel/core";
 import fs from "fs";
-import { logger } from "kotii-logger";
+import { loggas, logger } from "kotii-logger";
 import { isBuiltin } from "node:module";
 import { pathToFileURL } from "node:url";
 import path from "path";
 import babelJson from "../babel.server.json" assert { type: "json" };
 import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
+
 let meta = null;
 let workdir = `${process.cwd()}`;
 let sep = path.sep;
+logger.setNameSpaces([
+  { namespace: "nodejs:compilation:load", id: "load" },
+  { namespace: "nodejs:compilation:resolve", id: "resolve" },
+]);
 
 let whiteListedUrls = [
   `${pathToFileURL(`${workdir}${sep}plugins${sep}react${sep}methods.js`)}`,
@@ -186,7 +191,7 @@ export async function load(url, context, nextLoad) {
 
 export async function resolve(specifier, context, nextResolve) {
   // const { parentURL = workdir } = context;
-  logger.log(
+  loggas.resolve.log(
     "RESOLVE specifier",
     specifier
     // specifier,
