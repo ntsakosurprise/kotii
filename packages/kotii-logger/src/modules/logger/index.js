@@ -41,22 +41,34 @@ class KOLogger {
     debugrr(message);
     return true;
   };
-  setNameSpaces = (namespaces) => {
+  setNameSpaces(namespaces) {
     this.createNameSpaces(namespaces);
-  };
+  }
   createNameSpaces = (nameSpaces) => {
     nameSpaces.forEach((debugr, i) => {
-      this.createNamespaceDebug(
+      this.createNameSpacesDebug(
         "Creating debug namespace=>",
         `${this.appName}:${debugr}`
       );
-      this.debugus[debugr] = debug(`kotii:${debugr}`);
-      this.debugus[debugr].enabled = true;
-      this.debugus[debugr].useColors = true;
+      let debugrID = debugr?.namespace ? debugr.id : debugr;
+      if (typeof debugr == "string") {
+        this.debugus[debugrID] = {
+          log: debug(`kotii:${debugrID}`),
+        };
+      } else {
+        this.debugus[debugrID] = {
+          log: debug(`kotii:${debugr.namespace}`),
+        };
+      }
+      console.log("THE DEBUGS", this.debugus);
+
+      this.debugus[debugrID].log.enabled = true;
+      this.debugus[debugrID].log.useColors = true;
     });
   };
 }
 
 const logger = new KOLogger();
 const { log, events } = logger;
-export { logger, KOLogger, log, events };
+let loggas = logger.debugus;
+export { logger, KOLogger, log, events, loggas };
