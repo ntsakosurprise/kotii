@@ -18,17 +18,10 @@ class KOLogger {
   }
   log = (scope, message) => {
     const self = this;
-    console.log("THE debugus;;;", self.debugus);
-    console.log("THE SCOPE", scope);
-    console.log(">>> PROCESS", process.env);
+
     if (self.debugus[scope]) return self[scope](scope, message);
     console.log(message);
     const msg = debug("kotii:log");
-    console.log(">>> PROCESS", process.env);
-    console.log(">>> Debugr enabled?", debug.enabled);
-    console.log(">>> The value of return debug", msg);
-    console.log(">>> With REACT ENV VAR", process.env.REACT_APP_KOTII_DEBUG);
-    console.log(">>> The value of this", this);
     msg.enabled = true;
     msg("I am the message");
     return true;
