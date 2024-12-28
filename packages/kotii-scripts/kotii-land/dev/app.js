@@ -45,9 +45,8 @@ process.on("exit", function () {
   }
 });
 import("/kotii-user-api/plugins").then((imported) => {
-  console.log("THE IMPORTED USER PLUGINS", imported);
   let userPlugins = imported.default;
-  console.log("USER PLUGINS", userPlugins);
+
   if (userPlugins?.noApi && Object.keys(userPlugins).length === 1) {
     console.log("API PLUGINS NO API");
     anzii(plugins);
