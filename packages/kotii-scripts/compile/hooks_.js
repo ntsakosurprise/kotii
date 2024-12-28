@@ -9,19 +9,11 @@ import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
 
 let meta = null;
 let workdir = `${process.cwd()}`;
-let sep = path.sep;
+
 logger.setNameSpaces([
   { namespace: "nodejs:compilation:load", id: "load" },
   { namespace: "nodejs:compilation:resolve", id: "resolve" },
 ]);
-
-let whiteListedUrls = [
-  `${pathToFileURL(`${workdir}${sep}plugins${sep}react${sep}methods.js`)}`,
-  `${pathToFileURL(`${workdir}${sep}build.js`)}`,
-  `${pathToFileURL(`${workdir}${sep}public.js`)}`,
-  `${pathToFileURL(`${workdir}${sep}app_.js`)}`,
-];
-let customExtensionsRegex = /\.(png|css|jpg|jpeg|gif)$/;
 
 /**
  *
@@ -29,23 +21,9 @@ let customExtensionsRegex = /\.(png|css|jpg|jpeg|gif)$/;
  * reading the file content from disk and returning it to avoid styled
  * component function being undefiend
  */
-// const styledComponentsUrl =
-//   "file:///Users/surprisemashele/Documents/kotii/node_modules/styled-components/dist/styled-components.cjs.js";
-// const styledComponentsUrlFromClient =
-//   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/node_modules/styled-components/dist/styled-components.cjs.js";
-// // const styledComponentESMUrm =
-// //   "file:///Users/surprisemashele/Documents/kotii/node_modules/styled-components/dist/styled-components.esm.js";
-// const styledComponentESMUrm =
-//   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/node_modules/styled-components/dist/styled-components.esm.js";
-// // let pagesURL =
-// //   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/";
-// let styledUrl =
-//   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-scriptsnk/import_test.js";
-// let anziiPath =
-//   "file:///Users/surprisemashele/Documents/kotii/node_modules/anzii/lib/start.js";
+
 let extJsx = ".jsx";
 let extJS = ".js";
-let extSvg = ".svg";
 let extJson = ".json";
 let fileLoaderExts = [
   ".png",
@@ -68,8 +46,8 @@ export async function load(url, context, nextLoad) {
 
   const fileExtension = path.extname(url);
   const fileName = path.basename(url);
-  // console.log("THE PATH RESOLVE", path.join(workdir, "../kotii-templates"));
-  console.log(
+
+  loggas.load.log(
     "LOAD THE FILE NAME",
     fileName,
     url,
@@ -85,17 +63,17 @@ export async function load(url, context, nextLoad) {
       fileLoaderExts.includes(fileExtension)) &&
     !isBuiltin(fileName)
   ) {
-    console.log("EXTENSIONS EXECUTION", fileExtension);
+    loggas.load.log("EXTENSIONS EXECUTION", fileExtension);
     let source = null;
     let options = null;
 
     if (fileExtension === extJsx || fileExtension === extJS) {
-      console.log("JSX SECTION");
+      loggas.load.log("JSX SECTION");
       options = {
         presets: ["@babel/preset-react"],
         plugins: ["@babel/plugin-syntax-import-assertions"],
       };
-      console.log("READING FILE", fileExtension, url);
+      loggas.load.log("READING FILE", fileExtension, url);
       let urlInstance = new URL(url).pathname;
       if (url.indexOf("/api/") >= 0) {
         if (!fs.existsSync(urlInstance)) {
@@ -111,7 +89,7 @@ export async function load(url, context, nextLoad) {
           });
         }
       } else if (fileExtension === extJsx) {
-        console.log("JSX READ FILE", fileExtension);
+        loggas.load.log("JSX READ FILE", fileExtension);
         source = fs.readFileSync(urlInstance, {
           encoding: "utf-8",
         });
@@ -121,7 +99,7 @@ export async function load(url, context, nextLoad) {
           url.split("/").includes("kotii-scripts") &&
           url.indexOf("/kotii-scripts/node_modules") < 0
         ) {
-          console.log(
+          loggas.load.log(
             "IS NODE MODULES AND KOTII",
             fileName,
             fileExtension,
@@ -137,36 +115,25 @@ export async function load(url, context, nextLoad) {
         }
       }
     } else if (fileLoaderExts.includes(fileExtension)) {
-      console.log("The PNG", fileExtension);
+      loggas.load.log("The PNG", fileExtension);
       let pathName = new URL(url).pathname;
       let fileName = `/${path.basename(pathName)}`;
-      // console.log("THE PATHNAME", path.basename(pathName));
-      // let contents = fs.readFileSync(new URL(url).pathname, {
-      //   encoding: "utf-8",
-      // });
+
       source = `export default ${JSON.stringify(fileName)}`;
       return {
         format: "module",
         shortCircuit: true,
         source: source,
       };
-      // return {
-      //   format: "module",
-      //   shortCircuit: true,
-      //   source: !dataURI
-      //     ? `export default ${JSON.stringify(source.toString())}`
-      //     : `export default ${JSON.stringify(dataURI)}`,
-      // };
     } else {
       source = await nextLoad(url, { ...context, format });
     }
     let rawSource = typeof source === "string" ? source : source.source;
-    // console.log("THE OPTIONS", options, babelJson);
     let result = fileLoaderExts.includes(fileExtension)
       ? babel.transformFileSync(source, options)
       : babel.transform(rawSource, options || babelJson);
     if (fileLoaderExts.includes(fileExtension)) {
-      console.log("TRANSFORM RESULT", result);
+      loggas.load.log("TRANSFORM RESULT", result);
     }
 
     return {
