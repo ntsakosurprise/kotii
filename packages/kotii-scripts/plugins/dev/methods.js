@@ -5,8 +5,9 @@ methods.init = function () {
   });
 };
 methods.handleDevScript = function (data) {
-  self.infoSync("THE DAT OF START SCRIPTS", data);
   const self = this;
+  self.logSync("THE DAT OF START SCRIPTS", data);
+
   const setCall = data.callback;
   self.emit({
     type: "context-app",
