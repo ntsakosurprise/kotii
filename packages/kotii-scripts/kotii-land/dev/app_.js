@@ -56,7 +56,6 @@ const appWithRedux = ({
 } = props) => {
   loggas.appClient.log("APP WITH REDUX", appWrapper, layout, store, isServer);
   if (isServer) {
-    loggas.appClient.log("IT IS RENDERING FOR SERVER", isServer);
     return (
       <Provider store={store}>
         <AppProvider
@@ -75,9 +74,7 @@ const appWithRedux = ({
     document.getElementById
   );
   container = !container ? document.getElementById("root") : container;
-  loggas.appClient.log("THE CONTAINER", container);
-  loggas.appClient.log("THE CUSTOM HYDRATE ROOT", customHydrateRoot);
-  loggas.appClient.log("HYDRATE", hydrateInvokes);
+
   // customHydrateRoot = hydrateRoot(
   //   container,
   //   <Provider store={store}>
