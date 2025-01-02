@@ -47,7 +47,7 @@ export async function load(url, context, nextLoad) {
   const fileExtension = path.extname(url);
   const fileName = path.basename(url);
 
-  loggas.load.log(
+  loggas.load.debug(
     "LOAD THE FILE NAME",
     fileName,
     url,
@@ -63,17 +63,17 @@ export async function load(url, context, nextLoad) {
       fileLoaderExts.includes(fileExtension)) &&
     !isBuiltin(fileName)
   ) {
-    loggas.load.log("EXTENSIONS EXECUTION", fileExtension);
+    loggas.load.debug("EXTENSIONS EXECUTION", fileExtension);
     let source = null;
     let options = null;
 
     if (fileExtension === extJsx || fileExtension === extJS) {
-      loggas.load.log("JSX SECTION");
+      loggas.load.debug("JSX SECTION");
       options = {
         presets: ["@babel/preset-react"],
         plugins: ["@babel/plugin-syntax-import-assertions"],
       };
-      loggas.load.log("READING FILE", fileExtension, url);
+      loggas.load.debug("READING FILE", fileExtension, url);
       let urlInstance = new URL(url).pathname;
       if (url.indexOf("/api/") >= 0) {
         if (!fs.existsSync(urlInstance)) {
@@ -89,7 +89,7 @@ export async function load(url, context, nextLoad) {
           });
         }
       } else if (fileExtension === extJsx) {
-        loggas.load.log("JSX READ FILE", fileExtension);
+        loggas.load.debug("JSX READ FILE", fileExtension);
         source = fs.readFileSync(urlInstance, {
           encoding: "utf-8",
         });
@@ -99,7 +99,7 @@ export async function load(url, context, nextLoad) {
           url.split("/").includes("kotii-scripts") &&
           url.indexOf("/kotii-scripts/node_modules") < 0
         ) {
-          loggas.load.log(
+          loggas.load.debug(
             "IS NODE MODULES AND KOTII",
             fileName,
             fileExtension,
@@ -115,7 +115,7 @@ export async function load(url, context, nextLoad) {
         }
       }
     } else if (fileLoaderExts.includes(fileExtension)) {
-      loggas.load.log("The PNG", fileExtension);
+      loggas.load.debug("The PNG", fileExtension);
       let pathName = new URL(url).pathname;
       let fileName = `/${path.basename(pathName)}`;
 
@@ -133,7 +133,7 @@ export async function load(url, context, nextLoad) {
       ? babel.transformFileSync(source, options)
       : babel.transform(rawSource, options || babelJson);
     if (fileLoaderExts.includes(fileExtension)) {
-      loggas.load.log("TRANSFORM RESULT", result);
+      loggas.load.debug("TRANSFORM RESULT", result);
     }
 
     return {
@@ -158,11 +158,11 @@ export async function load(url, context, nextLoad) {
 
 export async function resolve(specifier, context, nextResolve) {
   // const { parentURL = workdir } = context;
-  loggas.resolve.log("RESOLVE specifier", specifier);
+  loggas.resolve.debug("RESOLVE specifier", specifier);
 
   let shouldTerminate = false;
   if (specifier.indexOf("../kotii-land/dev") >= 0) {
-    loggas.resolve.log("ALSO HANDLED BY LOADERS", meta);
+    loggas.resolve.debug("ALSO HANDLED BY LOADERS", meta);
   }
   shouldTerminate = resolveAliasedImports(specifier);
   if (shouldTerminate) return shouldTerminate;
@@ -203,14 +203,14 @@ export async function resolve(specifier, context, nextResolve) {
 const resolveAliasedImports = (specifier) => {
   if (!isBuiltin(specifier) && doMeta(specifier)) {
     let specifierAlias = meta.aliases[specifier];
-    loggas.resolve.log("SPECIAL ALIAS", specifier, specifierAlias);
+    loggas.resolve.debug("SPECIAL ALIAS", specifier, specifierAlias);
     let fileUrl = pathToFileURL(`${workdir}${specifierAlias}`);
 
     let fileUrlExt = path.extname(specifierAlias);
-    loggas.resolve.log("THE FILE EXTENSION", fileUrlExt);
+    loggas.resolve.debug("THE FILE EXTENSION", fileUrlExt);
 
     if (!fileUrlExt.trim()) {
-      loggas.resolve.log("FILE EXTENSION NOT SPECIFIED", fileUrlExt);
+      loggas.resolve.debug("FILE EXTENSION NOT SPECIFIED", fileUrlExt);
       let pathUrl = `${workdir}${specifierAlias}`;
       let pathUrlFileExtension = extensions.filter((ext) => {
         if (fs.existsSync(`${pathUrl}${ext}`)) return true;
@@ -220,12 +220,12 @@ const resolveAliasedImports = (specifier) => {
           "The specified path aliases does not have related file"
         );
       }
-      loggas.resolve.log("PATH URL EXTENSION", pathUrlFileExtension);
+      loggas.resolve.debug("PATH URL EXTENSION", pathUrlFileExtension);
       fileUrl = `${fileUrl}${pathUrlFileExtension[0]}`;
-      loggas.resolve.log("THE PATH URL", pathUrl);
+      loggas.resolve.debug("THE PATH URL", pathUrl);
     }
-    loggas.resolve.log("THE META SPECIFIER", specifierAlias, fileUrlExt);
-    loggas.resolve.log("PATH TO FILE", `${fileUrl}`);
+    loggas.resolve.debug("THE META SPECIFIER", specifierAlias, fileUrlExt);
+    loggas.resolve.debug("PATH TO FILE", `${fileUrl}`);
     // console.log("Processing PNG OR CSS", specifier);
     // let url = new URL(specifier, parentURL);
     // console.log("PNG URL", url.href);
@@ -258,15 +258,15 @@ const resolveAliasedImports = (specifier) => {
  */
 const resolveKotiiLandImports = (specifier) => {
   if (!isBuiltin(specifier) && /\.kotii-land\/(pages|routes)/.test(specifier)) {
-    loggas.resolve.log("THE PAGES PATH KOTII LAND PATH");
+    loggas.resolve.debug("THE PAGES PATH KOTII LAND PATH");
     let basePath = getPagesBasePath(specifier);
-    loggas.resolve.log("THE PATH BASE", basePath);
+    loggas.resolve.debug("THE PATH BASE", basePath);
 
     let fullPath =
       specifier.indexOf("pages") >= 0
         ? path.resolve(basePath, ".kotii-land/pages.js")
         : path.resolve(basePath, ".kotii-land/routes.js");
-    loggas.resolve.log("THE FULL PATH", fullPath);
+    loggas.resolve.debug("THE FULL PATH", fullPath);
     // console.log("THE BASE PATH", workdir);
     return {
       url: pathToFileURL(fullPath).href,
@@ -291,13 +291,13 @@ const resolveKotiiLandImports = (specifier) => {
  *
  */
 const resolvePagesImports = (specifier) => {
-  loggas.resolve.log("THE PAGES IMPORT", specifier);
+  loggas.resolve.debug("THE PAGES IMPORT", specifier);
   if (!isBuiltin(specifier) && /^\/src\//.test(specifier)) {
-    loggas.resolve.log("THE SPECIFIER FOR PAGES PATH", specifier);
+    loggas.resolve.debug("THE SPECIFIER FOR PAGES PATH", specifier);
     let basePath = getPagesBasePath(specifier);
-    loggas.resolve.log("THE SPECIFIRE BASE PATH", basePath);
-    loggas.resolve.log("THE FULL PATH", `${basePath}${specifier}`);
-    loggas.resolve.log(
+    loggas.resolve.debug("THE SPECIFIRE BASE PATH", basePath);
+    loggas.resolve.debug("THE FULL PATH", `${basePath}${specifier}`);
+    loggas.resolve.debug(
       "THE PATH AS URL",
       pathToFileURL(`${basePath}${specifier}`).href
     );
@@ -327,7 +327,7 @@ const resolvePagesImports = (specifier) => {
  *
  */
 const resolveKotiiScriptsImports = (specifier) => {
-  loggas.resolve.log(
+  loggas.resolve.debug(
     "KOTII SCRIPTS IMPORTS",
     specifier,
     /^kotii-scripts/.test(specifier)
@@ -340,7 +340,7 @@ const resolveKotiiScriptsImports = (specifier) => {
     // console.log("THE PATH AS URL", pathToFileURL(kotiiExportsPath).href);
     let kotiiExportsPath = `${kotiiKotiiLandPath}/dev/app_.js`;
     let urlLized = pathToFileURL(kotiiExportsPath).href;
-    loggas.resolve.log(
+    loggas.resolve.debug(
       "THE SPECIFIER FOR KOTII-SCRIPTS PATH",
       "KOTII-SCRIPTS IMPORTS",
       specifier,
@@ -376,7 +376,7 @@ const resolveKotiiScriptsInternalImports = (specifier) => {
 
     let kotiiExportsPath = `${kotiiRootPath}${specifier}`;
     let urlLized = pathToFileURL(kotiiExportsPath).href;
-    loggas.resolve.log(
+    loggas.resolve.debug(
       "THE SPECIFIER FOR KOTII-SCRIPTS PATH",
       "KOTII-LAND IMPORTS",
       specifier,
@@ -415,10 +415,10 @@ const resolveKotiiScriptsInternalImports = (specifier) => {
 const resolveKotiiUserApiPlugins = (specifier) => {
   if (!isBuiltin(specifier) && /^\/kotii-user-api/.test(specifier)) {
     let basePath = getPagesBasePath();
-    loggas.resolve.log("API PLUGINS PATH", basePath);
+    loggas.resolve.debug("API PLUGINS PATH", basePath);
 
     let fullPath = path.resolve(basePath, "api/index.js");
-    loggas.resolve.log("THE FULL PATH", fullPath);
+    loggas.resolve.debug("THE FULL PATH", fullPath);
     // console.log("THE BASE PATH", workdir);
     return {
       url: pathToFileURL(fullPath).href,
