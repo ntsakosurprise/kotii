@@ -6,7 +6,6 @@ import { Router } from "wouter";
 import { kotiiKotiiLandPath } from "../../kotii_paths.js";
 
 methods.init = function () {
-  this.adLog("React View has been initialised");
   this.listens({
     "handle-react-view": this.handleReactView.bind(this),
     "take-ssr-routes": this.handleSsrRoutes.bind(this),
@@ -16,20 +15,20 @@ methods.init = function () {
 
 methods.handleSsrRoutes = function (data) {
   const self = this;
-  console.log("THE SSR ROUTES", data);
-  console.log("THE ACTUAL DATA", data.payload.routes);
+  self.debug("THE SSR ROUTES", data, data.payload.routes);
+
   self.ssrRoutes = data.payload.routes;
 };
 
 methods.handleReactView = function (data) {
   const self = this;
-  self.adLog("Handling ReactView Event");
-  self.adLog(data);
+  self.debug("Handling ReactView Event", data);
+
   self.callback = data.callback;
   self.effectsData = {};
 
-  console.log("THE VIEW DATA", data);
-  console.log("ServerStyleSheet", ServerStyleSheet);
+  self.debug("THE VIEW DATA", data);
+  self.debug("ServerStyleSheet", ServerStyleSheet);
   self.runReactView(data).then((html) => {
     self.callback(null, html);
   });
@@ -37,11 +36,11 @@ methods.handleReactView = function (data) {
 
 methods.handleReactStaticViews = function (data) {
   const self = this;
-  // console.log("Static Views");
+  // self.debug("Static Views");
   self.callback = data.callback;
   self.effectsData = {};
 
-  console.log("THE VIEW DATA", data);
+  self.debug("THE VIEW DATA", data);
   const { views } = data;
   let mappedPromises = views.map(async (view) => {
     let gotHtmlView = await self.runReactView({
@@ -49,11 +48,11 @@ methods.handleReactStaticViews = function (data) {
       route: view,
       staticRender: true,
     });
-    // console.log("THE GOT HTML VIEW", gotHtmlView, view.name);
+    // self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
     return { content: gotHtmlView, name: view.name };
   });
   Promise.all(mappedPromises).then((htmlViews) => {
-    // console.log("ALL VIEWS PROMISES MAPPED", htmlViews);
+    // self.debug("ALL VIEWS PROMISES MAPPED", htmlViews);
     self.callback(htmlViews);
   });
 };
@@ -124,9 +123,9 @@ methods.runReactView = function (data) {
 
     let effectsStore = self.effectsData;
 
-    console.log("THE LAYOUT ROOT", layoutRoot.Layout);
-    console.log("GOT STATE DATA", stateData);
-    console.log("THE SELF COMPS", self.comps);
+    self.debug("THE LAYOUT ROOT", layoutRoot.Layout);
+    self.debug("GOT STATE DATA", stateData);
+    self.debug("THE SELF COMPS", self.comps);
     //   appWrapper = null,
     // layout = null,
     // goodies=null,
@@ -174,7 +173,7 @@ methods.runReactView = function (data) {
       );
       const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
       self.styledTags = styleTags;
-      console.log("STYLED-COMPONENTS STYLE TAGS", styleTags);
+      self.debug("STYLED-COMPONENTS STYLE TAGS", styleTags);
     } catch (error) {
       // handle error
       console.error(error);
@@ -187,12 +186,12 @@ methods.runReactView = function (data) {
     //     <Router ssrPath={view.match}>{REACTAPP(Root, Layout, store)}</Router>
     //   );
     // } catch (error) {
-    //   console.log("THE RENDER ERROR", error);
+    //   self.debug("THE RENDER ERROR", error);
     // }
 
     const finalState = store.getState();
     const helmetGenerated = HeadHelmet.renderStatic();
-    // console.log("HELMET GENERATED", helmetGenerated.title.toString());
+    // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
     const fullPage = self.renderFullPage({
       html,
       preloadedState: finalState,
@@ -200,7 +199,7 @@ methods.runReactView = function (data) {
       view,
       head: helmetGenerated,
     });
-    console.log("THE HTML IN RUN REACT-VIEW", fullPage);
+    self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
     resolve(fullPage);
   });
 };
@@ -222,7 +221,7 @@ methods.renderFullPage = function ({
       )
     : null;
   let styleTags = jsonStyles ? jsonStyles.toString().replaceAll(",", " ") : "";
-  console.log("THE PRELOADED STATE", preloadedState, styleTags);
+  self.debug("THE PRELOADED STATE", preloadedState, styleTags);
   return `
 		<!doctype html>
 		<html ${head.htmlAttributes.toString()}> 
@@ -266,7 +265,7 @@ methods.getStateDataFromServer = function ({
   const self = this;
   const routes = !staticRender ? self.ssrRoutes : [route];
 
-  // console.log("THE FOUND", routes);
+  // self.debug("THE FOUND", routes);
 
   return new Promise((resolve, reject) => {
     let dataFetchPromises = routes.filter((route, i) => {
@@ -276,7 +275,7 @@ methods.getStateDataFromServer = function ({
     });
 
     Promise.all(dataFetchPromises).then((resolveData) => {
-      console.log("THE RESOLVED DATA", resolveData);
+      self.debug("THE RESOLVED DATA", resolveData);
       resolve(resolveData);
     });
   });
@@ -287,26 +286,26 @@ methods.runComponentEffects = function (routePath, specialRoute = null) {
   const routes = !specialRoute ? self.ssrRoutes : [specialRoute];
   const effect_id_prefix = "kotii_eff_id_";
 
-  // console.log("THE FOUND", routes);
+  // self.debug("THE FOUND", routes);
 
   return new Promise((resolve, reject) => {
     let effectsRoute = self.getEffectsRouteList(routes, routePath);
     if (!effectsRoute) return resolve(true);
 
-    console.log("THE EFFECTS ROUTE", effectsRoute);
+    self.debug("THE EFFECTS ROUTE", effectsRoute);
     let effectsToRun =
       effectsRoute.effectsToRun instanceof Array
         ? effectsRoute.effectsToRun
         : [effectsRoute.effectsToRun];
     let routeId = effectsRoute.name;
-    console.log("THE EFFECTS TO RUN", effectsToRun);
+    self.debug("THE EFFECTS TO RUN", effectsToRun);
 
     let effectsPromises = effectsToRun.map((effectToRun, ID) => {
       let effectID = `${effect_id_prefix}${ID + 1}`;
       return new Promise((resolve, reject) => {
         effectToRun()
           .then((data) => {
-            console.log("Kotii effect react:data", data);
+            self.debug("Kotii effect react:data", data);
 
             if (!self.effectsData["effectsCount"]) {
               self.effectsData["effectsCount"] = ID + 1;
@@ -325,7 +324,7 @@ methods.runComponentEffects = function (routePath, specialRoute = null) {
                 isFirstTimeRun: true,
               };
               // self.effectsData.data[routeId] = data
-              console.log("Kotii effect react: self.effects", self.effectsData);
+              self.debug("Kotii effect react: self.effects", self.effectsData);
             } else {
               self.effectsData[routeId].data[effectID] = {
                 userData: data,
@@ -335,7 +334,7 @@ methods.runComponentEffects = function (routePath, specialRoute = null) {
             resolve(true);
           })
           .catch((err) => {
-            console.log("Kotii effect react:err", err);
+            self.debug("Kotii effect react:err", err);
             if (!self.effectsData[routeId]) self.effectsData[routeId] = {};
             if (!self.effectsData[routeId]["errors"]) {
               self.effectsData[routeId]["errors"] = {};
@@ -353,10 +352,10 @@ methods.runComponentEffects = function (routePath, specialRoute = null) {
           });
       });
     });
-    console.log("THE EFFECTS PROMISES", effectsPromises);
+    self.debug("THE EFFECTS PROMISES", effectsPromises);
 
     Promise.all(effectsPromises).then((resolveData) => {
-      console.log("THE RESOLVED EFFECTS DATA", resolveData);
+      self.debug("THE RESOLVED EFFECTS DATA", resolveData);
       resolve(resolveData);
     });
   });
@@ -374,17 +373,17 @@ methods.doImport = function (toImport, all = false, check = true) {
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
   const loadFileSync = pao.pa_loadFileSync;
-  // console.log("TIIMPORT", toImport);
+  // self.debug("TIIMPORT", toImport);
   return new Promise((resolve, reject) => {
     // const manifestFile = loadFileSync(toImport);
     // resolve({ module: imported.meta });
     loadFile(toImport, all, check)
       .then((imported) => {
-        console.log("Module has successfully been imported:", imported);
+        self.debug("Module has successfully been imported:", imported);
         resolve(imported);
       })
       .catch((err) => {
-        console.log(
+        self.debug(
           `importing module:${toImport}, has failed with an error:${err}`
         );
         reject(err);
@@ -393,7 +392,7 @@ methods.doImport = function (toImport, all = false, check = true) {
 };
 
 // methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
-//   //   console.log("THE HTML", html);
+//   //   self.debug("THE HTML", html);
 //   return `
 // 		  <!doctype html>
 // 		  <html>

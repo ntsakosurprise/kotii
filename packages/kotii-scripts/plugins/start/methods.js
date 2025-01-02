@@ -1,13 +1,10 @@
 const methods = {};
 methods.init = function () {
-  // console.log('Bitbucket has been initialised')
-  console.log("");
   this.listens({
     start: this.handleStartScript.bind(this),
   });
 };
 methods.handleStartScript = function (data) {
-  console.log("THE DAT OF START SCRIPTS", data);
   const self = this;
   const setCall = data.callback;
   self.emit({
@@ -15,9 +12,9 @@ methods.handleStartScript = function (data) {
     data: {
       myName: "ntsako",
       callback: (data) => {
-        // console.log("THIS DATA");
-        // console.log(self.pao);
-        console.log("WALAH", data);
+        // self.debug("THIS DATA");
+        // self.debug(self.pao);
+        self.debug("WALAH", data);
         self.getWebPackConfig(data, setCall);
       },
     },
@@ -31,7 +28,7 @@ methods.getWebPackConfig = function (dataToConfig, setCall) {
     data: {
       payload: dataToConfig,
       callback: (data) => {
-        console.log("THE DATA FROM WEBPACK CONFIG", data);
+        self.debug("THE DATA FROM WEBPACK CONFIG", data);
         setCall("Webpack config has been called successfully");
       },
     },

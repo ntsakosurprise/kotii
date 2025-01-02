@@ -19,7 +19,7 @@ class Env {
     self
       .getEnvFiles(envPath)
       .then(() => {
-        // console.log("the saved;;;");
+        // self.debug("the saved;;;");
         let kotiiEnvs = {};
         let kotiiEnvsStringified = {};
 
@@ -46,7 +46,7 @@ class Env {
         });
       })
       .catch((err) => {
-        console.log("savedError;;;", err);
+        self.debug("savedError;;;", err);
         return self.callback({ message: message, saved: err });
       });
     //return self.callback(null,{message: message})
@@ -67,7 +67,7 @@ class Env {
       //     resolve(envFileContent);
       //   })
       //   .catch((e) => {
-      //     console.log("there was an error get env file", e);
+      //     self.debug("there was an error get env file", e);
       //     reject(e);
       //   });
     });
@@ -75,8 +75,8 @@ class Env {
   loadEnvVariables(evnFile) {
     const self = this;
     let pao = self.pao;
-    self.pao.pa_wiLog("THE TYPE OF E IN DATAREQUEST HANDLER");
-    self.pao.pa_wiLog(e);
+    self.debug("THE TYPE OF E IN DATAREQUEST HANDLER", e);
+
     if (e) reject(new Error("An error has occured Inside MYSQL"));
     resolve(result);
   }
@@ -85,17 +85,17 @@ class Env {
     const pao = self.pao;
     const loadFile = pao.pa_loadFile;
     const loadFileSync = pao.pa_loadFileSync;
-    // console.log("TIIMPORT", toImport);
+    // self.debug("TIIMPORT", toImport);
     return new Promise((resolve, reject) => {
       // const manifestFile = loadFileSync(toImport);
       // resolve({ module: imported.meta });
       loadFile(toImport, all)
         .then((imported) => {
-          console.log("Module has successfully been imported:", imported);
+          self.debug("Module has successfully been imported:", imported);
           resolve(imported);
         })
         .catch((err) => {
-          console.log(
+          self.debug(
             `importing module:${toImport}, has failed with an error:${err}`
           );
           reject(err);

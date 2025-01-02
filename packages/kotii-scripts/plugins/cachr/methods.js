@@ -1,6 +1,6 @@
 const methods = {};
 methods.init = function () {
-  // console.log('Bitbucket has been initialised')
+  // self.debug('Bitbucket has been initialised')
 
   this.listens({
     "store-data-in-cache": this.handleCache.bind(this),
@@ -14,7 +14,7 @@ methods.handleCache = function (data) {
   const { callback, payload } = data;
 
   self.doCache(payload, callback);
-  // console.log("THE DATA OF Init SCRIPTS", data);
+  // self.debug("THE DATA OF Init SCRIPTS", data);
   // data.callback({ message: "Init plugin successfully called" });
   // return;
 };
@@ -22,7 +22,7 @@ methods.doCache = function (cachee, callback = () => {}) {
   const self = this;
   const NodeCache = self.NodeCache;
   let cache = self.cache;
-  console.log("CACHE: DO CACHE", cachee);
+  self.debug("CACHE: DO CACHE", cachee);
   const {
     toCache,
     cacheTime = 1000 * 60,
@@ -33,9 +33,9 @@ methods.doCache = function (cachee, callback = () => {}) {
     enableLegacyCallbacks = false,
     maxKeys = -1,
   } = cachee;
-  console.log("CACHE:TO CACHE", toCache);
+  self.debug("CACHE:TO CACHE", toCache);
   const { data, key = null, period = 1000 * 60, multiple = false } = toCache;
-  console.log("CACHE: THE KEY", key);
+  self.debug("CACHE: THE KEY", key);
 
   // if (!key || !multiple)
   //   throw new Error("Cache key should be a value to store data in cache");
@@ -51,8 +51,8 @@ methods.doCache = function (cachee, callback = () => {}) {
     });
     cache = self.cache;
   }
-  console.log("CACHE: AFTER SETTING", cache);
-  console.log("CACHE: AFTER SELF.CACHE", self.cache);
+  self.debug("CACHE: AFTER SETTING", cache);
+  self.debug("CACHE: AFTER SELF.CACHE", self.cache);
   if (multiple)
     return callaback({
       message: "Multi cache Results",
@@ -65,13 +65,13 @@ methods.handleGetData = function (data) {
   const self = this;
   const { callback, payload } = data;
   const { key, multiple = false } = payload;
-  console.log("SELF.NODECACHE", self.NodeCache);
+  self.debug("SELF.NODECACHE", self.NodeCache);
   if (!self.cache)
     return callback({ status: false, message: "No cache has been configured" });
   const retrievedData = multiple ? self.cache.mget(key) : self.cache.get(key);
   callback({ status: true, data: retrievedData });
 
-  // console.log("THE DATA OF Init SCRIPTS", data);
+  // self.debug("THE DATA OF Init SCRIPTS", data);
   // data.callback({ message: "Init plugin successfully called" });
   // return;
 };
@@ -84,7 +84,7 @@ methods.handleDeleteData = function (data) {
   // const retrievedData = self.cache.get(key);
   // callback(retrievedData);
 
-  // console.log("THE DATA OF Init SCRIPTS", data);
+  // self.debug("THE DATA OF Init SCRIPTS", data);
   // data.callback({ message: "Init plugin successfully called" });
   // return;
 };
@@ -112,7 +112,7 @@ methods.handleUpdate = function (data) {
 //   // const retrievedData = self.cache.get(key);
 //   // callback(retrievedData);
 
-//   // console.log("THE DATA OF Init SCRIPTS", data);
+//   // self.debug("THE DATA OF Init SCRIPTS", data);
 //   // data.callback({ message: "Init plugin successfully called" });
 //   // return;
 // };
@@ -126,7 +126,7 @@ methods.handleUpdate = function (data) {
 //   // const retrievedData = self.cache.get(key);
 //   // callback(retrievedData);
 
-//   // console.log("THE DATA OF Init SCRIPTS", data);
+//   // self.debug("THE DATA OF Init SCRIPTS", data);
 //   // data.callback({ message: "Init plugin successfully called" });
 //   // return;
 // };
@@ -149,7 +149,7 @@ methods.getDataLocal = function (key) {
   // const retrievedData = self.cache.get(key);
   // callback(retrievedData);
 
-  // console.log("THE DATA OF Init SCRIPTS", data);
+  // self.debug("THE DATA OF Init SCRIPTS", data);
   // data.callback({ message: "Init plugin successfully called" });
   // return;
 };

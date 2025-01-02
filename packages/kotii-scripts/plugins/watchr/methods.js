@@ -1,6 +1,6 @@
 const methods = {};
 methods.init = function () {
-  // console.log('Bitbucket has been initialised')
+  // self.debug('Bitbucket has been initialised')
 
   this.listens({
     "watch-target": this.handleWatch.bind(this),
@@ -18,16 +18,15 @@ methods.handleStopWatching = function (data) {
   });
 };
 methods.watchFiles = function (data) {
-  console.log("WATCHR::", data);
   const self = this;
   const { callback, payload } = data;
   let watcher = self.watcher;
   const { watched, persistent = true, ignored = null, events = null } = payload;
   self.watched = watched;
-  console.log("PLUGIN:: THE WATCHR", watcher);
+  self.debug("PLUGIN:: THE WATCHR", watcher);
 
   if (!watcher) {
-    console.log("PLUGIN:: NO WATCHER FOUND");
+    self.debug("PLUGIN:: NO WATCHER FOUND");
     watcher = self.chokidar.watch(watched, {
       persistent,
       ignored,
@@ -40,7 +39,7 @@ methods.watchFiles = function (data) {
     self.watcher = watcher;
   }
 
-  console.log("THE EVENTS", events);
+  self.debug("THE EVENTS", events);
 
   if (!events)
     return callback({
@@ -51,13 +50,13 @@ methods.watchFiles = function (data) {
     });
   const {
     add = () => {
-      console.log("THE ADD EVENT RUNS");
+      self.debug("THE ADD EVENT RUNS");
     },
     change = () => {
-      console.log("THE CHANGE EVENT RUNS");
+      self.debug("THE CHANGE EVENT RUNS");
     },
     delete: deleteEvent = () => {
-      console.log("THE DELETE EVENT RUNS");
+      self.debug("THE DELETE EVENT RUNS");
     },
   } = events;
   watcher.on("add", add);
@@ -73,10 +72,10 @@ methods.watchFiles = function (data) {
 };
 methods.closeFileWatch = function (onWatcherClose = () => {}) {
   const self = this;
-  console.log("CLOSING FILE WATCH", onWatcherClose);
-  console.log("THE WATCHER", self.watcher);
+  self.debug("CLOSING FILE WATCH", onWatcherClose);
+  self.debug("THE WATCHER", self.watcher);
   if (self.watcher) {
-    console.log("WATCHR: About to close");
+    self.debug("WATCHR: About to close");
     self.watcher.unwatch(self.watched);
     self.watcher.close().then(() => {
       onWatcherClose();

@@ -26,7 +26,6 @@ methods.getWebPackConfig = function (dataToConfig, setCall) {
     data: {
       payload: dataToConfig,
       callback: (data) => {
-        console.log("THE DATA FROM WEBPACK CONFIG", data);
         setCall("Webpack config has been called successfully");
       },
     },

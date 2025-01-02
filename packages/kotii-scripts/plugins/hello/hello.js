@@ -20,11 +20,11 @@ class Hello {
     self
       .getSavedHistory()
       .then((saved) => {
-        console.log("the saved;;;", saved);
+        self.debug("the saved;;;", saved);
         return self.callback(null, { message: message });
       })
       .catch((err) => {
-        console.log("savedError;;;", err);
+        self.debug("savedError;;;", err);
         return self.callback(null, { message: message });
       });
     //return self.callback(null,{message: message})
@@ -55,8 +55,8 @@ class Hello {
   ) {
     const self = this;
     let pao = self.pao;
-    self.pao.pa_wiLog("THE TYPE OF E IN DATAREQUEST HANDLER");
-    self.pao.pa_wiLog(e);
+    self.debug("THE TYPE OF E IN DATAREQUEST HANDLER", e);
+
     if (e) reject(new Error("An error has occured Inside MYSQL"));
     resolve(result);
   }

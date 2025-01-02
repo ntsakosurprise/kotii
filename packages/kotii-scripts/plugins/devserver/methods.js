@@ -1,12 +1,10 @@
 const methods = {};
 methods.init = function () {
-  console.log("DevServer has been initialised");
   this.listens({
     "dev-server": this.handleDevServer.bind(this),
   });
 };
 methods.handleDevServer = async function (data) {
-  console.log("THE DATA OF START SCRIPTS", data);
   const self = this;
   const { webpackDevServer } = self;
   const { compiler, webpackConfig } = data.payload;
@@ -17,30 +15,30 @@ methods.handleDevServer = async function (data) {
   // const hookStatus = self.hookIntoWebpackCompilation(compiler);
   const server = new webpackDevServer(devServerOptions, compiler);
   const runServer = async () => {
-    console.log("Starting DevServer");
+    self.debug("Starting DevServer");
     data.callback({ message: "Webpack dev-server has started running" });
     await server.start();
   };
   runServer();
   const open = (await import("open")).default;
-  console.log("THE OPEN", open);
+  self.debug("THE OPEN", open);
   await open("http://localhost:9000");
 };
 methods.dynamicImport = async function () {
   const self = this;
-  console.log("THE DYNAMI GOT A CALL");
+  self.debug("THE DYNAMI GOT A CALL");
   const open = await import("open");
-  console.log("THE OPEN", open);
+  self.debug("THE OPEN", open);
   return open;
 };
 methods.hookIntoWebpackCompilation = async function (compiler, configWp) {
   const self = this;
   compiler.hooks.invalid.tap("invalid", () => {
-    console.log("wEBPACK is compiling....");
+    self.debug("wEBPACK is compiling....");
   });
   compiler.hooks.invalid.tap("done", (stats) => {
-    console.log("Compiler is done compiling");
-    console.log(stats);
+    self.debug("Compiler is done compiling");
+    self.debug(stats);
   });
   return true;
 };

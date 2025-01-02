@@ -6,7 +6,6 @@ methods.init = function () {
   });
 };
 methods.handleBuildScript = function (data) {
-  console.log("THE DATA OF Build SCRIPTS", data);
   let setCall = data.callback;
   //   data.callback({ message: "Build plugin successfully called" });
 
@@ -19,7 +18,7 @@ methods.handleBuildScript = function (data) {
       build: true,
       env: "production",
       callback: (data) => {
-        console.log("BUILD CONTEXT APP RESPONSE", data);
+        self.debug("BUILD CONTEXT APP RESPONSE", data);
 
         self.getWebPackConfig(
           { ...data, build: true },
@@ -56,7 +55,6 @@ methods.getWebPackConfig = function (dataToConfig, options = {}, setCall) {
 };
 
 methods.doServerBuildGeneration = function (data) {
-  console.log("DO SERVER SIDE RENDERING", data);
   const self = this;
 
   self.emit({
@@ -64,7 +62,7 @@ methods.doServerBuildGeneration = function (data) {
     data: {
       payload: { build: "server-build", ...data },
       callback: (gotValue) => {
-        console.log("STATIC GENERATION IS COMPLETED", gotValue);
+        self.debug("STATIC GENERATION IS COMPLETED", gotValue);
         data.callback({ message: "Server Build plugin successfully called" });
       },
     },

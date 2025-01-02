@@ -2,8 +2,6 @@ const methods = {};
 import { kotiiKotiiLandPath } from "../../kotii_paths.js";
 
 methods.init = function () {
-  console.log("Filerouter has been initialised");
-
   this.listens({
     "create-file-routes": this.handleFileRoutes.bind(this),
     "remove-pages-import": this.handleRemovePagesImport.bind(this),
@@ -16,18 +14,18 @@ methods.handleFileRoutes = async function (data) {
   const isExistingDir = pao.pa_isExistingDir;
   const saveToFile = pao.pa_saveToFile;
   const loadFileSync = pao.pa_loadFileSync;
-  // console.log("HANDLE FILE ROUTES DATA", data);
+  // self.debug("HANDLE FILE ROUTES DATA", data);
   const { payload } = data;
   self.callback = data.callback;
 
   const { path: filePaths } = payload;
-  console.log("FILE PATHS", filePaths);
+  self.debug("FILE PATHS", filePaths);
   const pagesSource = filePaths.appSrc;
   const appManifest = filePaths.appManifest;
   let manifestData = null;
   const cwd = getWorkingFolder();
   // !self.kotiiUtils ? await self.emit({ type: "get-kotii-utils" }) : "";
-  //console.log("EXECSYNC", execSync);
+  //self.debug("EXECSYNC", execSync);
   //self.enableBabelRegister(cwd);
 
   const pagesPaths = self.getPages(
@@ -37,22 +35,22 @@ methods.handleFileRoutes = async function (data) {
 
   const filePath = `/kotii-land/dev/manifest.js`;
   // if (filePath) {
-  //   console.log("IMPORT LAOD THE REQUIRED OBJECT");
+  //   self.debug("IMPORT LAOD THE REQUIRED OBJECT");
   //   const manifes = require(filePath);
-  //   console.log("IMPORT LOAD THE REQUIRE WITH ", manifes);
+  //   self.debug("IMPORT LOAD THE REQUIRE WITH ", manifes);
   //   return;
   // }
 
   // const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
-  // console.log("THE PAGES routesObject", routesObject);
+  // self.debug("THE PAGES routesObject", routesObject);
 
   self
     .doImport(filePath, false, false)
     .then(async (imported) => {
-      // console.log("Impored", imported.module);
+      // self.debug("Impored", imported.module);
       let manifestJS = imported;
       let meta = manifestJS.meta;
-      console.log("META ", meta);
+      self.debug("META ", meta);
       // const buildJS = await self.doImport(
       //   `/kotii-land/dev/pages.js?fresh=true`,
       //   false,
@@ -71,7 +69,7 @@ methods.handleFileRoutes = async function (data) {
       const { lastCompsCount = 0, compsSource, compsPaths } = meta;
       const pagesPathsLen = pagesPaths.length;
 
-      console.log("THE SEND TO:", sendToRequestor);
+      self.debug("THE SEND TO:", sendToRequestor);
 
       if (
         lastCompsCount === 0 ||
@@ -98,7 +96,7 @@ methods.handleFileRoutes = async function (data) {
       }
     })
     .catch((err) => {
-      console.log("MANIFEST.JS: ERROR IMPORTING MANIFEST-JS", err);
+      self.debug("MANIFEST.JS: ERROR IMPORTING MANIFEST-JS", err);
     });
 };
 methods.handleRemovePagesImport = async function (data) {
@@ -109,7 +107,7 @@ methods.handleRemovePagesImport = async function (data) {
   const saveToFile = pao.pa_saveToFile;
   const loadFileSync = pao.pa_loadFileSync;
   const parser = self.parser;
-  // console.log("HANDLE FILE ROUTES DATA", data);
+  // self.debug("HANDLE FILE ROUTES DATA", data);
   const readFileSync = pao.pa_readFileSync;
   const cwd = getWorkingFolder();
 
@@ -148,7 +146,7 @@ methods.addOrRemoveByAST = function ({
   compsPaths.forEach((pPath) => {
     if (pagesPaths.indexOf(pPath) < 0) toRemove.push(pPath);
   });
-  console.log("RENAMES: PAGES LESS.TO REMOVE", toRemove);
+  self.debug("RENAMES: PAGES LESS.TO REMOVE", toRemove);
   if (compsPagesEqual && toRemove.length === 0 && toAdd.length === 0) {
     self.addImportLineToBuildJs();
   } else if (toRemove.length > 0 && toAdd.length > 0) {
@@ -159,7 +157,7 @@ methods.addOrRemoveByAST = function ({
       source: pagesSource,
     });
   } else if (toRemove.length > 0) {
-    console.log("ABOUT TO PROCESS WITH REMOVE");
+    self.debug("ABOUT TO PROCESS WITH REMOVE");
     self.addToAST({
       // objectToAdd: routesObject,
       pagesPaths,
@@ -167,7 +165,7 @@ methods.addOrRemoveByAST = function ({
       source: pagesSource,
     });
   } else {
-    console.log("ABOUT TO PROCESS WITHOUT REMOVE");
+    self.debug("ABOUT TO PROCESS WITHOUT REMOVE");
     // routesObject = self.getRoutesHelper(toAdd, pagesSource);
     self.addToAST({
       objectToAdd: self.getAstRoutes(routesObject, toAdd),
@@ -183,17 +181,17 @@ methods.addOrRemoveByAST = function ({
 //   const isExistingDir = pao.pa_isExistingDir;
 //   const saveToFile = pao.pa_saveToFile;
 //   const loadFileSync = pao.pa_loadFileSync;
-//   // console.log("HANDLE FILE ROUTES DATA", data);
+//   // self.debug("HANDLE FILE ROUTES DATA", data);
 //   const { payload } = data;
 //   self.callback = data.callback;
 
 //   const { path: filePaths } = payload;
-//   console.log("FILE PATHS", filePaths);
+//   self.debug("FILE PATHS", filePaths);
 //   const pagesSource = filePaths.appSrc;
 //   const appManifest = filePaths.appManifest;
 //   let manifestData = null;
 //   const cwd = getWorkingFolder();
-//   //console.log("EXECSYNC", execSync);
+//   //self.debug("EXECSYNC", execSync);
 //   //self.enableBabelRegister(cwd);
 //   const pagesPaths = self.getPages(
 //     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
@@ -202,28 +200,28 @@ methods.addOrRemoveByAST = function ({
 
 //   const filePath = `/kotii-land/dev/manifest.js`;
 //   // if (filePath) {
-//   //   console.log("IMPORT LAOD THE REQUIRED OBJECT");
+//   //   self.debug("IMPORT LAOD THE REQUIRED OBJECT");
 //   //   const manifes = require(filePath);
-//   //   console.log("IMPORT LOAD THE REQUIRE WITH ", manifes);
+//   //   self.debug("IMPORT LOAD THE REQUIRE WITH ", manifes);
 //   //   return;
 //   // }
 
 //   // const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
-//   // console.log("THE PAGES routesObject", routesObject);
+//   // self.debug("THE PAGES routesObject", routesObject);
 
 //   self
 //     .doImport(filePath, false, false)
 //     .then(async (imported) => {
-//       // console.log("Impored", imported.module);
+//       // self.debug("Impored", imported.module);
 //       let manifestJS = imported;
 //       let meta = manifestJS.meta;
-//       console.log("META ", meta);
+//       self.debug("META ", meta);
 //       const buildJS = await self.doImport(
 //         `/kotii-land/dev/pages.js`,
 //         false,
 //         false
 //       );
-//       console.log("BUILD:JS", buildJS);
+//       self.debug("BUILD:JS", buildJS);
 //       const routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
 //       const reactServerRoutes = self.buildServerRoutes(
 //         buildJS.routes,
@@ -235,7 +233,7 @@ methods.addOrRemoveByAST = function ({
 //         routes: reactServerRoutes,
 //         routesObject: routesObject,
 //       };
-//       console.log("THE ROUTES", reactServerRoutes);
+//       self.debug("THE ROUTES", reactServerRoutes);
 //       // if (meta || !meta) {
 //       //   return self.callback({
 //       //     message: "Routes Configured",
@@ -249,7 +247,7 @@ methods.addOrRemoveByAST = function ({
 //       const pagesPathsLen = pagesPaths.length;
 //       let renamesToAdd = [];
 //       let renamesToRemove = [];
-//       // console.log("META", lastCompsCount, compsSource);
+//       // self.debug("META", lastCompsCount, compsSource);
 //       // if (!imported || imported) return;
 
 //       if (lastCompsCount === 0 || !compsSource || compsPaths.length === 0) {
@@ -271,7 +269,7 @@ methods.addOrRemoveByAST = function ({
 //           if (pagesPaths.indexOf(pPath) < 0) renamesToRemove.push(pPath);
 //         });
 //         if (renamesToAdd.length === 0 && renamesToRemove.length === 0) {
-//           console.log(
+//           self.debug(
 //             "AST NODE NO NEED UPDATED REQUIRED",
 //             compsSource,
 //             lastCompsCount
@@ -286,14 +284,14 @@ methods.addOrRemoveByAST = function ({
 //           const routesObject = self.getRoutesHelper(renamesToAdd, pagesSource);
 //           self.addToAST(routesObject, pagesPaths, renamesToRemove, pagesSource);
 //         } else if (renamesToAdd.length > 0) {
-//           console.log("AST NODE RENAMES TO ADD", renamesToAdd);
+//           self.debug("AST NODE RENAMES TO ADD", renamesToAdd);
 //           const routesObject = self.getRoutesHelper(renamesToAdd, pagesSource);
 //           self.addToAST(routesObject, pagesPaths, null, pagesSource);
 //         } else if (renamesToRemove.length > 0) {
 //           self.addToAST(null, pagesPaths, toRemove, pagesSource);
 //         }
 //       } else if (lastCompsCount < pagesPathsLen) {
-//         console.log("AST NODE lastCompsCount");
+//         self.debug("AST NODE lastCompsCount");
 //         let toAdd = [];
 //         let toRemove = [];
 //         pagesPaths.forEach((pPath) => {
@@ -302,40 +300,40 @@ methods.addOrRemoveByAST = function ({
 //         compsPaths.forEach((pPath) => {
 //           if (pagesPaths.indexOf(pPath) < 0) toRemove.push(pPath);
 //         });
-//         console.log("TO ADD", toAdd);
-//         console.log("TO RENAME", toRemove);
+//         self.debug("TO ADD", toAdd);
+//         self.debug("TO RENAME", toRemove);
 //         const routesObject = self.getRoutesHelper(toAdd, pagesSource);
 
 //         if (toRemove.length > 0) {
-//           console.log("ABOUT TO PROCESS WITH REMOVE");
+//           self.debug("ABOUT TO PROCESS WITH REMOVE");
 //           self.addToAST(routesObject, pagesPaths, toRemove, pagesSource);
 //         } else {
-//           console.log("ABOUT TO PROCESS WITHOUT REMOVE");
+//           self.debug("ABOUT TO PROCESS WITHOUT REMOVE");
 //           self.addToAST(routesObject, pagesPaths, null, pagesSource);
 //         }
 //         // ? self.addToAST(routesObject, pagesPaths, toRemove, pagesSource)
 //         // : self.addToAST(routesObject, pagesPaths, null, pagesSource);
 //         return self.callback(sendToRequestor);
 //       } else {
-//         console.log("AST NODE:: REMOVING");
+//         self.debug("AST NODE:: REMOVING");
 //         let toRemove = [];
 //         compsPaths.forEach((pPath) => {
 //           if (pagesPaths.indexOf(pPath) < 0) toRemove.push(pPath);
 //         });
-//         console.log("TO REMOVE", toRemove);
+//         self.debug("TO REMOVE", toRemove);
 //         // const routesObject = self.getRoutesHelper(toAdd, pagesSource);
 //         self.addToAST(null, pagesPaths, toRemove, pagesSource);
 //         return self.callback(sendToRequestor);
 //       }
 //     })
 //     .catch((err) => {
-//       console.log("ERR WITH IMPORT", err);
+//       self.debug("ERR WITH IMPORT", err);
 //     });
 // };
 methods.getPages = function (filesToGet) {
   const self = this;
-  console.log("FILETS TO GET", filesToGet);
-  console.log("GLOBSYNC", self.globSync);
+  self.debug("FILETS TO GET", filesToGet);
+  self.debug("GLOBSYNC", self.globSync);
   const files = self.globSync(filesToGet);
   return files;
 };
@@ -355,7 +353,7 @@ methods.getSourceCodes = function (codesSource) {
 
   return sourcesCodesList;
 
-  //console.log("SOURCES AND THEIR CODES", sourcesCodesList);
+  //self.debug("SOURCES AND THEIR CODES", sourcesCodesList);
 };
 methods.getRoutesHelper = function (paths, source) {
   const self = this;
@@ -371,15 +369,15 @@ methods.createRouterComponents = function (maps, pathy) {
   const saveToFile = pao.pa_saveToFile;
   const makeFolderSync = pao.pa_makeFolderSync;
   const isExistingDir = pao.pa_isExistingDir;
-  console.log("pages paths", maps);
+  self.debug("pages paths", maps);
   // const dirPath = `${pathy}/components/system`;
   //const dirPath = `${pathy}/components/system`;
   //if (!isExistingDir(dirPath)) makeFolderSync(dirPath);
   return new Promise((resolve, reject) => {
     let compsMaps = maps.map(async (contextModule) => {
       // const readFile = loadFile(contextModule);
-      // console.log("COntext Module", contextModule);
-      // console.log("our path", contextModule.replace(/pages/g, "_pages"));
+      // self.debug("COntext Module", contextModule);
+      // self.debug("our path", contextModule.replace(/pages/g, "_pages"));
       // saveToFile(contextModule.replace(/pages/g, "_pages"), readFile);
       // self.buildFile(contextModule);
 
@@ -391,7 +389,6 @@ methods.createRouterComponents = function (maps, pathy) {
   });
 };
 methods.getItemPathAndFile = function (item) {
-  console.log("THE PAGES MAPS ITEM", item);
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
@@ -406,8 +403,8 @@ methods.getItemPathAndFile = function (item) {
     item.indexOf("pages") > 0
       ? item.slice(item.indexOf("pages"), item.length)
       : "";
-  console.log("Got endpoint", gotEndpoint);
-  console.log("GOT ENDPOINT PAGES REMOVED", gotEndpoint.replace("pages", ""));
+  self.debug("Got endpoint", gotEndpoint);
+  self.debug("GOT ENDPOINT PAGES REMOVED", gotEndpoint.replace("pages", ""));
   let patternMatch = gotEndpoint
     .replace("pages", "")
     .replace(extMatchPattern, "")
@@ -416,22 +413,22 @@ methods.getItemPathAndFile = function (item) {
     .replace(/\[\.{3}.+\]/, "*");
   // .replace(/\/$/, "");
   if (!/^\/$/.test(patternMatch)) {
-    console.log("Removes leading forwarslash");
+    self.debug("Removes leading forwarslash");
     patternMatch = patternMatch.replace(/\/$/, "");
   }
 
   return new Promise((res, rej) => {
     let splitPatternMatch = patternMatch.split("/");
     let splitLen = splitPatternMatch.length;
-    console.log("THE PAGES matched", patternMatch);
-    console.log("THE ITEM", item);
-    //console.log("THE LOADED FILE", loadFileSync(item));
+    self.debug("THE PAGES matched", patternMatch);
+    self.debug("THE ITEM", item);
+    //self.debug("THE LOADED FILE", loadFileSync(item));
 
     self.doImport(item, true).then((imported) => {
-      console.log("THE PAGE FILE IN CONTEXT EXPORTS", imported);
+      self.debug("THE PAGE FILE IN CONTEXT EXPORTS", imported);
       const { getServerState = null, universalEffects = null } = imported;
       // if (imported.getServerState) {
-      //   console.log(
+      //   self.debug(
       //     "THE GETSERVERSTATE METHOD",
       //     imported.getServerState(createReduxStore())
       //   );
@@ -455,12 +452,12 @@ methods.getItemPathAndFile = function (item) {
   });
 
   // fileAsComp = loadFileSync(item);
-  // console.log("THE FILE CODE", fileAsComp.default.toString());
+  // self.debug("THE FILE CODE", fileAsComp.default.toString());
   // await loadFile(item);
 };
 methods.dynamicImport = async function (module) {
   const self = this;
-  console.log("THE DYNAMIC GOT A CALL", module);
+  self.debug("THE DYNAMIC GOT A CALL", module);
   const open = await import(module);
   return open;
 };
@@ -474,7 +471,7 @@ methods.buildFile = function (filename, destination, babelOptions = {}) {
   const content = fs.readFileSync(filename, { encoding: "utf8" });
   const ext = path.extname(filename);
 
-  // console.log("babel", babel);
+  // self.debug("babel", babel);
 
   // Ignore non-JS files and test scripts
   if (filename) {
@@ -482,9 +479,9 @@ methods.buildFile = function (filename, destination, babelOptions = {}) {
       options.filename = filename;
       options.presets = ["@babel/preset-react", "@babel/preset-env"];
 
-      console.log("THE FILE NAME", options);
+      self.debug("THE FILE NAME", options);
       const result = babel.transform(content, options);
-      console.log("BABEL TRANSFORMED", result);
+      self.debug("BABEL TRANSFORMED", result);
 
       // return outputFileSync(outputPath, result.code, { encoding: "utf8" });
     }
@@ -508,16 +505,16 @@ methods.buildStringCode = function (code, destination, babelOptions = {}) {
   const options = Object.assign({}, babelOptions);
 
   // const outputPath = path.join(destination, path.basename(filename));
-  // console.log("babel", babel);
+  // self.debug("babel", babel);
 
   // Ignore non-JS files and test scripts
 
   options.presets = ["@babel/preset-env", "@babel/preset-react"];
   // options.output = destination
 
-  console.log("THE FILE NAME", options);
+  self.debug("THE FILE NAME", options);
   const result = babel.transformSync(code, options);
-  console.log("BABEL TRANSFORMED", result);
+  self.debug("BABEL TRANSFORMED", result);
 
   // const outputPath = path.join(destination, path.basename(filename));
 
@@ -538,7 +535,7 @@ methods.parseJsxToReact = function (sourceCodes) {
     data: {
       payload: { code: sourceCodes },
       callback: (data) => {
-        console.log("CODE CONVERTED TO REACT", data.message);
+        self.debug("CODE CONVERTED TO REACT", data.message);
         const { convertedCode } = data;
         // const codeToSave = code.code;
         const updatedSource = convertedCode.map((cCode, i) => {
@@ -553,18 +550,18 @@ methods.parseJsxToReact = function (sourceCodes) {
         readFileContent =
           readFileContent + `const mapsOfComps = ${updatedSource}`;
         const bundleCode = self.babel.transformSync(readFileContent, {});
-        console.log("BUNDLE CODE", bundleCode);
+        self.debug("BUNDLE CODE", bundleCode);
         // saveToFile(
         //   `${getWorkingFolder()}/bundle.js`,
         //   `const toSave = ${updatedSource}`
         // );
 
-        // console.log("UPDATED source", updatedSource);
-        // console.log("THE ROOT DIR", getWorkingFolder());
+        // self.debug("UPDATED source", updatedSource);
+        // self.debug("THE ROOT DIR", getWorkingFolder());
         // loadFile(fileToSaveTo)
         //   .then((loadedFile) => {
-        //     console.log("THE LOADED FILE", loadedFile);
-        //     console.log("THE CODE TO SAVE", userCode);
+        //     self.debug("THE LOADED FILE", loadedFile);
+        //     self.debug("THE CODE TO SAVE", userCode);
         //     saveToFile(fileToSaveTo, userCode);
 
         //     // const { code: lebabTransformed, warnings } = self.lebabTransform(
@@ -585,10 +582,10 @@ methods.parseJsxToReact = function (sourceCodes) {
         //     //   ] // transforms to apply
         //     // );
 
-        //     //console.log("LEBAB ES6", lebabTransformed);
+        //     //self.debug("LEBAB ES6", lebabTransformed);
         //   })
         //   .catch((err) => {
-        //     console.log("THERE WAS AN ERROR LOADING REACT FILE", err);
+        //     self.debug("THERE WAS AN ERROR LOADING REACT FILE", err);
         //   });
       },
     },
@@ -632,9 +629,9 @@ methods.addToAST = function ({
 
   const filePath = `${kotiiKotiiLandPath}/dev/pages.js`;
 
-  console.log("THE BUILD PATH CWD", cwd, filePath);
+  self.debug("THE BUILD PATH CWD", cwd, filePath);
 
-  console.log("KOTTILAND FILE PATH", filePath);
+  self.debug("KOTTILAND FILE PATH", filePath);
   // const altPath = `${cwd}/build_test.js`;
   const jsFile = readFileSync(filePath);
   let ast = parser.parse(jsFile, { sourceType: "module", plugins: ["jsx"] });
@@ -643,12 +640,12 @@ methods.addToAST = function ({
 
   traverse(ast, {
     VariableDeclaration(path) {
-      // console.log("TRAVERSE ENTERS", path.container);
+      // self.debug("TRAVERSE ENTERS", path.container);
       // if (!t.isIdentifier(path.node)) return;
-      //console.log("PATH AFTER CHECK", path.node.type);
+      //self.debug("PATH AFTER CHECK", path.node.type);
       // if (t.isIdentifier(path.node, { name: "surname" })) {
-      // console.log("THE NODE TYPE", path.node.type);
-      // console.log(
+      // self.debug("THE NODE TYPE", path.node.type);
+      // self.debug(
       //   "THE NODE TYPE IS IMPORT",
       //   path.node.type === "ImportDeclaration"
       // );
@@ -672,9 +669,9 @@ methods.addToAST = function ({
         // let nodeIDName = nd.declarations[0].id.name;
         // if (nodeIDName === "mapsOfFiles" || nodeIDName === "surname") return nd;
       });
-      // console.log("AST NODE ROUTES", routesNode, isRoutesDefined);
+      // self.debug("AST NODE ROUTES", routesNode, isRoutesDefined);
       // if (compsNode) {
-      //   console.log("AST NODE COMPS", compsNode);
+      //   self.debug("AST NODE COMPS", compsNode);
       //   return;
       // }
 
@@ -715,7 +712,7 @@ methods.addToAST = function ({
     },
   });
 
-  console.log("New AST", ast);
+  self.debug("New AST", ast);
   importStrings = !isCompsDefined
     ? self.insertImportDeclarations(objectToAdd, true)
     : importStrings
@@ -724,8 +721,8 @@ methods.addToAST = function ({
   const { code: genCode } = generate(ast);
   const modifiedCode = genCode;
 
-  console.log("New AST genCode", genCode);
-  console.log("Modiefied code", modifiedCode);
+  self.debug("New AST genCode", genCode);
+  self.debug("Modiefied code", modifiedCode);
   saveToFile(
     filePath,
     !importStrings ? modifiedCode : `${importStrings} ${modifiedCode}`
@@ -748,9 +745,9 @@ methods.addToAST = function ({
   // });
   // let commandToRun = "build:dev";
   // let bat = execSync("yarn", ["run", `${commandToRun}`], { cwd: cwd });
-  // //console.log("BUILD SPAWN", buildSpawn);
+  // //self.debug("BUILD SPAWN", buildSpawn);
   // bat.stdout.on("data", (data) => {
-  //   console.log(data.toString());
+  //   self.debug(data.toString());
   // });
 
   // bat.stderr.on("data", (data) => {
@@ -758,23 +755,23 @@ methods.addToAST = function ({
   // });
 
   // bat.on("exit", (code) => {
-  //   console.log(`Child exited with code ${code}`);
+  //   self.debug(`Child exited with code ${code}`);
   // });
   // buildSpawn.on("data", (data) => {
-  //   console.log("SPAWN DATA", data);
+  //   self.debug("SPAWN DATA", data);
   // });
   //execSync("yarn build:dev");
 
-  //console.log("file source code", fileCode);
+  //self.debug("file source code", fileCode);
 
   //   .then((file) => {
-  //     console.log("I got the file", file);
+  //     self.debug("I got the file", file);
   //     let fileCode = parser.parse(file)
   //   })
   //   .catch((err) => {
-  //     console.log("THE ERR", err);
+  //     self.debug("THE ERR", err);
   //   });
-  // console.log("THE FILE PATH", jsFile);
+  // self.debug("THE FILE PATH", jsFile);
 };
 
 methods.astAddNode = function (routesNode, compsNode, toAdd) {
@@ -782,7 +779,7 @@ methods.astAddNode = function (routesNode, compsNode, toAdd) {
   const t = self.t;
 
   // const nodeElements = init.elements;
-  console.log("AST NODE BEFORE LEN", toAdd);
+  self.debug("AST NODE BEFORE LEN", toAdd);
   if (routesNode) {
     const init = routesNode.init;
     toAdd.forEach((adding, i) => {
@@ -806,8 +803,8 @@ methods.astAddNode = function (routesNode, compsNode, toAdd) {
     });
   }
 
-  // console.log("AST NODE AFTER", node.init[nodeUpdateType].length);
-  // console.log("AST NODE AFTER CHANGE", node);
+  // self.debug("AST NODE AFTER", node.init[nodeUpdateType].length);
+  // self.debug("AST NODE AFTER CHANGE", node);
 
   // traverse(node, {
   //   objectExpression(path) {
@@ -850,21 +847,21 @@ methods.astAddNode = function (routesNode, compsNode, toAdd) {
 methods.astDeleteNode = function (routesNode, compsNode, toRemove) {
   const self = this;
   const t = self.t;
-  console.log("AST NODE DELETE", toRemove);
+  self.debug("AST NODE DELETE", toRemove);
   // const init = node.init;
   // const nodeUpdateType = node.id.type === "routes" ? "elements" : "properties";
   // const nodeElements = init.elements;
 
   if (routesNode) {
     let init = routesNode.init;
-    console.log("AST NODE ROUTES NODE", routesNode);
-    console.log("AST NODE INIT ELEMENT", init.elements[0]);
+    self.debug("AST NODE ROUTES NODE", routesNode);
+    self.debug("AST NODE INIT ELEMENT", init.elements[0]);
     init.elements.forEach((elNode, i) => {
       let objecProps = elNode.properties;
       objecProps.forEach((prop, ii) => {
         if (prop.key.name === "component") {
           if (toRemove === prop.value.value) {
-            console.log("AST ROUTE ELEMENT OBJECT VALUE TO BE REMOVED");
+            self.debug("AST ROUTE ELEMENT OBJECT VALUE TO BE REMOVED");
             init.elements.splice(i, 1);
           }
         }
@@ -877,19 +874,19 @@ methods.astDeleteNode = function (routesNode, compsNode, toRemove) {
   }
   if (compsNode) {
     let initProps = compsNode.init;
-    console.log("AST NODE COMPS NODE", compsNode);
-    console.log("AST NODE INIT Properties", initProps.properties[0]);
+    self.debug("AST NODE COMPS NODE", compsNode);
+    self.debug("AST NODE INIT Properties", initProps.properties[0]);
     initProps.properties.forEach((propNode, i) => {
       if (toRemove === propNode.key.name) {
-        console.log("AST NODE Object Proper to Be removed");
+        self.debug("AST NODE Object Proper to Be removed");
         initProps.properties.splice(i, 1);
       }
       // init.properties.unshift(i);
     });
   }
 
-  // console.log("AST NODE AFTER", );
-  // console.log("AST NODE AFTER CHANGE", node);
+  // self.debug("AST NODE AFTER", );
+  // self.debug("AST NODE AFTER CHANGE", node);
 };
 
 methods.variableCreation = function (
@@ -905,7 +902,7 @@ methods.variableCreation = function (
     ? path.replaceWith.bind(path)
     : path.container.unshift.bind(path.container);
   //const files = [{ path: "mypath", component: "myComponent" }];
-  // console.log("THE CREATING METHOD", creationMethod);
+  // self.debug("THE CREATING METHOD", creationMethod);
   // if(replace)
   creationMethod(
     t.variableDeclaration("const", [
@@ -917,25 +914,25 @@ methods.variableCreation = function (
             //   .toString()
             //   .replace(/\/\*#__PURE__\*\/_react.default/g, "React");
             // .replace(/;/g, "");
-            // console.log("FUNCTION AS A STRING", functionAsString);
+            // self.debug("FUNCTION AS A STRING", functionAsString);
             // let funcAst = parser.parse(functionAsString, {
             //   sourceType: "module",
             // });
-            //console.log("FUNCTION STRING", functionAsString);
+            //self.debug("FUNCTION STRING", functionAsString);
             // let funcAst = parser.parse(en.component, {
             //   sourceType: "module",
             //   plugins: ["jsx"],
             // });
-            // console.log("FUNC AST", funcAst);
-            // console.log("FUNCK FIRST NODE");
+            // self.debug("FUNC AST", funcAst);
+            // self.debug("FUNCK FIRST NODE");
             // self.funcToJsx(funcAst, en.path);
             // let functionInContext = funcAst.program.body[0];
-            // console.log("FUNCK FIRST NODE", functionInContext);
+            // self.debug("FUNCK FIRST NODE", functionInContext);
             // let funcName = functionInContext.id.name;
             // let funcBody = functionInContext.body;
-            // console.log("AST for func", funcAst.program.body);
-            // console.log("AST FUNCTION PARTS", funcName, funcBody);
-            // console.log("THE FUNCTION NAME", funcName);
+            // self.debug("AST for func", funcAst.program.body);
+            // self.debug("AST FUNCTION PARTS", funcName, funcBody);
+            // self.debug("THE FUNCTION NAME", funcName);
 
             return t.objectExpression([
               t.objectProperty(t.identifier("path"), t.stringLiteral(en.path)),
@@ -958,19 +955,19 @@ methods.funcToJsx = function (ast, pathID) {
 
   const traverse = self.traverse;
   const t = self.t;
-  console.log("PROCESSING PATHID", pathID);
+  self.debug("PROCESSING PATHID", pathID);
   traverse(ast, {
     CallExpression(path) {
-      console.log("JSX PATH", path.node);
-      console.log(
+      self.debug("JSX PATH", path.node);
+      self.debug(
         "JSX PATH.NODE.callee",
         t.isMemberExpression(path.node.callee)
       );
-      console.log(
+      self.debug(
         "JSX PATH.NODE.callee.object",
         t.isIdentifier(path.node.callee.object, { name: "React" })
       );
-      console.log(
+      self.debug(
         "JSX PATH.NODE.callee.property",
         t.isIdentifier(path.node.callee.property, { name: "createElement" })
       );
@@ -979,13 +976,13 @@ methods.funcToJsx = function (ast, pathID) {
         t.isIdentifier(path.node.callee.object, { name: "React" }) &&
         t.isIdentifier(path.node.callee.property, { name: "createElement" })
       ) {
-        console.log("JSX PATH ARGUMENTS", path.node.arguments);
+        self.debug("JSX PATH ARGUMENTS", path.node.arguments);
         const [type, props, ...children] = path.node.arguments;
 
-        console.log("JSX PATH CHILDREN", children);
-        console.log("JSX PATH TYPE", type);
-        console.log("JSX PATH PROPS", props);
-        console.log(
+        self.debug("JSX PATH CHILDREN", children);
+        self.debug("JSX PATH TYPE", type);
+        self.debug("JSX PATH PROPS", props);
+        self.debug(
           "JSX PATH PROPS.ISOBJECTEXPRESSION",
           t.isObjectExpression(props)
         );
@@ -1003,15 +1000,15 @@ methods.funcToJsx = function (ast, pathID) {
           if (t.isStringLiteral(child)) {
             jsxChildren.push(t.jsxText(child.value));
           } else if (t.isCallExpression(child)) {
-            console.log("NODE CHILD TYPE IS EXPRESSION");
+            self.debug("NODE CHILD TYPE IS EXPRESSION");
             jsxChildren.push(t.jsxExpressionContainer(child));
           }
         });
 
-        console.log("JSX CONTRUCTED CHILDREN", jsxChildren);
+        self.debug("JSX CONTRUCTED CHILDREN", jsxChildren);
 
         const idAsValueOrName = type?.value ? type.value : type.name;
-        console.log("JSX TYPE.VALUE", idAsValueOrName);
+        self.debug("JSX TYPE.VALUE", idAsValueOrName);
 
         const openingElement = t.jsxOpeningElement(
           t.jsxIdentifier(idAsValueOrName),
@@ -1022,7 +1019,7 @@ methods.funcToJsx = function (ast, pathID) {
         const closingElement = t.jsxClosingElement(
           t.jsxIdentifier(idAsValueOrName)
         );
-        console.log("BEFORE PLACEMENT DONE");
+        self.debug("BEFORE PLACEMENT DONE");
         const jsxElement = t.jsxElement(
           openingElement,
           closingElement,
@@ -1031,14 +1028,14 @@ methods.funcToJsx = function (ast, pathID) {
         );
 
         path.replaceWith(jsxElement);
-        console.log("REPLACEMENT IS DONE");
+        self.debug("REPLACEMENT IS DONE");
       }
     },
   });
 };
 methods.doImports = function (toImport) {
   const self = this;
-  console.log("TO IMPORT", toImport);
+  self.debug("TO IMPORT", toImport);
   return new Promise((res, rej) => {
     Promise.all(
       toImport.map((to, i) => {
@@ -1046,15 +1043,15 @@ methods.doImports = function (toImport) {
           self
             .dynamicImport(to.component)
             .then((imported) => {
-              console.log(
+              self.debug(
                 "Module has successfully been imported:",
                 to.component
               );
-              console.log("THE IMPORTED", imported);
+              self.debug("THE IMPORTED", imported);
               resolve({ path: to.path, module: imported });
             })
             .catch((err) => {
-              console.log(
+              self.debug(
                 `importing module:${to}, has failed with an error:${err}`
               );
               reject(err);
@@ -1071,17 +1068,17 @@ methods.doImport = function (toImport, all = false, check = true) {
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
   const loadFileSync = pao.pa_loadFileSync;
-  // console.log("TIIMPORT", toImport);
+  // self.debug("TIIMPORT", toImport);
   return new Promise((resolve, reject) => {
     // const manifestFile = loadFileSync(toImport);
     // resolve({ module: imported.meta });
     loadFile(toImport, all, check)
       .then((imported) => {
-        console.log("Module has successfully been imported:", imported);
+        self.debug("Module has successfully been imported:", imported);
         resolve(imported);
       })
       .catch((err) => {
-        console.log(
+        self.debug(
           `importing module:${toImport}, has failed with an error:${err}`
         );
         reject(err);
@@ -1102,7 +1099,7 @@ methods.insertImportDeclarations = function (
   const parser = self.parser;
   const saveToFile = pao.pa_saveToFile;
 
-  //   console.log("THE IMPORTS", imports);
+  //   self.debug("THE IMPORTS", imports);
   //   const buildImport = template(`
   //   let IMPORT_NAME = require(SOURCE);
   // `);
@@ -1125,13 +1122,13 @@ methods.insertImportDeclarations = function (
   let joinedString = shouldBuildComps
     ? `${importString.join("")} ${constString};`
     : `${importString.join("")}`;
-  console.log("ASTY JOINED STRING", joinedString);
+  self.debug("ASTY JOINED STRING", joinedString);
   let ast = parser.parse(joinedString, { sourceType: "module" });
   !shouldBuildComps ? self.astAddNode(routesNode, compsNode, imports) : "";
   let modifiedCode = generate(ast).code;
-  console.log("ASTY CODE THE IMPOT STRINGS", importString);
-  console.log("ASTY CODE", modifiedCode);
-  console.log();
+  self.debug("ASTY CODE THE IMPOT STRINGS", importString);
+  self.debug("ASTY CODE", modifiedCode);
+  self.debug();
   return modifiedCode;
   // saveToFile(filePath, modifiedCode);
   // saveToFile(filePath, modifiedCode);
@@ -1169,12 +1166,12 @@ methods.insertIdentifierImportDeclarations = function (imports) {
   });
 
   let joinedString = `${importString.join("")}`;
-  console.log("ASTY JOINED ID STRING", joinedString);
+  self.debug("ASTY JOINED ID STRING", joinedString);
   let ast = parser.parse(joinedString, { sourceType: "module" });
   let modifiedCode = generate(ast).code;
-  console.log("ASTY CODE ID THE IMPOT STRINGS", importString);
-  console.log("ASTY CODE ID", modifiedCode);
-  console.log();
+  self.debug("ASTY CODE ID THE IMPOT STRINGS", importString);
+  self.debug("ASTY CODE ID", modifiedCode);
+  self.debug();
   return modifiedCode;
 };
 methods.removeImportDeclarations = function (
@@ -1194,9 +1191,9 @@ methods.removeImportDeclarations = function (
 
   traverse(ast, {
     ImportDeclaration(path) {
-      console.log("AST NODE AFTER Import Node", path.node.source.value);
-      console.log("AST NODE SPECIFIER", path.node.specifiers[0]?.local.name);
-      console.log(
+      self.debug("AST NODE AFTER Import Node", path.node.source.value);
+      self.debug("AST NODE SPECIFIER", path.node.specifiers[0]?.local.name);
+      self.debug(
         "AST NODE AFTER Import Test",
         toRemove.indexOf(path.node.source.value) >= 0
       );
@@ -1208,7 +1205,7 @@ methods.removeImportDeclarations = function (
       }
     },
   });
-  console.log("AST NODE TO BE REMOVED IS", removedImportsIds);
+  self.debug("AST NODE TO BE REMOVED IS", removedImportsIds);
 };
 
 methods.addImportLineToBuildJs = function () {
@@ -1228,7 +1225,7 @@ methods.addImportLineToBuildJs = function () {
     plugins: ["jsx"],
   });
 
-  console.log("AST FOR BUILD.JS");
+  self.debug("AST FOR BUILD.JS");
   self.removeImportDeclarations(buildAst, ["./pages.js"]);
   const generateBuildAst = generate(buildAst).code;
   const buildImportString = self.insertIdentifierImportDeclarations([
@@ -1261,10 +1258,10 @@ methods.createMetaAst = function (metaData) {
 
   traverse(ast, {
     VariableDeclaration(path) {
-      console.log("AST NODE META ", path.node.declarations);
-      console.log("AST NODE META DECLARATION", path.node.declarations[0]);
-      console.log("AST NODE META ID", path.node.declarations[0].id);
-      console.log("AST NODE META INIT", path.node.declarations[0].init);
+      self.debug("AST NODE META ", path.node.declarations);
+      self.debug("AST NODE META DECLARATION", path.node.declarations[0]);
+      self.debug("AST NODE META ID", path.node.declarations[0].id);
+      self.debug("AST NODE META INIT", path.node.declarations[0].init);
       const declarations = path.node.declarations;
       let targetDeclaration = null;
       declarations.forEach((declaration) => {
@@ -1275,7 +1272,7 @@ methods.createMetaAst = function (metaData) {
         if (declarationInitProp.key.name === "comps") {
           let elements = [];
           // let merged = self.merge(elements, metaData.comps);
-          // console.log("AST NODE THE MERGED COMPS", merged);
+          // self.debug("AST NODE THE MERGED COMPS", merged);
           if (declarationInitProp.value.elements.length > 0) {
             declarationInitProp.value.elements.forEach((el) => {
               elements.push(el.value);
@@ -1289,7 +1286,7 @@ methods.createMetaAst = function (metaData) {
           metaData.comps.forEach((compName) => {
             if (!contains(elements, compName)) elements.push(compName);
           });
-          console.log("AST NODE ELEMENTS UPDATED AFTER", elements);
+          self.debug("AST NODE ELEMENTS UPDATED AFTER", elements);
           elements.forEach((element) => {
             declarationInitProp.value.elements.push(t.stringLiteral(element));
           });
@@ -1297,7 +1294,7 @@ methods.createMetaAst = function (metaData) {
         if (declarationInitProp.key.name === "compsPaths") {
           let elements = [];
           // let merged = self.merge(elements, metaData.comps);
-          // console.log("AST NODE THE MERGED COMPS", merged);
+          // self.debug("AST NODE THE MERGED COMPS", merged);
           if (declarationInitProp.value.elements.length > 0) {
             declarationInitProp.value.elements.forEach((el) => {
               elements.push(el.value);
@@ -1311,7 +1308,7 @@ methods.createMetaAst = function (metaData) {
           metaData.compsPaths.forEach((compName) => {
             if (!contains(elements, compName)) elements.push(compName);
           });
-          console.log("AST NODE ELEMENTS UPDATED AFTER", elements);
+          self.debug("AST NODE ELEMENTS UPDATED AFTER", elements);
           elements.forEach((element) => {
             declarationInitProp.value.elements.push(t.stringLiteral(element));
           });
@@ -1338,7 +1335,7 @@ methods.watchFile = function (data, events, options = null) {
     data: {
       payload: { watched: data, events },
       callback: (data) => {
-        console.log("File watch set", data);
+        self.debug("File watch set", data);
       },
     },
   });
@@ -1352,9 +1349,9 @@ methods.cacheData = function (dataToCache, cacheData) {
     data: {
       payload: { toCache: { key: dataToCache.key, data: cacheData } },
       callback: (data) => {
-        console.log("File ROUTER CACHE SAVING", data);
+        self.debug("File ROUTER CACHE SAVING", data);
         self.checkForSavedFiles({ key: "TEST_CACHE_SAVE" }).then((checked) => {
-          console.log("SAVED CACHE", checked);
+          self.debug("SAVED CACHE", checked);
         });
       },
     },
@@ -1372,7 +1369,7 @@ methods.updateCacheData = function (dataToCache) {
         updateData: { action: dataToCache.action, update: dataToCache.update },
       },
       callback: (data) => {
-        console.log("Update callback", data.message);
+        self.debug("Update callback", data.message);
       },
     },
   });
@@ -1388,7 +1385,7 @@ methods.checkForSavedFiles = function (check) {
       data: {
         payload: { key: check.key },
         callback: (keyGetResult) => {
-          console.log(`${check.key} RESULT`, keyGetResult);
+          self.debug(`${check.key} RESULT`, keyGetResult);
           if (!keyGetResult) return resolve(false);
           if (!keyGetResult?.status) return resolve(false);
           resolve(true);
@@ -1416,7 +1413,7 @@ methods.watchFileDeleteEvent = function (changed) {
     action: "delete",
   });
 
-  console.log("fILES HAVE BEEN CHANGED", changed);
+  self.debug("fILES HAVE BEEN CHANGED", changed);
 };
 
 methods.merge = function (a, b, predicate = (a, b) => a === b) {
@@ -1430,8 +1427,8 @@ methods.merge = function (a, b, predicate = (a, b) => a === b) {
 methods.buildServerRoutes = function (routesSource, routesObject) {
   const self = this;
 
-  console.log("THe routes source", routesSource);
-  // console.log("THE ROUTESOBJECT", routesObject);
+  self.debug("THe routes source", routesSource);
+  // self.debug("THE ROUTESOBJECT", routesObject);
 
   let builtRoutes = routesSource.map((route) => {
     return {
@@ -1449,29 +1446,29 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
       effectsToRun: route.universalEffects,
     };
   });
-  // console.log("ROUTES BUILT", builtRoutes);
+  // self.debug("ROUTES BUILT", builtRoutes);
   return builtRoutes;
 };
 
 methods.getComponentServerState = function (path, routesObject) {
   const self = this;
 
-  console.log("THE ROUTESOBJECT", routesObject, path);
+  self.debug("THE ROUTESOBJECT", routesObject, path);
 
   let gotServerState = routesObject.filter((route) => {
-    console.log("THE ROUTE", route);
+    self.debug("THE ROUTE", route);
     if (
       route?.getServerState &&
       route.path.toLowerCase() === path.toLowerCase()
     ) {
-      console.log("THE ACTUAL DATA THE THING MATCHED");
-      console.log("THE CURRENT ROUTE", route);
+      self.debug("THE ACTUAL DATA THE THING MATCHED");
+      self.debug("THE CURRENT ROUTE", route);
       return route;
     }
   });
 
-  console.log("THE ACTUAL DATA GOT SERVER STATE", gotServerState);
-  // console.log("ROUTES BUILT", builtRoutes);
+  self.debug("THE ACTUAL DATA GOT SERVER STATE", gotServerState);
+  // self.debug("ROUTES BUILT", builtRoutes);
   return gotServerState.length > 0 ? gotServerState[0].getServerState : null;
 };
 
@@ -1482,7 +1479,7 @@ methods.getAstRoutes = function (routesObject, renamesToAdd) {
     });
     return itemArray.length > 0 ? itemArray[0] : false;
   });
-  console.log("THE AST ROUTES", astRoutes);
+  self.debug("THE AST ROUTES", astRoutes);
   return astRoutes;
 };
 
