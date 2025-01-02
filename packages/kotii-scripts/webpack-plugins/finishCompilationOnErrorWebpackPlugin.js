@@ -1,15 +1,18 @@
-class finishCompilationOnErrorWebpackPlugin {
+class FinishCompilationOnErrorWebpackPlugin {
   closeWatcher = null;
-  constructor(options = null) {
+  constructor(options = null, loggas) {
+    this.loggas = loggas;
     this.closeWatcher = options.closeWatcher;
   }
   apply(compiler) {
     compiler.hooks.done.tap(
       "FinishCompilationOnErrorWebpackPlugin",
       (stats) => {
-        console.log("PLUGIN:: FINISHCOMPILATION ON ERROR");
+        this.loggas.finishCompilationOnErrorWebpackPlugin.debug(
+          "PLUGIN:: FINISHCOMPILATION ON ERROR"
+        );
         if (stats.compilation.errors.length > 0) {
-          console.log(
+          this.loggas.finishCompilationOnErrorWebpackPlugin.debug(
             "PLUGIN:: FINISHCOMPILATION WE ARE EXITING CODE",
             stats.compilation.errors
           );
@@ -20,4 +23,4 @@ class finishCompilationOnErrorWebpackPlugin {
   }
 }
 
-export default finishCompilationOnErrorWebpackPlugin;
+export default FinishCompilationOnErrorWebpackPlugin;

@@ -7,37 +7,44 @@ class RemoveImportsWebpackPlugin {
   removeFilePath = "";
   removeImportSpecifiers = [];
   importRemoved = false;
-  constructor(options) {
+  constructor(options, loggas) {
     this.removeFilePath = options.removeFilePath;
     this.removeImportSpecifiers = options.removeFileSpecifiers;
+    this.loggas = loggas;
   }
   apply(compiler) {
     compiler.hooks.afterCompile.tap("RemoveImportsWebpackPlugin", () => {
-      console.log("PLUGIN:: REMOVEIMPORTS");
+      this.loggas.removeImportsWebpackPlugin.debug("PLUGIN:: REMOVEIMPORTS");
       if (this.importRemoved) return;
       this.importRemoved = true;
       let removeImportSpecifiers = this.removeImportSpecifiers;
       const buildPath = this.removeFilePath;
-      console.log("REMOVE BUILD PATH", buildPath);
+      this.loggas.removeImportsWebpackPlugin.debug(
+        "REMOVE BUILD PATH",
+        buildPath
+      );
       const buildPathFile = fs.readFileSync(buildPath, { encoding: "utf-8" });
-      console.log("REMOVE READ FILE", buildPathFile);
+      this.loggas.removeImportsWebpackPlugin.debug(
+        "REMOVE READ FILE",
+        buildPathFile
+      );
       const buildAst = parser.parse(buildPathFile, {
         sourceType: "module",
         plugins: ["jsx"],
       });
-      console.log("REMVOE BUILD AST");
+      this.loggas.removeImportsWebpackPlugin.debug("REMVOE BUILD AST");
 
       traverse.default(buildAst, {
         ImportDeclaration(path) {
-          console.log(
+          this.loggas.removeImportsWebpackPlugin.debug(
             "AST NODE AFTER Import Node REMOVE",
             path.node.source.value
           );
-          console.log(
+          this.loggas.removeImportsWebpackPlugin.debug(
             "AST NODE SPECIFIER REMOVE",
             path.node.specifiers[0]?.local.name
           );
-          console.log(
+          this.loggas.removeImportsWebpackPlugin.debug(
             "AST NODE AFTER Import Test REMOVE",
             removeImportSpecifiers.indexOf(path.node.source.value) >= 0
           );
@@ -56,7 +63,11 @@ class RemoveImportsWebpackPlugin {
         newFileContent,
         { encoding: "utf-8" },
         (err, success) => {
-          console.log("REMOVE WRITE FILE", err, success);
+          this.loggas.removeImportsWebpackPlugin.debug(
+            "REMOVE WRITE FILE",
+            err,
+            success
+          );
         }
       );
     });

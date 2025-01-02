@@ -1,4 +1,5 @@
 import fs from "fs";
+import { loggas, logger } from "kotii-logger";
 import path from "path";
 import { fileURLToPath } from "url";
 import webpack from "webpack";
@@ -11,30 +12,53 @@ import {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+logger.setNameSpaces([
+  { namespace: "webpack:compilation", id: "webpack" },
+  {
+    namespace: "webpack:compilation:deleteFilesWebpackPlugin",
+    id: "deleteFilesWebpackPlugin",
+  },
+  {
+    namespace: "webpack:compilation:finishCompilationOnErrorWebpackPlugin",
+    id: "finishCompilationOnErrorWebpackPlugin",
+  },
+  {
+    namespace: "webpack:compilation:hookToLoaderResolutionWebpackPlugin",
+    id: "hookToLoaderResolutionWebpackPlugin",
+  },
+  {
+    namespace: "webpack:compilation:watchOwnFilesWebpackPlugin",
+    id: "watchOwnFilesWebpackPlugin",
+  },
+]);
 
 export default (options) => {
-  //   console.log("THE PROCESS", process.env.APPCONTEXT);
-  console.log("THE STUFF THAT IS", options);
+  //   loggas.webpack.debug("THE PROCESS", process.env.APPCONTEXT);
+  loggas.webpack.debug("THE STUFF THAT IS", options);
   let env = JSON.parse(process.env.APPCONTEXT); // GET the set APPCONTEXT environment variable
   let appEnvironmentVariables = JSON.parse(process.env.APP_ENVS); // Get context app kotii environment variables
-  console.log("THE APP BUILD FOLDER", env.appBuildFolder);
-  console.log("WEBPACK APP ENVS", appEnvironmentVariables);
-  console.log("THE SERVER CONFIG");
-  console.log("THE APP BUILD FOLDER", env.appBuildFolder);
-  console.log("PNPM STATUS", options.isProjectPNPM);
-  console.log("THE DIR_NAME", __dirname, path.resolve(__dirname, "../.."));
+  loggas.webpack.debug("THE APP BUILD FOLDER", env.appBuildFolder);
+  loggas.webpack.debug("WEBPACK APP ENVS", appEnvironmentVariables);
+  loggas.webpack.debug("THE SERVER CONFIG");
+  loggas.webpack.debug("THE APP BUILD FOLDER", env.appBuildFolder);
+  loggas.webpack.debug("PNPM STATUS", options.isProjectPNPM);
+  loggas.webpack.debug(
+    "THE DIR_NAME",
+    __dirname,
+    path.resolve(__dirname, "../..")
+  );
   let scriptsPath = path.resolve(__dirname, "../..");
   let scriptsWebpackResolve = path.resolve(
     scriptsPath,
     "kotii-land/dev/app_.js"
   );
-  console.log(
+  loggas.webpack.debug(
     "WEBPACK KOTII RESOLVE",
     scriptsPath,
     scriptsWebpackResolve,
     fs.existsSync(scriptsWebpackResolve)
   );
-  console.log(
+  loggas.webpack.debug(
     "WEBPACK KOTII RESOLVE path.join",
     path.resolve(`${scriptsWebpackResolve}`)
   );
@@ -66,8 +90,8 @@ export default (options) => {
       clean: true, // Clean build folder before emitting new bundle
       publicPath: "/",
       assetModuleFilename: (pathData, assetInfo) => {
-        console.log("THE PATH DATA", pathData.filename);
-        //console.log("THE PATH INFO", assetInfo);
+        loggas.webpack.debug("THE PATH DATA", pathData.filename);
+        //loggas.webpack.debug("THE PATH INFO", assetInfo);
         return `${path.basename(pathData.filename)}`;
       },
     },
@@ -241,19 +265,28 @@ export default (options) => {
       //   // template: env.appIndexHtml,
       //   filename: "index.html",
       // }),
-      new DeleteFilesWebpackPlugin({
-        deleteFolder: options.buildFolder,
-      }),
-      new HookToLoaderResolutionWebpackPlugin(),
+      new DeleteFilesWebpackPlugin(
+        {
+          deleteFolder: options.buildFolder,
+        },
+        loggas
+      ),
+      new HookToLoaderResolutionWebpackPlugin(loggas),
 
-      new FinishCompilationOnErrorWebpackPlugin({
-        closeWatcher: options.closeWatcher,
-      }),
-      new WatchOwnFilesWebpackPlugin({
-        filesToWatch: `${options.pagesFolder}`,
-        runOnComplete: options.runOnComplete,
-        notifyClient: options.notifyClient,
-      }),
+      new FinishCompilationOnErrorWebpackPlugin(
+        {
+          closeWatcher: options.closeWatcher,
+        },
+        loggas
+      ),
+      new WatchOwnFilesWebpackPlugin(
+        {
+          filesToWatch: `${options.pagesFolder}`,
+          runOnComplete: options.runOnComplete,
+          notifyClient: options.notifyClient,
+        },
+        loggas
+      ),
       // new GetStatsWebpackPlugin({ writeFilePath: env.appBuildFolder }),
       new webpack.DefinePlugin({
         "process.env": {

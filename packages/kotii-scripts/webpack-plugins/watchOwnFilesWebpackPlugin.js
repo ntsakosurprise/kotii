@@ -3,21 +3,29 @@ class WatchOwnFilesWebpackPlugin {
   isWatchingFiles = false;
   runOnComplete = null;
 
-  constructor(options) {
-    console.log("REMOVE IMPORT OPTIONS", options);
+  constructor(options, loggas) {
+    this.loggas = loggas;
+    this.loggas.watchOwnFilesWebpackPlugin.debug(
+      "REMOVE IMPORT OPTIONS",
+      options
+    );
     this.filesToWatch = options.filesToWatch;
     this.runOnComplete = options.runOnComplete;
     this.notifyClient = options.notifyClient;
   }
   apply(compiler) {
     compiler.hooks.initialize.tap("WatchOwnFilesWebpackPlugin", (stats) => {
-      console.log("PLUGIN:: WATCHFILES");
+      this.loggas.watchOwnFilesWebpackPlugin.debug("PLUGIN:: WATCHFILES");
       // this.runOnComplete()
 
       if (this.isWatchingFiles) return;
       this.isWatchingFiles = true;
 
-      console.log("PLUGIN:: FILES TO WATCH", this.filesToWatch, compiler.close);
+      this.loggas.watchOwnFilesWebpackPlugin.debug(
+        "PLUGIN:: FILES TO WATCH",
+        this.filesToWatch,
+        compiler.close
+      );
       this.runOnComplete(this.filesToWatch, this.isWatchingFiles);
     });
   }

@@ -1,8 +1,13 @@
 class HookToLoaderResolutionWebpackPlugin {
   dir = null;
 
-  constructor(options = null) {
-    console.log("DELETE HOT FILES OPTIONS", options);
+  constructor(loggas, options = null) {
+    this.loggas = loggas;
+    this.loggas.hookToLoaderResolutionWebpackPlugin.debug(
+      "DELETE HOT FILES OPTIONS",
+      options
+    );
+
     // this.deleteFolder = options.deleteFolder;
   }
 
@@ -12,11 +17,11 @@ class HookToLoaderResolutionWebpackPlugin {
       .tap("name", (resolver) => {
         // you can tap into resolver.hooks now
 
-        // console.log("RESOLVE HOOK RESULT RESOLVER", resolver);
+        // this.loggas.hookToLoaderResolutionWebpackPlugin.debug("RESOLVE HOOK RESULT RESOLVER", resolver);
         resolver.hooks.result.tap(
           "HookToLoaderResolutionWebpackPlugin",
           (result) => {
-            // console.log("RESOLVE HOOK RESULT", result);
+            // this.loggas.hookToLoaderResolutionWebpackPlugin.debug("RESOLVE HOOK RESULT", result);
             return result;
           }
         );
@@ -28,11 +33,11 @@ class HookToLoaderResolutionWebpackPlugin {
     //     (request, resolveContext, callback) => {
     //       // 1. check if the request is point to our component folder
     //       // resolver.join is same as path.join, but memoized
-    //       console.log("THE REQUEST", request, resolveContext, callback);
+    //       this.loggas.hookToLoaderResolutionWebpackPlugin.debug("THE REQUEST", request, resolveContext, callback);
     //       const { dir } = path.parse(
     //         resolver.join(request.path, request.request)
     //       );
-    //       console.log("THE DIR", dir);
+    //       this.loggas.hookToLoaderResolutionWebpackPlugin.debug("THE DIR", dir);
     //       const match = dir === this.dir;
 
     //       // if (match) {
@@ -69,20 +74,20 @@ class HookToLoaderResolutionWebpackPlugin {
   }
 
   // compiler.hooks.beforeCompile.tap("DeleteFilesWebpackPlugin", () => {
-  //   console.log("deleteFilesWebpackPlugin:: FILES TO WATCH");
+  //   this.loggas.hookToLoaderResolutionWebpackPlugin.debug("deleteFilesWebpackPlugin:: FILES TO WATCH");
 
   //   const filesToGet = globSync(
   //     `${this.deleteFolder}/**/*.{js,jsx,ts,tsx,json}`
   //   );
-  //   console.log("PLUGIN:: DELETE PLUGIN", filesToGet);
+  //   this.loggas.hookToLoaderResolutionWebpackPlugin.debug("PLUGIN:: DELETE PLUGIN", filesToGet);
   //   let deleteList = filesToGet.filter((filePath) => {
   //     if (filePath.indexOf(".hot-update") >= 0) return true;
   //   });
   //   deleteList.forEach((pathToDelete) => {
-  //     console.log("CURRENTLY DELETING FILE", pathToDelete);
+  //     this.loggas.hookToLoaderResolutionWebpackPlugin.debug("CURRENTLY DELETING FILE", pathToDelete);
   //     fs.unlinkSync(pathToDelete);
   //   });
-  //   console.log("THE DELETE LIST", deleteList);
+  //   this.loggas.hookToLoaderResolutionWebpackPlugin.debug("THE DELETE LIST", deleteList);
   // });
 }
 
