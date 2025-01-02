@@ -16,6 +16,7 @@ class KOLogger {
     this.appName = appName;
     this.createNameSpacesDebug = debug("KOLogger:namespaces");
     this.createEnvironment();
+    console.log("THE ENVIRONMENT", this.envLoggingContainer);
 
     if (!nameSpaces) {
       this.createNameSpaces(this.debugNameSpaces);
@@ -61,11 +62,11 @@ class KOLogger {
           logger(...message);
         },
         debug: function (...message) {
-          if (!this.shouldShowDebugLogs) return;
+          if (!self.envLoggingContainer.shouldShowDebugLogs) return;
           logger(...message);
         },
         log: function (...message) {
-          if (!this.shouldShowStandardLogs) return;
+          if (!self.envLoggingContainer.shouldShowStandardLogs) return;
           logger(...message);
         },
       };
