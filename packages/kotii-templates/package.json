@@ -47,7 +47,8 @@
     ]
   },
   "dependencies": {
-    "anzii": "file:/Users/surprisemashele/Documents/Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz"
+    "anzii": "file:/Users/surprisemashele/Documents/Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz",
+    "kotii-logger": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-logger/kotii-logger-1.0.0.tgz"
   },
   "files": [
     "dist/",

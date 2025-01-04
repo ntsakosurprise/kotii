@@ -20,11 +20,9 @@ class Users {
     self
       .getSavedHistory()
       .then((saved) => {
-        console.log("the saved;;;", saved);
         return self.callback(null, { actor: saved });
       })
       .catch((err) => {
-        console.log("savedError;;;", err);
         return self.callback(null, { message: message });
       });
     //return self.callback(null,{message: message})
