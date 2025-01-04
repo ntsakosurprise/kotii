@@ -78,9 +78,8 @@ export default (options) => {
 
     context: env.appFolder,
     mode: process.env.NODE_ENV,
-    infrastructureLogging: { debug: true },
-    stats: true,
-
+    infrastructureLogging: { level: "none" },
+    stats: "errors-only",
     output: {
       filename: "server.bundle.js",
       path:
