@@ -3,14 +3,6 @@ import { spawn } from "child_process";
 import { loggas } from "kotii-logger";
 import plugins from "../../plugins/index.js";
 
-process.argv.push("cli");
-process.env.ANZII_CLI_WITH_SERVER = "true";
-process.env.ANZII_SHOW_CLI_LOGS = "true";
-process.env.ANZII_OPEN_BROWSER = process.env?.CUSTOM_RESTART ? "false" : "true";
-// process.env.DEBUG = "anzii:*";
-process.env.ANZII_SHOW_DEBUG_LOGS = "true";
-process.env.ANZII_SHOW_WILD_LOGS = "true";
-
 process.on("beforeExit", () => {
   loggas.startUp.log("THE PROCESS IS ABOUT TO EXIST");
 });
