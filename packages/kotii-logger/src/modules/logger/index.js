@@ -16,7 +16,6 @@ class KOLogger {
     this.appName = appName;
     this.createNameSpacesDebug = debug("KOLogger:namespaces");
     this.createEnvironment();
-    console.log("THE ENVIRONMENT", this.envLoggingContainer);
 
     if (!nameSpaces) {
       this.createNameSpaces(this.debugNameSpaces);
@@ -28,7 +27,7 @@ class KOLogger {
     const self = this;
 
     if (self.debugus[scope]) return self[scope](scope, message);
-    console.log(message);
+
     const msg = debug("kotii:log");
     msg.enabled = true;
     msg("I am the message");
