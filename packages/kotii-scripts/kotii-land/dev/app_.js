@@ -1,16 +1,17 @@
 import fs from "fs";
-import { logger } from "kotii-logger";
+import { loggas, logger } from "kotii-logger";
 import path from "path";
 import React, { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-import { loggas } from "../../../kotii-logger/index.js";
 import { AppProvider, useAppContext } from "../../react-components/index.jsx";
 import createReduxStore from "./app_redux.js";
 import { ClientRoutes, RoutesAsServerRoutes } from "./build.js";
+
 logger.setNameSpaces([
   { namespace: "app:start-client", id: "appClient" },
   { namespace: "app:start-server", id: "appServer" },
+  { namespace: "app:demo", id: "app" },
 ]);
 
 // import { meta } from "./manifest.js";

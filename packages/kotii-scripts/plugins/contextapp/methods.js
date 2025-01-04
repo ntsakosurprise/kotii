@@ -285,21 +285,14 @@ methods.getEnvFilePath = function (basePath) {
 
 methods.getAvailablePort = function (port = 3000, useStrictPort = false) {
   const self = this;
-  self.infoSync(`User preffered port: ${port}`);
+
   return new Promise((resolve, reject) => {
     detectPort(port)
       .then((gotPort) => {
-        self.debug("THE GOT PORT", gotPort);
-        self.debug("THE CHECKED PORT", port);
-        self.debug("THE TYPEOF PORT", typeof port);
-        self.debug("THE TYPEOF GOT PORT", typeof gotPort.toString());
-        self.debug("THE GOT PORT EQUALS PORT", gotPort === port);
-
         if (gotPort.toString() === port) {
           process.env["PORT"] = gotPort;
           resolve(gotPort);
         } else {
-          self.debug("SEARCHING FOR OPEN PORT");
           portFinder
             .getPortPromise()
             .then((openPort) => {
@@ -308,9 +301,7 @@ methods.getAvailablePort = function (port = 3000, useStrictPort = false) {
                   "Specified port is in use, please try to set another port"
                 );
               }
-              self.infoSync(
-                `Specified port: ${port} is in use, anzii will resort to port:${openPort}`
-              );
+
               process.env["PORT"] = openPort;
               resolve(openPort);
             })
@@ -320,7 +311,7 @@ methods.getAvailablePort = function (port = 3000, useStrictPort = false) {
         }
       })
       .catch((err) => {
-        self.debug("Therw was an error trying to get a port", err);
+        self.error("There was an error trying to get a port", err);
         reject(err);
       });
   });

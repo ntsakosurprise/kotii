@@ -20,7 +20,6 @@ class Hello {
     self
       .getSavedHistory()
       .then((saved) => {
-        self.debug("the saved;;;", saved);
         return self.callback(null, { message: message });
       })
       .catch((err) => {
