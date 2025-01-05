@@ -13,7 +13,7 @@ const setEnvironmentForFramework = () => {
   process.env.ANZII_OPEN_BROWSER = process.env?.CUSTOM_RESTART
     ? "false"
     : "true";
-  if (!process.env?.DEBUG) process.env.DEBUG = "anzii:*";
+  // if (!process.env?.DEBUG) process.env.DEBUG = "anzii:*";
   process.env.ANZII_SHOW_DEBUG_LOGS = "true";
 };
 const setEnvironmentForUser = () => {
