@@ -1473,6 +1473,7 @@ methods.getComponentServerState = function (path, routesObject) {
 };
 
 methods.getAstRoutes = function (routesObject, renamesToAdd) {
+  const self = this;
   let astRoutes = routesObject.filter((ro) => {
     let itemArray = renamesToAdd.filter((routePath) => {
       if (ro.componentPath === routePath) return true;
