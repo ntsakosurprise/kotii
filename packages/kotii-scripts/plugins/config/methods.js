@@ -1,13 +1,10 @@
 const methods = {};
 methods.init = function () {
-  console.log("config has been initialised");
-
   this.listens({
     config: this.handleDevConfig.bind(this),
   });
 };
 methods.handleDevConfig = function (data) {
-  console.log("THE DATA OF DevConfig", data);
   data.callback({ message: "Init plugin successfully called" });
   return;
 };

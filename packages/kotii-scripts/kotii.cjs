@@ -55,12 +55,10 @@ const { parseScriptArguments } = cli;
 const commandToRun = parseScriptArguments()[0];
 
 if (commandToRun === "start") {
-  console.log("RUNNING SCRIPT:", commandToRun);
   process.env.ANZII_KICK_OFF_MANUALLY = "true";
   register("./compile/hooks_prod.js", parentURL);
   import("./kotii-land/prod/app_prod.js");
 } else {
-  console.log("THE REGISTER HOOK Dev");
   register("./compile/hooks_.js", parentURL);
   getAndSetEnvironmentVariables();
   import("./kotii-land/dev/app.js");

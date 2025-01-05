@@ -10,12 +10,12 @@ export const useUniversalEffect = (
 ) => {
   const effectID = `${effect_id_prefix}${currentEffectID}`;
   const { effectsStore = null } = useAppContext();
-  console.log("THE EFFECTS STORE", effectsStore);
+
   const { componentName, effectsCount } = effectsStore;
   const effectResources = effectsStore[componentName];
-  console.log("THE EFFECTS RESOURCES", effectResources);
+
   const { data = {}, errors = {} } = effectResources;
-  console.log("THE EFFECTS DATA ERRORS", data, errors);
+
   const currentEffectData = data[effectID] ? data[effectID] : null;
   const currentEffecterror = errors[effectID] ? errors[effectID] : null;
   const thisEffectData = currentEffectData ? currentEffectData.userData : null;
@@ -41,12 +41,6 @@ export const useUniversalEffect = (
   resetOrIncrementEffectCounter(effectsCount);
 
   if (typeof window === "undefined") {
-    console.log(
-      "Kotii effect react: store",
-      effectsStore,
-      "component name",
-      componentName
-    );
     if (thisEffectErrors) return [null, thisEffectErrors];
     return [thisEffectData, null];
   }
@@ -64,12 +58,10 @@ export const useUniversalEffect = (
 
     effect()
       .then((data) => {
-        console.log("THE EFFECT RE-RERUNS");
         setEffectState(data);
         if (updaters.length > 0) runUpdaters(updaters);
       })
       .catch((err) => {
-        console.log("THE EFFECT RE-RERUNS: Error", err);
         setErrorState(err);
         if (updaters.length > 0) runUpdaters(updaters);
       });
@@ -79,9 +71,7 @@ export const useUniversalEffect = (
 };
 
 const runUpdaters = (updaters) => {
-  console.log("Updaters", updaters);
   updaters.forEach((updater) => {
-    console.log("Updaters: updater", updater);
     updater();
   });
 };

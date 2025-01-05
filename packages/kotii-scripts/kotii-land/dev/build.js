@@ -17,7 +17,6 @@ const Wrapper = (props) => {
   );
 };
 const ClientRoutes = (props) => {
-  console.log("THE CLIENT PROPS", props);
   let astRoutes = typeof routes === "undefined" ? [] : routes;
   let astComps = typeof comps === "undefined" ? {} : comps;
   const { layout } = useAppContext();
@@ -33,7 +32,6 @@ const ClientRoutes = (props) => {
       <Layout>
         <Routes>
           {astRoutes.map((r, index) => {
-            console.log("THE COMPONENT");
             let Component = astComps[r.component];
             const ComponentWrapped = () => {
               return (
@@ -61,12 +59,11 @@ const ClientRoutes = (props) => {
   );
 };
 const RoutesAsServerRoutes = (props) => {
-  console.log("Server Goodies", props);
   const { goodies = {} } = props;
   // const {routes=[], comps={}} = goodies
   const gRoutes = goodies?.routes || [];
   const gComps = goodies?.comps || {};
-  console.log("THE ROUTES IN SERVER", gRoutes);
+
   const { layout } = useAppContext();
   const Layout = layout
     ? layout
@@ -78,7 +75,6 @@ const RoutesAsServerRoutes = (props) => {
     <Layout>
       <Routes>
         {gRoutes.map((r, index) => {
-          console.log("CURRENT SERVER ROUTE", r, gComps[r.component]);
           let Component = gComps[r.component];
           let ComponentWrapped = () => {
             return (

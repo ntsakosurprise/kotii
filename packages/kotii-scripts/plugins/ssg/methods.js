@@ -14,7 +14,7 @@ methods.handleStaticGeneration = function (data) {
   const { routes, routesObject, resources } = dataToConfig;
   const getWorkingFolder = pao.pa_getWorkingFolder;
 
-  console.log("THE DAT OF SSG PLUGIN", routes);
+  self.debug("THE DAT OF SSG PLUGIN", routes);
 
   const setCall = data.callback;
   const cwd = getWorkingFolder();
@@ -24,11 +24,11 @@ methods.handleStaticGeneration = function (data) {
   self
     .renderApp(routes)
     .then((htmlViews) => {
-      // console.log("THE HTML on render app", htmlViews);
+      // self.debug("THE HTML on render app", htmlViews);
       const DIST = self.createDistFolder(
         `${resources.appFolder}${path.sep}dist`
       );
-      console.log("THE DIST FOLDER", DIST);
+      self.debug("THE DIST FOLDER", DIST);
       self.copyPublicToDist(resources.appAssetsPublic, DIST, "index.html");
       self.copyPublicToDist(BUILD, DIST, "index.html");
       fs.existsSync(`${DIST}${path.sep}index.html`)
@@ -43,7 +43,7 @@ methods.handleStaticGeneration = function (data) {
       setCall({ message: "Static html has completed" });
     })
     .catch((err) => {
-      console.log("RENDERAPP REJECTED", err);
+      self.debug("RENDERAPP REJECTED", err);
     });
 };
 methods.renderApp = function (views) {
@@ -114,7 +114,7 @@ methods.cleanBuildFolder = function (view, setCall) {
 };
 methods.copyPublicToDist = function (from, to, ignore) {
   const self = this;
-  console.log("copying from", from, to);
+  self.debug("copying from", from, to);
   if (fs.existsSync(from)) {
     fs.cpSync(from, to, { recursive: true, filter: (fi) => fi !== ignore });
   } else {

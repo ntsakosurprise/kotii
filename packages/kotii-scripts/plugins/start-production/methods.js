@@ -7,7 +7,6 @@ methods.init = function () {
   });
 };
 methods.handleConfigIsReady = function (data) {
-  console.log("THE CONFIG IS READY: STARTING PRODUCTION");
   const self = this;
   const setCall = data.callback;
   self
@@ -21,13 +20,13 @@ methods.handleConfigIsReady = function (data) {
             config: config,
           },
           callback: (data) => {
-            console.log("Application run has started");
+            self.debug("Application run has started");
           },
         },
       });
     })
     .catch((err) => {
-      console.log("FAILED TO STARTUP THE APP", err);
+      self.debug("FAILED TO STARTUP THE APP", err);
     });
 };
 
@@ -40,7 +39,7 @@ methods.doStartUp = function (data) {
   return new Promise((resolve, reject) => {
     let nodeModulesOrUserLand = path.resolve(getWorkingDir(), "..");
     let configFolder = getWorkingDir();
-    console.log("CONFIG FOLDER", configFolder);
+    self.debug("CONFIG FOLDER", configFolder);
     // if (nodeModulesOrUserLand.indexOf("/packages") >= 0) {
     //   configFolder = `${nodeModulesOrUserLand}/kotii-templates/javascript/ssr`;
     // }
@@ -49,9 +48,9 @@ methods.doStartUp = function (data) {
     const files = fs.readdirSync(configFolder, { recursive: true });
 
     for (let fofi = 0; fofi <= files.length; fofi++) {
-      console.log("FILES");
+      self.debug("FILES");
       let filePath = `${configFolder}${path.sep}${files[fofi]}`;
-      console.log("THE FILE PATH", filePath);
+      self.debug("THE FILE PATH", filePath);
       if (
         fs.statSync(filePath).isDirectory() &&
         filePath.indexOf(".kotii-land") >= 0
@@ -66,9 +65,9 @@ methods.doStartUp = function (data) {
     }
 
     let rootStats = rootFiles[0];
-    console.log("GETTING THE WORKING DIR", configFolder);
-    console.log("THE FILES", files);
-    console.log("THE ROOT FILES", rootFiles);
+    self.debug("GETTING THE WORKING DIR", configFolder);
+    self.debug("THE FILES", files);
+    self.debug("THE ROOT FILES", rootFiles);
     if (rootFiles.length > 0) {
       loadFile(`${rootStats.buildRoot}${path.sep}.config.js`).then((config) => {
         let domain = config.domain;
@@ -86,8 +85,8 @@ methods.doStartUp = function (data) {
         //   ...config,
         //   domain: domain,
         // };
-        // console.log("THE CONFIG FILE", configMod);
-        // console.log("THE TO FOLDER", toFolder);
+        // self.debug("THE CONFIG FILE", configMod);
+        // self.debug("THE TO FOLDER", toFolder);
         // let madeFolder = self.createFolder(toFolder);
         // self.copyFromToFolder(buildPath, madeFolder);
 
@@ -102,7 +101,7 @@ methods.doStartUp = function (data) {
         if (fs.existsSync(pathApiRoot) && fs.existsSync(pathApiConfig)) {
           loadFile(`${rootStats.buildRoot}${path.sep}api/.config.js`).then(
             (apiConfig) => {
-              console.log("API CONFIG", apiConfig);
+              self.debug("API CONFIG", apiConfig);
               let appConfig = {
                 ...config,
                 ...apiConfig,
@@ -132,15 +131,15 @@ methods.createFolder = function (filepath) {
 methods.copyFromToFolder = function (from, to, ignores = []) {
   const self = this;
 
-  console.log("copying from", from, to);
+  self.debug("copying from", from, to);
   fs.cpSync(from, to, {
     recursive: true,
     filter: (fi) => {
-      // console.log("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
+      // self.debug("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
       // if (ignores.includes(fi)) return true;
       // let thisToReturn = fi !== ignore;
       let thisToReturn = !ignores.includes(fi);
-      // console.log("THIS TO RETURN", thisToReturn);
+      // self.debug("THIS TO RETURN", thisToReturn);
       return thisToReturn;
     },
   });

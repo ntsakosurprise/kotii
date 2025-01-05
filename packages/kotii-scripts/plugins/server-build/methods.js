@@ -19,13 +19,13 @@ methods.handleServerBuild = function (data) {
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const readFileSync = pao.pa_readFileSync;
   const saveToFile = pao.pa_saveToFile;
-  console.log("handling server build", data);
+  self.debug("handling server build", data);
   const { payload } = data;
   const { targetMain, destination, targetSource, routes, contextApp } = payload;
   data.callback({ gotValue: "Ran" });
   // const cwd = getWorkingFolder();
   // const cwd = self.kotiiScriptsPath;
-  console.log("KOTII SCRIPTS PATH", kotiiRootPath);
+  self.debug("KOTII SCRIPTS PATH", kotiiRootPath);
   if (fs.existsSync(`${kotiiKotiiLandPath}/dev/styles.json`)) {
     fs.rmSync(`${kotiiKotiiLandPath}/dev/styles.json`);
   }
@@ -49,38 +49,38 @@ methods.handleServerBuild = function (data) {
     },
   ]);
   babelJson.plugins = [...updatedBabelJsonPlugins];
-  console.log("BABEL JSON PLUGINS", babelJson.plugins);
+  self.debug("BABEL JSON PLUGINS", babelJson.plugins);
   saveToFile(
     path.join(kotiiRootPath, "babel.server.build.json"),
     JSON.stringify(babelJson, null, 2)
   );
   // const kottiBabelRc = JSON.parse(readFileSync(`${cwd}/babel.server.json`));
   // const ignores = self.handleIgnores(data.payload.targetSource, kottiBabelRc);
-  // console.log("MADE IGNORES", ignores);
+  // self.debug("MADE IGNORES", ignores);
   // const HTML = readFileSync(`${cwd}/test.html`);
-  // console.log("HTML-PARSER", HTML);
+  // self.debug("HTML-PARSER", HTML);
   // const root = parse(HTML);
   // let json = fs.readFileSync(`${process.cwd()}/styles.json`, {
   //   encoding: "utf8",
   // });
-  // console.log("THE JSON", json);
+  // self.debug("THE JSON", json);
 
   // const head = Array.from(root.getElementsByTagName("head"))[0];
-  // console.log(
+  // self.debug(
   //   "HTML-PARSER-ROOT BEFORE",
   //   head.insertAdjacentHTML(
   //     "beforeend",
   //     "<style data-custom-style='mystyle'>p{color:red}</style>"
   //   )
   // );
-  // // console.log(
+  // // self.debug(
   // //   "StyleEl",
   // //   head.appendChild("<style data-custom-style='mystyle'>p{color:red}</style>")
   // // );
-  // console.log("HTML-PARSER-ROOT");
+  // self.debug("HTML-PARSER-ROOT");
   // saveToFile(`${cwd}/test.html`, root.toString());
-  console.log("THE CWD", cwd);
-  console.log("THE LOCAL PACKAGE.JSON", localPackageJson);
+  self.debug("THE CWD", cwd);
+  self.debug("THE LOCAL PACKAGE.JSON", localPackageJson);
   localPackageJson["scripts"] = {
     ...localPackageJson.scripts,
     "build-ssr": `babel --config-file ${kotiiRootPath}/babel.server.build.json  --out-dir ${destination}${path.sep}src ${targetSource}`,
@@ -108,15 +108,15 @@ methods.handleServerBuild = function (data) {
         `${usrHomeDir}${path.sep}kotii-tmp`
       );
 
-      // console.log("NPM SCRIPT RAN SUCCESSFULLY", madeTempDir, os.homedir());
-      console.log("NPM FULL TEMP PATH", fullTempPath);
+      // self.debug("NPM SCRIPT RAN SUCCESSFULLY", madeTempDir, os.homedir());
+      self.debug("NPM FULL TEMP PATH", fullTempPath);
 
       // let dirs = fs.readdirSync(usrHomeDir);
       // saveToFile(`${cwd}${path.sep}tempDirFiles.json`, JSON.stringify(dirs));
-      // console.log("TEMP DIRS", dirs);
+      // self.debug("TEMP DIRS", dirs);
       // fs.rmdirSync(fullTempPath);
-      console.log("TARGET SOURCES", targetSource, "destination", destination);
-      console.log("TARGET MAIN", targetMain, "full temp", fullTempPath);
+      self.debug("TARGET SOURCES", targetSource, "destination", destination);
+      self.debug("TARGET MAIN", targetMain, "full temp", fullTempPath);
       self.syncDirectories(targetSource, `${destination}/src`);
       self.copyPublicToDist(`${targetMain}`, `${fullTempPath}`);
       self.copyPublicToDist(`${fullTempPath}`, `${destination}`);
@@ -142,7 +142,7 @@ methods.handleServerBuild = function (data) {
       });
     })
     .catch((error) => {
-      console.log("BUILD FAILED WITH FAIURE", error);
+      self.debug("BUILD FAILED WITH FAIURE", error);
     });
 };
 methods.renderApp = function (views) {
@@ -209,21 +209,21 @@ methods.handleIgnores = function (root) {
     return `${root}${path.sep}${ig}`;
   });
   // jsonConfig["ignore"] = [...absoluteIgnores];
-  console.log("THE IGNORE STRING", absoluteIgnores);
+  self.debug("THE IGNORE STRING", absoluteIgnores);
   return absoluteIgnores;
 };
 methods.copyPublicToDist = function (from, to, ignores = []) {
   const self = this;
   let ignoresMerged = [...ignores, ...self.handleIgnores(from)];
-  console.log("copying from", from, to, "with merged ignores", ignoresMerged);
+  self.debug("copying from", from, to, "with merged ignores", ignoresMerged);
   fs.cpSync(from, to, {
     recursive: true,
     filter: (fi) => {
-      console.log("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
+      self.debug("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
       // if (ignores.includes(fi)) return true;
       // let thisToReturn = fi !== ignore;
       let thisToReturn = !ignoresMerged.includes(fi);
-      // console.log("THIS TO RETURN", thisToReturn);
+      // self.debug("THIS TO RETURN", thisToReturn);
       return thisToReturn;
     },
   });
@@ -260,19 +260,19 @@ methods.removeJsxReferences = function (sourceRoot, state) {
     if (!blackListed.includes(folder)) return true;
   });
   pruneCandidates = [...pruneCandidates, ...rootFiles];
-  console.log("FOLDER:", sourceRoot, "With files");
-  console.log(files);
-  console.log(rootFiles);
-  console.log("CANDIATES", pruneCandidates);
+  self.debug("FOLDER:", sourceRoot, "With files");
+  self.debug(files);
+  self.debug(rootFiles);
+  self.debug("CANDIATES", pruneCandidates);
   pruneCandidates.forEach((candidate) => {
     let candidatePath = `${sourceRoot}${path.sep}${candidate}`;
     if (fs.statSync(candidatePath).isDirectory()) {
       fs.readdirSync(candidatePath, { recursive: true }).forEach((cndFile) => {
-        // console.log("THE CND FILE", cndFile);
+        // self.debug("THE CND FILE", cndFile);
         let cndFilePath = `${candidatePath}${path.sep}${cndFile}`;
         if (/.js$/.test(cndFile)) {
-          console.log("THE FILE IS JAVASCRIPT", cndFile);
-          // console.log("FULL PATH");
+          self.debug("THE FILE IS JAVASCRIPT", cndFile);
+          // self.debug("FULL PATH");
           let jsFile = readFileSync(cndFilePath);
           let ast = parser.parse(jsFile, {
             sourceType: "module",
@@ -282,8 +282,8 @@ methods.removeJsxReferences = function (sourceRoot, state) {
             const { code: genCode } = generate(ast);
             // const modifiedCode = genCode;
 
-            console.log("New AST genCode", genCode);
-            // console.log("Modiefied code", modifiedCode);
+            self.debug("New AST genCode", genCode);
+            // self.debug("Modiefied code", modifiedCode);
             saveToFile(cndFilePath, `${genCode}`);
           }
         }
@@ -295,7 +295,7 @@ methods.removeJsxReferences = function (sourceRoot, state) {
       });
       self.updateJSXImportDeclarations(ast, state);
 
-      console.log("THE FILE'S AST", ast);
+      self.debug("THE FILE'S AST", ast);
     }
   });
 
@@ -308,18 +308,18 @@ methods.removeJsxReferences = function (sourceRoot, state) {
 methods.updateJSXImportDeclarations = function (ast, state) {
   const self = this;
   const traverse = self.traverse;
-  console.log("THE APP STATE", state);
+  self.debug("THE APP STATE", state);
   const appManifest = state?.appManifest;
   // let removedImportsIds = [];
 
   let isUpdated = false;
   traverse(ast, {
     ImportDeclaration(path) {
-      console.log("AST NODE AFTER Import Node", path.node.source.value);
-      console.log("AST NODE SPECIFIER", path.node.specifiers[0]?.local.name);
+      self.debug("AST NODE AFTER Import Node", path.node.source.value);
+      self.debug("AST NODE SPECIFIER", path.node.specifiers[0]?.local.name);
       let importSpecifier = path.node.source.value;
       if (/.jsx$/.test(path.node.source.value)) {
-        console.log(
+        self.debug(
           "IT IS JSX",
           path.node.source.value,
           /^(\.+)/.test(path.node.source.value)
@@ -338,7 +338,7 @@ methods.updateJSXImportDeclarations = function (ast, state) {
           `${state.destination}`,
           importSpecifier.substr(importSpecifier.indexOf("/") + 1).trim()
         );
-        console.log("THE ABSOLUTE PATH", absoluteFilePath);
+        self.debug("THE ABSOLUTE PATH", absoluteFilePath);
         let contents = fs.readFileSync(absoluteFilePath, {
           encoding: "utf-8",
         });
@@ -372,7 +372,7 @@ methods.updateJSXImportDeclarations = function (ast, state) {
           path.node.source.value = importSpecifier.replace(".csv", ".js");
         }
 
-        console.log(
+        self.debug(
           "THE ABSOLUTE PATH",
           state.destination,
           resolve(
@@ -385,13 +385,13 @@ methods.updateJSXImportDeclarations = function (ast, state) {
         // });
         // source = `export default ${JSON.stringify(contents)}`;
       }
-      console.log("NOT JSX", /^(\.+)/.test(path.node.source.value));
+      self.debug("NOT JSX", /^(\.+)/.test(path.node.source.value));
       if (
         !/^(\.+)/.test(path.node.source.value) &&
         !isBuiltin(path.node.source.value) &&
         appManifest.aliases[path.node.source.value]
       ) {
-        console.log("SOURCE NOT RELATIVE", path.node.source.value);
+        self.debug("SOURCE NOT RELATIVE", path.node.source.value);
         path.node.source.value = `${
           appManifest.aliases[path.node.source.value]
         }.js`;
@@ -411,7 +411,7 @@ methods.updateJSXImportDeclarations = function (ast, state) {
 methods.doKotiiLandPagesFile = function (destination, options) {
   const self = this;
   const pao = self.pao;
-  console.log("THE KOTII LAND PAGE FILE DESTINATION", destination);
+  self.debug("THE KOTII LAND PAGE FILE DESTINATION", destination);
 
   const generate = self.generate;
   const parser = self.parser;
@@ -422,23 +422,23 @@ methods.doKotiiLandPagesFile = function (destination, options) {
   const cwd = self.kotiiScriptsPath;
 
   const jsFile = readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/pages.js`);
-  console.log(
+  self.debug(
     "THE SOURCE FILE PATH",
     `${kotiiKotiiLandPath}${path.sep}dev/pages.js`
   );
   let ast = parser.parse(jsFile, {
     sourceType: "module",
   });
-  console.log("THE JS FILE", jsFile);
-  console.log("THE AST", ast);
+  self.debug("THE JS FILE", jsFile);
+  self.debug("THE AST", ast);
 
   let updateResults = self.updateJSXImportDeclarations(ast);
   if (updateResults) {
     const { code: genCode } = generate(ast);
     // const modifiedCode = genCode;
 
-    console.log("New AST genCode", genCode);
-    // console.log("Modiefied code", modifiedCode);
+    self.debug("New AST genCode", genCode);
+    // self.debug("Modiefied code", modifiedCode);
     let madeFolder = self.createDistFolder(
       `${destination}${path.sep}.kotii-land`
     );
@@ -469,10 +469,10 @@ methods.syncDirectories = function (
 ) {
   let allDirectories = [];
   fs.readdirSync(sourceDirectoryPath).forEach((sourceFile) => {
-    console.log("THE READDIR SOURCE FILE", sourceFile);
+    self.debug("THE READDIR SOURCE FILE", sourceFile);
     let sourceFileFullPath = `${sourceDirectoryPath}${path.sep}${sourceFile}`;
     if (fs.statSync(sourceFileFullPath).isDirectory()) {
-      console.log("BUILD SYNC DIRECTORIES", sourceFile, sourceFileFullPath);
+      self.debug("BUILD SYNC DIRECTORIES", sourceFile, sourceFileFullPath);
       allDirectories.push(sourceFile);
     }
   });
@@ -484,19 +484,19 @@ methods.syncDirectories = function (
       fs.cpSync(`${sourceDirectoryPath}${path.sep}${dir}`, onDestinationPath, {
         recursive: true,
         filter: (fi) => {
-          // console.log("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
+          // self.debug("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
           // if (ignores.includes(fi)) return true;
           // let thisToReturn = fi !== ignore;
-          console.log("SYNC DIRECTORIES FILE BEING COPIED", fi);
+          self.debug("SYNC DIRECTORIES FILE BEING COPIED", fi);
           let thisToReturn = !ignores.includes(fi);
-          // console.log("THIS TO RETURN", thisToReturn);
+          // self.debug("THIS TO RETURN", thisToReturn);
           return thisToReturn;
         },
       });
     }
   });
 
-  console.log("THE ALL DIRECTORIES", allDirectories);
+  self.debug("THE ALL DIRECTORIES", allDirectories);
 };
 
 methods.saveRoutesInUserLand = function (routes) {
@@ -521,22 +521,22 @@ methods.saveRoutesInUserLand = function (routes) {
       }
     });
     let routesToPath = `${kotiiKotiiLandPath}${path.sep}app_routes.js`;
-    console.log("THE ROUTES PATHS BUILD", routesToPath);
+    self.debug("THE ROUTES PATHS BUILD", routesToPath);
     fs.writeFile(
       routesToPath,
       `const routes = ${JSON.stringify(routes)}; export default routes`,
       (err, succes) => {
         if (err) {
-          console.log("SAVING ROUTES FAILED WITH ERR", err);
+          self.debug("SAVING ROUTES FAILED WITH ERR", err);
         }
         let fileContent = fs.readFileSync(routesToPath, {
           encoding: "utf8",
         });
-        console.log("THE ROUTES PATHS BUILD AST BEFORE", routesToPath);
+        self.debug("THE ROUTES PATHS BUILD AST BEFORE", routesToPath);
         let ast = parser.parse(fileContent, {
           sourceType: "module",
         });
-        console.log("THE ROUTES PATHS BUILD AST", ast);
+        self.debug("THE ROUTES PATHS BUILD AST", ast);
         self.addObjectExpressionProperty(ast, requiresRoutes);
         const { code: genCode } = generate(ast);
         // const modifiedCode = genCode;
@@ -569,22 +569,22 @@ methods.saveRoutesInUserLand = function (routes) {
 //       }
 //     });
 //     let routesToPath = `${cwd}${path.sep}app_routes.js`;
-//     console.log("THE ROUTES PATHS BUILD", routesToPath);
+//     self.debug("THE ROUTES PATHS BUILD", routesToPath);
 //     fs.writeFile(
 //       routesToPath,
 //       `const routes = ${JSON.stringify(routes)}; export {routes}`,
 //       (err, succes) => {
 //         if (err) {
-//           console.log("SAVING ROUTES FAILED WITH ERR", err);
+//           self.debug("SAVING ROUTES FAILED WITH ERR", err);
 //         }
 //         let fileContent = fs.readFileSync(routesToPath, {
 //           encoding: "utf8",
 //         });
-//         console.log("THE ROUTES PATHS BUILD AST BEFORE", routesToPath);
+//         self.debug("THE ROUTES PATHS BUILD AST BEFORE", routesToPath);
 //         let ast = parser.parse(fileContent, {
 //           sourceType: "module",
 //         });
-//         console.log("THE ROUTES PATHS BUILD AST", ast);
+//         self.debug("THE ROUTES PATHS BUILD AST", ast);
 //         self.addObjectExpressionProperty(ast, requiresRoutes);
 //         const { code: genCode } = generate(ast);
 //         // const modifiedCode = genCode;
@@ -614,19 +614,19 @@ methods.addObjectExpressionProperty = function (ast, state) {
   let isUpdated = false;
   traverse(ast, {
     ObjectExpression(path) {
-      console.log("AST NODE AFTER OBJECT EXPRESSION Node", state);
+      self.debug("AST NODE AFTER OBJECT EXPRESSION Node", state);
       state.forEach((currentRout) => {
-        console.log("THE CURRENT ROUTE", currentRout);
+        self.debug("THE CURRENT ROUTE", currentRout);
         path.node.properties.forEach((objectProper) => {
           if (objectProper.key.value === "name") {
             if (
               objectProper.value.value.toLowerCase() ===
               currentRout.name.toLowerCase()
             ) {
-              console.log("THE CURRENT ROUT NAME", currentRout.name);
+              self.debug("THE CURRENT ROUT NAME", currentRout.name);
               let functionAST = parser.parse(`${currentRout.requiresData}`);
               let fExpression = functionAST.program.body[0].expression;
-              // console.log(
+              // self.debug(
               //   "THE FUNCTION AST",
               //   functionAST.program.body[0].expression.params
               // );
@@ -642,13 +642,13 @@ methods.addObjectExpressionProperty = function (ast, state) {
                   )
                 )
               );
-              console.log("THE PATH PROPERTY", objectProper.value.value);
+              self.debug("THE PATH PROPERTY", objectProper.value.value);
             }
           }
         });
       });
 
-      // console.log("AST NODE SPECIFIER", path.node.specifiers[0]?.local.name);
+      // self.debug("AST NODE SPECIFIER", path.node.specifiers[0]?.local.name);
       // let importSpecifier = path.node.source.value;
     },
   });

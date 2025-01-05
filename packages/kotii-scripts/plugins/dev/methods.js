@@ -1,14 +1,13 @@
 const methods = {};
 methods.init = function () {
-  // console.log('Bitbucket has been initialised')
-  console.log("");
   this.listens({
     dev: this.handleDevScript.bind(this),
   });
 };
 methods.handleDevScript = function (data) {
-  console.log("THE DAT OF START SCRIPTS", data);
   const self = this;
+  self.logSync("THE DAT OF START SCRIPTS", data);
+
   const setCall = data.callback;
   self.emit({
     type: "context-app",
@@ -27,7 +26,6 @@ methods.getWebPackConfig = function (dataToConfig, setCall) {
     data: {
       payload: dataToConfig,
       callback: (data) => {
-        console.log("THE DATA FROM WEBPACK CONFIG", data);
         setCall("Webpack config has been called successfully");
       },
     },

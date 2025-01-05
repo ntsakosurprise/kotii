@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
 import { images } from "Assets";
+import { CONFIG } from "Config";
 // import SearchImage from "../assets/docs_search.png";
 // import StonesJPG from "../assets/stones.jpg";
-import { CONFIG } from "Config";
+import { loggas } from "kotii-logger";
 import { Head, useUniversalEffect } from "kotii-scripts";
 import styled from "kotii-styled";
 import React from "react";
@@ -171,7 +172,7 @@ const SVG = styled("div")({
 });
 
 // const PeopleList = (props) => {
-//   console.log("THE PROPS TO PEOPLE COMP", props);
+//   loggas.app.log("THE PROPS TO PEOPLE COMP", props);
 //   if (props.people.length > 0)
 //     return (
 //       <ul>
@@ -183,7 +184,7 @@ const SVG = styled("div")({
 //   return null;
 // };
 const UserComp = (props) => {
-  console.log("THE PROPS TO PEOPLE COMP", props);
+  loggas.app.log("THE PROPS TO PEOPLE COMP", props);
   if (props?.user)
     return (
       <div>
@@ -201,22 +202,22 @@ const UserComp = (props) => {
 };
 
 const Index = () => {
-  console.log("THE ENVIRONMENT CONFIG", CONFIG.GITHUB_APP_ID);
-  console.log("OUR NODE ENV", process.env.NODE_ENV);
-  console.log("OUR IMAGES: SEARCH", images.SearchImage);
-  console.log("OUR IMAGES: STONES", images.StonesJPG);
-  console.log("THE CSV", Reminder);
-  console.log("USER XML", User);
-  console.log("NAMES", names);
+  loggas.app.log("THE ENVIRONMENT CONFIG", CONFIG.GITHUB_APP_ID);
+  loggas.app.log("OUR NODE ENV", process.env.NODE_ENV);
+  loggas.app.log("OUR IMAGES: SEARCH", images.SearchImage);
+  loggas.app.log("OUR IMAGES: STONES", images.StonesJPG);
+  loggas.app.log("THE CSV", Reminder);
+  loggas.app.log("USER XML", User);
+  loggas.app.log("NAMES", names);
   // const peopleList = useSelector((state) => {
-  //   console.log("STATE RECEIVED", state);
+  //   loggas.app.log("STATE RECEIVED", state);
   //   return state.homeReducer.people;
   // });
   const [data, error] = useUniversalEffect(runAsEffect, []);
   const [dataTwo, errorTwo] = useUniversalEffect(getRandomNum, []);
 
   const user = useSelector((state) => {
-    console.log("STATE RECEIVED", state);
+    loggas.app.log("STATE RECEIVED", state);
     return state.homeReducer.user;
   });
   const dispatch = useDispatch();
@@ -229,7 +230,7 @@ const Index = () => {
     if (!user) dispatch(actions.showUser());
     dispatch(actions.hidePeopleList());
   };
-  console.log("User data from useUniversalEffect", data, error);
+  loggas.app.log("User data from useUniversalEffect", data, error);
   return (
     <Main>
       <Head title={"Kotii Framework Boilerplate"} />
@@ -301,7 +302,7 @@ const runAsEffect = () => {
   //     // }
 
   //     // const json = await response.json();
-  //     // console.log("rESPONSE AS JSON", json);
+  //     // loggas.app.log("rESPONSE AS JSON", json);
   //   } catch (error) {
   //     reject(error);
   //   }
@@ -340,7 +341,7 @@ const getRandomNum = () => {
   //     // }
 
   //     // const json = await response.json();
-  //     // console.log("rESPONSE AS JSON", json);
+  //     // loggas.app.log("rESPONSE AS JSON", json);
   //   } catch (error) {
   //     reject(error);
   //   }

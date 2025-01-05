@@ -1,13 +1,12 @@
 const methods = {};
 methods.init = function () {
-  // console.log('Bitbucket has been initialised')
+  // self.debug('Bitbucket has been initialised')
 
   this.listens({
     "convert-jsx-to-react": this.handleConvertionToJsx.bind(this),
   });
 };
 methods.handleConvertionToJsx = function (data) {
-  console.log("THE code to transpile", data);
   const self = this;
   const convertedCode = self.buildStringCode(data.payload.code);
   data.callback({
@@ -24,7 +23,7 @@ methods.buildStringCode = function (code, babelOptions = {}) {
   const options = Object.assign({}, babelOptions);
 
   // const outputPath = path.join(destination, path.basename(filename));
-  // console.log("babel", babel);
+  // self.debug("babel", babel);
 
   // Ignore non-JS files and test scripts
 
@@ -34,7 +33,7 @@ methods.buildStringCode = function (code, babelOptions = {}) {
 
   // options.output = destination
 
-  console.log("THE FILE NAME", options);
+  self.debug("THE FILE NAME", options);
 
   const result = code.map((rawCode, i) => {
     return {
@@ -42,7 +41,7 @@ methods.buildStringCode = function (code, babelOptions = {}) {
       modifiedCode: babel.transformSync(rawCode.originalCode, options).code,
     };
   });
-  // console.log("BABEL TRANSFORMED", result);
+  // self.debug("BABEL TRANSFORMED", result);
 
   // const outputPath = path.join(destination, path.basename(filename));
 

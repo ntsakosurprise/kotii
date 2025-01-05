@@ -1,21 +1,19 @@
 import babel from "@babel/core";
 import fs from "fs";
+import { loggas, logger } from "kotii-logger";
 import { isBuiltin } from "node:module";
 import { pathToFileURL } from "node:url";
 import path from "path";
 import babelJson from "../babel.server.json" assert { type: "json" };
 import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
+
 let meta = null;
 let workdir = `${process.cwd()}`;
-let sep = path.sep;
 
-let whiteListedUrls = [
-  `${pathToFileURL(`${workdir}${sep}plugins${sep}react${sep}methods.js`)}`,
-  `${pathToFileURL(`${workdir}${sep}build.js`)}`,
-  `${pathToFileURL(`${workdir}${sep}public.js`)}`,
-  `${pathToFileURL(`${workdir}${sep}app_.js`)}`,
-];
-let customExtensionsRegex = /\.(png|css|jpg|jpeg|gif)$/;
+logger.setNameSpaces([
+  { namespace: "nodejs:compilation:load", id: "load" },
+  { namespace: "nodejs:compilation:resolve", id: "resolve" },
+]);
 
 /**
  *
@@ -23,23 +21,9 @@ let customExtensionsRegex = /\.(png|css|jpg|jpeg|gif)$/;
  * reading the file content from disk and returning it to avoid styled
  * component function being undefiend
  */
-// const styledComponentsUrl =
-//   "file:///Users/surprisemashele/Documents/kotii/node_modules/styled-components/dist/styled-components.cjs.js";
-// const styledComponentsUrlFromClient =
-//   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/node_modules/styled-components/dist/styled-components.cjs.js";
-// // const styledComponentESMUrm =
-// //   "file:///Users/surprisemashele/Documents/kotii/node_modules/styled-components/dist/styled-components.esm.js";
-// const styledComponentESMUrm =
-//   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/node_modules/styled-components/dist/styled-components.esm.js";
-// // let pagesURL =
-// //   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/";
-// let styledUrl =
-//   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-scriptsnk/import_test.js";
-// let anziiPath =
-//   "file:///Users/surprisemashele/Documents/kotii/node_modules/anzii/lib/start.js";
+
 let extJsx = ".jsx";
 let extJS = ".js";
-let extSvg = ".svg";
 let extJson = ".json";
 let fileLoaderExts = [
   ".png",
@@ -62,8 +46,8 @@ export async function load(url, context, nextLoad) {
 
   const fileExtension = path.extname(url);
   const fileName = path.basename(url);
-  // console.log("THE PATH RESOLVE", path.join(workdir, "../kotii-templates"));
-  console.log(
+
+  loggas.load.debug(
     "LOAD THE FILE NAME",
     fileName,
     url,
@@ -79,17 +63,17 @@ export async function load(url, context, nextLoad) {
       fileLoaderExts.includes(fileExtension)) &&
     !isBuiltin(fileName)
   ) {
-    console.log("EXTENSIONS EXECUTION", fileExtension);
+    loggas.load.debug("EXTENSIONS EXECUTION", fileExtension);
     let source = null;
     let options = null;
 
     if (fileExtension === extJsx || fileExtension === extJS) {
-      console.log("JSX SECTION");
+      loggas.load.debug("JSX SECTION");
       options = {
         presets: ["@babel/preset-react"],
         plugins: ["@babel/plugin-syntax-import-assertions"],
       };
-      console.log("READING FILE", fileExtension, url);
+      loggas.load.debug("READING FILE", fileExtension, url);
       let urlInstance = new URL(url).pathname;
       if (url.indexOf("/api/") >= 0) {
         if (!fs.existsSync(urlInstance)) {
@@ -105,7 +89,7 @@ export async function load(url, context, nextLoad) {
           });
         }
       } else if (fileExtension === extJsx) {
-        console.log("JSX READ FILE", fileExtension);
+        loggas.load.debug("JSX READ FILE", fileExtension);
         source = fs.readFileSync(urlInstance, {
           encoding: "utf-8",
         });
@@ -115,7 +99,7 @@ export async function load(url, context, nextLoad) {
           url.split("/").includes("kotii-scripts") &&
           url.indexOf("/kotii-scripts/node_modules") < 0
         ) {
-          console.log(
+          loggas.load.debug(
             "IS NODE MODULES AND KOTII",
             fileName,
             fileExtension,
@@ -131,36 +115,25 @@ export async function load(url, context, nextLoad) {
         }
       }
     } else if (fileLoaderExts.includes(fileExtension)) {
-      console.log("The PNG", fileExtension);
+      loggas.load.debug("The PNG", fileExtension);
       let pathName = new URL(url).pathname;
       let fileName = `/${path.basename(pathName)}`;
-      // console.log("THE PATHNAME", path.basename(pathName));
-      // let contents = fs.readFileSync(new URL(url).pathname, {
-      //   encoding: "utf-8",
-      // });
+
       source = `export default ${JSON.stringify(fileName)}`;
       return {
         format: "module",
         shortCircuit: true,
         source: source,
       };
-      // return {
-      //   format: "module",
-      //   shortCircuit: true,
-      //   source: !dataURI
-      //     ? `export default ${JSON.stringify(source.toString())}`
-      //     : `export default ${JSON.stringify(dataURI)}`,
-      // };
     } else {
       source = await nextLoad(url, { ...context, format });
     }
     let rawSource = typeof source === "string" ? source : source.source;
-    // console.log("THE OPTIONS", options, babelJson);
     let result = fileLoaderExts.includes(fileExtension)
       ? babel.transformFileSync(source, options)
       : babel.transform(rawSource, options || babelJson);
     if (fileLoaderExts.includes(fileExtension)) {
-      console.log("TRANSFORM RESULT", result);
+      loggas.load.debug("TRANSFORM RESULT", result);
     }
 
     return {
@@ -185,20 +158,11 @@ export async function load(url, context, nextLoad) {
 
 export async function resolve(specifier, context, nextResolve) {
   // const { parentURL = workdir } = context;
-  console.log(
-    "RESOLVE specifier",
-    specifier
-    // specifier,
-    // "IS BUILT IN",
-    // isBuiltin(specifier)
-  );
-  // console.log("RESOLVE context", context, meta.compsSource);
-  // console.log("NEW URL", parentURL ? new URL(specifier, parentURL) : "");
-  // console.log("RESOLVE nextResolve", nextResolve);
+  loggas.resolve.debug("RESOLVE specifier", specifier);
 
   let shouldTerminate = false;
   if (specifier.indexOf("../kotii-land/dev") >= 0) {
-    console.log("ALSO HANDLED BY LOADERS", meta);
+    loggas.resolve.debug("ALSO HANDLED BY LOADERS", meta);
   }
   shouldTerminate = resolveAliasedImports(specifier);
   if (shouldTerminate) return shouldTerminate;
@@ -239,14 +203,14 @@ export async function resolve(specifier, context, nextResolve) {
 const resolveAliasedImports = (specifier) => {
   if (!isBuiltin(specifier) && doMeta(specifier)) {
     let specifierAlias = meta.aliases[specifier];
-    console.log("SPECIAL ALIAS", specifier, specifierAlias);
+    loggas.resolve.debug("SPECIAL ALIAS", specifier, specifierAlias);
     let fileUrl = pathToFileURL(`${workdir}${specifierAlias}`);
 
     let fileUrlExt = path.extname(specifierAlias);
-    console.log("THE FILE EXTENSION", fileUrlExt);
+    loggas.resolve.debug("THE FILE EXTENSION", fileUrlExt);
 
     if (!fileUrlExt.trim()) {
-      console.log("FILE EXTENSION NOT SPECIFIED", fileUrlExt);
+      loggas.resolve.debug("FILE EXTENSION NOT SPECIFIED", fileUrlExt);
       let pathUrl = `${workdir}${specifierAlias}`;
       let pathUrlFileExtension = extensions.filter((ext) => {
         if (fs.existsSync(`${pathUrl}${ext}`)) return true;
@@ -256,12 +220,12 @@ const resolveAliasedImports = (specifier) => {
           "The specified path aliases does not have related file"
         );
       }
-      console.log("PATH URL EXTENSION", pathUrlFileExtension);
+      loggas.resolve.debug("PATH URL EXTENSION", pathUrlFileExtension);
       fileUrl = `${fileUrl}${pathUrlFileExtension[0]}`;
-      console.log("THE PATH URL", pathUrl);
+      loggas.resolve.debug("THE PATH URL", pathUrl);
     }
-    console.log("THE META SPECIFIER", specifierAlias, fileUrlExt);
-    console.log("PATH TO FILE", `${fileUrl}`);
+    loggas.resolve.debug("THE META SPECIFIER", specifierAlias, fileUrlExt);
+    loggas.resolve.debug("PATH TO FILE", `${fileUrl}`);
     // console.log("Processing PNG OR CSS", specifier);
     // let url = new URL(specifier, parentURL);
     // console.log("PNG URL", url.href);
@@ -294,15 +258,15 @@ const resolveAliasedImports = (specifier) => {
  */
 const resolveKotiiLandImports = (specifier) => {
   if (!isBuiltin(specifier) && /\.kotii-land\/(pages|routes)/.test(specifier)) {
-    console.log("THE PAGES PATH KOTII LAND PATH");
+    loggas.resolve.debug("THE PAGES PATH KOTII LAND PATH");
     let basePath = getPagesBasePath(specifier);
-    console.log("THE PATH BASE", basePath);
+    loggas.resolve.debug("THE PATH BASE", basePath);
 
     let fullPath =
       specifier.indexOf("pages") >= 0
         ? path.resolve(basePath, ".kotii-land/pages.js")
         : path.resolve(basePath, ".kotii-land/routes.js");
-    console.log("THE FULL PATH", fullPath);
+    loggas.resolve.debug("THE FULL PATH", fullPath);
     // console.log("THE BASE PATH", workdir);
     return {
       url: pathToFileURL(fullPath).href,
@@ -327,13 +291,13 @@ const resolveKotiiLandImports = (specifier) => {
  *
  */
 const resolvePagesImports = (specifier) => {
-  console.log("THE PAGES IMPORT", specifier);
+  loggas.resolve.debug("THE PAGES IMPORT", specifier);
   if (!isBuiltin(specifier) && /^\/src\//.test(specifier)) {
-    console.log("THE SPECIFIER FOR PAGES PATH", specifier);
+    loggas.resolve.debug("THE SPECIFIER FOR PAGES PATH", specifier);
     let basePath = getPagesBasePath(specifier);
-    console.log("THE SPECIFIRE BASE PATH", basePath);
-    console.log("THE FULL PATH", `${basePath}${specifier}`);
-    console.log(
+    loggas.resolve.debug("THE SPECIFIRE BASE PATH", basePath);
+    loggas.resolve.debug("THE FULL PATH", `${basePath}${specifier}`);
+    loggas.resolve.debug(
       "THE PATH AS URL",
       pathToFileURL(`${basePath}${specifier}`).href
     );
@@ -363,7 +327,7 @@ const resolvePagesImports = (specifier) => {
  *
  */
 const resolveKotiiScriptsImports = (specifier) => {
-  console.log(
+  loggas.resolve.debug(
     "KOTII SCRIPTS IMPORTS",
     specifier,
     /^kotii-scripts/.test(specifier)
@@ -376,7 +340,7 @@ const resolveKotiiScriptsImports = (specifier) => {
     // console.log("THE PATH AS URL", pathToFileURL(kotiiExportsPath).href);
     let kotiiExportsPath = `${kotiiKotiiLandPath}/dev/app_.js`;
     let urlLized = pathToFileURL(kotiiExportsPath).href;
-    console.log(
+    loggas.resolve.debug(
       "THE SPECIFIER FOR KOTII-SCRIPTS PATH",
       "KOTII-SCRIPTS IMPORTS",
       specifier,
@@ -412,7 +376,7 @@ const resolveKotiiScriptsInternalImports = (specifier) => {
 
     let kotiiExportsPath = `${kotiiRootPath}${specifier}`;
     let urlLized = pathToFileURL(kotiiExportsPath).href;
-    console.log(
+    loggas.resolve.debug(
       "THE SPECIFIER FOR KOTII-SCRIPTS PATH",
       "KOTII-LAND IMPORTS",
       specifier,
@@ -451,10 +415,10 @@ const resolveKotiiScriptsInternalImports = (specifier) => {
 const resolveKotiiUserApiPlugins = (specifier) => {
   if (!isBuiltin(specifier) && /^\/kotii-user-api/.test(specifier)) {
     let basePath = getPagesBasePath();
-    console.log("API PLUGINS PATH", basePath);
+    loggas.resolve.debug("API PLUGINS PATH", basePath);
 
     let fullPath = path.resolve(basePath, "api/index.js");
-    console.log("THE FULL PATH", fullPath);
+    loggas.resolve.debug("THE FULL PATH", fullPath);
     // console.log("THE BASE PATH", workdir);
     return {
       url: pathToFileURL(fullPath).href,
@@ -477,12 +441,10 @@ const resolveKotiiUserApiPlugins = (specifier) => {
 const getPagesBasePath = () => {
   let nodeModulesPath = `${path.join(workdir, "node_modules")}`;
   let kotiiPath = `${path.join(workdir, "..")}`;
-  console.log("KOTII NODE MODULES PATH", nodeModulesPath);
-  console.log("KOTII PATH", kotiiPath);
-  let inKotiiLand = fs.existsSync(`${kotiiPath}`);
+
+  // let inKotiiLand = fs.existsSync(`${kotiiPath}`);
   let inUserLand = fs.existsSync(`${nodeModulesPath}`);
-  console.log("IS KOTII LAND", inKotiiLand, kotiiPath);
-  console.log("IS USER LAND", inUserLand, nodeModulesPath);
+
   let resolvePath = inUserLand
     ? `${workdir}`
     : `${path.join(kotiiPath, "kotii-templates/javascript/ssr")}`;
@@ -501,15 +463,13 @@ const getPagesBasePath = () => {
 const doMeta = (specifier) => {
   if (!meta) {
     let metaPath = path.resolve(workdir, "app.manifest.json");
-    console.log("META:: MADE PATH", metaPath);
+
     if (fs.existsSync(metaPath)) {
-      console.log("META:: EXISTS", metaPath);
       meta = JSON.parse(
         fs.readFileSync(metaPath, {
           encoding: "utf8",
         })
       );
-      console.log("META:: CONTENT", meta);
 
       if (meta?.aliases && meta.aliases[specifier]) {
         return true;

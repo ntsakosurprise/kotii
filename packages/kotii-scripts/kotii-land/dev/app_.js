@@ -1,4 +1,5 @@
 import fs from "fs";
+import { loggas, logger } from "kotii-logger";
 import path from "path";
 import React, { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
@@ -6,6 +7,13 @@ import { Provider } from "react-redux";
 import { AppProvider, useAppContext } from "../../react-components/index.jsx";
 import createReduxStore from "./app_redux.js";
 import { ClientRoutes, RoutesAsServerRoutes } from "./build.js";
+
+logger.setNameSpaces([
+  { namespace: "app:start-client", id: "appClient" },
+  { namespace: "app:start-server", id: "appServer" },
+  { namespace: "app:demo", id: "app" },
+]);
+
 // import { meta } from "./manifest.js";
 let hydrateInvokes = 0;
 let userWrapper = null;
@@ -20,11 +28,11 @@ const App = (appWrapper = null, layout = null) => {
   const app = process.env.KOTII_APP_META;
   const effectsStore = JSON.parse(window.__KOTII_EFFECTS_STATE__);
 
-  console.log("THE PROCESS.BROWSER.ENVS", process.env);
+  loggas.appClient.log("THE PROCESS.BROWSER.ENVS", process.env);
 
   let { type, stateVendor = null } = app;
   if (type !== "ssr") {
-    console.log("NOT SSR", stateVendor);
+    loggas.appClient.log("NOT SSR", stateVendor);
     if (stateVendor && stateVendor === "redux") {
       const store = createReduxStore();
       return appSpaWithRedux({ appWrapper, layout, store, effectsStore });
@@ -32,7 +40,7 @@ const App = (appWrapper = null, layout = null) => {
     return appSpa({ appWrapper, layout, effectsStore });
   } else {
     if (stateVendor && stateVendor === "redux") {
-      console.log("TYPE IS SSR");
+      loggas.appClient.log("TYPE IS SSR");
       const store = createReduxStore(window.__PRELOADED_STATE__);
       return appWithRedux({ appWrapper, layout, store, effectsStore });
     }
@@ -47,9 +55,8 @@ const appWithRedux = ({
   goodies = null,
   effectsStore,
 } = props) => {
-  console.log("APP WITH REDUX", appWrapper, layout, store, isServer);
+  loggas.appClient.log("APP WITH REDUX", appWrapper, layout, store, isServer);
   if (isServer) {
-    console.log("IT IS RENDERING FOR SERVER", isServer);
     return (
       <Provider store={store}>
         <AppProvider
@@ -63,11 +70,12 @@ const appWithRedux = ({
     );
   }
   hydrateInvokes++;
-  console.log(" ABOUT TO HYDRATE ON THE CLIENT", document.getElementById);
+  loggas.appClient.log(
+    " ABOUT TO HYDRATE ON THE CLIENT",
+    document.getElementById
+  );
   container = !container ? document.getElementById("root") : container;
-  console.log("THE CONTAINER", container);
-  console.log("THE CUSTOM HYDRATE ROOT", customHydrateRoot);
-  console.log("HYDRATE", hydrateInvokes);
+
   // customHydrateRoot = hydrateRoot(
   //   container,
   //   <Provider store={store}>
@@ -101,7 +109,7 @@ const appWithRedux = ({
         </AppProvider>
       </Provider>
     );
-    console.log(
+    loggas.appClient.log(
       "CREATED HYDRATED ROOT",
       customHydrateRoot,
       customHydrateRoot.render
@@ -135,7 +143,7 @@ const appNormal = ({
   isServer = false,
   effectsStore,
 } = props) => {
-  console.log("APP NORMARL IS RUNNING");
+  loggas.appClient.log("APP NORMARL IS RUNNING");
   if (isServer) {
     return (
       <AppProvider
@@ -161,12 +169,16 @@ const appNormal = ({
 };
 
 const appSpa = ({ appWrapper, layout, effectsStore } = props) => {
-  console.log("APP SPA IS RUNNING");
+  loggas.appClient.log("APP SPA IS RUNNING");
 
   const root = createRoot(document.getElementById("root"));
   root.render(
     <StrictMode>
-      <AppProvider appWrapper={appWrapper} layout={layout}>
+      <AppProvider
+        appWrapper={appWrapper}
+        layout={layout}
+        effectsStore={effectsStore}
+      >
         <AppGeneric />
       </AppProvider>
     </StrictMode>
@@ -179,7 +191,7 @@ const appSpaWithRedux = ({
   store,
   effectsStore,
 } = props) => {
-  console.log("APP SPA WITH REDUX RUNNING");
+  loggas.appClient.log("APP SPA WITH REDUX RUNNING");
 
   const root = createRoot(document.getElementById("root"));
   root.render(
@@ -204,7 +216,7 @@ const ServerApp = ({
   storeFromSource = null,
   effectsStore,
 } = props) => {
-  console.log("THE GOODIES FROM SERVER", goodies);
+  loggas.appServer.log("THE GOODIES FROM SERVER", goodies);
   const store = !storeFromSource ? createReduxStore() : storeFromSource;
   const existsMeta = fs.existsSync(
     `${process.cwd()}${path.sep}app.manifest.json`
@@ -217,7 +229,7 @@ const ServerApp = ({
 
   const { app } = meta;
   const { stateVendor = null } = app;
-  console.log("SERVER META", meta);
+  loggas.appServer.log("SERVER META", meta);
 
   if (stateVendor && stateVendor === "redux") {
     return appWithRedux({
@@ -239,10 +251,15 @@ const ServerApp = ({
 };
 
 if (import.meta.webpackHot) {
-  console.log("THE META.HOT");
+  loggas.appClient.log("THE META.HOT");
   import.meta.webpackHot.accept("./build.js", (er) => {
-    console.log("THE HOT ERROR", er);
-    console.log("THE CUSTOM", customHydrateRoot, userLayout, userWrapper);
+    loggas.appClient.log("THE HOT ERROR", er);
+    loggas.appClient.log(
+      "THE CUSTOM",
+      customHydrateRoot,
+      userLayout,
+      userWrapper
+    );
     App(userWrapper, userLayout);
   });
 }

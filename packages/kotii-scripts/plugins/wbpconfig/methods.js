@@ -4,24 +4,21 @@ import path from "path";
 import { kotiiKotiiLandPath } from "../../kotii_paths.js";
 
 methods.init = function () {
-  console.log("Webpackconfig has been initialised");
-
   this.listens({
     "webpack-config": this.handleWebpackConfig.bind(this),
   });
 };
 methods.handleWebpackConfig = function (data) {
-  console.log("THE DATA OF WebPack config SCRIPTS", data);
   const self = this;
-  // console.log("SELF BEFORE", self);
+  // self.debug("SELF BEFORE", self);
   self["callback"] = data.callback;
   const loadFile = self.pao.pa_loadFile;
   const { contextApp } = data.payload;
   const { appEnv = "" } = contextApp;
   const { useCustomDomain = false, useHttps = false } = contextApp.appManifest;
-  console.log("WEBPACK DATA PAYLOAD", data.payload.build);
-  // console.log("SELF. AFTER SETTING CALLBACK", self);
-  // console.log("THE NODE ENV", process.env.NODE_ENV);
+  self.debug("WEBPACK DATA PAYLOAD", data.payload.build);
+  // self.debug("SELF. AFTER SETTING CALLBACK", self);
+  // self.debug("THE NODE ENV", process.env.NODE_ENV);
   if (!fs.existsSync(contextApp.appSsl) && useHttps) {
     // if (
     //   !self.checkIfIsFile(
@@ -43,7 +40,7 @@ methods.handleWebpackConfig = function (data) {
         self
           .createSSLCertificate(config, `${kotiiKotiiLandPath}/openssl.conf`)
           .then((certs) => {
-            console.log("THE APP CERTS", certs);
+            self.debug("THE APP CERTS", certs);
             self
               .addDomainToHost(`${contextApp.appName}.com`)
               .then((addedHost) => {
@@ -62,14 +59,14 @@ methods.handleWebpackConfig = function (data) {
                 }:${process.env.PORT}`;
 
                 self.getEnvVariables(appEnv).then((envs) => {
-                  console.log("THE ENVS", config);
+                  self.debug("THE ENVS", config);
                   self.configureWebPack(data.payload, envs, server);
                 });
               });
           });
       })
       .catch((err) => {
-        console.log("An error occured loading file", err);
+        self.debug("An error occured loading file", err);
       });
   } else {
     let server = {
@@ -97,7 +94,7 @@ methods.handleWebpackConfig = function (data) {
     }
 
     self.getEnvVariables(appEnv).then((envs) => {
-      console.log("THE ENVS", envs);
+      self.debug("THE ENVS", envs);
       self.configureWebPack(data.payload, envs, server);
     });
   }
@@ -105,12 +102,12 @@ methods.handleWebpackConfig = function (data) {
   return;
 };
 methods.handleSystemAppUrl = function (data) {
-  console.log("HandleSystemAppurl", data);
+  self.debug("HandleSystemAppurl", data);
   const self = this;
-  // console.log("SELF BEFORE", self);
+  // self.debug("SELF BEFORE", self);
   self["callback"] = data.callback;
   process.env["KOTII_APP_URL"] = JSON.stringify(data.App_URL);
-  // console.log("THE NODE ENV", process.env.NODE_ENV);
+  // self.debug("THE NODE ENV", process.env.NODE_ENV);
 };
 methods.configureWebPack = function (
   payload,
@@ -131,13 +128,13 @@ methods.configureWebPack = function (
       ? self.webPackServerConfig
       : self.webPackConfig;
 
-  // console.log("THE APP CONTEXT CONFIG", payload);
+  // self.debug("THE APP CONTEXT CONFIG", payload);
   process.env["KOTII_APP_URL"] = JSON.stringify(certDomainConfig.APP_URL);
   envs.stringified["KOTII_APP_META"] = JSON.stringify(
     contextApp.appManifest.app
   );
 
-  console.log("THE APP ENVS", envs);
+  self.debug("THE APP ENVS", envs);
 
   setContextEnv(contextApp, envs);
   const webpackConfigObject = webPackConfig({
@@ -159,19 +156,19 @@ methods.configureWebPack = function (
     isProjectPNPM: contextApp.appPnpmPkgr,
   });
 
-  console.log("PROCESS.ENV", process.env);
-  console.log("THE WEBPACK CONFIG", webpackConfigObject);
+  self.debug("PROCESS.ENV", process.env);
+  self.debug("THE WEBPACK CONFIG", webpackConfigObject);
   let wbpCompiler = null;
   try {
     wbpCompiler = webpack(webpackConfigObject);
   } catch (err) {
-    console.log("Webpack config error", err);
+    self.debug("Webpack config error", err);
     process.exit(1);
   }
 
   if (!build)
     return self.hookIntoWebpackCompilation(wbpCompiler).then((hooked) => {
-      console.log("THE CONFIG HOOK STATUS", hooked);
+      self.debug("THE CONFIG HOOK STATUS", hooked);
       self.configureDevServer(
         {
           compiler: wbpCompiler,
@@ -185,9 +182,9 @@ methods.configureWebPack = function (
     });
 
   self.hookIntoWebpackCompilation(wbpCompiler).then((hooked) => {
-    console.log("ABOUT TO TRIGGER MANUAL webpack compilation");
+    self.debug("ABOUT TO TRIGGER MANUAL webpack compilation");
     wbpCompiler.run((err, stats) => {
-      console.log("COMPILER ERR", err);
+      self.debug("COMPILER ERR", err);
       const info = stats.toJson();
 
       if (stats.hasErrors()) {
@@ -197,7 +194,7 @@ methods.configureWebPack = function (
       if (stats.hasWarnings()) {
         console.warn(info.warnings);
       }
-      console.log("COMPILER INFO", info.assets);
+      self.debug("COMPILER INFO", info.assets);
       self.callback({
         webpackCompileStats: {
           assets: info.assets,
@@ -206,13 +203,13 @@ methods.configureWebPack = function (
     });
   });
 
-  // console.log("THE WEBPACK COMPILER", wbpCompiler);
+  // self.debug("THE WEBPACK COMPILER", wbpCompiler);
   return;
 };
 methods.setContextEnv = function (mdconfig, envs = null) {
   process.env["APPCONTEXT"] = JSON.stringify(mdconfig);
   if (envs) {
-    // console.log("STRINGIFIED ENVS", envs);
+    // self.debug("STRINGIFIED ENVS", envs);
     if (envs?.stringified) {
       process.env["APP_ENVS"] = JSON.stringify({
         ...envs.stringified,
@@ -259,9 +256,9 @@ methods.configureDevServer = function (
         webpackHotMiddleware: self.webpackHotMiddleware,
       })
     : "";
-  // console.log("SELF IN CONFIGURE", self);
-  console.log("THE APP WITH APP CLI", process.env?.ANZII_CLI_WITH_SERVER);
-  console.log("THE SERVER TYPE", serverType);
+  // self.debug("SELF IN CONFIGURE", self);
+  self.debug("THE APP WITH APP CLI", process.env?.ANZII_CLI_WITH_SERVER);
+  self.debug("THE SERVER TYPE", serverType);
   self.emit({
     type: "take-ssr-routes",
     data: { payload: { routes: [...anziiManualConfigs.routes] } },
@@ -269,7 +266,7 @@ methods.configureDevServer = function (
   if (anziiManualConfigs.api && fs.existsSync(anziiManualConfigs.api)) {
     loadFile(`${anziiManualConfigs.api}${path.sep}.config.js`).then(
       (config) => {
-        console.log("API PLUGIN THE CONFIG FILE", config);
+        self.debug("API PLUGIN THE CONFIG FILE", config);
         let appConfig = {
           ...anziiManualConfigs,
           router: [...config.router, ...anziiManualConfigs.routes],
@@ -337,24 +334,24 @@ methods.hookIntoWebpackCompilation = async function (compiler, configWp) {
   const self = this;
   if (compiler) return {};
   compiler.hooks.invalid.tap("invalid", () => {
-    console.log("wEBPACK is compiling our code....");
+    self.debug("wEBPACK is compiling our code....");
   });
   compiler.hooks.invalid.tap("done", (stats) => {
-    console.log("Compiler is done compiling our code");
-    console.log(stats);
+    self.debug("Compiler is done compiling our code");
+    self.debug(stats);
   });
   return true;
 };
 
 methods.removePagesImport = function () {
-  console.log("REMOVE GETS A CALL");
+  self.debug("REMOVE GETS A CALL");
   const self = this;
 
   self.emit({
     type: "remove-pages-import",
     data: {
       callback: () => {
-        console.log("KOTII HAS REMOVED PAGES IMPORT");
+        self.debug("KOTII HAS REMOVED PAGES IMPORT");
       },
     },
   });
@@ -362,12 +359,12 @@ methods.removePagesImport = function () {
 
 methods.testRunFromWebpack = function (watchPath, runStatus) {
   const self = this;
-  console.log("TEST RUN FROM WEBPACK", self.removePagesImport, watchPath);
+  self.debug("TEST RUN FROM WEBPACK", self.removePagesImport, watchPath);
   self.watchFile(watchPath, {
     add: (addPath, stats) => {
       // let stats = null
       // stats = fs.statSync(addPath);
-      console.log("WATCHR:: ADD FILE STATS", addPath, stats);
+      self.debug("WATCHR:: ADD FILE STATS", addPath, stats);
       // if(stats.size > 0){
       //   self.restartSever(addPath,"add", runStatus )
       // }else{
@@ -382,10 +379,10 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
       // }
 
       if (stats.size > 0) {
-        console.log("FILE SIZE IS BIGGER THAN ZERO, NO RESTART");
+        self.debug("FILE SIZE IS BIGGER THAN ZERO, NO RESTART");
         self.restartSever(addPath, runStatus);
       } else {
-        console.log("FILE SIZE IS ZERO, NO RESTART");
+        self.debug("FILE SIZE IS ZERO, NO RESTART");
         if (!self.addedEmptyFiles) {
           self.addedEmptyFiles = [addPath];
         } else {
@@ -396,7 +393,7 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
       // self.notifyClient()
     },
     delete: (addPath, stats) => {
-      console.log("WATCHR:: DELETE FILE STATS", addPath, stats);
+      self.debug("WATCHR:: DELETE FILE STATS", addPath, stats);
       self.restartSever(addPath, "delete", runStatus);
       // if(!self.fileIsAddOrDelProcessed){
       //   self.fileIsAddOrDelProcessed = true
@@ -411,7 +408,7 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
           self.addedEmptyFiles = null;
           self.restartSever(addPath, "changeEmpyFile");
         } else {
-          console.log(
+          self.debug(
             "WATCHR:: ONCHANGE MANY FILES",
             self.addedEmptyFiles,
             self.addedEmptyFiles.indexOf(addPath)
@@ -437,8 +434,8 @@ methods.notifyClient = function () {
         event: { name: "kotii-client-reload", content: { user: "Ntsako" } },
       },
       callback: (data = null) => {
-        console.log("SERVER SENT EVENT SENT");
-        console.log("Event has been successfully sent to client", data);
+        self.debug("SERVER SENT EVENT SENT");
+        self.debug("Event has been successfully sent to client", data);
         // process.exit(1)
       },
     },
@@ -453,7 +450,7 @@ methods.watchFile = function (data, events, options = null) {
     data: {
       payload: { watched: data, events },
       callback: (data) => {
-        console.log("File watch set", data);
+        self.debug("File watch set", data);
         self.closeWatcher = data.closeWatcher;
       },
     },
@@ -463,17 +460,14 @@ methods.watchFile = function (data, events, options = null) {
 methods.restartSever = function (addPath, eventType = "", runStatus = null) {
   const self = this;
 
-  console.log(`PLUGIN:: WATCHR:: FILE ${eventType} event`, addPath, runStatus);
+  self.debug(`PLUGIN:: WATCHR:: FILE ${eventType} event`, addPath, runStatus);
   process.env.CUSTOM_RESTART = true;
   process.env.ANZII_OPEN_BROWSER = "false";
-  console.log(
-    "PLUGIN:: THE PROCESS.ENV.PORT",
-    JSON.stringify(process.env.PORT)
-  );
-  console.log("PLUGIN:: THE WATCHER ADD", process.env.PORT);
+  self.debug("PLUGIN:: THE PROCESS.ENV.PORT", JSON.stringify(process.env.PORT));
+  self.debug("PLUGIN:: THE WATCHER ADD", process.env.PORT);
 
   self.closeWatcher(() => {
-    console.log(
+    self.debug(
       "ADD EVENT CLOSING WATCHER BEFORE RESTART",
       JSON.stringify(process.env.PORT)
     );
@@ -489,7 +483,7 @@ methods.configureDomainOnceOff = function (data, events, options = null) {
     data: {
       payload: { watched: data, events },
       callback: (data) => {
-        console.log("File watch set", data);
+        self.debug("File watch set", data);
         self.closeWatcher = data.closeWatcher;
       },
     },
@@ -501,12 +495,12 @@ methods.checkIfIsFile = function (filePath) {
   let stats;
   try {
     stats = fs.statSync(filePath);
-    // console.log("FILE STATISTICS", stats);
+    // self.debug("FILE STATISTICS", stats);
     const isFile = stats.isFile();
-    // console.log("IS FILE", isFile);
+    // self.debug("IS FILE", isFile);
     return isFile;
   } catch (error) {
-    // console.log("THE STATS THROWN", error);
+    // self.debug("THE STATS THROWN", error);
     return false;
   }
 };

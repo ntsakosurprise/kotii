@@ -4,20 +4,20 @@ import portFinder from "portfinder";
 
 const methods = {};
 methods.init = function () {
-  // console.log('Bitbucket has been initialised')
-  // console.log("THE VALUE OF THIS", this);
+  // self.debug('Bitbucket has been initialised')
+  // self.debug("THE VALUE OF THIS", this);
   this.setContexts();
   this.listens({
     "context-app": this.handleContextApp.bind(this),
   });
 };
 methods.handleContextApp = function (data) {
-  console.log("THE DATA OF HANDLE CONTEXT", data);
   const self = this;
   const { build = false } = data;
+  self.debug("THE DATA OF HANDLE CONTEXT", data);
 
   self.getAppInContextResources(build).then(async (appInfo) => {
-    console.log("CONTEXT APP:", appInfo);
+    self.debug("CONTEXT APP:", appInfo);
 
     if (!build) {
       if (appInfo.path.appManifest?.useSetPort) {
@@ -44,7 +44,7 @@ methods.handleContextApp = function (data) {
   // return;
 };
 methods.setContexts = function (data) {
-  // console.log("THE DATA OF START SCRIPTS", data);
+  // self.debug("THE DATA OF START SCRIPTS", data);
   const self = this;
   const pao = self.pao;
   const getWorkingFolder = pao.pa_getWorkingFolder;
@@ -64,9 +64,6 @@ methods.getAppInContextResources = function (environment = false) {
   const fs = self.fs;
   const { appFolder: folder, getFilePath, checkIfIsFile } = self;
   const cwd = getWorkingFolder();
-  console.log("AAPP FOLDER", folder);
-  console.log("AAAP ROOT", self.appRoot);
-  //console.log(pao);
 
   self.setNodeEnv(environment);
   return new Promise((resolve, reject) => {
@@ -78,12 +75,12 @@ methods.getAppInContextResources = function (environment = false) {
     const appFolder = isPackageNameKotii
       ? `${templateFolder}/kotii-templates/javascript/ssr`
       : folder;
-    console.log("THE APP PACKAGE JSON", appPackageJson);
-    console.log("THE APP CONFIG", isPackageNameKotii);
-    console.log("THE TEMPLATE FOLDER", templateFolder);
-    console.log("THE TEMPLATE app FOLDER", appFolder);
+    self.debug("THE APP PACKAGE JSON", appPackageJson);
+    self.debug("THE APP CONFIG", isPackageNameKotii);
+    self.debug("THE TEMPLATE FOLDER", templateFolder);
+    self.debug("THE TEMPLATE app FOLDER", appFolder);
     let appFolderSplit = appFolder.split("/");
-    console.log("THE");
+    self.debug("THE");
     const resources = {
       appEnv: self.getEnvFilePath(appFolder),
       appFolder: self.getFilePath(appFolder, "."),
@@ -126,20 +123,20 @@ methods.getAppInContextResources = function (environment = false) {
         ? true
         : null,
     };
-    console.log("THE RESOURCES", resources);
+    self.debug("THE RESOURCES", resources);
     // let appFileSavePath = `${resources.appSrc}/about_.js`;
     // let appFilePath = `${resources.appSrc}/about.jsx`;
     // loadFileSync("@babel/register").default({
     //   cwd: resources.appSrc,
     //   presets: ["@babel/preset-env"],
     // });
-    // console.log("BABEL-REGISTER", babelRegister);
+    // self.debug("BABEL-REGISTER", babelRegister);
     // let anonyMouse = babelRegister().default;
-    // console.log("ANONYMOUSE", anonyMouse);
-    // console.log("THE BABEL", babelRegister);
+    // self.debug("ANONYMOUSE", anonyMouse);
+    // self.debug("THE BABEL", babelRegister);
     // let jsx = loadFileSync(appFilePath);
     // let jsx = loadFileSync(appFilePath);
-    // console.log("LOADED JSX", jsx);
+    // self.debug("LOADED JSX", jsx);
     // jsx.default();
     // let jsxCode = readFileSync(appFilePath);
     // self.parseJsxToReact(jsxCode, appFileSavePath);
@@ -154,13 +151,13 @@ methods.getContextAppInfo = function () {
   const makeFolderSync = pao.pa_makeFolderSync;
   // self.callback = data.callback;
   return self.getAppInContextResources();
-  // console.log("THE WORKING DIR INFORMATION", self.appFolder, self.appRoot);
+  // self.debug("THE WORKING DIR INFORMATION", self.appFolder, self.appRoot);
 };
 methods.getFilePath = function (fromDir, to) {
   const self = this;
 
   const { path } = self;
-  console.log("THE PATH RESOLVE", path.resolve(fromDir, to));
+  self.debug("THE PATH RESOLVE", path.resolve(fromDir, to));
 
   return path.resolve(fromDir, to);
 };
@@ -170,12 +167,12 @@ methods.checkIfIsFile = function (filePath) {
   let stats;
   try {
     stats = fs.statSync(filePath);
-    // console.log("FILE STATISTICS", stats);
+    // self.debug("FILE STATISTICS", stats);
     const isFile = stats.isFile();
-    // console.log("IS FILE", isFile);
+    // self.debug("IS FILE", isFile);
     return isFile;
   } catch (error) {
-    // console.log("THE STATS THROWN", error);
+    // self.debug("THE STATS THROWN", error);
     return false;
   }
 };
@@ -183,17 +180,17 @@ methods.checkIfIsDirectory = function (filePath) {
   const self = this;
   const { fs } = self;
   let stats;
-  console.log("DIRECTORY PATH", filePath);
+  self.debug("DIRECTORY PATH", filePath);
   try {
     stats = fs.statSync(filePath);
 
-    console.log("FILE STATISTICS", stats);
+    self.debug("FILE STATISTICS", stats);
     const isDir = stats.isDirectory();
 
-    console.log("IS FILE", isDir);
+    self.debug("IS FILE", isDir);
     return isDir;
   } catch (error) {
-    console.log("THE STATS THROWN", error);
+    self.debug("THE STATS THROWN", error);
     return false;
   }
 };
@@ -204,7 +201,7 @@ methods.doRoutes = function (resources, pResolve, pReject) {
     data: {
       payload: resources,
       callback: (data) => {
-        console.log("FILE ROUTES PROCESSED", data.message);
+        self.debug("FILE ROUTES PROCESSED", data.message);
         pResolve({ routes: data.routes, ...resources, ...data });
       },
     },
@@ -221,14 +218,14 @@ methods.parseJsxToReact = function (userCode, fileToSaveTo) {
     data: {
       payload: { code: userCode },
       callback: (data) => {
-        console.log("CODE CONVERTED TO REACT", data);
+        self.debug("CODE CONVERTED TO REACT", data);
         const { code } = data;
         const codeToSave = code.code;
         saveToFile(fileToSaveTo, codeToSave);
         loadFile(fileToSaveTo)
           .then((loadedFile) => {
-            console.log("THE LOADED FILE", loadedFile);
-            console.log("THE CODE TO SAVE", userCode);
+            self.debug("THE LOADED FILE", loadedFile);
+            self.debug("THE CODE TO SAVE", userCode);
             saveToFile(fileToSaveTo, userCode);
 
             // const { code: lebabTransformed, warnings } = self.lebabTransform(
@@ -249,10 +246,10 @@ methods.parseJsxToReact = function (userCode, fileToSaveTo) {
             //   ] // transforms to apply
             // );
 
-            //console.log("LEBAB ES6", lebabTransformed);
+            //self.debug("LEBAB ES6", lebabTransformed);
           })
           .catch((err) => {
-            console.log("THERE WAS AN ERROR LOADING REACT FILE", err);
+            self.debug("THERE WAS AN ERROR LOADING REACT FILE", err);
           });
       },
     },
@@ -279,7 +276,7 @@ methods.getEnvFilePath = function (basePath) {
   );
 
   if (self.checkIfIsFile(envFilePath)) {
-    console.log("THE ENV FILE PATH", envFilePath);
+    self.debug("THE ENV FILE PATH", envFilePath);
     return envFilePath;
   } else {
     return null;
@@ -288,21 +285,14 @@ methods.getEnvFilePath = function (basePath) {
 
 methods.getAvailablePort = function (port = 3000, useStrictPort = false) {
   const self = this;
-  self.infoSync(`User preffered port: ${port}`);
+
   return new Promise((resolve, reject) => {
     detectPort(port)
       .then((gotPort) => {
-        console.log("THE GOT PORT", gotPort);
-        console.log("THE CHECKED PORT", port);
-        console.log("THE TYPEOF PORT", typeof port);
-        console.log("THE TYPEOF GOT PORT", typeof gotPort.toString());
-        console.log("THE GOT PORT EQUALS PORT", gotPort === port);
-
         if (gotPort.toString() === port) {
           process.env["PORT"] = gotPort;
           resolve(gotPort);
         } else {
-          console.log("SEARCHING FOR OPEN PORT");
           portFinder
             .getPortPromise()
             .then((openPort) => {
@@ -311,9 +301,7 @@ methods.getAvailablePort = function (port = 3000, useStrictPort = false) {
                   "Specified port is in use, please try to set another port"
                 );
               }
-              self.infoSync(
-                `Specified port: ${port} is in use, anzii will resort to port:${openPort}`
-              );
+
               process.env["PORT"] = openPort;
               resolve(openPort);
             })
@@ -323,7 +311,7 @@ methods.getAvailablePort = function (port = 3000, useStrictPort = false) {
         }
       })
       .catch((err) => {
-        console.log("Therw was an error trying to get a port", err);
+        self.error("There was an error trying to get a port", err);
         reject(err);
       });
   });

@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
 
 import { CONFIG } from "Config";
+import { loggas } from "kotii-logger";
 import * as types from "./types.js";
 export const showPeopleList = () => {
-  console.log("THE ACTION CREATOR RUNNING");
+  loggas.app.log("THE ACTION CREATOR RUNNING");
 
   dispatch(showPeopleListSuccess());
 };
@@ -19,10 +20,10 @@ export const showUser = () => {
       }
 
       const json = await response.json();
-      console.log("rESPONSE AS JSON", json);
+      loggas.app.log("rESPONSE AS JSON", json);
       dispatch(showUserSuccess(json));
     } catch (error) {
-      console.log("FETCH ERROR", error);
+      loggas.app.log("FETCH ERROR", error);
       console.error(error?.message);
       dispatch(showUserSuccess({ actor: { name: "Msapu" } }));
     }
@@ -37,7 +38,7 @@ export const showPeopleListSuccess = () => {
 };
 
 export const showUserSuccess = (user) => {
-  console.log("THE USER", user);
+  loggas.app.log("THE USER", user);
   return {
     type: types.SHOW_USER,
     payload: { user: { ...user.actor[0] } },
@@ -45,7 +46,7 @@ export const showUserSuccess = (user) => {
 };
 
 export const showPeopleListFailure = (err) => {
-  console.log("THE PEOPLE FAILURE", err);
+  loggas.app.log("THE PEOPLE FAILURE", err);
   return {
     type: types.SHOW_PEOPLE_LIST,
     payload: { people: ["Nyeleti", "Nyiko", "Tsakani", "Nyambi"] },

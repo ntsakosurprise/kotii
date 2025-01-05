@@ -1,6 +1,5 @@
 let methods = {};
 methods.init = function () {
-  console.log("THE INTEPRETER INITIALIZES");
   this.listens({
     "start-io-operations": this.handleInterpreterCliInput.bind(this),
     "prompt-user": this.handlePromptUser.bind(this),
@@ -18,8 +17,7 @@ methods.handleInterpreterCliInput = function (data) {
   const figlet = self.figlet;
   const chalk = self.chalk;
   let stopFurtherExecution = false;
-  self.logSync("Handling send-output Cli event");
-  self.logSync("About to send output to std");
+
   /*
      Use arg package to get passed arguments to the cli.
      This arg packages take two objects: 1. An object of commands to be checked for availability.
@@ -60,8 +58,8 @@ methods.handleInterpreterCliInput = function (data) {
     let userPassedCommands = commands._;
     // Get the first item from the commands. This item is considered a command
     // let firstItemAsCommand = userPassedCommands[0];
-    // console.log("userPassedCommands", userPassedCommands);
-    // console.log("Objects commands", Object.keys(commands));
+    // self.debug("userPassedCommands", userPassedCommands);
+    // self.debug("Objects commands", Object.keys(commands));
     // if (Object.keys(commands).length <= 1) {
     //   let skip = false;
     //   if (
@@ -89,7 +87,7 @@ methods.handleInterpreterCliInput = function (data) {
     //     if (self[com]) {
     //       return self[com]();
     //     } else {
-    //       console.log("THE PROCESS IS EXITING WITH ERROR CODE", com);
+    //       self.debug("THE PROCESS IS EXITING WITH ERROR CODE", com);
     //       process.exit(1);
     //     }
     //   }
@@ -99,7 +97,7 @@ methods.handleInterpreterCliInput = function (data) {
       self.logSync("COMMAND NAME", commandName);
       self.logSync("THE SELF COMMANDS", self.commands);
       if (contains(self.commands, commandName) && self[commandName]) {
-        console.log("THE APP CONTAINS THE COMMAND", self[commandName]);
+        self.debug("THE APP CONTAINS THE COMMAND", self[commandName]);
         if (self[commandName]) self[commandName]();
         stopFurtherExecution = true;
         break;
@@ -109,7 +107,7 @@ methods.handleInterpreterCliInput = function (data) {
         delete newOptions._;
         let i = newOptions.commands.indexOf("cli");
         if (i > 0) newOptions.commands.splice(i, 1);
-        // console.log(
+        // self.debug(
         //   chalk.yellow(
         //     figlet.textSync("Welcome to ANZII-CLI", {
         //       horizontalLayout: "full",
@@ -127,7 +125,7 @@ methods.handleInterpreterCliInput = function (data) {
       }
     }
   } else {
-    console.log("THE LENGTH IS");
+    self.debug("THE LENGTH IS");
     /*
           Show available commands that are expected to be passed if none of them has been passed to the script.
           showAvailableCommands() contains a list of valid commands available to the cli program.
@@ -143,27 +141,27 @@ methods.handleInterpreterCliInput = function (data) {
   // 	choices: ['backend/api/web','cli']
   // 	 }
   // 	]
-  // console.log(
+  // self.debug(
   // 	chalk.yellow(
   // 	  figlet.textSync('Welcome to ANZII-CLI', { horizontalLayout: 'full' })
   // 	)
   //   );
   //   self.prompt({message})
   //   .then((input)=>{
-  // 	console.log(input)
-  // 	console.log(chalk.green(
+  // 	self.debug(input)
+  // 	self.debug(chalk.green(
   // 		'Question successfully answered'
   // 	  ))
   //   })
   //   .catch((e)=>{
-  // 	console.log(chalk.red('An error occured prompting for input'));
+  // 	self.debug(chalk.red('An error occured prompting for input'));
   // 	process.exit(1)
   //   })
 };
 methods.handlePromptUser = function (data) {
   const self = this;
-  // console.log('DATA IN HANDLE PROMPT')
-  // console.log(data)
+  // self.debug('DATA IN HANDLE PROMPT')
+  // self.debug(data)
   const { callback, query } = data;
   self
     .prompt({ message: query })
@@ -177,8 +175,8 @@ methods.handlePromptUser = function (data) {
 methods.handleCommands = function (parsedCommands) {
   const self = this;
   const commands = self.commands;
-  self.logSync("Handling possible tasks storage");
-  self.logSync(data);
+  self.logSync("Handling possible tasks storage", data);
+
   if (commands.alias) {
     if (commands.alias === parsedCommands.command) {
       self.emit({
@@ -223,8 +221,8 @@ methods.outPut = function (message) {
   const self = this;
   const chalk = self.chalk;
   const figlet = self.figlet;
-  if (typeof message === "object") return console.log(message);
-  console.log(chalk.yellow(message));
+  if (typeof message === "object") return self.debug(message);
+  self.debug(chalk.yellow(message));
 };
 methods.showAvailableCommands = function () {
   const self = this;
@@ -280,7 +278,7 @@ methods.versionCommand = function () {
   //   ${chalk.cyan.bold('-g | --git')} ............... Initializes git for you anzii app
   //   ${chalk.cyan.bold('-y | --yes')} ............... Creates anzii app with default settings
   // `
-  // console.log(help)
+  // self.debug(help)
 };
 methods.createAnziiAppCommand = function () {
   const self = this;

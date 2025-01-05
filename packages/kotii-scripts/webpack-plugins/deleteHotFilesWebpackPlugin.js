@@ -3,28 +3,38 @@ import { globSync } from "glob";
 
 class deleteFilesWebpackPlugin {
   deleteFolder = null;
+  logger = null;
 
-  constructor(options = null) {
-    console.log("DELETE HOT FILES OPTIONS", options);
+  constructor(options = null, loggas) {
+    this.loggas = loggas;
+    loggas.deleteFilesWebpackPlugin.debug("DELETE HOT FILES OPTIONS", options);
     this.deleteFolder = options.deleteFolder;
   }
 
   apply(compiler) {
     compiler.hooks.beforeCompile.tap("DeleteFilesWebpackPlugin", () => {
-      console.log("deleteFilesWebpackPlugin:: FILES TO WATCH");
+      this.loggas.deleteFilesWebpackPlugin.debug(
+        "deleteFilesWebpackPlugin:: FILES TO WATCH"
+      );
 
       const filesToGet = globSync(
         `${this.deleteFolder}/**/*.{js,jsx,ts,tsx,json}`
       );
-      console.log("PLUGIN:: DELETE PLUGIN", filesToGet);
+      this.loggas.deleteFilesWebpackPlugin.debug(
+        "PLUGIN:: DELETE PLUGIN",
+        filesToGet
+      );
       let deleteList = filesToGet.filter((filePath) => {
         if (filePath.indexOf(".hot-update") >= 0) return true;
       });
       deleteList.forEach((pathToDelete) => {
-        console.log("CURRENTLY DELETING FILE", pathToDelete);
+        this.loggas.deleteFilesWebpackPlugin.debug(
+          "CURRENTLY DELETING FILE",
+          pathToDelete
+        );
         fs.unlinkSync(pathToDelete);
       });
-      console.log("THE DELETE LIST", deleteList);
+      this.loggas.deleteFilesWebpackPlugin.debug("THE DELETE LIST", deleteList);
     });
   }
 }
