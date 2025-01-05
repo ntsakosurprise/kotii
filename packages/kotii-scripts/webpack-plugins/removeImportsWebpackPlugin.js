@@ -36,18 +36,6 @@ class RemoveImportsWebpackPlugin {
 
       traverse.default(buildAst, {
         ImportDeclaration(path) {
-          this.loggas.removeImportsWebpackPlugin.debug(
-            "AST NODE AFTER Import Node REMOVE",
-            path.node.source.value
-          );
-          this.loggas.removeImportsWebpackPlugin.debug(
-            "AST NODE SPECIFIER REMOVE",
-            path.node.specifiers[0]?.local.name
-          );
-          this.loggas.removeImportsWebpackPlugin.debug(
-            "AST NODE AFTER Import Test REMOVE",
-            removeImportSpecifiers.indexOf(path.node.source.value) >= 0
-          );
           if (removeImportSpecifiers.indexOf(path.node.source.value) >= 0) {
             let local = path.node.specifiers[0]?.local.name;
             // removedImportsIds.push(local);
