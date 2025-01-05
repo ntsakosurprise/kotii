@@ -10,6 +10,7 @@ process.on("beforeExit", () => {
 process.on("exit", function () {
   if (process.env.CUSTOM_RESTART && process.env.CUSTOM_RESTART === "true") {
     process.env.ANZII_OPEN_BROWSER = "false";
+    process.env.CUSTOM_RESTART = "false";
     spawn(process.argv.shift(), process.argv, {
       cwd: process.cwd(),
       detached: true,
