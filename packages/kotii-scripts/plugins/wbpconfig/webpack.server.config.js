@@ -7,6 +7,7 @@ import {
   DeleteFilesWebpackPlugin,
   FinishCompilationOnErrorWebpackPlugin,
   HookToLoaderResolutionWebpackPlugin,
+  RemoveImportsWebpackPlugin,
   WatchOwnFilesWebpackPlugin,
 } from "../../webpack-plugins/index.js";
 
@@ -29,6 +30,10 @@ logger.setNameSpaces([
   {
     namespace: "webpack:compilation:watchOwnFilesWebpackPlugin",
     id: "watchOwnFilesWebpackPlugin",
+  },
+  {
+    namespace: "webpack:compilation:removeImportsWebpackPlugin",
+    id: "removeImportsWebpackPlugin",
   },
 ]);
 
@@ -293,10 +298,13 @@ export default (options) => {
         },
       }),
       new webpack.HotModuleReplacementPlugin(),
-      // new RemoveImportsWebpackPlugin({
-      //   removeFilePath: `${scriptsPath}/kotii-land/dev/build.js`,
-      //   removeFileSpecifiers: ["./pages.js"],
-      // }),
+      new RemoveImportsWebpackPlugin(
+        {
+          removeFilePath: `${scriptsPath}/kotii-land/dev/build.js`,
+          removeFileSpecifiers: ["./pages.js"],
+        },
+        loggas
+      ),
     ],
   };
 };
