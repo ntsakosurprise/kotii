@@ -11,21 +11,21 @@
 - Set SPA to be handled by kotiijs server
 - Clean-up custom nodejs loaders
 - Fix manipulation of babel-json file in server-build
-- Double-check that `env` plugin properly loads dotenv files
+- `Double-check that `env` plugin properly loads dotenv files`
 - Set up lazy-load of components or on the fly rendering
 - Write docs for `run-local` scripts
 - Write tests
-- Double-check that `kotii-templates` has its templates configured properly
+- `Double-check that `kotii-templates` has its templates configured properly`
 - Check redux state management configurations
 - Create plans for supporting other state managers
 - Create webpack production configs
 - Optimize the system
 - Add logging strategy[Explore react logging]
 - Configure source maps
-- Support https on a local server
+- `Support https on a local server`
 - `Add support for fonts`
 - `Hydrate other assets like css, etc`
-- Add support for protected routes or views
+- `Add support for protected routes or views`
 - Generate kotii production build
 - Generate kotii static site
 
