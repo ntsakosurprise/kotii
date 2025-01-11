@@ -115,6 +115,7 @@ methods.handleServerBuild = function (data) {
         .then(() => {
           self.doKotiiLandPagesFile(destination, {
             contextApp,
+            targetMain,
           });
         })
         .catch((saveErr) => {
@@ -293,6 +294,7 @@ methods.updateJSXImportDeclarations = function (ast, state) {
   const traverse = self.traverse;
   self.debug("THE APP STATE", state);
   const appManifest = state?.appManifest;
+  const isPages = state?.isPages ? true : false;
   // let removedImportsIds = [];
 
   let isUpdated = false;
@@ -308,6 +310,12 @@ methods.updateJSXImportDeclarations = function (ast, state) {
           /^(\.+)/.test(path.node.source.value)
         );
         path.node.source.value = path.node.source.value.replace(/.jsx$/, ".js");
+        isPages
+          ? (path.node.source.value = path.node.source.value.replace(
+              state.replacePath,
+              state.pagesPathsDestination
+            ))
+          : null;
         isUpdated = true;
         return;
       }
@@ -415,7 +423,11 @@ methods.doKotiiLandPagesFile = function (destination, options) {
   self.debug("THE JS FILE", jsFile);
   self.debug("THE AST", ast);
 
-  let updateResults = self.updateJSXImportDeclarations(ast);
+  let updateResults = self.updateJSXImportDeclarations(ast, {
+    isPages: true,
+    pagesPathsDestination: destination,
+    replacePath: options.targetMain,
+  });
   if (updateResults) {
     const { code: genCode } = generate(ast);
     // const modifiedCode = genCode;
