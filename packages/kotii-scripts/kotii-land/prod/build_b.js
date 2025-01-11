@@ -1,72 +1,6 @@
 import React from "react";
 import { Route, Router, Switch as Routes } from "wouter";
 import { useAppContext } from "../../react-components-pruned/index.js";
-import { comps, routes } from "/.kotii-land/pages.js";
-
-// const comps = {
-//   Test,
-//   Privacy,
-//   Home,
-//   Faqs,
-//   ContactUs,
-//   About,
-//   Todo,
-//   Pos,
-//   Slug,
-//   Connection,
-//   Testing,
-// };
-// const routes = [
-//   {
-//     path: "/test",
-//     component: "Test",
-//   },
-//   {
-//     path: "/privacy",
-//     component: "Privacy",
-//   },
-//   {
-//     path: "/",
-//     component: "Home",
-//   },
-//   {
-//     path: "/faqs",
-//     component: "Faqs",
-//   },
-//   {
-//     path: "/contact-us",
-//     component: "ContactUs",
-//   },
-//   {
-//     path: "/about",
-//     component: "About",
-//   },
-//   {
-//     path: "/todo",
-//     component: "Todo",
-//   },
-//   {
-//     path: "/pos",
-//     component: "Pos",
-//   },
-//   {
-//     path: "/pos/:slug",
-//     component: "Slug",
-//   },
-//   {
-//     path: "/connection",
-//     component: "Connection",
-//   },
-//   {
-//     path: "/testing",
-//     component: "Testing",
-//   },
-//   // {
-//   //   path: "/test.jsxxxx",
-//   //   component: "Test.jsxxxx",
-//   // },
-// ];
-
 const Wrapper = props => {
   //const Component = props.component;
   return /*#__PURE__*/React.createElement("div", {
@@ -77,9 +11,9 @@ const Wrapper = props => {
     }
   }, props.children);
 };
-const ClientRoutes = async () => {
-  const tested = await testRun();
-  console.log("THE TESTED", tested);
+const ClientRoutes = props => {
+  let astRoutes = typeof routes === "undefined" ? [] : routes;
+  let astComps = typeof comps === "undefined" ? {} : comps;
   const {
     layout
   } = useAppContext();
@@ -88,25 +22,11 @@ const ClientRoutes = async () => {
   const Layout = layout ? layout : () => {
     return /*#__PURE__*/React.createElement(React.Fragment, null);
   };
-  return /*#__PURE__*/React.createElement(Router, null, /*#__PURE__*/React.createElement(Layout, null, /*#__PURE__*/React.createElement(Routes, null, routes.map((r, index) => {
-    console.log("THE COMPONENT");
-    let Component = comps[r.component];
+  return /*#__PURE__*/React.createElement(Router, null, /*#__PURE__*/React.createElement(Layout, null, /*#__PURE__*/React.createElement(Routes, null, astRoutes.map((r, index) => {
+    let Component = astComps[r.component];
     const ComponentWrapped = () => {
       return /*#__PURE__*/React.createElement(Wrapper, null, /*#__PURE__*/React.createElement(Component, null));
     };
-    // console.log("FUNCTION TO RENDER", funcToRender)
-    // return (
-    //   <Wrapper key={index}>
-    //     <Public
-    //       {...props}
-    //       exact
-    //       path={r.path}
-    //       component={component}
-    //       key={index}
-    //     />
-    //   </Wrapper>
-    // );
-
     return /*#__PURE__*/React.createElement(Route
     // {...rest}
     , {
@@ -119,19 +39,21 @@ const ClientRoutes = async () => {
     });
   }))));
 };
-const RoutesAsServerRoutes = async () => {
-  const tested = await testRun();
-  console.log("THE TESTED", tested);
+const RoutesAsServerRoutes = props => {
+  const {
+    goodies = {}
+  } = props;
+  // const {routes=[], comps={}} = goodies
+  const gRoutes = goodies?.routes || [];
+  const gComps = goodies?.comps || {};
   const {
     layout
   } = useAppContext();
   const Layout = layout ? layout : () => {
     return /*#__PURE__*/React.createElement(React.Fragment, null);
   };
-
-  // if (!Layout || Layout) return <div>My react component</div>;
-  return /*#__PURE__*/React.createElement(Layout, null, /*#__PURE__*/React.createElement(Routes, null, routes.map((r, index) => {
-    let Component = comps[r.component];
+  return /*#__PURE__*/React.createElement(Layout, null, /*#__PURE__*/React.createElement(Routes, null, gRoutes.map((r, index) => {
+    let Component = gComps[r.component];
     let ComponentWrapped = () => {
       return /*#__PURE__*/React.createElement(Wrapper, null, /*#__PURE__*/React.createElement(Component, null));
     };
@@ -142,13 +64,7 @@ const RoutesAsServerRoutes = async () => {
     });
   })));
 };
-const testRun = () => {
-  return Promise((resolve, reject) => {
-    resolve({
-      name: "test"
-    });
-  });
-};
+
 // export { RoutesAsServerRoutes, routes };
 // export default ClientRoutes;
-export { RoutesAsServerRoutes, routes, ClientRoutes };
+export { RoutesAsServerRoutes, ClientRoutes };
