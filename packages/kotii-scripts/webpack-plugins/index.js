@@ -3,6 +3,7 @@ import FinishCompilationOnErrorWebpackPlugin from "./finishCompilationOnErrorWeb
 import GetStatsWebpackPlugin from "./getStatsWebpackPlugin.js";
 import HookToLoaderResolutionWebpackPlugin from "./hookToLoaderResolutionWebpackPlugin.js";
 import RemoveImportsWebpackPlugin from "./removeImportsWebpackPlugin.js";
+import StatsPrintWebpackPlugin from "./statsPrintWebpackPlugin.js";
 import WatchOwnFilesWebpackPlugin from "./watchOwnFilesWebpackPlugin.js";
 export {
   RemoveImportsWebpackPlugin,
@@ -11,4 +12,5 @@ export {
   FinishCompilationOnErrorWebpackPlugin,
   HookToLoaderResolutionWebpackPlugin,
   GetStatsWebpackPlugin,
+  StatsPrintWebpackPlugin,
 };

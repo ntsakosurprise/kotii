@@ -462,6 +462,7 @@ methods.restartSever = function (addPath, eventType = "", runStatus = null) {
 
   self.debug(`PLUGIN:: WATCHR:: FILE ${eventType} event`, addPath, runStatus);
   process.env.CUSTOM_RESTART = true;
+
   process.env.ANZII_OPEN_BROWSER = "false";
   self.debug("PLUGIN:: THE PROCESS.ENV.PORT", JSON.stringify(process.env.PORT));
   self.debug("PLUGIN:: THE WATCHER ADD", process.env.PORT);
