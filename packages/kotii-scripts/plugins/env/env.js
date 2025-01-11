@@ -11,8 +11,8 @@ class Env {
   }
   handleEnvironmentVariables(data) {
     const self = this;
-    self.logSync("Getting Environment Variables");
-    self.logSync(data);
+    self.debug("Getting Environment Variables", data);
+
     self.callback = data.callback;
     let message = "Environement variables check done";
     const { envPath = "" } = data;
