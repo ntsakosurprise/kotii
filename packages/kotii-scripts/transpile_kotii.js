@@ -3,11 +3,13 @@ import generate from "@babel/generator";
 import parser from "@babel/parser";
 import traverse from "@babel/traverse";
 import fs from "fs";
+import { loggas, logger } from "kotii-logger";
 import path from "path";
 // let options = {
 //   presets: ["@babel/preset-react"],
 //   plugins: ["@babel/plugin-syntax-import-assertions"],
 // };
+logger.setNameSpaces([{ namespace: "transpilation:prod", id: "transpile" }]);
 
 let options = {
   presets: [
@@ -68,15 +70,15 @@ let changeList = [
 ];
 
 const transpileFiles = (toTranspile) => {
-  console.log("THE FILES TO TRANSPILE", filesToTranspile);
+  loggas.transpile.debug("THE FILES TO TRANSPILE", filesToTranspile);
   toTranspile.forEach((file) => {
-    console.log("THE FILE", file);
+    loggas.transpile.debug("THE FILE", file);
     if (file?.isFolder) {
       if (!fs.existsSync(file.destination)) {
         fs.mkdirSync(file.destination);
       }
       fs.readdirSync(file.source).forEach((sourceFile) => {
-        console.log("THE READDIR SOURCE FILE", sourceFile);
+        loggas.transpile.debug("THE READDIR SOURCE FILE", sourceFile);
         let sourceFileFullPath = `${file.source}${path.sep}${sourceFile}`;
         if (fs.statSync(sourceFileFullPath).isDirectory()) {
           transpileFiles([
@@ -94,7 +96,7 @@ const transpileFiles = (toTranspile) => {
           //       destination: `${file.destination}${path.sep}${sourceFile}`,
           //     });
           //   } else if (file?.recursive) {
-          //     console.log("RECURSSIVE KEY", file, sourceFile);
+          //     loggas.transpile.debug("RECURSSIVE KEY", file, sourceFile);
           //     transpileFile({
           //       source: `${file.source}${path.sep}${sourceFile}`,
           //       destination: `${file.destination}${path.sep}${sourceFile}`,
@@ -114,24 +116,27 @@ const transpileFiles = (toTranspile) => {
     } else {
       transpileFile(file);
     }
+
     // process.exit();
   });
+  loggas.transpile.info("Transpilation successfully completed");
 };
 
 const transpileFile = (file) => {
   let source = "";
-  console.log("THE FILE SOURCE");
+  loggas.transpile.debug("THE FILE SOURCE");
   source = fs.readFileSync(file.source, {
     encoding: "utf-8",
   });
   let transpiled = babel.transformSync(source, options);
-  console.log("THE FILE DESTINATION", file.destination);
+  loggas.transpile.debug("THE FILE DESTINATION", file.destination);
 
   //   const jsFile = readFileSync(file.destination);
   let ast = parser.parse(transpiled.code.toString(), {
     sourceType: "module",
   });
   let isUp = updateJSXImportDeclarations(ast);
+  updateJSXExportDeclarations(ast);
   const { code: genCode } = generate.default(ast);
   fs.writeFileSync(file.destination.replace(/.jsx$/, ".js"), `${genCode}`);
 };
@@ -142,8 +147,8 @@ const updateJSXImportDeclarations = function (ast) {
   traverse.default(ast, {
     ImportDeclaration(path) {
       let importSpecifier = path.node.source.value;
-      console.log("AST NODE AFTER Import Node", importSpecifier);
-      //   console.log("AST NODE SPECIFIER", path.node.specifiers[0]?.local.name);
+      loggas.transpile.debug("AST NODE AFTER Import Node", importSpecifier);
+      //   loggas.transpile.debug("AST NODE SPECIFIER", path.node.specifiers[0]?.local.name);
 
       if (importSpecifier === "./pages.js") {
         path.node.source.value = "/.kotii-land/pages.js";
@@ -151,7 +156,7 @@ const updateJSXImportDeclarations = function (ast) {
       }
 
       if (/.jsx$/.test(importSpecifier)) {
-        console.log(
+        loggas.transpile.debug(
           "IT IS JSX",
           importSpecifier,
           /^(\.+)/.test(importSpecifier)
@@ -189,13 +194,13 @@ const updateJSXImportDeclarations = function (ast) {
       //     );
       //     return;
       //   }
-      //   console.log("NOT JSX", /^(\.+)/.test(path.node.source.value));
+      //   loggas.transpile.debug("NOT JSX", /^(\.+)/.test(path.node.source.value));
       //   if (
       //     !/^(\.+)/.test(path.node.source.value) &&
       //     !isBuiltin(path.node.source.value) &&
       //     meta.alias[path.node.source.value]
       //   ) {
-      //     console.log("SOURCE NOT RELATIVE", path.node.source.value);
+      //     loggas.transpile.debug("SOURCE NOT RELATIVE", path.node.source.value);
       //     path.node.source.value = `${meta.appMain}${
       //       meta.alias[path.node.source.value]
       //     }.js`;
@@ -208,6 +213,38 @@ const updateJSXImportDeclarations = function (ast) {
       //   self.astDeleteNode(routesNode, compsNode, local);
       //   path.remove();
       // }
+    },
+  });
+  return isUpdated;
+};
+const updateJSXExportDeclarations = function (ast) {
+  let isUpdated = false;
+  traverse.default(ast, {
+    ExportNamedDeclaration(path) {
+      let exportSpecifier = path.node.source ? path.node.source.value : "";
+      loggas.transpile.debug("export specifier", exportSpecifier);
+      //   loggas.transpile.debug("AST NODE SPECIFIER", path.node.specifiers[0]?.local.name);
+
+      if (/.jsx$/.test(exportSpecifier)) {
+        loggas.transpile.debug(
+          "IT IS JSX",
+          exportSpecifier,
+          /^(\.+)/.test(exportSpecifier)
+        );
+        path.node.source.value = exportSpecifier.replace(/.jsx$/, ".js");
+        isUpdated = true;
+      }
+      for (let ch = 0; ch < changeList.length; ch++) {
+        let toPrune = changeList[ch].toPrune;
+        let toChangeTo = changeList[ch].toChangeTo;
+        if (exportSpecifier.indexOf(toPrune) > 0) {
+          path.node.source.value = path.node.source.value.replace(
+            toPrune,
+            toChangeTo
+          );
+          break;
+        }
+      }
     },
   });
   return isUpdated;
