@@ -8,6 +8,7 @@ import {
   FinishCompilationOnErrorWebpackPlugin,
   HookToLoaderResolutionWebpackPlugin,
   RemoveImportsWebpackPlugin,
+  StatsPrintWebpackPlugin,
   WatchOwnFilesWebpackPlugin,
 } from "../../webpack-plugins/index.js";
 
@@ -34,6 +35,10 @@ logger.setNameSpaces([
   {
     namespace: "webpack:compilation:removeImportsWebpackPlugin",
     id: "removeImportsWebpackPlugin",
+  },
+  {
+    namespace: "webpack:compilation:statsPrintWebpackPlugin",
+    id: "statsPrintWebpackPlugin",
   },
 ]);
 
@@ -305,6 +310,7 @@ export default (options) => {
         },
         loggas
       ),
+      new StatsPrintWebpackPlugin(loggas),
     ],
   };
 };

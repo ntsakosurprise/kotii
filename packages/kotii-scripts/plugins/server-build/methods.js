@@ -36,61 +36,36 @@ methods.handleServerBuild = function (data) {
   const babelJson = JSON.parse(
     readFileSync(`${kotiiRootPath}/babel.server.build.json`)
   );
-  let updatedBabelJsonPlugins = babelJson.plugins;
-  updatedBabelJsonPlugins.unshift([
-    `${path.join(
-      kotiiRootPath,
-      "./babel-plugins/scoped-styles-plugin/index.js"
-    )}`,
-    {
-      appFolder: targetMain,
-      appSrc: targetSource,
-      cwd: kotiiRootPath,
-    },
-  ]);
-  babelJson.plugins = [...updatedBabelJsonPlugins];
-  self.debug("BABEL JSON PLUGINS", babelJson.plugins);
-  saveToFile(
-    path.join(kotiiRootPath, "babel.server.build.json"),
-    JSON.stringify(babelJson, null, 2)
-  );
-  // const kottiBabelRc = JSON.parse(readFileSync(`${cwd}/babel.server.json`));
-  // const ignores = self.handleIgnores(data.payload.targetSource, kottiBabelRc);
-  // self.debug("MADE IGNORES", ignores);
-  // const HTML = readFileSync(`${cwd}/test.html`);
-  // self.debug("HTML-PARSER", HTML);
-  // const root = parse(HTML);
-  // let json = fs.readFileSync(`${process.cwd()}/styles.json`, {
-  //   encoding: "utf8",
-  // });
-  // self.debug("THE JSON", json);
+  let isPluginAlreadySet =
+    babelJson.plugins[0][0].indexOf("scoped-styles-plugin") > 0 ? true : false;
+  self.debug("Contains Scoped Plugin", isPluginAlreadySet);
+  if (!isPluginAlreadySet) {
+    let updatedBabelJsonPlugins = babelJson.plugins;
+    updatedBabelJsonPlugins.unshift([
+      `${path.join(
+        kotiiRootPath,
+        "./babel-plugins/scoped-styles-plugin/index.js"
+      )}`,
+      {
+        appFolder: targetMain,
+        appSrc: targetSource,
+        cwd: kotiiRootPath,
+      },
+    ]);
+    babelJson.plugins = [...updatedBabelJsonPlugins];
+    self.debug("BABEL JSON PLUGINS", babelJson.plugins);
+    saveToFile(
+      path.join(kotiiRootPath, "babel.server.build.json"),
+      JSON.stringify(babelJson, null, 2)
+    );
+  }
 
-  // const head = Array.from(root.getElementsByTagName("head"))[0];
-  // self.debug(
-  //   "HTML-PARSER-ROOT BEFORE",
-  //   head.insertAdjacentHTML(
-  //     "beforeend",
-  //     "<style data-custom-style='mystyle'>p{color:red}</style>"
-  //   )
-  // );
-  // // self.debug(
-  // //   "StyleEl",
-  // //   head.appendChild("<style data-custom-style='mystyle'>p{color:red}</style>")
-  // // );
-  // self.debug("HTML-PARSER-ROOT");
-  // saveToFile(`${cwd}/test.html`, root.toString());
-  self.debug("THE CWD", cwd);
   self.debug("THE LOCAL PACKAGE.JSON", localPackageJson);
   localPackageJson["scripts"] = {
     ...localPackageJson.scripts,
     "build-ssr": `babel --config-file ${kotiiRootPath}/babel.server.build.json  --out-dir ${destination}${path.sep}src ${targetSource}`,
     // "babel-ssr": `babel ${data.payload.targetSource} --out-dir ${data.payload.destination}`,
   };
-
-  // saveToFile(
-  //   path.join(cwd, "babel.server.json"),
-  //   JSON.stringify(ignores, null, 2)
-  // );
 
   saveToFile(
     path.join(kotiiRootPath, "package.json"),
@@ -135,11 +110,20 @@ methods.handleServerBuild = function (data) {
         path.join(kotiiRootPath, "babel.server.build.json"),
         JSON.stringify(babelJson, null, 2)
       );
-      self.saveRoutesInUserLand(routes).then(() => {
-        self.doKotiiLandPagesFile(destination, {
-          contextApp,
+      self
+        .saveRoutesInUserLand(routes)
+        .then(() => {
+          self.doKotiiLandPagesFile(destination, {
+            contextApp,
+            targetMain,
+          });
+        })
+        .catch((saveErr) => {
+          self.error(
+            chalk.whiteBright.bold("Building project has failed with error:"),
+            chalk.bgRedBright(saveErr)
+          );
         });
-      });
     })
     .catch((error) => {
       self.debug("BUILD FAILED WITH FAIURE", error);
@@ -310,6 +294,7 @@ methods.updateJSXImportDeclarations = function (ast, state) {
   const traverse = self.traverse;
   self.debug("THE APP STATE", state);
   const appManifest = state?.appManifest;
+  const isPages = state?.isPages ? true : false;
   // let removedImportsIds = [];
 
   let isUpdated = false;
@@ -325,6 +310,12 @@ methods.updateJSXImportDeclarations = function (ast, state) {
           /^(\.+)/.test(path.node.source.value)
         );
         path.node.source.value = path.node.source.value.replace(/.jsx$/, ".js");
+        isPages
+          ? (path.node.source.value = path.node.source.value.replace(
+              state.replacePath,
+              state.pagesPathsDestination
+            ))
+          : null;
         isUpdated = true;
         return;
       }
@@ -432,7 +423,11 @@ methods.doKotiiLandPagesFile = function (destination, options) {
   self.debug("THE JS FILE", jsFile);
   self.debug("THE AST", ast);
 
-  let updateResults = self.updateJSXImportDeclarations(ast);
+  let updateResults = self.updateJSXImportDeclarations(ast, {
+    isPages: true,
+    pagesPathsDestination: destination,
+    replacePath: options.targetMain,
+  });
   if (updateResults) {
     const { code: genCode } = generate(ast);
     // const modifiedCode = genCode;
@@ -444,7 +439,7 @@ methods.doKotiiLandPagesFile = function (destination, options) {
     );
     saveToFile(`${madeFolder}${path.sep}pages.js`, `${genCode}`);
     fs.copyFileSync(
-      `${kotiiRootPath}${path.sep}app_routes.js`,
+      `${kotiiKotiiLandPath}${path.sep}app_routes.js`,
       `${madeFolder}${path.sep}routes.js`
     );
     saveToFile(
@@ -467,6 +462,7 @@ methods.syncDirectories = function (
   destination,
   ignores = []
 ) {
+  const self = this;
   let allDirectories = [];
   fs.readdirSync(sourceDirectoryPath).forEach((sourceFile) => {
     self.debug("THE READDIR SOURCE FILE", sourceFile);

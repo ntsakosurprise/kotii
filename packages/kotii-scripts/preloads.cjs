@@ -14,7 +14,7 @@ const setEnvironmentForFramework = () => {
     ? "false"
     : "true";
   // if (!process.env?.DEBUG) process.env.DEBUG = "anzii:*";
-  process.env.ANZII_SHOW_DEBUG_LOGS = "true";
+  // process.env.ANZII_SHOW_DEBUG_LOGS = "true";
 };
 const setEnvironmentForUser = () => {
   let workdir = process.cwd();

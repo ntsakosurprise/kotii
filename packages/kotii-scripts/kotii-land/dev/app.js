@@ -4,7 +4,7 @@ import { loggas } from "kotii-logger";
 import plugins from "../../plugins/index.js";
 
 process.on("beforeExit", () => {
-  loggas.startUp.log("THE PROCESS IS ABOUT TO EXIST");
+  loggas.startUp.debug("THE PROCESS IS ABOUT TO EXIST");
 });
 
 process.on("exit", function () {
@@ -16,6 +16,8 @@ process.on("exit", function () {
       detached: true,
       stdio: "inherit",
     });
+  } else {
+    process.env.KOTII_WEBPACK_COMPILATION_SET = "false";
   }
 });
 import("/kotii-user-api/plugins").then((imported) => {
