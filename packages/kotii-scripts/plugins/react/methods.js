@@ -112,13 +112,21 @@ methods.runReactView = function (data) {
       }
     }
 
+    let layoutStaticAbsolutePath =
+      process.env.NODE_ENV == "development"
+        ? `/src/components/startup/index.jsx`
+        : `/src/components/startup/index.js`;
     let layoutRoot = await self.doImport(
-      `/src/components/startup/index.jsx`,
+      `${layoutStaticAbsolutePath}`,
       true,
       false
     );
     if (!self.comps) {
-      self.comps = await self.doImport(`/kotii-land/dev/pages.js`, true, false);
+      let compsAbsolutePath =
+        process.env.NODE_ENV == "development"
+          ? `/kotii-land/dev/pages.js`
+          : `.kotii-land/pages.js`;
+      self.comps = await self.doImport(`${compsAbsolutePath}`, true, false);
     }
 
     let effectsStore = self.effectsData;
