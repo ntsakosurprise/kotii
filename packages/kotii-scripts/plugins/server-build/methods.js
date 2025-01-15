@@ -188,6 +188,8 @@ methods.handleIgnores = function (root) {
     ".env.production",
     ".env.staging",
     ".env.development",
+    ".git",
+    "git",
   ];
   let absoluteIgnores = ignores.map((ig) => {
     return `${root}${path.sep}${ig}`;
@@ -511,38 +513,69 @@ methods.saveRoutesInUserLand = function (routes) {
   // const cwd = getWorkingFolder();
 
   return new Promise((resolve, reject) => {
-    let requiresRoutes = routes.filter((rou) => {
-      if (rou.requiresData) {
-        return rou;
-      }
-    });
+    // let requiresRoutes = routes.filter((rou) => {
+    //   if (rou.requiresData) {
+    //     return rou;
+    //   }
+    // });
     let routesToPath = `${kotiiKotiiLandPath}${path.sep}app_routes.js`;
     self.debug("THE ROUTES PATHS BUILD", routesToPath);
-    fs.writeFile(
+    fs.writeFileSync(
       routesToPath,
-      `const routes = ${JSON.stringify(routes)}; export default routes`,
-      (err, succes) => {
-        if (err) {
-          self.debug("SAVING ROUTES FAILED WITH ERR", err);
-        }
-        let fileContent = fs.readFileSync(routesToPath, {
-          encoding: "utf8",
-        });
-        self.debug("THE ROUTES PATHS BUILD AST BEFORE", routesToPath);
-        let ast = parser.parse(fileContent, {
-          sourceType: "module",
-        });
-        self.debug("THE ROUTES PATHS BUILD AST", ast);
-        self.addObjectExpressionProperty(ast, requiresRoutes);
-        const { code: genCode } = generate(ast);
-        // const modifiedCode = genCode;
-
-        saveToFile(routesToPath, `${genCode}`);
-        resolve(true);
-      }
+      `const routes = ${JSON.stringify(routes, null, 2)}; export default routes`
     );
+    resolve(true);
   });
 };
+
+// methods.saveRoutesInUserLand = function (routes) {
+//   const self = this;
+//   const pao = self.pao;
+//   const traverse = self.traverse;
+//   const generate = self.generate;
+//   const parser = self.parser;
+//   const t = self.t;
+//   const execSync = self.execSync;
+//   const loadFileSync = pao.pa_loadFileSync;
+//   const loadFile = pao.pa_loadFile;
+//   const readFileSync = pao.pa_readFileSync;
+//   const saveToFile = pao.pa_saveToFile;
+//   const getWorkingFolder = pao.pa_getWorkingFolder;
+//   // const cwd = getWorkingFolder();
+
+//   return new Promise((resolve, reject) => {
+//     let requiresRoutes = routes.filter((rou) => {
+//       if (rou.requiresData) {
+//         return rou;
+//       }
+//     });
+//     let routesToPath = `${kotiiKotiiLandPath}${path.sep}app_routes.js`;
+//     self.debug("THE ROUTES PATHS BUILD", routesToPath);
+//     fs.writeFile(
+//       routesToPath,
+//       `const routes = ${JSON.stringify(routes)}; export default routes`,
+//       (err, succes) => {
+//         if (err) {
+//           self.debug("SAVING ROUTES FAILED WITH ERR", err);
+//         }
+//         let fileContent = fs.readFileSync(routesToPath, {
+//           encoding: "utf8",
+//         });
+//         self.debug("THE ROUTES PATHS BUILD AST BEFORE", routesToPath);
+//         let ast = parser.parse(fileContent, {
+//           sourceType: "module",
+//         });
+//         self.debug("THE ROUTES PATHS BUILD AST", ast);
+//         self.addObjectExpressionProperty(ast, requiresRoutes);
+//         const { code: genCode } = generate(ast);
+//         // const modifiedCode = genCode;
+
+//         saveToFile(routesToPath, `${genCode}`);
+//         resolve(true);
+//       }
+//     );
+//   });
+// };
 // methods.saveAppManifestInUserLand = function (appManifest, resources) {
 //   const self = this;
 //   const pao = self.pao;
