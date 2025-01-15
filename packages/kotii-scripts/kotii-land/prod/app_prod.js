@@ -1,7 +1,7 @@
 import { anzii } from "anzii";
 import plugins from "../../plugins/index_pruned.js";
-process.env.DEBUG = "anzii:*";
-process.env.ANZII_SHOW_DEBUG_LOGS = "true";
+// process.env.DEBUG = "anzii:*";
+// process.env.ANZII_SHOW_DEBUG_LOGS = "true";
 
 import("/kotii-user-api/plugins").then((imported) => {
   console.log("THE IMPORTED USER PLUGINS", imported);
