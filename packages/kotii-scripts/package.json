@@ -177,6 +177,7 @@
     "CONTRIBUTING.md",
     "LICENSE",
     "preloads.cjs",
+    "globals.mjs",
     "package.json"
   ],
   "browser": {
