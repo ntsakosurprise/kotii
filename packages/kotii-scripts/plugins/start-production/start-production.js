@@ -10,6 +10,7 @@ class StartProduction {
     this.doStartUp = methods.doStartUp;
     this.copyFromToFolder = methods.copyFromToFolder;
     this.createFolder = methods.createFolder;
+    this.doProdRoutes = methods.doProdRoutes;
   }
 }
 export default StartProduction;
