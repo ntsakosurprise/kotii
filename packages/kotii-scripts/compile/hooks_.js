@@ -5,6 +5,7 @@ import { isBuiltin } from "node:module";
 import { pathToFileURL } from "node:url";
 import path from "path";
 import babelJson from "../babel.server.json" assert { type: "json" };
+import { getNodejsForeignData } from "../globals.mjs";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
 
 let meta = null;
@@ -24,7 +25,6 @@ logger.setNameSpaces([
 
 let extJsx = ".jsx";
 let extJS = ".js";
-let extJson = ".json";
 let fileLoaderExts = [
   ".png",
   ".jpg",
@@ -37,6 +37,7 @@ let fileLoaderExts = [
   ".csv",
   ".tsv",
   ".xml",
+  ".json",
 ];
 let extensions = [".js", ".jsx", ".tsx", ".ts"];
 let nodeModulesRegex = /node_modules/;
@@ -118,8 +119,23 @@ export async function load(url, context, nextLoad) {
       loggas.load.debug("The PNG", fileExtension);
       let pathName = new URL(url).pathname;
       let fileName = `/${path.basename(pathName)}`;
+      switch (fileExtension) {
+        case ".json":
+          source = await getNodejsForeignData("json", pathName);
+          break;
+        case ".csv":
+          source = await getNodejsForeignData("csv", pathName);
+          break;
+        case ".xml":
+          source = await getNodejsForeignData("xml", pathName);
+          break;
+        default:
+          source = `export default ${JSON.stringify(fileName)}`;
+      }
 
-      source = `export default ${JSON.stringify(fileName)}`;
+      loggas.load.debug("filename.pathname", fileName, pathName);
+
+      loggas.load.debug("FileName source", source);
       return {
         format: "module",
         shortCircuit: true,
@@ -140,16 +156,6 @@ export async function load(url, context, nextLoad) {
       format: format ? (format === "commonjs" ? "module" : format) : "module",
       shortCircuit: true,
       source: result.code,
-    };
-  } else if (fileExtension === extJson) {
-    let contents = fs.readFileSync(new URL(url).pathname, {
-      encoding: "utf-8",
-    });
-    let source = `export default ${JSON.stringify(contents)}`;
-    return {
-      format: "module",
-      shortCircuit: true,
-      source: source,
     };
   }
 
