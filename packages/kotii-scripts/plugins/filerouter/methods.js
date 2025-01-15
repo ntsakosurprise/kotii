@@ -21,7 +21,8 @@ methods.handleFileRoutes = async function (data) {
   const { path: filePaths } = payload;
   self.debug("FILE PATHS", filePaths);
   const pagesSource = filePaths.appSrc;
-  const appManifest = filePaths.appManifest;
+  const isProductionRequest = filePaths?.isProductionRequest || false;
+  // const appManifest = filePaths?.appManifest;
   let manifestData = null;
   const cwd = getWorkingFolder();
   // !self.kotiiUtils ? await self.emit({ type: "get-kotii-utils" }) : "";
@@ -32,72 +33,66 @@ methods.handleFileRoutes = async function (data) {
     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
   );
   // appManifest ? manifestData = loadFileSync(appManifest)) : null;
+  if (isProductionRequest) {
+    return self
+      .getRoutesHelper(pagesPaths, pagesSource)
+      .then((routesObject) => {
+        let routes = self.buildServerRoutes(routesObject);
+        self.callback({ routes, message: "Routes configured" });
+      });
+  } else {
+    const filePath = `/kotii-land/dev/manifest.js`;
+    self
+      .doImport(filePath, false, false)
+      .then(async (imported) => {
+        // self.debug("Impored", imported.module);
 
-  const filePath = `/kotii-land/dev/manifest.js`;
-  // if (filePath) {
-  //   self.debug("IMPORT LAOD THE REQUIRED OBJECT");
-  //   const manifes = require(filePath);
-  //   self.debug("IMPORT LOAD THE REQUIRE WITH ", manifes);
-  //   return;
-  // }
+        let manifestJS = imported;
+        let meta = manifestJS.meta;
+        self.debug("META ", meta);
 
-  // const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
-  // self.debug("THE PAGES routesObject", routesObject);
+        let routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
 
-  self
-    .doImport(filePath, false, false)
-    .then(async (imported) => {
-      // self.debug("Impored", imported.module);
-      let manifestJS = imported;
-      let meta = manifestJS.meta;
-      self.debug("META ", meta);
-      // const buildJS = await self.doImport(
-      //   `/kotii-land/dev/pages.js?fresh=true`,
-      //   false,
-      //   false
-      // );
+        let sendToRequestor = {
+          message: "Routes Configured",
+          resources: payload.path,
+          routes: self.buildServerRoutes(routesObject),
+          isDomainCreated: meta?.isDomainCreated || false,
+        };
 
-      let routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
+        const { lastCompsCount = 0, compsSource, compsPaths } = meta;
+        const pagesPathsLen = pagesPaths.length;
 
-      let sendToRequestor = {
-        message: "Routes Configured",
-        resources: payload.path,
-        routes: self.buildServerRoutes(routesObject),
-        isDomainCreated: meta?.isDomainCreated || false,
-      };
+        self.debug("THE SEND TO:", sendToRequestor);
 
-      const { lastCompsCount = 0, compsSource, compsPaths } = meta;
-      const pagesPathsLen = pagesPaths.length;
-
-      self.debug("THE SEND TO:", sendToRequestor);
-
-      if (
-        lastCompsCount === 0 ||
-        !compsSource ||
-        compsPaths.length === 0 ||
-        compsSource !== pagesSource
-      ) {
-        self.addToAST({
-          objectToAdd: routesObject,
-          pagesPaths,
-          source: pagesSource,
-          isNewSource: compsSource !== pagesSource,
-        });
-        return self.callback(sendToRequestor);
-      } else {
-        self.addOrRemoveByAST({
-          pagesPaths,
-          compsPaths,
-          pagesSource,
-          routesObject,
-          compsPagesEqual: lastCompsCount === pagesPathsLen,
-        });
-        return self.callback(sendToRequestor);
-      }
-    })
-    .catch((err) => {
-      self.debug("MANIFEST.JS: ERROR IMPORTING MANIFEST-JS", err);
-    });
+        if (
+          lastCompsCount === 0 ||
+          !compsSource ||
+          compsPaths.length === 0 ||
+          compsSource !== pagesSource
+        ) {
+          self.addToAST({
+            objectToAdd: routesObject,
+            pagesPaths,
+            source: pagesSource,
+            isNewSource: compsSource !== pagesSource,
+          });
+          return self.callback(sendToRequestor);
+        } else {
+          self.addOrRemoveByAST({
+            pagesPaths,
+            compsPaths,
+            pagesSource,
+            routesObject,
+            compsPagesEqual: lastCompsCount === pagesPathsLen,
+          });
+          return self.callback(sendToRequestor);
+        }
+      })
+      .catch((err) => {
+        self.debug("MANIFEST.JS: ERROR IMPORTING MANIFEST-JS", err);
+      });
+  }
 };
 methods.handleRemovePagesImport = async function (data) {
   const self = this;
@@ -174,162 +169,7 @@ methods.addOrRemoveByAST = function ({
     });
   }
 };
-// methods.handleFileRoutes = async function (data) {
-//   const self = this;
-//   const pao = self.pao;
-//   const getWorkingFolder = pao.pa_getWorkingFolder;
-//   const isExistingDir = pao.pa_isExistingDir;
-//   const saveToFile = pao.pa_saveToFile;
-//   const loadFileSync = pao.pa_loadFileSync;
-//   // self.debug("HANDLE FILE ROUTES DATA", data);
-//   const { payload } = data;
-//   self.callback = data.callback;
 
-//   const { path: filePaths } = payload;
-//   self.debug("FILE PATHS", filePaths);
-//   const pagesSource = filePaths.appSrc;
-//   const appManifest = filePaths.appManifest;
-//   let manifestData = null;
-//   const cwd = getWorkingFolder();
-//   //self.debug("EXECSYNC", execSync);
-//   //self.enableBabelRegister(cwd);
-//   const pagesPaths = self.getPages(
-//     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
-//   );
-//   // appManifest ? manifestData = loadFileSync(appManifest)) : null;
-
-//   const filePath = `/kotii-land/dev/manifest.js`;
-//   // if (filePath) {
-//   //   self.debug("IMPORT LAOD THE REQUIRED OBJECT");
-//   //   const manifes = require(filePath);
-//   //   self.debug("IMPORT LOAD THE REQUIRE WITH ", manifes);
-//   //   return;
-//   // }
-
-//   // const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
-//   // self.debug("THE PAGES routesObject", routesObject);
-
-//   self
-//     .doImport(filePath, false, false)
-//     .then(async (imported) => {
-//       // self.debug("Impored", imported.module);
-//       let manifestJS = imported;
-//       let meta = manifestJS.meta;
-//       self.debug("META ", meta);
-//       const buildJS = await self.doImport(
-//         `/kotii-land/dev/pages.js`,
-//         false,
-//         false
-//       );
-//       self.debug("BUILD:JS", buildJS);
-//       const routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
-//       const reactServerRoutes = self.buildServerRoutes(
-//         buildJS.routes,
-//         routesObject
-//       );
-//       let sendToRequestor = {
-//         message: "Routes Configured",
-//         resources: payload.path,
-//         routes: reactServerRoutes,
-//         routesObject: routesObject,
-//       };
-//       self.debug("THE ROUTES", reactServerRoutes);
-//       // if (meta || !meta) {
-//       //   return self.callback({
-//       //     message: "Routes Configured",
-//       //     resources: payload.path,
-//       //     routes: reactServerRoutes,
-//       //     routesObject: routesObject,
-//       //   });
-//       // }
-
-//       const { lastCompsCount = 0, compsSource, compsPaths } = meta;
-//       const pagesPathsLen = pagesPaths.length;
-//       let renamesToAdd = [];
-//       let renamesToRemove = [];
-//       // self.debug("META", lastCompsCount, compsSource);
-//       // if (!imported || imported) return;
-
-//       if (lastCompsCount === 0 || !compsSource || compsPaths.length === 0) {
-//         const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
-//         self.addToAST(routesObject, pagesPaths, null, pagesSource);
-//         return self.callback(sendToRequestor);
-//       }
-
-//       if (compsSource !== pagesSource) {
-//         const routesObject = self.getRoutesHelper(pagesPaths, pagesSource);
-//         self.addToAST(routesObject, pagesPaths, null, pagesSource, true);
-//         return self.callback(sendToRequestor);
-//       }
-//       if (lastCompsCount === pagesPathsLen) {
-//         pagesPaths.forEach((pPath) => {
-//           if (compsPaths.indexOf(pPath) < 0) renamesToAdd.push(pPath);
-//         });
-//         compsPaths.forEach((pPath) => {
-//           if (pagesPaths.indexOf(pPath) < 0) renamesToRemove.push(pPath);
-//         });
-//         if (renamesToAdd.length === 0 && renamesToRemove.length === 0) {
-//           self.debug(
-//             "AST NODE NO NEED UPDATED REQUIRED",
-//             compsSource,
-//             lastCompsCount
-//           );
-//           self.callback({
-//             message: "Routes Configured",
-//             resources: payload.path,
-//           });
-//           return;
-//         }
-//         if (renamesToAdd.length > 0 && renamesToRemove.length > 0) {
-//           const routesObject = self.getRoutesHelper(renamesToAdd, pagesSource);
-//           self.addToAST(routesObject, pagesPaths, renamesToRemove, pagesSource);
-//         } else if (renamesToAdd.length > 0) {
-//           self.debug("AST NODE RENAMES TO ADD", renamesToAdd);
-//           const routesObject = self.getRoutesHelper(renamesToAdd, pagesSource);
-//           self.addToAST(routesObject, pagesPaths, null, pagesSource);
-//         } else if (renamesToRemove.length > 0) {
-//           self.addToAST(null, pagesPaths, toRemove, pagesSource);
-//         }
-//       } else if (lastCompsCount < pagesPathsLen) {
-//         self.debug("AST NODE lastCompsCount");
-//         let toAdd = [];
-//         let toRemove = [];
-//         pagesPaths.forEach((pPath) => {
-//           if (compsPaths.indexOf(pPath) < 0) toAdd.push(pPath);
-//         });
-//         compsPaths.forEach((pPath) => {
-//           if (pagesPaths.indexOf(pPath) < 0) toRemove.push(pPath);
-//         });
-//         self.debug("TO ADD", toAdd);
-//         self.debug("TO RENAME", toRemove);
-//         const routesObject = self.getRoutesHelper(toAdd, pagesSource);
-
-//         if (toRemove.length > 0) {
-//           self.debug("ABOUT TO PROCESS WITH REMOVE");
-//           self.addToAST(routesObject, pagesPaths, toRemove, pagesSource);
-//         } else {
-//           self.debug("ABOUT TO PROCESS WITHOUT REMOVE");
-//           self.addToAST(routesObject, pagesPaths, null, pagesSource);
-//         }
-//         // ? self.addToAST(routesObject, pagesPaths, toRemove, pagesSource)
-//         // : self.addToAST(routesObject, pagesPaths, null, pagesSource);
-//         return self.callback(sendToRequestor);
-//       } else {
-//         self.debug("AST NODE:: REMOVING");
-//         let toRemove = [];
-//         compsPaths.forEach((pPath) => {
-//           if (pagesPaths.indexOf(pPath) < 0) toRemove.push(pPath);
-//         });
-//         self.debug("TO REMOVE", toRemove);
-//         // const routesObject = self.getRoutesHelper(toAdd, pagesSource);
-//         self.addToAST(null, pagesPaths, toRemove, pagesSource);
-//         return self.callback(sendToRequestor);
-//       }
-//     })
-//     .catch((err) => {
-//       self.debug("ERR WITH IMPORT", err);
-//     });
-// };
 methods.getPages = function (filesToGet) {
   const self = this;
   self.debug("FILETS TO GET", filesToGet);
@@ -396,7 +236,7 @@ methods.getItemPathAndFile = function (item) {
   const readFileSync = pao.pa_readFileSync;
   const capitalizeFirstLetter = pao.pa_capitalizeFirstLetter;
   const camelCase = pao.pa_camelCase;
-  const extMatchPattern = /\.jsx|\.ts|\.tsx|\.jsx$/g;
+  const extMatchPattern = /\.jsx|\.ts|\.tsx|\.jsx|\.js$/g;
   let fileAsComp = null;
 
   let gotEndpoint =
