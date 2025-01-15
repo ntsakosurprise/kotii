@@ -133,6 +133,7 @@ methods.configureWebPack = function (
   envs.stringified["KOTII_APP_META"] = JSON.stringify(
     contextApp.appManifest.app
   );
+  envs.stringified["KOTII_SHOW_DEBUG_LOGS"] = true;
 
   self.debug("THE APP ENVS", envs);
 
