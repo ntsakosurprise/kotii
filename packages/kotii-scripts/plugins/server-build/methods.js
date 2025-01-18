@@ -2,12 +2,10 @@ const methods = {};
 import fs from "fs";
 import { isBuiltin } from "node:module";
 import os from "node:os";
-import Papa from "papaparse";
 import path, { resolve } from "path";
-import { parseString } from "xml2js";
+import { getNodejsForeignData } from "../../globals.mjs";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../../kotii_paths.js";
 import runNpmScript from "./runNpmScript.js";
-
 methods.init = function () {
   this.listens({
     "generate-server-build": this.handleServerBuild.bind(this),
@@ -337,32 +335,25 @@ methods.updateJSXImportDeclarations = function (ast, state) {
         });
         // source = `export default ${JSON.stringify(contents)}`;
         if (/.json$/.test(importSpecifier)) {
-          fs.writeFileSync(
-            absoluteFilePath.replace(".json", ".js"),
-            `export default ${contents}`
-          );
-          path.node.source.value = importSpecifier.replace(".json", ".js");
+          getNodejsForeignData("json", absoluteFilePath).then((data) => {
+            self.info("THE FOREING JSON", data);
+            fs.writeFileSync(absoluteFilePath.replace(".json", ".js"), data);
+            path.node.source.value = importSpecifier.replace(".json", ".js");
+          });
         }
 
         if (/.xml$/.test(importSpecifier)) {
-          // let parsedXml = xmlLoader(source);
-          parseString(contents, function (err, result) {
-            // self.callback(err, !err && "module.exports = " + JSON.stringify(result));
-            fs.writeFileSync(
-              absoluteFilePath.replace(".xml", ".js"),
-              `export default ${JSON.stringify(result)}`
-            );
+          getNodejsForeignData("xml", absoluteFilePath).then((data) => {
+            fs.writeFileSync(absoluteFilePath.replace(".xml", ".js"), data);
             path.node.source.value = importSpecifier.replace(".xml", ".js");
           });
         }
 
         if (/.csv$/.test(importSpecifier)) {
-          let parsedCsv = Papa.parse(contents);
-          fs.writeFileSync(
-            absoluteFilePath.replace(".csv", ".js"),
-            `export default ${JSON.stringify(parsedCsv)}`
-          );
-          path.node.source.value = importSpecifier.replace(".csv", ".js");
+          getNodejsForeignData("csv", absoluteFilePath).then((data) => {
+            fs.writeFileSync(absoluteFilePath.replace(".csv", ".js"), data);
+            path.node.source.value = importSpecifier.replace(".csv", ".js");
+          });
         }
 
         self.debug(
