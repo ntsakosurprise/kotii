@@ -9,6 +9,7 @@ import { getNodejsForeignData } from "../globals.mjs";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
 
 let meta = null;
+let metaChecked = false;
 let workdir = `${process.cwd()}`;
 
 logger.setNameSpaces([
@@ -116,7 +117,7 @@ export async function load(url, context, nextLoad) {
         }
       }
     } else if (fileLoaderExts.includes(fileExtension)) {
-      loggas.load.debug("The PNG", fileExtension);
+      loggas.load.debug("The PNG", fileExtension, meta && meta.useInlinedPngs);
       let pathName = new URL(url).pathname;
       let fileName = `/${path.basename(pathName)}`;
       switch (fileExtension) {
@@ -128,6 +129,9 @@ export async function load(url, context, nextLoad) {
           break;
         case ".xml":
           source = await getNodejsForeignData("xml", pathName);
+          break;
+        case ".png":
+          source = doInlinedPngs(pathName, fileName);
           break;
         default:
           source = `export default ${JSON.stringify(fileName)}`;
@@ -167,6 +171,9 @@ export async function resolve(specifier, context, nextResolve) {
   loggas.resolve.debug("RESOLVE specifier", specifier);
 
   let shouldTerminate = false;
+  if (!meta && !metaChecked) {
+    loadMeta();
+  }
   if (specifier.indexOf("../kotii-land/dev") >= 0) {
     loggas.resolve.debug("ALSO HANDLED BY LOADERS", meta);
   }
@@ -467,29 +474,36 @@ const getPagesBasePath = () => {
  * key that maps a name and an absolute path that should be resolved to some file(s)
  */
 const doMeta = (specifier) => {
-  if (!meta) {
-    let metaPath = path.resolve(workdir, "app.manifest.json");
-
-    if (fs.existsSync(metaPath)) {
-      meta = JSON.parse(
-        fs.readFileSync(metaPath, {
-          encoding: "utf8",
-        })
-      );
-
-      if (meta?.aliases && meta.aliases[specifier]) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
+  if (meta && meta?.aliases) {
+    return meta.aliases[specifier];
   } else {
-    if (meta?.aliases) {
-      return meta.aliases[specifier];
-    } else {
-      return false;
-    }
+    return false;
+  }
+};
+
+const loadMeta = () => {
+  loggas.resolve.debug("LOAD META CALLED");
+  let metaPath = path.resolve(workdir, "app.manifest.json");
+
+  if (fs.existsSync(metaPath)) {
+    meta = JSON.parse(
+      fs.readFileSync(metaPath, {
+        encoding: "utf8",
+      })
+    );
+    loggas.resolve.debug("LOADED META", meta);
+    metaChecked = true;
+  }
+};
+
+const doInlinedPngs = (fileUrl, fName) => {
+  loggas.load.debug("DO PNG GETS A CALL", fileUrl);
+  if (meta && meta.useInlinedPngs) {
+    let pngContent = fs.readFileSync(fileUrl, { encoding: "base64" });
+    const b64 = pngContent.toString("base64");
+    let dataURI = `data:image/png;base64,${b64}`;
+    return `export default ${JSON.stringify(dataURI)}`;
+  } else {
+    return `export default ${JSON.stringify(fName)}`;
   }
 };
