@@ -2,18 +2,22 @@ import fs from "node:fs";
 import Papa from "papaparse";
 import { parseString } from "xml2js";
 
-const getNodejsForeignData = async (dataType, path) => {
+const getNodejsForeignData = (dataType, path) => {
   console.log("GET FOREING", dataType, path);
-  switch (dataType.toLowerCase()) {
-    case "json":
-      return getJSON(path);
-    case "xml":
-      return await getXML(path);
-    case "csv":
-      return getCSV(path);
-    default:
-      "";
-  }
+  return new Promise((resolve) => {
+    switch (dataType.toLowerCase()) {
+      case "json":
+        return resolve(getJSON(path));
+      case "xml":
+        return getXML(path).then((data) => {
+          resolve(data);
+        });
+      case "csv":
+        return resolve(getCSV(path));
+      default:
+        "";
+    }
+  });
 };
 
 const getJSON = (absoluteFilePath) => {
