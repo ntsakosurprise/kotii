@@ -6,6 +6,7 @@
   "useHttps": true,
   "useCustomDomain": true,
   "useSetPort": true,
+  "useInlinedPngs": true,
   "build": "build",
   "static": "static",
   "aliases": {
