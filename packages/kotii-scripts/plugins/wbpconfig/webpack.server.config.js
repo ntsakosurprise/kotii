@@ -3,6 +3,7 @@ import { loggas, logger } from "kotii-logger";
 import path from "path";
 import { fileURLToPath } from "url";
 import webpack from "webpack";
+import { kotiiKotiiLandPath, kotiiRootPath } from "../../kotii_paths.js";
 import {
   DeleteFilesWebpackPlugin,
   FinishCompilationOnErrorWebpackPlugin,
@@ -154,6 +155,14 @@ export default (options) => {
             path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
           ],
     },
+    resolveLoader: {
+      alias: {
+        "syncAssets-loader": path.resolve(
+          `${kotiiRootPath}`,
+          "webpack-loaders/syncAssetsLoader.cjs"
+        ),
+      },
+    },
     module: {
       rules: [
         {
@@ -234,7 +243,7 @@ export default (options) => {
         },
 
         {
-          test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          test: /\.(svg|jpg|jpeg|gif)$/i,
           loader: "file-loader",
           options: {
             // name: "[hash].[ext]",
@@ -243,6 +252,19 @@ export default (options) => {
             // publicPath: "public/img",
             // outputPath: null,
           },
+        },
+        {
+          test: /\.png$/i,
+          use: [
+            {
+              loader: "syncAssets-loader",
+              options: {
+                referenceAssetsPath: kotiiKotiiLandPath,
+                assetsFile: "assets.manifest.json",
+                fileFormat: "json",
+              },
+            },
+          ],
         },
         {
           test: /\.m?js?x$/,
@@ -256,6 +278,7 @@ export default (options) => {
         // },
       ],
     },
+
     // devServer: {
     //   allowedHosts: "auto",
     //   client: {
