@@ -245,24 +245,22 @@ export default (options) => {
         {
           test: /\.(svg|jpg|jpeg|gif)$/i,
           loader: "file-loader",
-          options: {
-            // name: "[hash].[ext]",
-            name: "[name].[ext]",
-            // extensions: ["png", "jpg", "jpeg", "gif", "svg"],
-            // publicPath: "public/img",
-            // outputPath: null,
-          },
+          options: getFileLoaderOptions(),
         },
         {
           test: /\.png$/i,
           use: [
             {
-              loader: "syncAssets-loader",
-              options: {
-                referenceAssetsPath: kotiiKotiiLandPath,
-                assetsFile: "assets.manifest.json",
-                fileFormat: "json",
-              },
+              loader: options.useInlinedPngs
+                ? "syncAssets-loader"
+                : "file-loader",
+              options: options.useInlinedPngs
+                ? {
+                    referenceAssetsPath: kotiiKotiiLandPath,
+                    assetsFile: "assets.manifest.json",
+                    fileFormat: "json",
+                  }
+                : getFileLoaderOptions(),
             },
           ],
         },
@@ -335,5 +333,11 @@ export default (options) => {
       ),
       new StatsPrintWebpackPlugin(loggas),
     ],
+  };
+};
+
+const getFileLoaderOptions = () => {
+  return {
+    name: "[name].[ext]",
   };
 };
