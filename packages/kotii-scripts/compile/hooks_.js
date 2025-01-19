@@ -9,6 +9,8 @@ import { getNodejsForeignData } from "../globals.mjs";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
 
 let meta = null;
+let kotiiAssetsMeta = {};
+let timerActive = false;
 let metaChecked = false;
 let workdir = `${process.cwd()}`;
 
@@ -496,12 +498,28 @@ const loadMeta = () => {
   }
 };
 
+const saveKotiiAssetsMeta = () => {
+  let metaPath = path.resolve(kotiiKotiiLandPath, "assets.manifest.json");
+
+  fs.writeFileSync(metaPath, JSON.stringify(kotiiAssetsMeta, null, 2));
+
+  // metaChecked = true;
+};
+
 const doInlinedPngs = (fileUrl, fName) => {
   loggas.load.debug("DO PNG GETS A CALL", fileUrl);
   if (meta && meta.useInlinedPngs) {
     let pngContent = fs.readFileSync(fileUrl, { encoding: "base64" });
     const b64 = pngContent.toString("base64");
     let dataURI = `data:image/png;base64,${b64}`;
+    kotiiAssetsMeta[fileUrl] = dataURI;
+    if (!timerActive) {
+      timerActive = true;
+      setTimeout(() => {
+        timerActive = false;
+        saveKotiiAssetsMeta();
+      }, 1000);
+    }
     return `export default ${JSON.stringify(dataURI)}`;
   } else {
     return `export default ${JSON.stringify(fName)}`;
