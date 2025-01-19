@@ -163,6 +163,7 @@
     "babel-plugins",
     "kotii-land/",
     "webpack-plugins/",
+    "webpack-loaders/",
     ".babelrc",
     "babel.server.build.json",
     "babel.server.json",
