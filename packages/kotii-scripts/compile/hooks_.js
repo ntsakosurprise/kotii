@@ -41,6 +41,7 @@ let fileLoaderExts = [
   ".tsv",
   ".xml",
   ".json",
+  ".svg",
 ];
 let extensions = [".js", ".jsx", ".tsx", ".ts"];
 let nodeModulesRegex = /node_modules/;
@@ -135,6 +136,9 @@ export async function load(url, context, nextLoad) {
         case ".png":
           source = doInlinedPngs(pathName, fileName);
           break;
+        // case ".svg":
+        //   source = doSvgs(pathName, fileName);
+        //   break;
         default:
           source = `export default ${JSON.stringify(fileName)}`;
       }
@@ -524,4 +528,21 @@ const doInlinedPngs = (fileUrl, fName) => {
   } else {
     return `export default ${JSON.stringify(fName)}`;
   }
+};
+const doSvgs = (fileUrl, fName) => {
+  loggas.load.debug("DO SVG GETS A CALL", fileUrl);
+
+  let svgContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
+  // const b64 = pngContent.toString("base64");
+  // let dataURI = `data:image/png;base64,${b64}`;
+  // kotiiAssetsMeta[fileUrl] = svgContent;
+  // if (!timerActive) {
+  //   timerActive = true;
+  //   setTimeout(() => {
+  //     timerActive = false;
+  //     saveKotiiAssetsMeta();
+  //   }, 1000);
+  // }
+  console.log("THE SVG CONTENT", svgContent);
+  return `export default ${JSON.stringify(svgContent)}`;
 };
