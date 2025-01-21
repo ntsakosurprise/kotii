@@ -15,7 +15,11 @@ methods.handleWebpackConfig = function (data) {
   const loadFile = self.pao.pa_loadFile;
   const { contextApp } = data.payload;
   const { appEnv = "" } = contextApp;
-  const { useCustomDomain = false, useHttps = false } = contextApp.appManifest;
+  const {
+    useCustomDomain = false,
+    useHttps = false,
+    useAsDefaultPage = "/",
+  } = contextApp.appManifest;
   self.debug("WEBPACK DATA PAYLOAD", data.payload.build);
   // self.debug("SELF. AFTER SETTING CALLBACK", self);
   // self.debug("THE NODE ENV", process.env.NODE_ENV);
@@ -73,6 +77,7 @@ methods.handleWebpackConfig = function (data) {
       useHttps,
       useCustomDomain,
       useAvailablePort: false,
+      pageToOpen: useAsDefaultPage,
       domainName: useCustomDomain ? `${contextApp.appName}.com` : "localhost",
     };
     useCustomDomain
