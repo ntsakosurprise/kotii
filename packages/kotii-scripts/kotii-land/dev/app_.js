@@ -266,6 +266,8 @@ if (import.meta.webpackHot) {
 
 export {
   Head,
+  Image,
+  Svg,
   useAppContext,
   useUniversalEffect,
 } from "../../react-components/index.jsx";
