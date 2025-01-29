@@ -11,7 +11,7 @@ import {
   sassToCssConverter,
   stylusToCssConverter,
 } from "../css/index.js";
-import { getNodejsForeignData } from "../globals.mjs";
+import { getNodejsForeignData } from "../globals.cjs";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
 
 let meta = null;

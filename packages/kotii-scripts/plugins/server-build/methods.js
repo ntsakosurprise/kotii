@@ -3,7 +3,7 @@ import fs from "fs";
 import { isBuiltin } from "node:module";
 import os from "node:os";
 import path, { resolve } from "path";
-import { getNodejsForeignData } from "../../globals.mjs";
+import { getNodejsForeignData } from "../../globals.cjs";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../../kotii_paths.js";
 import runNpmScript from "./runNpmScript.js";
 methods.init = function () {
