@@ -15,7 +15,7 @@ const SvgObjectTag = (props) => {
     <object
       type="image/svg+xml"
       data={props.src}
-      class={props?.styles ? props.styles : ""}
+      className={props?.styles ? props.styles : ""}
       {...props}
     ></object>
   );
