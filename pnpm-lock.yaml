@@ -1115,6 +1115,12 @@ importers:
       papaparse:
         specifier: ^5.4.1
         version: 5.4.1
+      postcss:
+        specifier: ^8.5.1
+        version: 8.5.1
+      postcss-modules:
+        specifier: ^6.0.1
+        version: 6.0.1(postcss@8.5.1)
       prettier:
         specifier: 2.6.2
         version: 2.6.2
@@ -1172,6 +1178,9 @@ importers:
       anzii:
         specifier: file:/Users/surprisemashele/Documents/Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz
         version: file:../Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz(@babel/core@7.25.2)
+      kotii-logger:
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-logger/kotii-logger-1.0.0.tgz
+        version: file:packages/kotii-logger/kotii-logger-1.0.0.tgz
     devDependencies:
       '@babel/cli':
         specifier: ^7.24.8
@@ -4430,7 +4439,7 @@ packages:
     engines: {node: '>= 8'}
 
   anzii@file:../Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz:
-    resolution: {integrity: sha512-WGqdMZQQ0Ot/dcvXk93WJIiO6ekOkmqrBsqda0B2610m8QyYCL/RNVnxQIvArMt6MFIRCjpfpIdH7ZhQX6LN9A==, tarball: file:../Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz}
+    resolution: {integrity: sha512-dv1mkgd4h81VoB01O98rjervrAkU/RObRDFF9ETIK1r0k1/C8LdU9zKBv7hKSzouyary+MHy6exYHLBlzf5RbQ==, tarball: file:../Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz}
     version: 7.1.0
 
   app-root-dir@1.0.2:
@@ -6746,6 +6755,9 @@ packages:
   generate-function@2.3.1:
     resolution: {integrity: sha512-eeB5GfMNeevm/GRYq20ShmsaGcmI81kIX2K9XQx5miC8KdHaC6Jm0qQ8ZNeGOi7wYB8OsdxKs+Y2oVuTFuVwKQ==}
 
+  generic-names@4.0.0:
+    resolution: {integrity: sha512-ySFolZQfw9FoDb3ed9d80Cm9f0+r7qj+HJkWjeD9RBfpxEVTlVhol+gvaQB/78WbwYfbnNh8nWHHBSlg072y6A==}
+
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
     engines: {node: '>=6.9.0'}
@@ -8135,7 +8147,7 @@ packages:
     engines: {node: '>= 8'}
 
   kotii-logger@file:packages/kotii-logger/kotii-logger-1.0.0.tgz:
-    resolution: {integrity: sha512-DfcoX/xLHm/NKb2UAsS2r6Hf3J2gbWUgcMZ4YIkwPI2lntt07nkZ6rxK6UpG3cvnnuvD4rumLa+2KLe/lJrJnA==, tarball: file:packages/kotii-logger/kotii-logger-1.0.0.tgz}
+    resolution: {integrity: sha512-A+AMMwgSHb58194vzwODNqai2/G2gvkC366YNdzeaBJrYnETGH6W3wwvdLDQl1xPoFqZWr6w0OELBJNmlGrd3Q==, tarball: file:packages/kotii-logger/kotii-logger-1.0.0.tgz}
     version: 1.0.0
 
   kotii-styled@file:packages/kotii-styled/kotii-styled-1.0.0.tgz:
@@ -8143,7 +8155,7 @@ packages:
     version: 1.0.0
 
   kotii-templates@file:packages/kotii-templates/kotii-templates-1.0.0.tgz:
-    resolution: {integrity: sha512-dznt4M8BGcFWqm+fAJl1YukyeQWdD31rToSSXWOwumCXiwoBn3BzAZfPhGNThyNwPLTmJYWugthKYaP87+fBbw==, tarball: file:packages/kotii-templates/kotii-templates-1.0.0.tgz}
+    resolution: {integrity: sha512-7AZTDCu1VC2w1szPyPl/zOOnAMmDpkApsucx5Ni+xpPM8PorZV0IBUi/aXA2E//G8bzPJjyAFU3eZFXKbvMyVg==, tarball: file:packages/kotii-templates/kotii-templates-1.0.0.tgz}
     version: 1.0.0
     engines: {node: '>=17.2.0', npm: '>=8.19.2', yarn: '>=1.22.11'}
 
@@ -8253,6 +8265,10 @@ packages:
   loader-utils@2.0.4:
     resolution: {integrity: sha512-xXqpXoINfFhgua9xiqD8fPFHgkoq1mmmpE92WlDbm9rNRd/EbRb+Gqf908T2DMfuHjjJlksiK2RbHVOdD/MqSw==}
     engines: {node: '>=8.9.0'}
+
+  loader-utils@3.3.1:
+    resolution: {integrity: sha512-FMJTLMXfCLMLfJxcX9PFqX5qD88Z5MRGaZCVzfuqeZSPsyiBzs+pahDQjbIWz2QIzPZz0NX9Zy4FX3lmK6YHIg==}
+    engines: {node: '>= 12.13.0'}
 
   locate-path@2.0.0:
     resolution: {integrity: sha512-NCI2kiDkyR7VeEKm27Kda/iQHyKJe1Bu0FlTbYp3CqJu+9IFe9bLyAjMxf5ZDDbEg+iMPzB5zYyUTSm8wVTKmA==}
@@ -8851,6 +8867,11 @@ packages:
 
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
+    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
+  nanoid@3.3.8:
+    resolution: {integrity: sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
@@ -9514,6 +9535,9 @@ packages:
   picocolors@1.0.1:
     resolution: {integrity: sha512-anP1Z8qwhkbmu7MFP5iTt+wQKXgwzf7zTyGlcdzabySa9vd0Xt392U0rVmz9poOaBj0uHJKyyo9/upk0HrEQew==}
 
+  picocolors@1.1.1:
+    resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
+
   picomatch@2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
@@ -9612,6 +9636,11 @@ packages:
     peerDependencies:
       postcss: ^8.1.0
 
+  postcss-modules@6.0.1:
+    resolution: {integrity: sha512-zyo2sAkVvuZFFy0gc2+4O+xar5dYlaVy/ebO24KT0ftk/iJevSNyPyQellsBLlnccwh7f6V6Y4GvuKRYToNgpQ==}
+    peerDependencies:
+      postcss: ^8.0.0
+
   postcss-selector-parser@6.1.2:
     resolution: {integrity: sha512-Q8qQfPiZ+THO/3ZrOrO0cJJKfpYCagtMUkXbnEfmgUjwXg6z/WBeOyS9APBBPCTSiDV+s4SwQGu8yFsiMRIudg==}
     engines: {node: '>=4'}
@@ -9630,8 +9659,8 @@ packages:
     resolution: {integrity: sha512-Wglpdk03BSfXkHoQa3b/oulrotAkwrlLDRSOb9D0bN86FdRyE9lppSp33aHNPgBa0JKCoB+drFLZkQoRRYae5A==}
     engines: {node: ^10 || ^12 || >=14}
 
-  postcss@8.4.41:
-    resolution: {integrity: sha512-TesUflQ0WKZqAvg52PWL6kHgLKP6xB6heTOdoYM0Wt2UHyxNa4K25EZZMgKns3BH1RLVbZCREPpLY0rhnNoHVQ==}
+  postcss@8.5.1:
+    resolution: {integrity: sha512-6oz2beyjc5VMn/KV1pPw8fliQkhBXrVn1Z3TVyqZxU8kZpzEKhBdmCFqI6ZbmGtamQvQGuU1sgPTk8ZrXDD7jQ==}
     engines: {node: ^10 || ^12 || >=14}
 
   prelude-ls@1.2.1:
@@ -10708,6 +10737,10 @@ packages:
     resolution: {integrity: sha512-itJW8lvSA0TXEphiRoawsCksnlf8SyvmFzIhltqAHluXd88pkCd+cXJVHTDwdCr0IzwptSm035IHQktUu1QUMg==}
     engines: {node: '>=0.10.0'}
 
+  source-map-js@1.2.1:
+    resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
+    engines: {node: '>=0.10.0'}
+
   source-map-loader@4.0.2:
     resolution: {integrity: sha512-oYwAqCuL0OZhBoSgmdrLa7mv9MjommVMiQIWgcztf+eS4+8BfcUee6nenFnDhKOhzAVnk5gpZdfnz1iiBv+5sg==}
     engines: {node: '>= 14.15.0'}
@@ -10853,6 +10886,9 @@ packages:
 
   string-convert@0.2.1:
     resolution: {integrity: sha512-u/1tdPl4yQnPBjnVrmdLo9gtuLvELKsAoRapekWggdiQNvvvum+jYF329d84NAa660KQw7pB2n36KrIKVoXa3A==}
+
+  string-hash@1.1.3:
+    resolution: {integrity: sha512-kJUvRUFK49aub+a7T1nNE66EJbZBMnBgoC1UbCZ5n6bsZKBRga4KgBRTMn/pFkeCZSYtNeSyMxPDM0AXWELk2A==}
 
   string-length@4.0.2:
     resolution: {integrity: sha512-+l6rNN5fYHNhZZy41RXsYptCjA2Igmq4EG7kZAYFQI1E1VTXarr6ZPXBg6eq7Y6eK4FEhY6AJlyuFIb/v/S0VQ==}
@@ -17478,12 +17514,12 @@ snapshots:
 
   css-loader@6.11.0(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0)):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.4.41)
-      postcss: 8.4.41
-      postcss-modules-extract-imports: 3.1.0(postcss@8.4.41)
-      postcss-modules-local-by-default: 4.0.5(postcss@8.4.41)
-      postcss-modules-scope: 3.2.0(postcss@8.4.41)
-      postcss-modules-values: 4.0.0(postcss@8.4.41)
+      icss-utils: 5.1.0(postcss@8.5.1)
+      postcss: 8.5.1
+      postcss-modules-extract-imports: 3.1.0(postcss@8.5.1)
+      postcss-modules-local-by-default: 4.0.5(postcss@8.5.1)
+      postcss-modules-scope: 3.2.0(postcss@8.5.1)
+      postcss-modules-values: 4.0.0(postcss@8.5.1)
       postcss-value-parser: 4.2.0
       semver: 7.6.3
     optionalDependencies:
@@ -17491,12 +17527,12 @@ snapshots:
 
   css-loader@6.11.0(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@5.1.4)):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.4.41)
-      postcss: 8.4.41
-      postcss-modules-extract-imports: 3.1.0(postcss@8.4.41)
-      postcss-modules-local-by-default: 4.0.5(postcss@8.4.41)
-      postcss-modules-scope: 3.2.0(postcss@8.4.41)
-      postcss-modules-values: 4.0.0(postcss@8.4.41)
+      icss-utils: 5.1.0(postcss@8.5.1)
+      postcss: 8.5.1
+      postcss-modules-extract-imports: 3.1.0(postcss@8.5.1)
+      postcss-modules-local-by-default: 4.0.5(postcss@8.5.1)
+      postcss-modules-scope: 3.2.0(postcss@8.5.1)
+      postcss-modules-values: 4.0.0(postcss@8.5.1)
       postcss-value-parser: 4.2.0
       semver: 7.6.3
     optionalDependencies:
@@ -19019,6 +19055,10 @@ snapshots:
     dependencies:
       is-property: 1.0.2
 
+  generic-names@4.0.0:
+    dependencies:
+      loader-utils: 3.3.1
+
   gensync@1.0.0-beta.2: {}
 
   get-caller-file@2.0.5: {}
@@ -19632,9 +19672,9 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  icss-utils@5.1.0(postcss@8.4.41):
+  icss-utils@5.1.0(postcss@8.5.1):
     dependencies:
-      postcss: 8.4.41
+      postcss: 8.5.1
 
   identity-obj-proxy@3.0.0:
     dependencies:
@@ -20820,8 +20860,10 @@ snapshots:
   kotii-templates@file:packages/kotii-templates/kotii-templates-1.0.0.tgz(@babel/core@7.25.2):
     dependencies:
       anzii: file:../Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz(@babel/core@7.25.2)
+      kotii-logger: file:packages/kotii-logger/kotii-logger-1.0.0.tgz
     transitivePeerDependencies:
       - '@babel/core'
+      - supports-color
 
   kuler@2.0.0: {}
 
@@ -21007,6 +21049,8 @@ snapshots:
       big.js: 5.2.2
       emojis-list: 3.0.0
       json5: 2.2.3
+
+  loader-utils@3.3.1: {}
 
   locate-path@2.0.0:
     dependencies:
@@ -21809,6 +21853,8 @@ snapshots:
   nanoid@2.1.11: {}
 
   nanoid@3.3.7: {}
+
+  nanoid@3.3.8: {}
 
   nanomatch@1.2.13:
     dependencies:
@@ -22615,6 +22661,8 @@ snapshots:
 
   picocolors@1.0.1: {}
 
+  picocolors@1.1.1: {}
+
   picomatch@2.3.1: {}
 
   pidtree@0.3.1: {}
@@ -22677,26 +22725,38 @@ snapshots:
 
   possible-typed-array-names@1.0.0: {}
 
-  postcss-modules-extract-imports@3.1.0(postcss@8.4.41):
+  postcss-modules-extract-imports@3.1.0(postcss@8.5.1):
     dependencies:
-      postcss: 8.4.41
+      postcss: 8.5.1
 
-  postcss-modules-local-by-default@4.0.5(postcss@8.4.41):
+  postcss-modules-local-by-default@4.0.5(postcss@8.5.1):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.4.41)
-      postcss: 8.4.41
+      icss-utils: 5.1.0(postcss@8.5.1)
+      postcss: 8.5.1
       postcss-selector-parser: 6.1.2
       postcss-value-parser: 4.2.0
 
-  postcss-modules-scope@3.2.0(postcss@8.4.41):
+  postcss-modules-scope@3.2.0(postcss@8.5.1):
     dependencies:
-      postcss: 8.4.41
+      postcss: 8.5.1
       postcss-selector-parser: 6.1.2
 
-  postcss-modules-values@4.0.0(postcss@8.4.41):
+  postcss-modules-values@4.0.0(postcss@8.5.1):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.4.41)
-      postcss: 8.4.41
+      icss-utils: 5.1.0(postcss@8.5.1)
+      postcss: 8.5.1
+
+  postcss-modules@6.0.1(postcss@8.5.1):
+    dependencies:
+      generic-names: 4.0.0
+      icss-utils: 5.1.0(postcss@8.5.1)
+      lodash.camelcase: 4.3.0
+      postcss: 8.5.1
+      postcss-modules-extract-imports: 3.1.0(postcss@8.5.1)
+      postcss-modules-local-by-default: 4.0.5(postcss@8.5.1)
+      postcss-modules-scope: 3.2.0(postcss@8.5.1)
+      postcss-modules-values: 4.0.0(postcss@8.5.1)
+      string-hash: 1.1.3
 
   postcss-selector-parser@6.1.2:
     dependencies:
@@ -22719,11 +22779,11 @@ snapshots:
       picocolors: 1.0.1
       source-map-js: 1.2.0
 
-  postcss@8.4.41:
+  postcss@8.5.1:
     dependencies:
-      nanoid: 3.3.7
-      picocolors: 1.0.1
-      source-map-js: 1.2.0
+      nanoid: 3.3.8
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
 
   prelude-ls@1.2.1: {}
 
@@ -23948,6 +24008,8 @@ snapshots:
 
   source-map-js@1.2.0: {}
 
+  source-map-js@1.2.1: {}
+
   source-map-loader@4.0.2(webpack@5.93.0(@swc/core@1.7.12)(esbuild@0.18.20)(webpack-cli@4.10.0)):
     dependencies:
       iconv-lite: 0.6.3
@@ -24110,6 +24172,8 @@ snapshots:
   stream-shift@1.0.3: {}
 
   string-convert@0.2.1: {}
+
+  string-hash@1.1.3: {}
 
   string-length@4.0.2:
     dependencies:
