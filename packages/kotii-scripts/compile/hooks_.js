@@ -9,15 +9,20 @@ import {
   lessToCssConverter,
   renderCssModules,
   sassToCssConverter,
+  stylusToCssConverter,
 } from "../css/index.js";
 import { getNodejsForeignData } from "../globals.mjs";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
 
 let meta = null;
 let kotiiAssetsMeta = {};
+let kotiiModulesMeta = {};
 let timerActive = false;
 let metaChecked = false;
 let workdir = `${process.cwd()}`;
+let GLOBAL_STYLES_REGEX = /global\.+/;
+let JSON_STYLES_PATH = `${kotiiKotiiLandPath}/dev/styles.json`;
+let JSON_STYLES_MAP_PATH = `${kotiiKotiiLandPath}/dev/styles-css-modules.json`;
 
 logger.setNameSpaces([
   { namespace: "nodejs:compilation:load", id: "load" },
@@ -142,10 +147,17 @@ export async function load(url, context, nextLoad) {
           source = doInlinedPngs(pathName, fileName);
           break;
         case ".scss":
-          source = getCssFromSass(pathName, fileName);
+        case ".sass":
+          source = await getCssFromSass(pathName, fileName);
           break;
         case ".less":
-          source = getCssFromLess(pathName, fileName);
+          source = await getCssFromLess(pathName, fileName);
+          break;
+        case ".styl":
+          source = await getCssFromStylus(pathName, fileName);
+          break;
+        case ".css":
+          source = await getCss(pathName, fileName);
           break;
         default:
           source = `export default ${JSON.stringify(fileName)}`;
@@ -572,43 +584,140 @@ const doStyles = (fileUrl, fName) => {
   return `export default ${JSON.stringify(svgContent)}`;
 };
 
-const getCssFromSass = (fileUrl, fName) => {
+const getCssFromSass = async (fileUrl, fName) => {
   loggas.load.debug("SASS TO CSSS", fileUrl);
 
   let cssFromSass = sassToCssConverter(fileUrl);
-  console.log("THE CSS CONVERTED SASS", cssFromSass);
-  // let svgContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
-  // const b64 = pngContent.toString("base64");
-  // let dataURI = `data:image/png;base64,${b64}`;
-  // kotiiAssetsMeta[fileUrl] = svgContent;
-  // if (!timerActive) {
-  //   timerActive = true;
-  //   setTimeout(() => {
-  //     timerActive = false;
-  //     saveKotiiAssetsMeta();
-  //   }, 1000);
-  // }
-  // console.log("THE SVG CONTENT", svgContent);
-  return `export default ${JSON.stringify(fName)}`;
+  let modulesResult = "";
+  if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
+    modulesResult = await renderCssModules(
+      cssFromSass,
+      kotiiModulesMeta,
+      fileUrl
+    );
+    saveStyles(modulesResult.css);
+    saveCssModulesMap(fileUrl, modulesResult.cssModules);
+  } else {
+    console.log("THE URL CONTAINS GLOBAL", fileUrl);
+    saveStyles(cssFromSass);
+    return `export default ${JSON.stringify(fName)}`;
+  }
+
+  return `export default ${JSON.stringify(modulesResult.cssModules)}`;
 };
 
-const getCssFromLess = (fileUrl, fName) => {
+const getCssFromLess = async (fileUrl, fName) => {
   loggas.load.debug("LESS TO CSSS", fileUrl);
-  renderCssModules();
 
-  let cssFromLess = lessToCssConverter(fileUrl, fName);
-  console.log("THE CSS CONVERTED LESS", cssFromLess);
-  // let svgContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
-  // const b64 = pngContent.toString("base64");
-  // let dataURI = `data:image/png;base64,${b64}`;
-  // kotiiAssetsMeta[fileUrl] = svgContent;
-  // if (!timerActive) {
-  //   timerActive = true;
-  //   setTimeout(() => {
-  //     timerActive = false;
-  //     saveKotiiAssetsMeta();
-  //   }, 1000);
-  // }
-  // console.log("THE SVG CONTENT", svgContent);
-  return `export default ${JSON.stringify(fName)}`;
+  let cssFromLess = await lessToCssConverter(fileUrl, fName);
+  let modulesResult = "";
+
+  if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
+    modulesResult = await renderCssModules(
+      cssFromLess,
+      kotiiModulesMeta,
+      fileUrl
+    );
+    saveStyles(modulesResult.css);
+    saveCssModulesMap(fileUrl, modulesResult.cssModules);
+  } else {
+    console.log("THE URL CONTAINS GLOBAL", fileUrl);
+    saveStyles(cssFromLess);
+    return `export default ${JSON.stringify(fName)}`;
+  }
+
+  console.log("THE CSS CONVERTED LESS", modulesResult.ccsModules);
+
+  return `export default ${JSON.stringify(modulesResult.cssModules)}`;
+};
+
+const getCssFromStylus = async (fileUrl, fName) => {
+  loggas.load.debug("Stylus TO CSSS", fileUrl);
+
+  let cssFromStylus = await stylusToCssConverter(fileUrl, fName);
+  let modulesResult = "";
+  if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
+    modulesResult = await renderCssModules(
+      cssFromStylus,
+      kotiiModulesMeta,
+      fileUrl
+    );
+    console.log("THE CSS CONVERTED LESS", modulesResult.cssModules);
+
+    saveStyles(modulesResult.css);
+    saveCssModulesMap(fileUrl, modulesResult.cssModules);
+  } else {
+    console.log("THE URL CONTAINS GLOBAL", fileUrl);
+    saveStyles(cssFromStylus);
+    return `export default ${JSON.stringify(fName)}`;
+  }
+
+  return `export default ${JSON.stringify(modulesResult.cssModules)}`;
+};
+
+const getCss = async (fileUrl, fName) => {
+  loggas.load.debug("CSS RENDER", fileUrl);
+
+  let cssContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
+  let modulesResult = "";
+  if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
+    modulesResult = await renderCssModules(
+      cssContent,
+      kotiiModulesMeta,
+      fileUrl
+    );
+    console.log("THE CSS CONVERTED LESS", modulesResult.cssModules);
+    saveStyles(modulesResult.css);
+    saveCssModulesMap(fileUrl, modulesResult.cssModules);
+  } else {
+    console.log("THE URL CONTAINS GLOBAL", fileUrl);
+    saveStyles(cssContent);
+    return `export default ${JSON.stringify(fName)}`;
+  }
+
+  return `export default ${JSON.stringify(modulesResult.cssModules)}`;
+};
+
+const saveStyles = (styles) => {
+  console.log("MANIPULATE STYLES, PATH TO STYLES", JSON_STYLES_PATH);
+
+  let json = null;
+  if (fs.existsSync(JSON_STYLES_PATH)) {
+    json = fs.readFileSync(JSON_STYLES_PATH, {
+      encoding: "utf8",
+    });
+  }
+
+  let newJson = !json ? json : JSON.parse(json);
+  if (!newJson || newJson.length === 0) {
+    newJson = [styles];
+  } else {
+    newJson.push(styles);
+  }
+  fs.writeFileSync(JSON_STYLES_PATH, JSON.stringify(newJson), {
+    encoding: "utf8",
+  });
+};
+
+const saveCssModulesMap = (id, idModules) => {
+  console.log("MANIPULATE STYLES, PATH TO STYLES", JSON_STYLES_MAP_PATH);
+
+  let json = null;
+  if (fs.existsSync(JSON_STYLES_MAP_PATH)) {
+    json = fs.readFileSync(JSON_STYLES_MAP_PATH, {
+      encoding: "utf8",
+    });
+  }
+
+  let newJson = !json ? json : JSON.parse(json);
+  if (!newJson || newJson.length === 0) {
+    newJson = {
+      [id]: idModules,
+    };
+  } else {
+    newJson[id] = idModules;
+  }
+  fs.writeFileSync(JSON_STYLES_MAP_PATH, JSON.stringify(newJson), {
+    encoding: "utf8",
+  });
 };
