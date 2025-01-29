@@ -238,7 +238,7 @@ methods.renderFullPage = function ({
     ${head?.meta.toString()}
     ${head?.link.toString()}
     ${self.styledTags}
-    ${styleTags}
+    
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
