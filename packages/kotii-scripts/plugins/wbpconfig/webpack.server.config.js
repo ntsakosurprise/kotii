@@ -161,10 +161,18 @@ export default (options) => {
           `${kotiiRootPath}`,
           "webpack-loaders/syncAssetsLoader.cjs"
         ),
-        "test-styles-loader": path.resolve(
+        "sync-styles-loader": path.resolve(
           `${kotiiRootPath}`,
-          "webpack-loaders/testStyles.cjs"
+          "webpack-loaders/syncStylesLoader.cjs"
         ),
+        "handle-sync-styles-loader": path.resolve(
+          `${kotiiRootPath}`,
+          "webpack-loaders/handleSyncLoaderStyles.cjs"
+        ),
+        // "test-styles-loader": path.resolve(
+        //   `${kotiiRootPath}`,
+        //   "webpack-loaders/testStyles.cjs"
+        // ),
       },
     },
     module: {
@@ -197,42 +205,23 @@ export default (options) => {
           test: /\.html$/,
           use: "html-loader",
         },
-        /*Choose only one of the following two: if you're using
-                  plain CSS, use the first one, and if you're using a
-                  preprocessor, in this case SASS, use the second one*/
         {
-          test: /\.css$/,
-          use: ["style-loader", "css-loader"],
-        },
-        {
-          test: /\.less$/i,
+          test: /\.(css|sass|scss|less|styl)$/i,
           use: [
-            // compiles Less to CSS
-            "style-loader",
-            "css-loader",
-            "less-loader",
-          ],
-        },
-        {
-          test: /\.s[ac]ss$/i,
-          use: [
-            // Creates `style` nodes from JS strings
-            "style-loader",
-            // Translates CSS into CommonJS
-            "css-loader",
-            // Compiles Sass to CSS
-            "sass-loader",
-          ],
-        },
-        {
-          test: /\.styl$/,
-          use: [
-            "style-loader",
-            "css-loader",
             {
-              loader: "stylus-loader",
+              loader: "handle-sync-styles-loader",
               options: {
-                webpackImporter: false,
+                referenceAssetsPath: `${kotiiKotiiLandPath}/dev`,
+                assetsFile: "styles-css-modules.json",
+                fileFormat: "json",
+              },
+            },
+            {
+              loader: "sync-styles-loader",
+              options: {
+                referenceAssetsPath: `${kotiiKotiiLandPath}/dev`,
+                assetsFile: "styles-css-modules.json",
+                fileFormat: "json",
               },
             },
           ],
@@ -274,6 +263,47 @@ export default (options) => {
             fullySpecified: false, // disable the behaviour
           },
         },
+        /*Choose only one of the following two: if you're using
+                  plain CSS, use the first one, and if you're using a
+                  preprocessor, in this case SASS, use the second one*/
+        // {
+        //   test: /\.css$/,
+        //   use: ["style-loader", "css-loader"],
+        // },
+        // {
+        //   test: /\.less$/i,
+        //   use: [
+        //     // compiles Less to CSS
+        //     "style-loader",
+        //     "css-loader",
+        //     "less-loader",
+        //   ],
+        // },
+        // {
+        //   test: /\.s[ac]ss$/i,
+        //   use: [
+        //     // Creates `style` nodes from JS strings
+        //     "style-loader",
+        //     // Translates CSS into CommonJS
+        //     "css-loader",
+        //     // Compiles Sass to CSS
+        //     "sass-loader",
+        //   ],
+        // },
+        // {
+        //   test: /\.styl$/,
+        //   use: [
+        //     "style-loader",
+        //     "css-loader",
+        //     {
+        //       loader: "stylus-loader",
+        //       options: {
+        //         webpackImporter: false,
+        //       },
+        //     },
+        //   ],
+        // },
+
         // {
         //   test: /\.scss$/,
         //   use: ["style-loader", "css-loader", "sass-loader"],
