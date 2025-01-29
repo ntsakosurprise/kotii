@@ -3,6 +3,7 @@
 const { register } = require("node:module");
 const { pathToFileURL } = require("node:url");
 const { getAndSetEnvironmentVariables } = require("./preloads.cjs");
+const { removeStylesJson } = require("./globals.cjs");
 
 const parentURL = pathToFileURL(__filename);
 const cli = require("./cli.cjs");
@@ -18,6 +19,7 @@ if (commandToRun === "start") {
 
   import("./kotii-land/prod/app_prod.js");
 } else {
+  removeStylesJson();
   register("./compile/hooks_.js", parentURL);
   getAndSetEnvironmentVariables(
     process.env.NODE_ENV
