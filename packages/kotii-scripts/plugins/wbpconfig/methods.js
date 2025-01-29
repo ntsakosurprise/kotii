@@ -141,7 +141,8 @@ methods.configureWebPack = function (
   envs.stringified["KOTII_SHOW_DEBUG_LOGS"] = true;
 
   self.debug("THE APP ENVS", envs);
-
+  // self.addImportLineTCSSModulesJs()
+  // self.addImportLineTAppJs()
   setContextEnv(contextApp, envs);
   const webpackConfigObject = webPackConfig({
     cwd,
@@ -547,6 +548,86 @@ methods.addDomainToHost = function (domain) {
       },
     });
   });
+};
+
+methods.insertIdentifierImportDeclarations = function (imports) {
+  const self = this;
+
+  const generate = self.generate;
+
+  const parser = self.parser;
+
+  let importString = imports.map((im, i) => {
+    return `import ${
+      !im?.defaultImport ? `{${im.ids.join(",")}}` : im.ids.join(",")
+    } from "${im.source}";`;
+  });
+
+  let joinedString = `${importString.join("")}`;
+  self.debug("ASTY JOINED ID STRING", joinedString);
+  let ast = parser.parse(joinedString, { sourceType: "module" });
+  let modifiedCode = generate(ast).code;
+  self.debug("ASTY CODE ID THE IMPOT STRINGS", importString);
+  self.debug("ASTY CODE ID", modifiedCode);
+  self.debug();
+  return modifiedCode;
+};
+
+methods.addImportLineTCSSModulesJs = function () {
+  const self = this;
+  const pao = self.pao;
+  const generate = self.generate;
+  const parser = self.parser;
+  const readFileSync = pao.pa_readFileSync;
+  const saveToFile = pao.pa_saveToFile;
+
+  const buildPath = `${kotiiKotiiLandPath}/dev/hot-load-css-modules.js`;
+  const buildPathFile = readFileSync(buildPath);
+  let buildAst = parser.parse(buildPathFile, {
+    sourceType: "module",
+    plugins: ["jsx"],
+  });
+
+  self.debug("AST FOR BUILD.JS");
+  // self.removeImportDeclarations(buildAst, ["./pages.js"]);
+  const generateBuildAst = generate(buildAst).code;
+  const buildImportString = self.insertIdentifierImportDeclarations([
+    {
+      source: "./styles-css-modules.json",
+      defaultImport: true,
+      ids: ["dependecies"],
+    },
+  ]);
+  let newFileContent = `${buildImportString} ${generateBuildAst}`;
+  saveToFile(buildPath, newFileContent);
+};
+
+methods.addImportLineTAppJs = function () {
+  const self = this;
+  const pao = self.pao;
+  const generate = self.generate;
+  const parser = self.parser;
+  const readFileSync = pao.pa_readFileSync;
+  const saveToFile = pao.pa_saveToFile;
+
+  const buildPath = `${kotiiKotiiLandPath}/dev/app_.js`;
+  const buildPathFile = readFileSync(buildPath);
+  let buildAst = parser.parse(buildPathFile, {
+    sourceType: "module",
+    plugins: ["jsx"],
+  });
+
+  self.debug("AST FOR BUILD.JS");
+  // self.removeImportDeclarations(buildAst, ["./pages.js"]);
+  const generateBuildAst = generate(buildAst).code;
+  const buildImportString = self.insertIdentifierImportDeclarations([
+    {
+      source: "./hot-load-css-modules.js",
+      ids: ["test"],
+    },
+  ]);
+  let newFileContent = `${buildImportString} ${generateBuildAst}`;
+  saveToFile(buildPath, newFileContent);
 };
 
 export default methods;
