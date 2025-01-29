@@ -249,8 +249,12 @@ const Index = () => {
 
         {/* {peopleList ? <PeopleList people={peopleList} /> : null} */}
         {user ? <UserComp user={user} /> : null}
-        <p>The effect DATA: {data?.actor?.age || "nothing"}</p>
-        <p>The effect DATA: {dataTwo?.actor?.age || "nothing"}</p>
+        <p className="text-color">
+          The effect DATA: {data?.actor?.age || "nothing"}
+        </p>
+        <p className="text-color-yellow">
+          The effect DATA: {dataTwo?.actor?.age || "nothing"}
+        </p>
         {/* <img src={connectionsSvg} width={50} alt="connections svg" /> */}
       </Hero>
       <SVG>
