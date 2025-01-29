@@ -182,7 +182,7 @@
     "CONTRIBUTING.md",
     "LICENSE",
     "preloads.cjs",
-    "globals.mjs",
+    "globals.cjs",
     "package.json"
   ],
   "browser": {
