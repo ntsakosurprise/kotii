@@ -1,6 +1,7 @@
-import fs from "node:fs";
-import Papa from "papaparse";
-import { parseString } from "xml2js";
+const fs = require("node:fs");
+const Papa = require("papaparse");
+const { parseString } = require("xml2js");
+
 
 const getNodejsForeignData = (dataType, path) => {
   console.log("GET FOREING", dataType, path);
@@ -45,4 +46,13 @@ const readFileContent = (absoluteFilePath) => {
   return contents;
 };
 
-export { getNodejsForeignData };
+const removeStylesJson = ()=>{
+  
+  let stylesPath =  `${__dirname}/dev/styles.json`
+  let stylesPathCss =  `${__dirname}/dev/styles-css-modules.json`
+  console.log("REMOVE STYLES RUNS",stylesPath)
+  if(fs.existsSync(stylesPath)) fs.unlinkSync(stylesPath)
+  if(fs.existsSync(stylesPathCss)) fs.unlinkSync(stylesPathCss)
+}
+
+module.exports = { getNodejsForeignData,removeStylesJson };
