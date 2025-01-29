@@ -161,6 +161,10 @@ export default (options) => {
           `${kotiiRootPath}`,
           "webpack-loaders/syncAssetsLoader.cjs"
         ),
+        "test-styles-loader": path.resolve(
+          `${kotiiRootPath}`,
+          "webpack-loaders/testStyles.cjs"
+        ),
       },
     },
     module: {

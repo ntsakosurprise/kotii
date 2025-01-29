@@ -5,6 +5,11 @@ import { isBuiltin } from "node:module";
 import { pathToFileURL } from "node:url";
 import path from "path";
 import babelJson from "../babel.server.json" assert { type: "json" };
+import {
+  lessToCssConverter,
+  renderCssModules,
+  sassToCssConverter,
+} from "../css/index.js";
 import { getNodejsForeignData } from "../globals.mjs";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
 
@@ -136,9 +141,12 @@ export async function load(url, context, nextLoad) {
         case ".png":
           source = doInlinedPngs(pathName, fileName);
           break;
-        // case ".svg":
-        //   source = doSvgs(pathName, fileName);
-        //   break;
+        case ".scss":
+          source = getCssFromSass(pathName, fileName);
+          break;
+        case ".less":
+          source = getCssFromLess(pathName, fileName);
+          break;
         default:
           source = `export default ${JSON.stringify(fileName)}`;
       }
@@ -545,4 +553,62 @@ const doSvgs = (fileUrl, fName) => {
   // }
   console.log("THE SVG CONTENT", svgContent);
   return `export default ${JSON.stringify(svgContent)}`;
+};
+const doStyles = (fileUrl, fName) => {
+  loggas.load.debug("DO STYLES GETS A CALL", fileUrl);
+
+  let svgContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
+  // const b64 = pngContent.toString("base64");
+  // let dataURI = `data:image/png;base64,${b64}`;
+  // kotiiAssetsMeta[fileUrl] = svgContent;
+  // if (!timerActive) {
+  //   timerActive = true;
+  //   setTimeout(() => {
+  //     timerActive = false;
+  //     saveKotiiAssetsMeta();
+  //   }, 1000);
+  // }
+  console.log("THE SVG CONTENT", svgContent);
+  return `export default ${JSON.stringify(svgContent)}`;
+};
+
+const getCssFromSass = (fileUrl, fName) => {
+  loggas.load.debug("SASS TO CSSS", fileUrl);
+
+  let cssFromSass = sassToCssConverter(fileUrl);
+  console.log("THE CSS CONVERTED SASS", cssFromSass);
+  // let svgContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
+  // const b64 = pngContent.toString("base64");
+  // let dataURI = `data:image/png;base64,${b64}`;
+  // kotiiAssetsMeta[fileUrl] = svgContent;
+  // if (!timerActive) {
+  //   timerActive = true;
+  //   setTimeout(() => {
+  //     timerActive = false;
+  //     saveKotiiAssetsMeta();
+  //   }, 1000);
+  // }
+  // console.log("THE SVG CONTENT", svgContent);
+  return `export default ${JSON.stringify(fName)}`;
+};
+
+const getCssFromLess = (fileUrl, fName) => {
+  loggas.load.debug("LESS TO CSSS", fileUrl);
+  renderCssModules();
+
+  let cssFromLess = lessToCssConverter(fileUrl, fName);
+  console.log("THE CSS CONVERTED LESS", cssFromLess);
+  // let svgContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
+  // const b64 = pngContent.toString("base64");
+  // let dataURI = `data:image/png;base64,${b64}`;
+  // kotiiAssetsMeta[fileUrl] = svgContent;
+  // if (!timerActive) {
+  //   timerActive = true;
+  //   setTimeout(() => {
+  //     timerActive = false;
+  //     saveKotiiAssetsMeta();
+  //   }, 1000);
+  // }
+  // console.log("THE SVG CONTENT", svgContent);
+  return `export default ${JSON.stringify(fName)}`;
 };
