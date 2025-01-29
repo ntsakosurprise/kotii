@@ -1,6 +1,6 @@
 import { Head } from "kotii-scripts";
 import React from "react";
-import "../styles/color.scss";
+import "../styles/color.global.scss";
 
 const Connection = () => {
   return (
