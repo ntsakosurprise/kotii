@@ -8,7 +8,7 @@ const AppProvider = (props) => {
     typeof window !== "undefined"
       ? JSON.parse(window.__KOTII_EFFECTS_STATE__)
       : props.effectsStore;
-  typeof window !== "undefined" ? delete window.__KOTII_EFFECTS_STATE__ : null;
+  // typeof window !== "undefined" ? delete window.__KOTII_EFFECTS_STATE__ : null;
   // effectsStore["isFirstTimeRun"] = true;
 
   return (
