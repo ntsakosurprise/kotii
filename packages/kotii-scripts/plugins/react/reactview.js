@@ -9,6 +9,7 @@ import createReduxStore from "../../kotii-land/dev/app_redux.js";
 import { meta } from "../../kotii-land/dev/manifest.js";
 import { Head, HeadHelmet } from "../../react-components/index.jsx";
 import methods from "./methods.js";
+
 // import {
 //   Footer,
 //   Header,
@@ -56,6 +57,7 @@ class ReactView {
     this.runComponentEffects = methods.runComponentEffects;
     this.getEffectsRouteList = methods.getEffectsRouteList;
     this.includeScripts = methods.includeScripts;
+    this.doKotiiStyles = methods.doKotiiStyles;
   }
 }
 
