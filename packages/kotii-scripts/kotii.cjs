@@ -19,7 +19,7 @@ if (commandToRun === "start") {
 
   import("./kotii-land/prod/app_prod.js");
 } else {
-  removeStylesJson();
+  // removeStylesJson();
   register("./compile/hooks_.js", parentURL);
   getAndSetEnvironmentVariables(
     process.env.NODE_ENV
