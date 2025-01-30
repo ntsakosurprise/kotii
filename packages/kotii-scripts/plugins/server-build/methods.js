@@ -24,9 +24,9 @@ methods.handleServerBuild = function (data) {
   // const cwd = getWorkingFolder();
   // const cwd = self.kotiiScriptsPath;
   self.debug("KOTII SCRIPTS PATH", kotiiRootPath);
-  if (fs.existsSync(`${kotiiKotiiLandPath}/dev/styles.json`)) {
-    fs.rmSync(`${kotiiKotiiLandPath}/dev/styles.json`);
-  }
+  // if (fs.existsSync(`${kotiiKotiiLandPath}/dev/styles.json`)) {
+  //   fs.rmSync(`${kotiiKotiiLandPath}/dev/styles.json`);
+  // }
 
   const localPackageJson = JSON.parse(
     readFileSync(`${kotiiRootPath}/package.json`)
