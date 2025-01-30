@@ -10,9 +10,12 @@ export const useUniversalEffect = (
 ) => {
   const effectID = `${effect_id_prefix}${currentEffectID}`;
   const { effectsStore = null } = useAppContext();
+  console.log("THE EFFECTS STORE", effectsStore);
 
-  const { componentName, effectsCount } = effectsStore;
-  const effectResources = effectsStore[componentName];
+  const { componentName = "", effectsCount = "" } = !effectsStore
+    ? {}
+    : effectsStore;
+  const effectResources = !componentName ? {} : effectsStore[componentName];
 
   const { data = {}, errors = {} } = effectResources;
 
