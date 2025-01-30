@@ -1,5 +1,4 @@
 import fs from "fs";
-import { resolve } from "path";
 // let cwd = process.cwd();
 const scopedStylesBabelPlugin = (babel, state) => {
   return {
@@ -13,39 +12,40 @@ const scopedStylesBabelPlugin = (babel, state) => {
         //   return;
         // }
 
-        if (
-          path.node.source.value.indexOf(".less") > 0 &&
-          path.node.specifiers.length === 0
-        ) {
-          let sourceValue = path.node.source.value;
+        // if (
+        //   path.node.source.value.indexOf(".less") > 0 &&
+        //   path.node.specifiers.length === 0
+        // ) {
+        //   let sourceValue = path.node.source.value;
 
-          manipulateStyles({
-            pathToStyles: resolve(`${state.appSrc}/styles`, sourceValue),
-            cwd: state.cwd,
-          });
-          return path.remove();
-        }
+        //   // manipulateStyles({
+        //   //   pathToStyles: resolve(`${state.appSrc}/styles`, sourceValue),
+        //   //   cwd: state.cwd,
+        //   // });
+        //   return path.remove();
+        // }
 
         if (
           path.node.source.value.indexOf(".scss") > 0 ||
           path.node.source.value.indexOf(".sass") > 0 ||
           path.node.source.value.indexOf(".css") > 0 ||
+          path.node.source.value.indexOf(".less") > 0 ||
           (path.node.source.value.indexOf(".styl") > 0 &&
             path.node.specifiers.length === 0)
         ) {
-          let sourceValue = path.node.source.value;
+          // let sourceValue = path.node.source.value;
 
-          if (path.node.source.value.indexOf(".styl") > 0) {
-            manipulateStyles({
-              pathToStyles: resolve(`${state.appSrc}/src/styles`, sourceValue),
-              cwd: state.cwd,
-            });
-          } else {
-            manipulateStyles({
-              pathToStyles: resolve(`${state.appSrc}/styles`, sourceValue),
-              cwd: state.cwd,
-            });
-          }
+          // if (path.node.source.value.indexOf(".styl") > 0) {
+          //   manipulateStyles({
+          //     pathToStyles: resolve(`${state.appSrc}/src/styles`, sourceValue),
+          //     cwd: state.cwd,
+          //   });
+          // } else {
+          //   manipulateStyles({
+          //     pathToStyles: resolve(`${state.appSrc}/styles`, sourceValue),
+          //     cwd: state.cwd,
+          //   });
+          // }
 
           return path.remove();
         }
