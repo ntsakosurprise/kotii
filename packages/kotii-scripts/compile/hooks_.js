@@ -23,6 +23,8 @@ let workdir = `${process.cwd()}`;
 let GLOBAL_STYLES_REGEX = /global\.+/;
 let JSON_STYLES_PATH = `${kotiiKotiiLandPath}/dev/styles.json`;
 let JSON_STYLES_MAP_PATH = `${kotiiKotiiLandPath}/dev/styles-css-modules.json`;
+let JSON_STYLES_PATH_FIRSTTIME_USE = false;
+let JSON_STYLES_PATH_MAP_FIRSTTIME_USE = false;
 
 logger.setNameSpaces([
   { namespace: "nodejs:compilation:load", id: "load" },
@@ -682,12 +684,17 @@ const saveStyles = (styles) => {
   console.log("MANIPULATE STYLES, PATH TO STYLES", JSON_STYLES_PATH);
 
   let json = null;
-  if (fs.existsSync(JSON_STYLES_PATH)) {
+  if (!JSON_STYLES_PATH_FIRSTTIME_USE && fs.existsSync(JSON_STYLES_PATH)) {
+    JSON_STYLES_PATH_FIRSTTIME_USE = true;
+    json = json;
+  } else if (fs.existsSync(JSON_STYLES_PATH)) {
     json = fs.readFileSync(JSON_STYLES_PATH, {
       encoding: "utf8",
     });
   }
-
+  if (!JSON_STYLES_PATH_FIRSTTIME_USE) {
+    JSON_STYLES_PATH_FIRSTTIME_USE = true;
+  }
   let newJson = !json ? json : JSON.parse(json);
   if (!newJson || newJson.length === 0) {
     newJson = [styles];
@@ -703,10 +710,20 @@ const saveCssModulesMap = (id, idModules) => {
   console.log("MANIPULATE STYLES, PATH TO STYLES", JSON_STYLES_MAP_PATH);
 
   let json = null;
-  if (fs.existsSync(JSON_STYLES_MAP_PATH)) {
+  if (
+    !JSON_STYLES_PATH_MAP_FIRSTTIME_USE &&
+    fs.existsSync(JSON_STYLES_MAP_PATH)
+  ) {
+    JSON_STYLES_PATH_MAP_FIRSTTIME_USE = true;
+    json = json;
+  } else if (fs.existsSync(JSON_STYLES_MAP_PATH)) {
     json = fs.readFileSync(JSON_STYLES_MAP_PATH, {
       encoding: "utf8",
     });
+  }
+
+  if (!JSON_STYLES_PATH_MAP_FIRSTTIME_USE) {
+    JSON_STYLES_PATH_MAP_FIRSTTIME_USE = true;
   }
 
   let newJson = !json ? json : JSON.parse(json);
