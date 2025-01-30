@@ -65,7 +65,7 @@ importers:
         version: 8.57.0
       eslint-plugin-jest:
         specifier: ^27.2.1
-        version: 27.9.0(eslint@8.57.0)(jest@29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)))(typescript@4.9.5)
+        version: 27.9.0(eslint@8.57.0)(jest@29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)))(typescript@4.9.5)
       eslint-plugin-react:
         specifier: ^7.30.1
         version: 7.35.0(eslint@8.57.0)
@@ -77,7 +77,7 @@ importers:
         version: 8.0.3
       jest:
         specifier: ^29.7.0
-        version: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       lerna:
         specifier: ^5.1.8
         version: 5.6.2(@swc/core@1.7.12)(encoding@0.1.13)
@@ -89,7 +89,7 @@ importers:
         version: 2.8.8
       ts-jest:
         specifier: ^29.1.1
-        version: 29.2.4(@babel/core@7.25.2)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.25.2))(esbuild@0.18.20)(jest@29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)))(typescript@4.9.5)
+        version: 29.2.4(@babel/core@7.25.2)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.25.2))(esbuild@0.18.20)(jest@29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)))(typescript@4.9.5)
       typescript:
         specifier: ^4.9.4
         version: 4.9.5
@@ -225,7 +225,7 @@ importers:
         version: 5.6.0(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@5.1.4))
       jest:
         specifier: ^29.5.0
-        version: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.7.4))
       nodemon:
         specifier: ^2.0.15
         version: 2.0.22
@@ -301,7 +301,7 @@ importers:
         version: 8.3.0(@babel/core@7.25.2)(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0))
       jest:
         specifier: ^29.5.0
-        version: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       style-loader:
         specifier: ^3.3.1
         version: 3.3.4(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0))
@@ -359,7 +359,7 @@ importers:
         version: 7.0.3
       jest:
         specifier: ^29.5.0
-        version: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       jest-environment-jsdom:
         specifier: ^29.6.1
         version: 29.7.0
@@ -368,7 +368,7 @@ importers:
         version: 4.0.2(webpack@5.93.0(@swc/core@1.7.12)(esbuild@0.18.20)(webpack-cli@4.10.0))
       ts-jest:
         specifier: ^29.1.1
-        version: 29.2.4(@babel/core@7.25.2)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.25.2))(esbuild@0.18.20)(jest@29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)))(typescript@4.9.5)
+        version: 29.2.4(@babel/core@7.25.2)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.25.2))(esbuild@0.18.20)(jest@29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)))(typescript@4.9.5)
       ts-loader:
         specifier: ^9.4.4
         version: 9.5.1(typescript@4.9.5)(webpack@5.93.0(@swc/core@1.7.12)(esbuild@0.18.20)(webpack-cli@4.10.0))
@@ -420,7 +420,7 @@ importers:
         version: 8.3.0(@babel/core@7.25.2)(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0))
       jest:
         specifier: ^29.5.0
-        version: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       style-loader:
         specifier: ^3.3.1
         version: 3.3.4(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0))
@@ -616,7 +616,7 @@ importers:
         version: 5.6.0(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0))
       jest:
         specifier: ^29.5.0
-        version: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       nodemon:
         specifier: ^2.0.15
         version: 2.0.22
@@ -785,7 +785,7 @@ importers:
         version: 5.6.0(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0))
       jest:
         specifier: ^29.5.0
-        version: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       nodemon:
         specifier: ^2.0.15
         version: 2.0.22
@@ -840,7 +840,7 @@ importers:
         version: 8.3.0(@babel/core@7.25.2)(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0))
       jest:
         specifier: ^29.5.0
-        version: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       style-loader:
         specifier: ^3.3.1
         version: 3.3.4(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0))
@@ -951,7 +951,7 @@ importers:
         version: 1.0.0
       portfinder:
         specifier: ^1.0.32
-        version: 1.0.32(supports-color@7.2.0)
+        version: 1.0.32
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -1090,7 +1090,7 @@ importers:
         version: 5.6.0(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@5.1.4))
       jest:
         specifier: ^29.5.0
-        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.7.4))
+        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       lebab:
         specifier: ^3.2.3
         version: 3.2.4
@@ -1248,7 +1248,7 @@ importers:
         version: 8.3.0(@babel/core@7.25.2)(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0))
       jest:
         specifier: ^29.6.0
-        version: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       jest-environment-jsdom:
         specifier: ^29.6.0
         version: 29.7.0
@@ -1330,7 +1330,7 @@ importers:
         version: 3.0.0
       jest:
         specifier: ^29.5.0
-        version: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       jest-environment-jsdom:
         specifier: ^29.6.1
         version: 29.7.0
@@ -1342,7 +1342,7 @@ importers:
         version: 3.3.4(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0))
       ts-jest:
         specifier: ^29.1.1
-        version: 29.2.4(@babel/core@7.25.2)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.25.2))(esbuild@0.18.20)(jest@29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)))(typescript@4.9.5)
+        version: 29.2.4(@babel/core@7.25.2)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.25.2))(esbuild@0.18.20)(jest@29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)))(typescript@4.9.5)
       ts-loader:
         specifier: ^9.4.4
         version: 9.5.1(typescript@4.9.5)(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0))
@@ -1388,7 +1388,7 @@ importers:
         version: 8.3.0(@babel/core@7.25.2)(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0))
       jest:
         specifier: ^29.5.0
-        version: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       jest-environment-jsdom:
         specifier: ^29.6.1
         version: 29.7.0
@@ -1548,7 +1548,7 @@ importers:
         version: 5.6.0(webpack@5.93.0(@swc/core@1.7.12)(webpack-cli@4.10.0))
       jest:
         specifier: ^29.5.0
-        version: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+        version: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       nodemon:
         specifier: ^2.0.15
         version: 2.0.22
@@ -8155,7 +8155,7 @@ packages:
     version: 1.0.0
 
   kotii-templates@file:packages/kotii-templates/kotii-templates-1.0.0.tgz:
-    resolution: {integrity: sha512-7AZTDCu1VC2w1szPyPl/zOOnAMmDpkApsucx5Ni+xpPM8PorZV0IBUi/aXA2E//G8bzPJjyAFU3eZFXKbvMyVg==, tarball: file:packages/kotii-templates/kotii-templates-1.0.0.tgz}
+    resolution: {integrity: sha512-q6lexk8AcIHEDZj28hLy9m/vQrFsbUVHHcFZ1q81yCG5Sb0aM8Io2L2lqJC4w+e2qx5a3zYxWnfdBOSumWfuJg==, tarball: file:packages/kotii-templates/kotii-templates-1.0.0.tgz}
     version: 1.0.0
     engines: {node: '>=17.2.0', npm: '>=8.19.2', yarn: '>=1.22.11'}
 
@@ -13547,7 +13547,7 @@ snapshots:
       - supports-color
       - ts-node
 
-  '@jest/core@29.7.0(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))':
+  '@jest/core@29.7.0(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))':
     dependencies:
       '@jest/console': 29.7.0
       '@jest/reporters': 29.7.0
@@ -13561,7 +13561,7 @@ snapshots:
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+      jest-config: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -17458,13 +17458,13 @@ snapshots:
       - supports-color
       - ts-node
 
-  create-jest@29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)):
+  create-jest@29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)):
     dependencies:
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
-      jest-config: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+      jest-config: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       jest-util: 29.7.0
       prompts: 2.4.2
     transitivePeerDependencies:
@@ -18252,12 +18252,12 @@ snapshots:
       esrecurse: 4.3.0
       estraverse: 4.3.0
 
-  eslint-plugin-jest@27.9.0(eslint@8.57.0)(jest@29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)))(typescript@4.9.5):
+  eslint-plugin-jest@27.9.0(eslint@8.57.0)(jest@29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)))(typescript@4.9.5):
     dependencies:
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@4.9.5)
       eslint: 8.57.0
     optionalDependencies:
-      jest: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+      jest: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -20269,16 +20269,16 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-cli@29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)):
+  jest-cli@29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+      '@jest/core': 29.7.0(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
       chalk: 4.1.2
-      create-jest: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+      create-jest: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       exit: 0.1.2
       import-local: 3.2.0
-      jest-config: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+      jest-config: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       jest-util: 29.7.0
       jest-validate: 29.7.0
       yargs: 17.7.2
@@ -20319,7 +20319,7 @@ snapshots:
       - babel-plugin-macros
       - supports-color
 
-  jest-config@29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)):
+  jest-config@29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)):
     dependencies:
       '@babel/core': 7.25.2
       '@jest/test-sequencer': 29.7.0
@@ -20598,12 +20598,12 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest@29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)):
+  jest@29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+      '@jest/core': 29.7.0(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       '@jest/types': 29.6.3
       import-local: 3.2.0
-      jest-cli: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+      jest-cli: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -22713,6 +22713,14 @@ snapshots:
 
   popper.js@1.16.1-lts: {}
 
+  portfinder@1.0.32:
+    dependencies:
+      async: 2.6.4
+      debug: 3.2.7(supports-color@5.5.0)
+      mkdirp: 0.5.6
+    transitivePeerDependencies:
+      - supports-color
+
   portfinder@1.0.32(supports-color@7.2.0):
     dependencies:
       async: 2.6.4
@@ -23697,7 +23705,7 @@ snapshots:
     dependencies:
       chokidar: 4.0.1
       immutable: 5.0.3
-      source-map-js: 1.2.0
+      source-map-js: 1.2.1
     optionalDependencies:
       '@parcel/watcher': 2.5.0
 
@@ -24684,12 +24692,12 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-jest@29.2.4(@babel/core@7.25.2)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.25.2))(esbuild@0.18.20)(jest@29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)))(typescript@4.9.5):
+  ts-jest@29.2.4(@babel/core@7.25.2)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.25.2))(esbuild@0.18.20)(jest@29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5)))(typescript@4.9.5):
     dependencies:
       bs-logger: 0.2.6
       ejs: 3.1.10
       fast-json-stable-stringify: 2.1.0
-      jest: 29.7.0(@types/node@22.4.1)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
+      jest: 29.7.0(@types/node@22.4.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.7.12)(@types/node@22.4.1)(typescript@4.9.5))
       jest-util: 29.7.0
       json5: 2.2.3
       lodash.memoize: 4.1.2
