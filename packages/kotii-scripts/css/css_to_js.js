@@ -3,16 +3,20 @@ import postcss from "postcss";
 //import postcssModules from "postcss-modules";
 import postCssModules from "../postcss-plugins/index.js";
 
-const renderCssModules = function (cssInput, opts, filePath) {
+const renderCssModules = function (cssInput, opts, filePath, shortName) {
   return new Promise((resolve) => {
     postcss([postCssModules])
       .process(cssInput)
       .then((result) => {
         console.log("POST CSS PROCESSOR HAS COMPLETED", result.css);
-        opts[filePath] = { ...result.root.modulesMap };
+        opts[shortName] = {
+          modules: { ...result.root.modulesMap },
+          fullPath: filePath,
+        };
+
         console.log("THE FIEPATH", opts);
         delete result.root.modulesMap;
-        resolve({ css: result.css, cssModules: opts[filePath] });
+        resolve({ css: result.css, cssModules: opts[shortName] });
       });
   });
 };
