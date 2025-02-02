@@ -30,12 +30,17 @@ const scopedStylesBabelPlugin = (babel, state) => {
             console.log("THE STATE", state.appSrc);
             console.log("Scoped absolute path", absoluteFilePath);
 
-            let data = `export default {name: "test"}`;
             console.log("New URL SCOOPED PLUGING", absoluteFilePath);
             let extension = nativePath.extname(importSpecifier);
             let cssModuleDataExport = `export default ${JSON.stringify(
               assetsManifestData[importSpecifier].modules
             )}`;
+            console.log(
+              "cssModulesData export",
+              cssModuleDataExport,
+              absoluteFilePath,
+              extension
+            );
             fs.writeFileSync(
               absoluteFilePath.replace(extension, ".js"),
               cssModuleDataExport
