@@ -11,7 +11,8 @@ export default function ({
       options instanceof Array ? options.join(" ") : options.trim();
     let commandToRun = `npm ${npmCommand} ${scriptToRun} ${terminalOptions}`;
     console.log("command to run", commandToRun);
-    exec(`${commandToRun}`, { cwd: cwd }, (err) => {
+    exec(`${commandToRun}`, { cwd: cwd }, (err, stdout) => {
+      console.log("THE SCOPED STDOUT", stdout);
       if (err)
         console.log(chalk.redBright.bold("Npm script failed with error:"), err);
       if (err) reject(false);
