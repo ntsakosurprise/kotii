@@ -1,11 +1,14 @@
-
 const path = require("path");
 const fs = require("fs");
 let assetsManifestData = null;
 
-
 module.exports = function (cssContent) {
+  console.log(
+    "SyncStylesLoader context",
+    this._module.resourceResolveData.relativePath
+  );
   const filePath = this.resource;
+  const fileSpecifier = this._module.resourceResolveData.relativePath;
   let options = this.getOptions();
   let modulesMap = "";
 
@@ -23,8 +26,8 @@ module.exports = function (cssContent) {
     }
   }
 
-  if (assetsManifestData[filePath]) {
-    modulesMap = assetsManifestData[filePath];
+  if (assetsManifestData[fileSpecifier]) {
+    modulesMap = assetsManifestData[fileSpecifier].modules;
   }
 
   return `export default ${JSON.stringify(modulesMap)}`;
