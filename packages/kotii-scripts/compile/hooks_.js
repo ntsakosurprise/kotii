@@ -25,6 +25,9 @@ let JSON_STYLES_PATH = `${kotiiKotiiLandPath}/dev/styles.json`;
 let JSON_STYLES_MAP_PATH = `${kotiiKotiiLandPath}/dev/styles-css-modules.json`;
 let JSON_STYLES_PATH_FIRSTTIME_USE = false;
 let JSON_STYLES_PATH_MAP_FIRSTTIME_USE = false;
+let MODULES_SPECIFIERS = {};
+
+let cssSpecifiers = [".css", ".scss", ".sass", ".less", ".styl"];
 
 logger.setNameSpaces([
   { namespace: "nodejs:compilation:load", id: "load" },
@@ -195,10 +198,14 @@ export async function load(url, context, nextLoad) {
 }
 
 export async function resolve(specifier, context, nextResolve) {
-  // const { parentURL = workdir } = context;
+  const { parentURL = "" } = context;
   loggas.resolve.debug("RESOLVE specifier", specifier);
 
   let shouldTerminate = false;
+  if (cssSpecifiers.includes(path.extname(specifier))) {
+    let url = new URL(specifier, parentURL);
+    storeCssModuleSpecifier(specifier, url.pathname);
+  }
   if (!meta && !metaChecked) {
     loadMeta();
   }
@@ -270,6 +277,7 @@ const resolveAliasedImports = (specifier) => {
     // console.log("Processing PNG OR CSS", specifier);
     // let url = new URL(specifier, parentURL);
     // console.log("PNG URL", url.href);
+
     return { url: fileUrl, shortCircuit: true };
   } else {
     return false;
@@ -588,17 +596,21 @@ const doStyles = (fileUrl, fName) => {
 
 const getCssFromSass = async (fileUrl, fName) => {
   loggas.load.debug("SASS TO CSSS", fileUrl);
-
+  console.log("THE MODULE SPECIFIER");
   let cssFromSass = sassToCssConverter(fileUrl);
   let modulesResult = "";
   if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
     modulesResult = await renderCssModules(
       cssFromSass,
       kotiiModulesMeta,
-      fileUrl
+      fileUrl,
+      MODULES_SPECIFIERS[fileUrl].shortName
     );
     saveStyles(modulesResult.css);
-    saveCssModulesMap(fileUrl, modulesResult.cssModules);
+    saveCssModulesMap(
+      MODULES_SPECIFIERS[fileUrl].shortName,
+      modulesResult.cssModules
+    );
   } else {
     console.log("THE URL CONTAINS GLOBAL", fileUrl);
     saveStyles(cssFromSass);
@@ -618,10 +630,14 @@ const getCssFromLess = async (fileUrl, fName) => {
     modulesResult = await renderCssModules(
       cssFromLess,
       kotiiModulesMeta,
-      fileUrl
+      fileUrl,
+      MODULES_SPECIFIERS[fileUrl].shortName
     );
     saveStyles(modulesResult.css);
-    saveCssModulesMap(fileUrl, modulesResult.cssModules);
+    saveCssModulesMap(
+      MODULES_SPECIFIERS[fileUrl].shortName,
+      modulesResult.cssModules
+    );
   } else {
     console.log("THE URL CONTAINS GLOBAL", fileUrl);
     saveStyles(cssFromLess);
@@ -642,12 +658,16 @@ const getCssFromStylus = async (fileUrl, fName) => {
     modulesResult = await renderCssModules(
       cssFromStylus,
       kotiiModulesMeta,
-      fileUrl
+      fileUrl,
+      MODULES_SPECIFIERS[fileUrl].shortName
     );
     console.log("THE CSS CONVERTED LESS", modulesResult.cssModules);
 
     saveStyles(modulesResult.css);
-    saveCssModulesMap(fileUrl, modulesResult.cssModules);
+    saveCssModulesMap(
+      MODULES_SPECIFIERS[fileUrl].shortName,
+      modulesResult.cssModules
+    );
   } else {
     console.log("THE URL CONTAINS GLOBAL", fileUrl);
     saveStyles(cssFromStylus);
@@ -666,11 +686,15 @@ const getCss = async (fileUrl, fName) => {
     modulesResult = await renderCssModules(
       cssContent,
       kotiiModulesMeta,
-      fileUrl
+      fileUrl,
+      MODULES_SPECIFIERS[fileUrl].shortName
     );
     console.log("THE CSS CONVERTED LESS", modulesResult.cssModules);
     saveStyles(modulesResult.css);
-    saveCssModulesMap(fileUrl, modulesResult.cssModules);
+    saveCssModulesMap(
+      MODULES_SPECIFIERS[fileUrl].shortName,
+      modulesResult.cssModules
+    );
   } else {
     console.log("THE URL CONTAINS GLOBAL", fileUrl);
     saveStyles(cssContent);
@@ -707,7 +731,7 @@ const saveStyles = (styles) => {
 };
 
 const saveCssModulesMap = (id, idModules) => {
-  console.log("MANIPULATE STYLES, PATH TO STYLES", JSON_STYLES_MAP_PATH);
+  console.log("css modules map", id, JSON_STYLES_MAP_PATH);
 
   let json = null;
   if (
@@ -734,7 +758,15 @@ const saveCssModulesMap = (id, idModules) => {
   } else {
     newJson[id] = idModules;
   }
+
   fs.writeFileSync(JSON_STYLES_MAP_PATH, JSON.stringify(newJson), {
     encoding: "utf8",
   });
+};
+
+const storeCssModuleSpecifier = (specifier, filePath) => {
+  MODULES_SPECIFIERS[filePath] = {
+    shortName: specifier,
+  };
+  loggas.resolve.debug("THE MODULES SPECIFIER", MODULES_SPECIFIERS);
 };
