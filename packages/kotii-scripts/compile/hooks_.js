@@ -11,7 +11,8 @@ import {
   sassToCssConverter,
   stylusToCssConverter,
 } from "../css/index.js";
-import { getNodejsForeignData } from "../globals.cjs";
+import { loadFile } from "../file-loader/index.js";
+import { createImportPathContext, getNodejsForeignData } from "../globals.cjs";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
 
 let meta = null;
@@ -26,8 +27,15 @@ let JSON_STYLES_MAP_PATH = `${kotiiKotiiLandPath}/dev/styles-css-modules.json`;
 let JSON_STYLES_PATH_FIRSTTIME_USE = false;
 let JSON_STYLES_PATH_MAP_FIRSTTIME_USE = false;
 let MODULES_SPECIFIERS = {};
+let MODULES_FILE_SPECIFIER = {};
+let FILE_LOADER_DEFAULT = {
+  name: "name.ext",
+  output: "public/imgs",
+  inlinePngs: true,
+};
 
 let cssSpecifiers = [".css", ".scss", ".sass", ".less", ".styl"];
+let fileSpecifiers = [".gif", ".png", ".svg", ".jpg", ".jpeg"];
 
 logger.setNameSpaces([
   { namespace: "nodejs:compilation:load", id: "load" },
@@ -148,8 +156,13 @@ export async function load(url, context, nextLoad) {
         case ".xml":
           source = await getNodejsForeignData("xml", pathName);
           break;
+        case ".jpg":
+        case ".svg":
         case ".png":
-          source = doInlinedPngs(pathName, fileName);
+        case ".gif":
+        case ".mp3":
+        case ".mp4":
+          source = processImageFiles(pathName, fileName, fileExtension);
           break;
         case ".scss":
         case ".sass":
@@ -199,16 +212,27 @@ export async function load(url, context, nextLoad) {
 
 export async function resolve(specifier, context, nextResolve) {
   const { parentURL = "" } = context;
-  loggas.resolve.debug("RESOLVE specifier", specifier);
+  loggas.resolve.debug("RESOLVE specifier", specifier, parentURL);
 
   let shouldTerminate = false;
   if (cssSpecifiers.includes(path.extname(specifier))) {
     let url = new URL(specifier, parentURL);
-    storeCssModuleSpecifier(specifier, url.pathname);
+    loggas.resolve.debug("THE CWD");
+    storeCssModuleSpecifier(
+      createImportPathContext(url.pathname, specifier, "src")
+    );
+    // storeCssModuleSpecifier(specifier, url.pathname);
+  }
+  if (fileSpecifiers.includes(path.extname(specifier))) {
+    let url = new URL(specifier, parentURL);
+    storeFileModuleSpecifier(
+      createImportPathContext(url.pathname, specifier, "src")
+    );
   }
   if (!meta && !metaChecked) {
     loadMeta();
   }
+
   if (specifier.indexOf("../kotii-land/dev") >= 0) {
     loggas.resolve.debug("ALSO HANDLED BY LOADERS", meta);
   }
@@ -603,8 +627,7 @@ const getCssFromSass = async (fileUrl, fName) => {
     modulesResult = await renderCssModules(
       cssFromSass,
       kotiiModulesMeta,
-      fileUrl,
-      MODULES_SPECIFIERS[fileUrl].shortName
+      MODULES_SPECIFIERS[fileUrl]
     );
     saveStyles(modulesResult.css);
     saveCssModulesMap(
@@ -630,8 +653,7 @@ const getCssFromLess = async (fileUrl, fName) => {
     modulesResult = await renderCssModules(
       cssFromLess,
       kotiiModulesMeta,
-      fileUrl,
-      MODULES_SPECIFIERS[fileUrl].shortName
+      MODULES_SPECIFIERS[fileUrl]
     );
     saveStyles(modulesResult.css);
     saveCssModulesMap(
@@ -658,8 +680,7 @@ const getCssFromStylus = async (fileUrl, fName) => {
     modulesResult = await renderCssModules(
       cssFromStylus,
       kotiiModulesMeta,
-      fileUrl,
-      MODULES_SPECIFIERS[fileUrl].shortName
+      MODULES_SPECIFIERS[fileUrl]
     );
     console.log("THE CSS CONVERTED LESS", modulesResult.cssModules);
 
@@ -686,8 +707,7 @@ const getCss = async (fileUrl, fName) => {
     modulesResult = await renderCssModules(
       cssContent,
       kotiiModulesMeta,
-      fileUrl,
-      MODULES_SPECIFIERS[fileUrl].shortName
+      MODULES_SPECIFIERS[fileUrl]
     );
     console.log("THE CSS CONVERTED LESS", modulesResult.cssModules);
     saveStyles(modulesResult.css);
@@ -759,14 +779,51 @@ const saveCssModulesMap = (id, idModules) => {
     newJson[id] = idModules;
   }
 
-  fs.writeFileSync(JSON_STYLES_MAP_PATH, JSON.stringify(newJson), {
+  fs.writeFileSync(JSON_STYLES_MAP_PATH, JSON.stringify(newJson, null, 2), {
     encoding: "utf8",
   });
 };
 
-const storeCssModuleSpecifier = (specifier, filePath) => {
-  MODULES_SPECIFIERS[filePath] = {
-    shortName: specifier,
+const storeCssModuleSpecifier = (pathContext) => {
+  console.log("THE PATH CONTEXT", pathContext);
+  MODULES_SPECIFIERS[pathContext.fileFullPath] = {
+    shortName: pathContext.fileUserRequest,
+    pathContext,
   };
   loggas.resolve.debug("THE MODULES SPECIFIER", MODULES_SPECIFIERS);
+};
+
+const storeFileModuleSpecifier = (pathContext) => {
+  MODULES_FILE_SPECIFIER[pathContext.fileFullPath] = {
+    shortName: pathContext.fileUserRequest,
+    pathContext,
+  };
+};
+
+const processImageFiles = (fullUrl, filename, fileExtension) => {
+  let fileLoaderConfig =
+    meta && meta.fileLoader ? meta.fileLoader : FILE_LOADER_DEFAULT;
+  let fileConfig = {
+    extension: fileExtension,
+    fullUrl,
+    filename,
+    processor: "nodejs",
+  };
+
+  let loadedFileResult = loadFile(fileLoaderConfig, fileConfig);
+  loggas.load.debug("The LoadedFileResult", loadedFileResult);
+
+  kotiiAssetsMeta[MODULES_FILE_SPECIFIER[fullUrl].shortName] = {
+    content: loadedFileResult,
+    pathContext: MODULES_FILE_SPECIFIER[fullUrl].pathContext,
+  };
+
+  if (!timerActive) {
+    timerActive = true;
+    setTimeout(() => {
+      timerActive = false;
+      saveKotiiAssetsMeta();
+    }, 1000);
+  }
+  return `export default ${JSON.stringify(loadedFileResult)}`;
 };
