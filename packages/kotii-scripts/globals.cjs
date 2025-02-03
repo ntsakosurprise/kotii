@@ -1,5 +1,6 @@
 const fs = require("node:fs");
 const Papa = require("papaparse");
+const path = require("path");
 const { parseString } = require("xml2js");
 const { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 const parser = new XMLParser();
@@ -75,8 +76,53 @@ const removeStylesJson = () => {
   if (fs.existsSync(stylesPathCss)) fs.unlinkSync(stylesPathCss);
 };
 
+const createImportPathContext = (
+  filePath,
+  specifier,
+  firstGenChild = "src"
+) => {
+  console.log("CREATE IMPORT PATH CONTEXT", specifier);
+  let pathContext = {};
+  let currentPathString = "";
+  let contineScan = true;
+  let fileName = "";
+  let fileNameSet = false;
+  //  while(contineScan){
+  //     console.log("THE FOLDER",path.dirname(specifier))
+  //     if(!fileName) fileName = path.basename(specifier)
+  //     let currentFolder = path.dirname(specifier)
+  //      if(!fileNameSet) {
+  //        fileNameSet = true;
+  //        currentPathString = `${currentFolder}/${fileName}`
+  //       }else{
+  //         currentPathString = `${currentFolder}/${currentPathString}`
+  //       }
+  //     if(currentFolder == firstGenChild) {
+  //       pathContext[fileRelativePath] = currentPathString
+  //       pathContext[fileRoot] = specifier
+  //       pathContext[fileUserRequest] = specifier
+  //       contineScan = false
+  //     }
+
+  //  }
+  console.log(
+    "THE LAST INDEX OF SOURCE",
+    filePath.substring(0, filePath.lastIndexOf(firstGenChild) - 1)
+  );
+  let lastIndexOfChild = filePath.lastIndexOf(firstGenChild);
+  let root = filePath.substring(0, lastIndexOfChild - 1);
+  let relativePath = `./${filePath.substring(lastIndexOfChild)}`;
+  pathContext["fileRelativePath"] = relativePath;
+  pathContext["fileRoot"] = root;
+  pathContext["fileUserRequest"] = specifier;
+  pathContext["fileFullPath"] = filePath;
+  console.log("THE FOLDER", pathContext);
+  return pathContext;
+};
+
 module.exports = {
   getNodejsForeignData,
   removeStylesJson,
   getNodejsForeignDataSync,
+  createImportPathContext,
 };
