@@ -7,10 +7,8 @@ module.exports = function (cssContent) {
     "SyncStylesLoader context",
     this._module.resourceResolveData.relativePath
   );
-  const filePath = this.resource;
-  const fileSpecifier = this._module.resourceResolveData.relativePath;
+  const relativeFilePath = this._module.resourceResolveData.relativePath;
   let options = this.getOptions();
-  let modulesMap = "";
 
   let assetsPath = path.resolve(
     options.referenceAssetsPath,
@@ -26,9 +24,30 @@ module.exports = function (cssContent) {
     }
   }
 
-  if (assetsManifestData[fileSpecifier]) {
-    modulesMap = assetsManifestData[fileSpecifier].modules;
+  let content = getFileContent(relativeFilePath);
+  console.log("THE CONTENT", content);
+
+  return `export default ${JSON.stringify(content)}`;
+
+  // return `export default ${JSON.stringify(modulesMap)}`;
+};
+
+const getFileContent = (relativeFilePath) => {
+  let assetsKeys = Object.keys(assetsManifestData);
+  let content = "";
+
+  for (
+    let currentAssetIndex = 0;
+    currentAssetIndex < assetsKeys.length;
+    currentAssetIndex++
+  ) {
+    let currentAssetMap = assetsManifestData[assetsKeys[currentAssetIndex]];
+
+    if (currentAssetMap.pathContext.fileRelativePath === relativeFilePath) {
+      content = currentAssetMap.modules;
+      break;
+    }
   }
 
-  return `export default ${JSON.stringify(modulesMap)}`;
+  return content;
 };
