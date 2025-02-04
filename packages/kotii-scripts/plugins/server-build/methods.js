@@ -731,7 +731,7 @@ methods.processStylesNodes = function (nodePath, state) {
     return path.remove();
   } else {
     console.log("SCOOPED THE SPECIFIER", importSpecifier);
-    let fullPath = assetsManifestData[importSpecifier].fullPath;
+    let fullPath = assetsManifestData[importSpecifier].pathContext.fileFullPath;
     console.log("THE FULL PATH", fullPath);
     let absoluteFilePath = fullPath.replace(
       state.appSrc,
