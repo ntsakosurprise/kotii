@@ -114,6 +114,12 @@ methods.handleServerBuild = function (data) {
         targetSource,
         appManifest: contextApp.appManifest,
       });
+      self.aggregateProductionResources({
+        appFolder: targetMain,
+        appSrc: targetSource,
+        cwd: kotiiRootPath,
+        appBuildFolder: destination,
+      });
 
       //  babelJson.plugins = [...babelJson.plugins.filter((plugin)=>{
       //     if(plugin[0].indexOf("scoped-styles-plugin") >= 0) return false
@@ -743,19 +749,26 @@ methods.processStylesNodes = function (nodePath, state) {
 
     console.log("New URL SCOOPED PLUGING", absoluteFilePath);
     let extension = nativePath.extname(importSpecifier);
-    let cssModuleDataExport = `export default ${JSON.stringify(
-      assetsManifestData[importSpecifier].modules
-    )}`;
+
     console.log(
       "cssModulesData export",
-      cssModuleDataExport,
+
       absoluteFilePath,
       extension
     );
-    let cssJsFilePath = absoluteFilePath.replace(extension, ".js");
+    let fileIsInPages = absoluteFilePath.toLowerCase().indexOf("/pages")
+      ? true
+      : false;
+    let saveExtension = fileIsInPages ? ".ktc" : ".js";
+    let cssModuleDataExport = fileIsInPages
+      ? JSON.stringify(assetsManifestData[importSpecifier].modules)
+      : `export default ${JSON.stringify(
+          assetsManifestData[importSpecifier].modules
+        )}`;
+    let cssJsFilePath = absoluteFilePath.replace(extension, saveExtension);
     console.log("THE CSS JS FILE PATH", cssJsFilePath);
     fs.writeFileSync(cssJsFilePath, cssModuleDataExport);
-    path.node.source.value = importSpecifier.replace(extension, ".js");
+    path.node.source.value = importSpecifier.replace(extension, saveExtension);
     return;
   }
 };
@@ -770,5 +783,35 @@ methods.getStylesMap = function (kotiiAppPath) {
       })
     );
   }
+};
+methods.aggregateProductionResources = function (context) {
+  const self = this;
+  self.aggregateAppKotiiMeta(context);
+  self.aggregateAppCss(context);
+};
+methods.aggregateAppCss = function (context) {
+  const self = this;
+  let assetsPath = `${kotiiRootPath}/kotii-land/dev/styles.json`;
+  let savePath = `${context.appBuildFolder}/index.css`;
+  console.log("THE SAVE PATH", savePath);
+  let cssContent = JSON.parse(
+    fs.readFileSync(assetsPath, { encoding: "utf-8" })
+  );
+  let cssParsedContent = cssContent.toString().replaceAll(",", " ");
+  fs.writeFileSync(savePath, cssParsedContent);
+};
+methods.aggregateAppKotiiMeta = function (context) {
+  const self = this;
+  console.log("THE CONTEXT", context);
+  let assetsModulesPath = `${kotiiRootPath}/kotii-land/dev/styles-css-modules.json`;
+  let cssModules = JSON.parse(
+    fs.readFileSync(assetsModulesPath, { encoding: "utf-8" })
+  );
+  let savePath = `${context.appBuildFolder}/kotii_index.js`;
+  console.log("THE SAVE PATH", savePath);
+  let content = `const modules = ${JSON.stringify(
+    cssModules
+  )}; export default modules;`;
+  fs.writeFileSync(savePath, content, null, 2);
 };
 export default methods;

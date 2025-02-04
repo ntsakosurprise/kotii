@@ -34,6 +34,9 @@ class ServerBuild {
     this.getStylesMap = methods.getStylesMap;
     this.processStylesNodes = methods.processStylesNodes;
     this.processDataNodes = methods.processDataNodes;
+    this.aggregateProductionResources = methods.aggregateProductionResources;
+    this.aggregateAppCss = methods.aggregateAppCss;
+    this.aggregateAppKotiiMeta = methods.aggregateAppKotiiMeta;
   }
 }
 export default ServerBuild;
