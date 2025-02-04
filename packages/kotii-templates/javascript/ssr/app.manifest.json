@@ -31,5 +31,9 @@
     "Constants": "/src/constants/",
     "Assets": "/src/assets/index",
     "AppGlobals": "/src/globals/index"
+  },
+  "file-loader": {
+    "name": "[name].[ext]",
+    "output": "public/imgs"
   }
 }
