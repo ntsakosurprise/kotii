@@ -167,6 +167,7 @@
     "postcss-plugins/",
     "babel-plugins",
     "kotii-land/",
+    "file-loader/",
     "webpack-plugins/",
     "webpack-loaders/",
     ".babelrc",
