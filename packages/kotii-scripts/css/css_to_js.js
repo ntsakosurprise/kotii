@@ -3,7 +3,9 @@ import postcss from "postcss";
 //import postcssModules from "postcss-modules";
 import postCssModules from "../postcss-plugins/index.js";
 
-const renderCssModules = function (cssInput, opts, filePath, shortName) {
+const renderCssModules = function (cssInput, opts, moduleMeta) {
+  console.log("MODULES META", moduleMeta);
+  let shortName = moduleMeta.shortName;
   return new Promise((resolve) => {
     postcss([postCssModules])
       .process(cssInput)
@@ -11,7 +13,7 @@ const renderCssModules = function (cssInput, opts, filePath, shortName) {
         console.log("POST CSS PROCESSOR HAS COMPLETED", result.css);
         opts[shortName] = {
           modules: { ...result.root.modulesMap },
-          fullPath: filePath,
+          pathContext: moduleMeta.pathContext,
         };
 
         console.log("THE FIEPATH", opts);
