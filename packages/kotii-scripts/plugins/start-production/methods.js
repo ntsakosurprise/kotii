@@ -40,10 +40,10 @@ methods.doStartUp = function (data) {
     let nodeModulesOrUserLand = path.resolve(getWorkingDir(), "..");
     let configFolder = getWorkingDir();
     self.debug("CONFIG FOLDER", configFolder);
+
     // if (nodeModulesOrUserLand.indexOf("/packages") >= 0) {
     //   configFolder = `${nodeModulesOrUserLand}/kotii-templates/javascript/ssr`;
     // }
-
     let rootFiles = [];
     const files = fs.readdirSync(configFolder, { recursive: true });
 
@@ -68,53 +68,52 @@ methods.doStartUp = function (data) {
     self.debug("GETTING THE WORKING DIR", configFolder);
     self.debug("THE FILES", files);
     self.debug("THE ROOT FILES", rootFiles);
-    if (rootFiles.length > 0) {
-      loadFile(`${rootStats.buildRoot}${path.sep}.config.js`).then((config) => {
-        let domain = config.domain;
-        // let buildPath = "";
-        // let toFolder = "";
-        // domain.forEach((doma) => {
-        //   if (doma.name === "static") {
-        //     toFolder = path.resolve(getWorkingDir(), `${doma.set}`);
-        //     buildPath = `${rootStats.buildRoot}/${doma.set}`;
-        //     // doma.set = `${rootFiles[0].buildRoot}/${doma.set}`;
-        //   }
-        // });
-        // delete config.domain;
-        // let configMod = {
-        //   ...config,
-        //   domain: domain,
-        // };
-        // self.debug("THE CONFIG FILE", configMod);
-        // self.debug("THE TO FOLDER", toFolder);
-        // let madeFolder = self.createFolder(toFolder);
-        // self.copyFromToFolder(buildPath, madeFolder);
 
-        domain.forEach((doma) => {
-          if (doma.name === "static") {
-            doma.set = `${rootFiles[0].buildRoot}/${doma.set}`;
-            doma.absolute = true;
-          }
-        });
-        let pathApiRoot = path.resolve(rootStats.buildRoot, "api");
-        let pathApiConfig = path.resolve(rootStats.buildRoot, "api/.config.js");
-        if (fs.existsSync(pathApiRoot) && fs.existsSync(pathApiConfig)) {
-          loadFile(`${rootStats.buildRoot}${path.sep}api/.config.js`).then(
-            (apiConfig) => {
-              self.debug("API CONFIG", apiConfig);
-              let appConfig = {
-                ...config,
-                ...apiConfig,
-                router: [...apiConfig.router, ...config.router],
-              };
-              resolve(appConfig);
+    self
+      .doProdRoutes({
+        path: {
+          appSrc: `${rootFiles[0].buildRoot}/src`,
+          isProductionRequest: true,
+        },
+      })
+      .then((routes) => {
+        self.debug("The Retrieved Routes", routes);
+
+        if (rootFiles.length > 0) {
+          loadFile(`${rootStats.buildRoot}${path.sep}.config.js`).then(
+            (config) => {
+              let domain = config.domain;
+
+              domain.forEach((doma) => {
+                if (doma.name === "static") {
+                  doma.set = `${rootFiles[0].buildRoot}/${doma.set}`;
+                  doma.absolute = true;
+                }
+              });
+              let pathApiRoot = path.resolve(rootStats.buildRoot, "api");
+              let pathApiConfig = path.resolve(
+                rootStats.buildRoot,
+                "api/.config.js"
+              );
+              if (fs.existsSync(pathApiRoot) && fs.existsSync(pathApiConfig)) {
+                loadFile(
+                  `${rootStats.buildRoot}${path.sep}api/.config.js`
+                ).then((apiConfig) => {
+                  self.debug("API CONFIG", apiConfig);
+                  let appConfig = {
+                    ...config,
+                    ...apiConfig,
+                    router: [...apiConfig.router, ...routes],
+                  };
+                  resolve(appConfig);
+                });
+              } else {
+                resolve(config);
+              }
             }
           );
-        } else {
-          resolve(config);
         }
       });
-    }
   });
 };
 
@@ -142,6 +141,23 @@ methods.copyFromToFolder = function (from, to, ignores = []) {
       // self.debug("THIS TO RETURN", thisToReturn);
       return thisToReturn;
     },
+  });
+};
+
+methods.doProdRoutes = function (resources) {
+  const self = this;
+  return new Promise((resolve, reject) => {
+    self.emit({
+      type: "create-file-routes",
+      data: {
+        payload: resources,
+        callback: (data) => {
+          self.debug("FILE ROUTES PROCESSED", data);
+          // pResolve({ routes: data.routes, ...resources, ...data });
+          resolve(data.routes);
+        },
+      },
+    });
   });
 };
 

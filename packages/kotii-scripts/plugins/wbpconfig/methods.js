@@ -15,7 +15,11 @@ methods.handleWebpackConfig = function (data) {
   const loadFile = self.pao.pa_loadFile;
   const { contextApp } = data.payload;
   const { appEnv = "" } = contextApp;
-  const { useCustomDomain = false, useHttps = false } = contextApp.appManifest;
+  const {
+    useCustomDomain = false,
+    useHttps = false,
+    useAsDefaultPage = "/",
+  } = contextApp.appManifest;
   self.debug("WEBPACK DATA PAYLOAD", data.payload.build);
   // self.debug("SELF. AFTER SETTING CALLBACK", self);
   // self.debug("THE NODE ENV", process.env.NODE_ENV);
@@ -73,6 +77,7 @@ methods.handleWebpackConfig = function (data) {
       useHttps,
       useCustomDomain,
       useAvailablePort: false,
+      pageToOpen: useAsDefaultPage,
       domainName: useCustomDomain ? `${contextApp.appName}.com` : "localhost",
     };
     useCustomDomain
@@ -133,9 +138,11 @@ methods.configureWebPack = function (
   envs.stringified["KOTII_APP_META"] = JSON.stringify(
     contextApp.appManifest.app
   );
+  envs.stringified["KOTII_SHOW_DEBUG_LOGS"] = true;
 
   self.debug("THE APP ENVS", envs);
-
+  // self.addImportLineTCSSModulesJs()
+  // self.addImportLineTAppJs()
   setContextEnv(contextApp, envs);
   const webpackConfigObject = webPackConfig({
     cwd,
@@ -154,6 +161,7 @@ methods.configureWebPack = function (
     closeWatcher: self.closeWatcher.bind(self),
     notifyClient: self.notifyClient.bind(self),
     isProjectPNPM: contextApp.appPnpmPkgr,
+    useInlinedPngs: contextApp.appManifest?.useInlinedPngs || false,
   });
 
   self.debug("PROCESS.ENV", process.env);
@@ -541,6 +549,86 @@ methods.addDomainToHost = function (domain) {
       },
     });
   });
+};
+
+methods.insertIdentifierImportDeclarations = function (imports) {
+  const self = this;
+
+  const generate = self.generate;
+
+  const parser = self.parser;
+
+  let importString = imports.map((im, i) => {
+    return `import ${
+      !im?.defaultImport ? `{${im.ids.join(",")}}` : im.ids.join(",")
+    } from "${im.source}";`;
+  });
+
+  let joinedString = `${importString.join("")}`;
+  self.debug("ASTY JOINED ID STRING", joinedString);
+  let ast = parser.parse(joinedString, { sourceType: "module" });
+  let modifiedCode = generate(ast).code;
+  self.debug("ASTY CODE ID THE IMPOT STRINGS", importString);
+  self.debug("ASTY CODE ID", modifiedCode);
+  self.debug();
+  return modifiedCode;
+};
+
+methods.addImportLineTCSSModulesJs = function () {
+  const self = this;
+  const pao = self.pao;
+  const generate = self.generate;
+  const parser = self.parser;
+  const readFileSync = pao.pa_readFileSync;
+  const saveToFile = pao.pa_saveToFile;
+
+  const buildPath = `${kotiiKotiiLandPath}/dev/hot-load-css-modules.js`;
+  const buildPathFile = readFileSync(buildPath);
+  let buildAst = parser.parse(buildPathFile, {
+    sourceType: "module",
+    plugins: ["jsx"],
+  });
+
+  self.debug("AST FOR BUILD.JS");
+  // self.removeImportDeclarations(buildAst, ["./pages.js"]);
+  const generateBuildAst = generate(buildAst).code;
+  const buildImportString = self.insertIdentifierImportDeclarations([
+    {
+      source: "./styles-css-modules.json",
+      defaultImport: true,
+      ids: ["dependecies"],
+    },
+  ]);
+  let newFileContent = `${buildImportString} ${generateBuildAst}`;
+  saveToFile(buildPath, newFileContent);
+};
+
+methods.addImportLineTAppJs = function () {
+  const self = this;
+  const pao = self.pao;
+  const generate = self.generate;
+  const parser = self.parser;
+  const readFileSync = pao.pa_readFileSync;
+  const saveToFile = pao.pa_saveToFile;
+
+  const buildPath = `${kotiiKotiiLandPath}/dev/app_.js`;
+  const buildPathFile = readFileSync(buildPath);
+  let buildAst = parser.parse(buildPathFile, {
+    sourceType: "module",
+    plugins: ["jsx"],
+  });
+
+  self.debug("AST FOR BUILD.JS");
+  // self.removeImportDeclarations(buildAst, ["./pages.js"]);
+  const generateBuildAst = generate(buildAst).code;
+  const buildImportString = self.insertIdentifierImportDeclarations([
+    {
+      source: "./hot-load-css-modules.js",
+      ids: ["test"],
+    },
+  ]);
+  let newFileContent = `${buildImportString} ${generateBuildAst}`;
+  saveToFile(buildPath, newFileContent);
 };
 
 export default methods;

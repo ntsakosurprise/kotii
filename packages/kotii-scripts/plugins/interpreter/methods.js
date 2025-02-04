@@ -93,9 +93,10 @@ methods.handleInterpreterCliInput = function (data) {
     //   }
     // }
     for (let cmd = 0; cmd < userPassedCommands.length; ++cmd) {
+      console.log("THE INTERPRETER IS RUNNING");
       let commandName = userPassedCommands[cmd];
-      self.logSync("COMMAND NAME", commandName);
-      self.logSync("THE SELF COMMANDS", self.commands);
+      self.debug("COMMAND NAME", commandName);
+      self.debug("THE SELF COMMANDS", self.commands);
       if (contains(self.commands, commandName) && self[commandName]) {
         self.debug("THE APP CONTAINS THE COMMAND", self[commandName]);
         if (self[commandName]) self[commandName]();

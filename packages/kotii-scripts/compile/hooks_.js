@@ -5,10 +5,37 @@ import { isBuiltin } from "node:module";
 import { pathToFileURL } from "node:url";
 import path from "path";
 import babelJson from "../babel.server.json" assert { type: "json" };
+import {
+  lessToCssConverter,
+  renderCssModules,
+  sassToCssConverter,
+  stylusToCssConverter,
+} from "../css/index.js";
+import { loadFile } from "../file-loader/index.js";
+import { createImportPathContext, getNodejsForeignData } from "../globals.cjs";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
 
 let meta = null;
+let kotiiAssetsMeta = {};
+let kotiiModulesMeta = {};
+let timerActive = false;
+let metaChecked = false;
 let workdir = `${process.cwd()}`;
+let GLOBAL_STYLES_REGEX = /global\.+/;
+let JSON_STYLES_PATH = `${kotiiKotiiLandPath}/dev/styles.json`;
+let JSON_STYLES_MAP_PATH = `${kotiiKotiiLandPath}/dev/styles-css-modules.json`;
+let JSON_STYLES_PATH_FIRSTTIME_USE = false;
+let JSON_STYLES_PATH_MAP_FIRSTTIME_USE = false;
+let MODULES_SPECIFIERS = {};
+let MODULES_FILE_SPECIFIER = {};
+let FILE_LOADER_DEFAULT = {
+  name: "name.ext",
+  output: "public/imgs",
+  inlinePngs: true,
+};
+
+let cssSpecifiers = [".css", ".scss", ".sass", ".less", ".styl"];
+let fileSpecifiers = [".gif", ".png", ".svg", ".jpg", ".jpeg"];
 
 logger.setNameSpaces([
   { namespace: "nodejs:compilation:load", id: "load" },
@@ -24,7 +51,6 @@ logger.setNameSpaces([
 
 let extJsx = ".jsx";
 let extJS = ".js";
-let extJson = ".json";
 let fileLoaderExts = [
   ".png",
   ".jpg",
@@ -37,6 +63,8 @@ let fileLoaderExts = [
   ".csv",
   ".tsv",
   ".xml",
+  ".json",
+  ".svg",
 ];
 let extensions = [".js", ".jsx", ".tsx", ".ts"];
 let nodeModulesRegex = /node_modules/;
@@ -115,11 +143,47 @@ export async function load(url, context, nextLoad) {
         }
       }
     } else if (fileLoaderExts.includes(fileExtension)) {
-      loggas.load.debug("The PNG", fileExtension);
+      loggas.load.debug("The PNG", fileExtension, meta && meta.useInlinedPngs);
       let pathName = new URL(url).pathname;
       let fileName = `/${path.basename(pathName)}`;
+      switch (fileExtension) {
+        case ".json":
+          source = await getNodejsForeignData("json", pathName);
+          break;
+        case ".csv":
+          source = await getNodejsForeignData("csv", pathName);
+          break;
+        case ".xml":
+          source = await getNodejsForeignData("xml", pathName);
+          break;
+        case ".jpg":
+        case ".svg":
+        case ".png":
+        case ".gif":
+        case ".mp3":
+        case ".mp4":
+          source = processImageFiles(pathName, fileName, fileExtension);
+          break;
+        case ".scss":
+        case ".sass":
+          source = await getCssFromSass(pathName, fileName);
+          break;
+        case ".less":
+          source = await getCssFromLess(pathName, fileName);
+          break;
+        case ".styl":
+          source = await getCssFromStylus(pathName, fileName);
+          break;
+        case ".css":
+          source = await getCss(pathName, fileName);
+          break;
+        default:
+          source = `export default ${JSON.stringify(fileName)}`;
+      }
 
-      source = `export default ${JSON.stringify(fileName)}`;
+      loggas.load.debug("filename.pathname", fileName, pathName);
+
+      loggas.load.debug("FileName source", source);
       return {
         format: "module",
         shortCircuit: true,
@@ -141,26 +205,34 @@ export async function load(url, context, nextLoad) {
       shortCircuit: true,
       source: result.code,
     };
-  } else if (fileExtension === extJson) {
-    let contents = fs.readFileSync(new URL(url).pathname, {
-      encoding: "utf-8",
-    });
-    let source = `export default ${JSON.stringify(contents)}`;
-    return {
-      format: "module",
-      shortCircuit: true,
-      source: source,
-    };
   }
 
   return nextLoad(url);
 }
 
 export async function resolve(specifier, context, nextResolve) {
-  // const { parentURL = workdir } = context;
-  loggas.resolve.debug("RESOLVE specifier", specifier);
+  const { parentURL = "" } = context;
+  loggas.resolve.debug("RESOLVE specifier", specifier, parentURL);
 
   let shouldTerminate = false;
+  if (cssSpecifiers.includes(path.extname(specifier))) {
+    let url = new URL(specifier, parentURL);
+    loggas.resolve.debug("THE CWD");
+    storeCssModuleSpecifier(
+      createImportPathContext(url.pathname, specifier, "src")
+    );
+    // storeCssModuleSpecifier(specifier, url.pathname);
+  }
+  if (fileSpecifiers.includes(path.extname(specifier))) {
+    let url = new URL(specifier, parentURL);
+    storeFileModuleSpecifier(
+      createImportPathContext(url.pathname, specifier, "src")
+    );
+  }
+  if (!meta && !metaChecked) {
+    loadMeta();
+  }
+
   if (specifier.indexOf("../kotii-land/dev") >= 0) {
     loggas.resolve.debug("ALSO HANDLED BY LOADERS", meta);
   }
@@ -229,6 +301,7 @@ const resolveAliasedImports = (specifier) => {
     // console.log("Processing PNG OR CSS", specifier);
     // let url = new URL(specifier, parentURL);
     // console.log("PNG URL", url.href);
+
     return { url: fileUrl, shortCircuit: true };
   } else {
     return false;
@@ -461,29 +534,296 @@ const getPagesBasePath = () => {
  * key that maps a name and an absolute path that should be resolved to some file(s)
  */
 const doMeta = (specifier) => {
-  if (!meta) {
-    let metaPath = path.resolve(workdir, "app.manifest.json");
-
-    if (fs.existsSync(metaPath)) {
-      meta = JSON.parse(
-        fs.readFileSync(metaPath, {
-          encoding: "utf8",
-        })
-      );
-
-      if (meta?.aliases && meta.aliases[specifier]) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
+  if (meta && meta?.aliases) {
+    return meta.aliases[specifier];
   } else {
-    if (meta?.aliases) {
-      return meta.aliases[specifier];
-    } else {
-      return false;
-    }
+    return false;
   }
+};
+
+const loadMeta = () => {
+  loggas.resolve.debug("LOAD META CALLED");
+  let metaPath = path.resolve(workdir, "app.manifest.json");
+
+  if (fs.existsSync(metaPath)) {
+    meta = JSON.parse(
+      fs.readFileSync(metaPath, {
+        encoding: "utf8",
+      })
+    );
+    loggas.resolve.debug("LOADED META", meta);
+    metaChecked = true;
+  }
+};
+
+const saveKotiiAssetsMeta = () => {
+  let metaPath = path.resolve(kotiiKotiiLandPath, "assets.manifest.json");
+
+  fs.writeFileSync(metaPath, JSON.stringify(kotiiAssetsMeta, null, 2));
+
+  // metaChecked = true;
+};
+
+const doInlinedPngs = (fileUrl, fName) => {
+  loggas.load.debug("DO PNG GETS A CALL", fileUrl);
+  if (meta && meta.useInlinedPngs) {
+    let pngContent = fs.readFileSync(fileUrl, { encoding: "base64" });
+    const b64 = pngContent.toString("base64");
+    let dataURI = `data:image/png;base64,${b64}`;
+    kotiiAssetsMeta[fileUrl] = dataURI;
+    if (!timerActive) {
+      timerActive = true;
+      setTimeout(() => {
+        timerActive = false;
+        saveKotiiAssetsMeta();
+      }, 1000);
+    }
+    return `export default ${JSON.stringify(dataURI)}`;
+  } else {
+    return `export default ${JSON.stringify(fName)}`;
+  }
+};
+const doSvgs = (fileUrl, fName) => {
+  loggas.load.debug("DO SVG GETS A CALL", fileUrl);
+
+  let svgContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
+  // const b64 = pngContent.toString("base64");
+  // let dataURI = `data:image/png;base64,${b64}`;
+  // kotiiAssetsMeta[fileUrl] = svgContent;
+  // if (!timerActive) {
+  //   timerActive = true;
+  //   setTimeout(() => {
+  //     timerActive = false;
+  //     saveKotiiAssetsMeta();
+  //   }, 1000);
+  // }
+  console.log("THE SVG CONTENT", svgContent);
+  return `export default ${JSON.stringify(svgContent)}`;
+};
+const doStyles = (fileUrl, fName) => {
+  loggas.load.debug("DO STYLES GETS A CALL", fileUrl);
+
+  let svgContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
+  // const b64 = pngContent.toString("base64");
+  // let dataURI = `data:image/png;base64,${b64}`;
+  // kotiiAssetsMeta[fileUrl] = svgContent;
+  // if (!timerActive) {
+  //   timerActive = true;
+  //   setTimeout(() => {
+  //     timerActive = false;
+  //     saveKotiiAssetsMeta();
+  //   }, 1000);
+  // }
+  console.log("THE SVG CONTENT", svgContent);
+  return `export default ${JSON.stringify(svgContent)}`;
+};
+
+const getCssFromSass = async (fileUrl, fName) => {
+  loggas.load.debug("SASS TO CSSS", fileUrl);
+  console.log("THE MODULE SPECIFIER");
+  let cssFromSass = sassToCssConverter(fileUrl);
+  let modulesResult = "";
+  if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
+    modulesResult = await renderCssModules(
+      cssFromSass,
+      kotiiModulesMeta,
+      MODULES_SPECIFIERS[fileUrl]
+    );
+    saveStyles(modulesResult.css);
+    saveCssModulesMap(
+      MODULES_SPECIFIERS[fileUrl].shortName,
+      modulesResult.cssModules
+    );
+  } else {
+    console.log("THE URL CONTAINS GLOBAL", fileUrl);
+    saveStyles(cssFromSass);
+    return `export default ${JSON.stringify(fName)}`;
+  }
+
+  return `export default ${JSON.stringify(modulesResult.cssModules)}`;
+};
+
+const getCssFromLess = async (fileUrl, fName) => {
+  loggas.load.debug("LESS TO CSSS", fileUrl);
+
+  let cssFromLess = await lessToCssConverter(fileUrl, fName);
+  let modulesResult = "";
+
+  if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
+    modulesResult = await renderCssModules(
+      cssFromLess,
+      kotiiModulesMeta,
+      MODULES_SPECIFIERS[fileUrl]
+    );
+    saveStyles(modulesResult.css);
+    saveCssModulesMap(
+      MODULES_SPECIFIERS[fileUrl].shortName,
+      modulesResult.cssModules
+    );
+  } else {
+    console.log("THE URL CONTAINS GLOBAL", fileUrl);
+    saveStyles(cssFromLess);
+    return `export default ${JSON.stringify(fName)}`;
+  }
+
+  console.log("THE CSS CONVERTED LESS", modulesResult.ccsModules);
+
+  return `export default ${JSON.stringify(modulesResult.cssModules)}`;
+};
+
+const getCssFromStylus = async (fileUrl, fName) => {
+  loggas.load.debug("Stylus TO CSSS", fileUrl);
+
+  let cssFromStylus = await stylusToCssConverter(fileUrl, fName);
+  let modulesResult = "";
+  if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
+    modulesResult = await renderCssModules(
+      cssFromStylus,
+      kotiiModulesMeta,
+      MODULES_SPECIFIERS[fileUrl]
+    );
+    console.log("THE CSS CONVERTED LESS", modulesResult.cssModules);
+
+    saveStyles(modulesResult.css);
+    saveCssModulesMap(
+      MODULES_SPECIFIERS[fileUrl].shortName,
+      modulesResult.cssModules
+    );
+  } else {
+    console.log("THE URL CONTAINS GLOBAL", fileUrl);
+    saveStyles(cssFromStylus);
+    return `export default ${JSON.stringify(fName)}`;
+  }
+
+  return `export default ${JSON.stringify(modulesResult.cssModules)}`;
+};
+
+const getCss = async (fileUrl, fName) => {
+  loggas.load.debug("CSS RENDER", fileUrl);
+
+  let cssContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
+  let modulesResult = "";
+  if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
+    modulesResult = await renderCssModules(
+      cssContent,
+      kotiiModulesMeta,
+      MODULES_SPECIFIERS[fileUrl]
+    );
+    console.log("THE CSS CONVERTED LESS", modulesResult.cssModules);
+    saveStyles(modulesResult.css);
+    saveCssModulesMap(
+      MODULES_SPECIFIERS[fileUrl].shortName,
+      modulesResult.cssModules
+    );
+  } else {
+    console.log("THE URL CONTAINS GLOBAL", fileUrl);
+    saveStyles(cssContent);
+    return `export default ${JSON.stringify(fName)}`;
+  }
+
+  return `export default ${JSON.stringify(modulesResult.cssModules)}`;
+};
+
+const saveStyles = (styles) => {
+  console.log("MANIPULATE STYLES, PATH TO STYLES", JSON_STYLES_PATH);
+
+  let json = null;
+  if (!JSON_STYLES_PATH_FIRSTTIME_USE && fs.existsSync(JSON_STYLES_PATH)) {
+    JSON_STYLES_PATH_FIRSTTIME_USE = true;
+    json = json;
+  } else if (fs.existsSync(JSON_STYLES_PATH)) {
+    json = fs.readFileSync(JSON_STYLES_PATH, {
+      encoding: "utf8",
+    });
+  }
+  if (!JSON_STYLES_PATH_FIRSTTIME_USE) {
+    JSON_STYLES_PATH_FIRSTTIME_USE = true;
+  }
+  let newJson = !json ? json : JSON.parse(json);
+  if (!newJson || newJson.length === 0) {
+    newJson = [styles];
+  } else {
+    newJson.push(styles);
+  }
+  fs.writeFileSync(JSON_STYLES_PATH, JSON.stringify(newJson), {
+    encoding: "utf8",
+  });
+};
+
+const saveCssModulesMap = (id, idModules) => {
+  console.log("css modules map", id, JSON_STYLES_MAP_PATH);
+
+  let json = null;
+  if (
+    !JSON_STYLES_PATH_MAP_FIRSTTIME_USE &&
+    fs.existsSync(JSON_STYLES_MAP_PATH)
+  ) {
+    JSON_STYLES_PATH_MAP_FIRSTTIME_USE = true;
+    json = json;
+  } else if (fs.existsSync(JSON_STYLES_MAP_PATH)) {
+    json = fs.readFileSync(JSON_STYLES_MAP_PATH, {
+      encoding: "utf8",
+    });
+  }
+
+  if (!JSON_STYLES_PATH_MAP_FIRSTTIME_USE) {
+    JSON_STYLES_PATH_MAP_FIRSTTIME_USE = true;
+  }
+
+  let newJson = !json ? json : JSON.parse(json);
+  if (!newJson || newJson.length === 0) {
+    newJson = {
+      [id]: idModules,
+    };
+  } else {
+    newJson[id] = idModules;
+  }
+
+  fs.writeFileSync(JSON_STYLES_MAP_PATH, JSON.stringify(newJson, null, 2), {
+    encoding: "utf8",
+  });
+};
+
+const storeCssModuleSpecifier = (pathContext) => {
+  console.log("THE PATH CONTEXT", pathContext);
+  MODULES_SPECIFIERS[pathContext.fileFullPath] = {
+    shortName: pathContext.fileUserRequest,
+    pathContext,
+  };
+  loggas.resolve.debug("THE MODULES SPECIFIER", MODULES_SPECIFIERS);
+};
+
+const storeFileModuleSpecifier = (pathContext) => {
+  MODULES_FILE_SPECIFIER[pathContext.fileFullPath] = {
+    shortName: pathContext.fileUserRequest,
+    pathContext,
+  };
+};
+
+const processImageFiles = (fullUrl, filename, fileExtension) => {
+  let fileLoaderConfig =
+    meta && meta.fileLoader ? meta.fileLoader : FILE_LOADER_DEFAULT;
+  let fileConfig = {
+    extension: fileExtension,
+    fullUrl,
+    filename,
+    processor: "nodejs",
+  };
+
+  let loadedFileResult = loadFile(fileLoaderConfig, fileConfig);
+  loggas.load.debug("The LoadedFileResult", loadedFileResult);
+
+  kotiiAssetsMeta[MODULES_FILE_SPECIFIER[fullUrl].shortName] = {
+    content: loadedFileResult,
+    pathContext: MODULES_FILE_SPECIFIER[fullUrl].pathContext,
+  };
+
+  if (!timerActive) {
+    timerActive = true;
+    setTimeout(() => {
+      timerActive = false;
+      saveKotiiAssetsMeta();
+    }, 1000);
+  }
+  return `export default ${JSON.stringify(loadedFileResult)}`;
 };

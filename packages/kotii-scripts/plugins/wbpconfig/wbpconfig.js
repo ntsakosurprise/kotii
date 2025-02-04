@@ -1,9 +1,15 @@
+import generate from "@babel/generator";
+import parser from "@babel/parser";
+import template from "@babel/template";
+import traverse from "@babel/traverse";
+import * as t from "@babel/types";
 import webpack from "webpack";
 import webpackDevMiddleware from "webpack-dev-middleware";
 import webpackHotMiddleware from "webpack-hot-middleware";
 import methods from "./methods.js";
 import webPackConfig from "./webpack.config.js";
 import webPackServerConfig from "./webpack.server.config.js";
+
 /**
  * @type WebpackConfig
  */
@@ -18,6 +24,13 @@ class WebpackConfig {
     this.webpackHotMiddleware = webpackHotMiddleware;
     this.fileIsAddOrDelProcessed = false;
     this.lastAddOrDelFile = "";
+
+    this.parser = parser;
+    this.traverse = traverse.default;
+    this.t = t;
+    this.template = template.default;
+    this.generate = generate.default;
+
     this.init = methods.init;
     this.handleWebpackConfig = methods.handleWebpackConfig;
     this.configureWebPack = methods.configureWebPack;
@@ -38,6 +51,10 @@ class WebpackConfig {
     this.checkIfIsFile = methods.checkIfIsFile;
     this.createSSLCertificate = methods.createSSLCertificate;
     this.addDomainToHost = methods.addDomainToHost;
+    this.addImportLineTCSSModulesJs = methods.addImportLineTCSSModulesJs;
+    this.insertIdentifierImportDeclarations =
+      methods.insertIdentifierImportDeclarations;
+    this.addImportLineTAppJs = methods.addImportLineTAppJs;
   }
 }
 export default WebpackConfig;

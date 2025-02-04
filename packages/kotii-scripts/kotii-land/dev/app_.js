@@ -26,6 +26,7 @@ const App = (appWrapper = null, layout = null) => {
   userWrapper = appWrapper;
   userLayout = layout;
   const app = process.env.KOTII_APP_META;
+  console.log("THE EFFECTSTORE RAW", window.__KOTII_EFFECTS_STATE__);
   const effectsStore = JSON.parse(window.__KOTII_EFFECTS_STATE__);
 
   loggas.appClient.debug("THE PROCESS.BROWSER.ENVS", process.env);
@@ -266,6 +267,8 @@ if (import.meta.webpackHot) {
 
 export {
   Head,
+  Image,
+  Svg,
   useAppContext,
   useUniversalEffect,
 } from "../../react-components/index.jsx";

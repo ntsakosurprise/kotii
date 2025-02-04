@@ -13,6 +13,7 @@ class ServerBuild {
     this.t = t;
     this.template = template.default;
     this.generate = generate.default;
+    this.assetsManifestData = null;
     // this.kotiiScriptsPath = path.join(__dirname, "..", "..");
 
     this.init = methods.init;
@@ -30,6 +31,12 @@ class ServerBuild {
     this.addObjectExpressionProperty = methods.addObjectExpressionProperty;
     this.saveRoutesInUserLand = methods.saveRoutesInUserLand;
     this.getKotiiConfigTemplate = methods.getKotiiConfigTemplate;
+    this.getStylesMap = methods.getStylesMap;
+    this.processStylesNodes = methods.processStylesNodes;
+    this.processDataNodes = methods.processDataNodes;
+    this.aggregateProductionResources = methods.aggregateProductionResources;
+    this.aggregateAppCss = methods.aggregateAppCss;
+    this.aggregateAppKotiiMeta = methods.aggregateAppKotiiMeta;
   }
 }
 export default ServerBuild;

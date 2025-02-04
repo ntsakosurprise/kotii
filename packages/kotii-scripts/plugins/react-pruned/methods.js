@@ -117,9 +117,11 @@ methods.runReactView = function (data) {
         await self.runComponentEffects(view.match, route);
       }
     }
-    let layoutRoot = await self.doImport(`/src/components/startup/index.jsx`, true, false);
+    let layoutStaticAbsolutePath = process.env.NODE_ENV == "development" ? `/src/components/startup/index.jsx` : `/src/components/startup/index.js`;
+    let layoutRoot = await self.doImport(`${layoutStaticAbsolutePath}`, true, false);
     if (!self.comps) {
-      self.comps = await self.doImport(`/kotii-land/dev/pages.js`, true, false);
+      let compsAbsolutePath = process.env.NODE_ENV == "development" ? `/kotii-land/dev/pages.js` : `.kotii-land/pages.js`;
+      self.comps = await self.doImport(`${compsAbsolutePath}`, true, false);
     }
     let effectsStore = self.effectsData;
     self.debug("THE LAYOUT ROOT", layoutRoot.Layout);
@@ -203,9 +205,8 @@ methods.renderFullPage = function () {
     scripts = []
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
   const self = this;
-  const jsonStyles = fs.existsSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`) ? JSON.parse(fs.readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`)) : null;
-  let styleTags = jsonStyles ? jsonStyles.toString().replaceAll(",", " ") : "";
-  self.debug("THE PRELOADED STATE", preloadedState, styleTags);
+  if (!self.styleTags) self.doKotiiStyles();
+  self.debug("THE PRELOADED STATE", preloadedState);
   return `
 		<!doctype html>
 		<html ${head.htmlAttributes.toString()}> 
@@ -214,7 +215,9 @@ methods.renderFullPage = function () {
     ${head?.meta.toString()}
     ${head?.link.toString()}
     ${self.styledTags}
-    ${styleTags}
+    ${self.styleTags}
+   
+    
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
@@ -357,6 +360,11 @@ methods.doImport = function (toImport) {
       reject(err);
     });
   });
+};
+methods.doKotiiStyles = function () {
+  const self = this;
+  const jsonStyles = fs.existsSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`) ? JSON.parse(fs.readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`)) : null;
+  self.styleTags = jsonStyles ? `<style>${jsonStyles.toString().replaceAll(",", " ")}</style>` : "";
 };
 
 // methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
