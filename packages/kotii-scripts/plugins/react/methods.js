@@ -125,7 +125,7 @@ methods.runReactView = function (data) {
       let compsAbsolutePath =
         process.env.NODE_ENV == "development"
           ? `/kotii-land/dev/pages.js`
-          : `.kotii-land/pages.js`;
+          : `.kotii-land/bundle-imports.js`;
       self.comps = await self.doImport(`${compsAbsolutePath}`, true, false);
     }
 
