@@ -33,6 +33,7 @@ methods.handleServerBuild = function (data) {
   // if (fs.existsSync(`${kotiiKotiiLandPath}/dev/styles.json`)) {
   //   fs.rmSync(`${kotiiKotiiLandPath}/dev/styles.json`);
   // }
+  if (fs.existsSync(destination)) fs.rmSync(destination, { recursive: true });
 
   const localPackageJson = JSON.parse(
     readFileSync(`${kotiiRootPath}/package.json`)
@@ -74,7 +75,7 @@ methods.handleServerBuild = function (data) {
   self.debug("THE LOCAL PACKAGE.JSON", localPackageJson);
   localPackageJson["scripts"] = {
     ...localPackageJson.scripts,
-    "build-ssr": `babel --config-file ${kotiiRootPath}/babel.server.build.json  --out-dir ${destination}${path.sep}src ${targetSource}`,
+    "build-ssr": `babel --config-file ${kotiiRootPath}/babel.server.build.json  --out-dir ${destination}${path.sep}src ${targetSource} --copy-files`,
     // "babel-ssr": `babel ${data.payload.targetSource} --out-dir ${data.payload.destination}`,
   };
 
@@ -101,6 +102,8 @@ methods.handleServerBuild = function (data) {
       // saveToFile(`${cwd}${path.sep}tempDirFiles.json`, JSON.stringify(dirs));
       // self.debug("TEMP DIRS", dirs);
       // fs.rmdirSync(fullTempPath);
+      // let cutOut = true;
+      // if (cutOut) return resolve(true);
       self.debug("TARGET SOURCES", targetSource, "destination", destination);
       self.debug("TARGET MAIN", targetMain, "full temp", fullTempPath);
       self.syncDirectories(targetSource, `${destination}/src`);
@@ -108,17 +111,12 @@ methods.handleServerBuild = function (data) {
       self.copyPublicToDist(`${fullTempPath}`, `${destination}`);
       // self.syncDirectories(targetSource, `${destination}/src`);
       fs.rmSync(fullTempPath, { recursive: true });
+
       self.removeJsxReferences(destination, {
         destination: `${destination}${path.sep}src`,
         targetMain,
         targetSource,
         appManifest: contextApp.appManifest,
-      });
-      self.aggregateProductionResources({
-        appFolder: targetMain,
-        appSrc: targetSource,
-        cwd: kotiiRootPath,
-        appBuildFolder: destination,
       });
 
       //  babelJson.plugins = [...babelJson.plugins.filter((plugin)=>{
@@ -129,19 +127,39 @@ methods.handleServerBuild = function (data) {
       //   path.join(kotiiRootPath, "babel.server.build.json"),
       //   JSON.stringify(babelJson, null, 2)
       // );
+      // self
+      //   .saveRoutesInUserLand(routes)
+      //   .then(() => {
+      //     self.doKotiiLandPagesFile(destination, {
+      //       contextApp,
+      //       targetMain,
+      //     });
+      //     self.aggregateProductionResources({
+      //       appFolder: targetMain,
+      //       appSrc: targetSource,
+      //       cwd: kotiiRootPath,
+      //       appBuildFolder: destination,
+      //     });
+      //   })
+      //   .catch((saveErr) => {
+      //     self.error(
+      //       chalk.whiteBright.bold("Building project has failed with error:"),
+      //       chalk.bgRedBright(saveErr)
+      //     );
+      //   });
       self
-        .saveRoutesInUserLand(routes)
-        .then(() => {
-          self.doKotiiLandPagesFile(destination, {
-            contextApp,
-            targetMain,
-          });
+        .doKotiiLandPagesFile(destination, {
+          contextApp,
+          targetMain,
         })
-        .catch((saveErr) => {
-          self.error(
-            chalk.whiteBright.bold("Building project has failed with error:"),
-            chalk.bgRedBright(saveErr)
-          );
+        .then((pagesSourceCode) => {
+          self.aggregateProductionResources({
+            appFolder: targetMain,
+            appSrc: targetSource,
+            cwd: kotiiRootPath,
+            appBuildFolder: destination,
+            pagesSourceCode,
+          });
         });
     })
     .catch((error) => {
@@ -331,9 +349,9 @@ methods.updateJSXImportDeclarations = function (ast, state) {
         );
         path.node.source.value = path.node.source.value.replace(/.jsx$/, ".js");
         isPages
-          ? (path.node.source.value = path.node.source.value.replace(
-              state.replacePath,
-              state.pagesPathsDestination
+          ? (path.node.source.value = self.getPageImportAbsolutePath(
+              state.userFolder,
+              path.node.source.value
             ))
           : null;
         isUpdated = true;
@@ -380,60 +398,65 @@ methods.updateJSXImportDeclarations = function (ast, state) {
 methods.doKotiiLandPagesFile = function (destination, options) {
   const self = this;
   const pao = self.pao;
+  let pathSplit = options.targetMain.split(path.sep);
+  let userFolder = pathSplit[pathSplit.length - 1];
   self.debug("THE KOTII LAND PAGE FILE DESTINATION", destination);
 
-  const generate = self.generate;
-  const parser = self.parser;
-  const readFileSync = pao.pa_readFileSync;
-  const saveToFile = pao.pa_saveToFile;
-  const getWorkingFolder = pao.pa_getWorkingFolder;
-  // const cwd = getWorkingFolder();
-  const cwd = self.kotiiScriptsPath;
+  return new Promise((resolve, rejct) => {
+    const generate = self.generate;
+    const parser = self.parser;
+    const readFileSync = pao.pa_readFileSync;
+    const saveToFile = pao.pa_saveToFile;
+    const getWorkingFolder = pao.pa_getWorkingFolder;
+    // const cwd = getWorkingFolder();
+    const cwd = self.kotiiScriptsPath;
+    const jsFile = readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/pages.js`);
+    self.debug(
+      "THE SOURCE FILE PATH",
+      `${kotiiKotiiLandPath}${path.sep}dev/pages.js`
+    );
+    let ast = parser.parse(jsFile, {
+      sourceType: "module",
+    });
+    self.debug("THE JS FILE", jsFile);
+    self.debug("THE AST", ast);
 
-  const jsFile = readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/pages.js`);
-  self.debug(
-    "THE SOURCE FILE PATH",
-    `${kotiiKotiiLandPath}${path.sep}dev/pages.js`
-  );
-  let ast = parser.parse(jsFile, {
-    sourceType: "module",
+    let updateResults = self.updateJSXImportDeclarations(ast, {
+      isPages: true,
+      pagesPathsDestination: destination,
+      replacePath: options.targetMain,
+      userFolder,
+    });
+    if (updateResults) {
+      const { code: genCode } = generate(ast);
+      // const modifiedCode = genCode;
+
+      self.debug("New AST genCode", genCode);
+      // self.debug("Modiefied code", modifiedCode);
+      let madeFolder = self.createDistFolder(
+        `${destination}${path.sep}.kotii-land`
+      );
+      // saveToFile(`${madeFolder}${path.sep}pages.js`, `${genCode}`);
+      // fs.copyFileSync(
+      //   `${kotiiKotiiLandPath}${path.sep}app_routes.js`,
+      //   `${madeFolder}${path.sep}routes.js`
+      // );
+      saveToFile(
+        `${destination}${path.sep}.config.js`,
+        self.getKotiiConfigTemplate({
+          public: options.contextApp.appManifest.static,
+        })
+      );
+      saveToFile(
+        `${madeFolder}${path.sep}app.manifest.json`,
+        JSON.stringify({
+          ...options.contextApp.appManifest,
+          buildPath: options.contextApp.appBuildFolder,
+        })
+      );
+      resolve(genCode);
+    }
   });
-  self.debug("THE JS FILE", jsFile);
-  self.debug("THE AST", ast);
-
-  let updateResults = self.updateJSXImportDeclarations(ast, {
-    isPages: true,
-    pagesPathsDestination: destination,
-    replacePath: options.targetMain,
-  });
-  if (updateResults) {
-    const { code: genCode } = generate(ast);
-    // const modifiedCode = genCode;
-
-    self.debug("New AST genCode", genCode);
-    // self.debug("Modiefied code", modifiedCode);
-    let madeFolder = self.createDistFolder(
-      `${destination}${path.sep}.kotii-land`
-    );
-    saveToFile(`${madeFolder}${path.sep}pages.js`, `${genCode}`);
-    fs.copyFileSync(
-      `${kotiiKotiiLandPath}${path.sep}app_routes.js`,
-      `${madeFolder}${path.sep}routes.js`
-    );
-    saveToFile(
-      `${destination}${path.sep}.config.js`,
-      self.getKotiiConfigTemplate({
-        public: options.contextApp.appManifest.static,
-      })
-    );
-    saveToFile(
-      `${madeFolder}${path.sep}app.manifest.json`,
-      JSON.stringify({
-        ...options.contextApp.appManifest,
-        buildPath: options.contextApp.appBuildFolder,
-      })
-    );
-  }
 };
 methods.syncDirectories = function (
   sourceDirectoryPath,
@@ -452,7 +475,10 @@ methods.syncDirectories = function (
   });
 
   allDirectories.forEach((dir) => {
+    console.log("THE DIRECTORY", dir);
     let onDestinationPath = `${destination}${path.sep}${dir}`;
+    console.log("on destination", onDestinationPath);
+    console.log("EXIST ON DESTINATION", !fs.existsSync(onDestinationPath));
     if (!fs.existsSync(onDestinationPath)) {
       fs.mkdirSync(onDestinationPath);
       fs.cpSync(`${sourceDirectoryPath}${path.sep}${dir}`, onDestinationPath, {
@@ -461,6 +487,7 @@ methods.syncDirectories = function (
           // self.debug("THE FILE BEING PROCESSED", fi, ignores.includes(fi));
           // if (ignores.includes(fi)) return true;
           // let thisToReturn = fi !== ignore;
+          console.log("COPYING FILS FILTER", fi);
           self.debug("SYNC DIRECTORIES FILE BEING COPIED", fi);
           let thisToReturn = !ignores.includes(fi);
           // self.debug("THIS TO RETURN", thisToReturn);
@@ -661,19 +688,14 @@ methods.addObjectExpressionProperty = function (ast, state) {
 };
 methods.getKotiiConfigTemplate = function (dynamic) {
   const self = this;
-  return `import routes  from '/.kotii-land/routes.js'
-  
+  return ` 
   export default {
   
       domain: [{ name: "static", set: ${JSON.stringify(dynamic.public)}}],
-      router: routes,
       register: '',
       // logger: {level: 'info'},
       cluster:{workers: 1,spawn: false,} ,
       server: 'server'
-     
-  
-  
   
   }`;
 };
@@ -756,9 +778,8 @@ methods.processStylesNodes = function (nodePath, state) {
       absoluteFilePath,
       extension
     );
-    let fileIsInPages = absoluteFilePath.toLowerCase().indexOf("/pages")
-      ? true
-      : false;
+    let fileIsInPages =
+      absoluteFilePath.toLowerCase().indexOf("/pages") >= 0 ? true : false;
     let saveExtension = fileIsInPages ? ".ktc" : ".js";
     let cssModuleDataExport = fileIsInPages
       ? JSON.stringify(assetsManifestData[importSpecifier].modules)
@@ -786,19 +807,35 @@ methods.getStylesMap = function (kotiiAppPath) {
 };
 methods.aggregateProductionResources = function (context) {
   const self = this;
-  self.aggregateAppKotiiMeta(context);
-  self.aggregateAppCss(context);
+  let cssSavePath = `${context.appBuildFolder}/index.css`;
+  let kotiiBundleSavePath = `${context.appBuildFolder}/.kotii-land/bundle.js`;
+  let kotiiBundleSaveImportsPath = `${context.appBuildFolder}/.kotii-land/bundle-imports.js`;
+  let cssModulesMap = self.aggregateAppKotiiMeta(context);
+  let css = self.aggregateAppCss(context);
+  let images = self.aggregateAppImages(context);
+  console.log("THE IMAGES", images);
+  console.log("THE CSS MODULES", cssModulesMap);
+  let kotiiBundleSaveContent = `
+  const appModules = ${JSON.stringify(cssModulesMap)};
+  const appImagesMap = ${JSON.stringify(images)};
+  export {appModules, appImagesMap};
+  `;
+
+  fs.writeFileSync(cssSavePath, css);
+  fs.writeFileSync(kotiiBundleSavePath, kotiiBundleSaveContent);
+  fs.writeFileSync(kotiiBundleSaveImportsPath, `${context.pagesSourceCode}`);
 };
 methods.aggregateAppCss = function (context) {
   const self = this;
   let assetsPath = `${kotiiRootPath}/kotii-land/dev/styles.json`;
-  let savePath = `${context.appBuildFolder}/index.css`;
-  console.log("THE SAVE PATH", savePath);
+  // let savePath = `${context.appBuildFolder}/index.css`;
+  // console.log("THE SAVE PATH", savePath);
   let cssContent = JSON.parse(
     fs.readFileSync(assetsPath, { encoding: "utf-8" })
   );
   let cssParsedContent = cssContent.toString().replaceAll(",", " ");
-  fs.writeFileSync(savePath, cssParsedContent);
+  return cssParsedContent;
+  // fs.writeFileSync(savePath, cssParsedContent);
 };
 methods.aggregateAppKotiiMeta = function (context) {
   const self = this;
@@ -807,11 +844,47 @@ methods.aggregateAppKotiiMeta = function (context) {
   let cssModules = JSON.parse(
     fs.readFileSync(assetsModulesPath, { encoding: "utf-8" })
   );
-  let savePath = `${context.appBuildFolder}/kotii_index.js`;
-  console.log("THE SAVE PATH", savePath);
-  let content = `const modules = ${JSON.stringify(
-    cssModules
-  )}; export default modules;`;
-  fs.writeFileSync(savePath, content, null, 2);
+  // let savePath = `${context.appBuildFolder}/.kotii-land/bundle.js`;
+  // console.log("THE SAVE PATH", savePath);
+  // let content = `const modules = ${JSON.stringify(
+  //   cssModules
+  // )}; export default modules;`;
+  // return content
+  // fs.writeFileSync(savePath, content, null, 2);
+  return cssModules;
+};
+methods.aggregateAppImages = function (context) {
+  const self = this;
+  let assetsPath = `${kotiiRootPath}/kotii-land/assets.manifest.json`;
+  // let savePath = `${context.appBuildFolder}/index.css`;
+  // console.log("THE SAVE PATH", savePath);
+  let imagesMeta = JSON.parse(
+    fs.readFileSync(assetsPath, { encoding: "utf-8" })
+  );
+  let simplifiedImagesMap = {};
+  Object.keys(imagesMeta).forEach((imageMap) => {
+    simplifiedImagesMap[imageMap] = imagesMeta[imageMap].content;
+  });
+  return simplifiedImagesMap;
+};
+
+methods.getPageImportAbsolutePath = function (userFolder, item) {
+  const self = this;
+
+  console.log("THE USER FOLDER", userFolder, item);
+  let cwdPos = item.indexOf(userFolder);
+  let absolutePath = item.substring(cwdPos, item.length);
+  let sourcePos = absolutePath.indexOf("src");
+  let requiredPath = absolutePath.substring(sourcePos, absolutePath.length);
+  // console.log(
+  //   "THE PAGE WORK DIR",
+  //   workDir,
+  //   cwdPos,
+  //   absolutePath,
+  //   requiredPath
+  // );
+  let absolutePathPre = "kotii-prod";
+  let absSrc = `${path.sep}${absolutePathPre}${path.sep}${requiredPath}`;
+  return absSrc;
 };
 export default methods;

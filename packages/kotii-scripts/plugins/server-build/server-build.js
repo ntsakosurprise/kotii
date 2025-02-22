@@ -37,6 +37,8 @@ class ServerBuild {
     this.aggregateProductionResources = methods.aggregateProductionResources;
     this.aggregateAppCss = methods.aggregateAppCss;
     this.aggregateAppKotiiMeta = methods.aggregateAppKotiiMeta;
+    this.aggregateAppImages = methods.aggregateAppImages;
+    this.getPageImportAbsolutePath = methods.getPageImportAbsolutePath;
   }
 }
 export default ServerBuild;

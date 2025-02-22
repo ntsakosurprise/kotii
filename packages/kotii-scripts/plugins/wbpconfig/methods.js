@@ -161,7 +161,11 @@ methods.configureWebPack = function (
     closeWatcher: self.closeWatcher.bind(self),
     notifyClient: self.notifyClient.bind(self),
     isProjectPNPM: contextApp.appPnpmPkgr,
-    useInlinedPngs: contextApp.appManifest?.useInlinedPngs || false,
+    inline:
+      contextApp.appManifest?.fileLoader &&
+      contextApp.appManifest?.fileLoader?.inline
+        ? contextApp.appManifest.fileLoader.inline
+        : false,
   });
 
   self.debug("PROCESS.ENV", process.env);

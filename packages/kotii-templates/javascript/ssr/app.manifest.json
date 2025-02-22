@@ -34,6 +34,10 @@
   },
   "file-loader": {
     "name": "[name].[ext]",
-    "output": "public/imgs"
+    "output": "public/imgs",
+    "inline": {
+      "limit": 2500,
+      "mime": "all"
+    }
   }
 }

@@ -31,7 +31,7 @@ let MODULES_FILE_SPECIFIER = {};
 let FILE_LOADER_DEFAULT = {
   name: "name.ext",
   output: "public/imgs",
-  inlinePngs: true,
+  // inlinePngs: true,
 };
 
 let cssSpecifiers = [".css", ".scss", ".sass", ".less", ".styl"];
@@ -248,6 +248,7 @@ export async function resolve(specifier, context, nextResolve) {
   if (shouldTerminate) return shouldTerminate;
   shouldTerminate = resolveKotiiScriptsInternalImports(specifier);
   if (shouldTerminate) return shouldTerminate;
+
   return nextResolve(specifier);
 }
 
@@ -383,6 +384,7 @@ const resolvePagesImports = (specifier) => {
     return false;
   }
 };
+
 /**
  *
  * @param {*} specifier
@@ -640,7 +642,7 @@ const getCssFromSass = async (fileUrl, fName) => {
     return `export default ${JSON.stringify(fName)}`;
   }
 
-  return `export default ${JSON.stringify(modulesResult.cssModules)}`;
+  return `export default ${JSON.stringify(modulesResult.cssModules.modules)}`;
 };
 
 const getCssFromLess = async (fileUrl, fName) => {
@@ -668,7 +670,7 @@ const getCssFromLess = async (fileUrl, fName) => {
 
   console.log("THE CSS CONVERTED LESS", modulesResult.ccsModules);
 
-  return `export default ${JSON.stringify(modulesResult.cssModules)}`;
+  return `export default ${JSON.stringify(modulesResult.cssModules.modules)}`;
 };
 
 const getCssFromStylus = async (fileUrl, fName) => {
@@ -695,7 +697,7 @@ const getCssFromStylus = async (fileUrl, fName) => {
     return `export default ${JSON.stringify(fName)}`;
   }
 
-  return `export default ${JSON.stringify(modulesResult.cssModules)}`;
+  return `export default ${JSON.stringify(modulesResult.cssModules.modules)}`;
 };
 
 const getCss = async (fileUrl, fName) => {
@@ -721,7 +723,7 @@ const getCss = async (fileUrl, fName) => {
     return `export default ${JSON.stringify(fName)}`;
   }
 
-  return `export default ${JSON.stringify(modulesResult.cssModules)}`;
+  return `export default ${JSON.stringify(modulesResult.cssModules.modules)}`;
 };
 
 const saveStyles = (styles) => {
@@ -801,6 +803,7 @@ const storeFileModuleSpecifier = (pathContext) => {
 };
 
 const processImageFiles = (fullUrl, filename, fileExtension) => {
+  console.log("META.FILELOADER", meta);
   let fileLoaderConfig =
     meta && meta.fileLoader ? meta.fileLoader : FILE_LOADER_DEFAULT;
   let fileConfig = {
@@ -814,7 +817,8 @@ const processImageFiles = (fullUrl, filename, fileExtension) => {
   loggas.load.debug("The LoadedFileResult", loadedFileResult);
 
   kotiiAssetsMeta[MODULES_FILE_SPECIFIER[fullUrl].shortName] = {
-    content: loadedFileResult,
+    content: loadedFileResult.content,
+    inlined: loadedFileResult.inlined,
     pathContext: MODULES_FILE_SPECIFIER[fullUrl].pathContext,
   };
 
@@ -825,5 +829,5 @@ const processImageFiles = (fullUrl, filename, fileExtension) => {
       saveKotiiAssetsMeta();
     }, 1000);
   }
-  return `export default ${JSON.stringify(loadedFileResult)}`;
+  return `export default ${JSON.stringify(loadedFileResult.content)}`;
 };

@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import webpack from "webpack";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../../kotii_paths.js";
 import {
+  CopyAssetsWebpackPlugin,
   DeleteFilesWebpackPlugin,
   FinishCompilationOnErrorWebpackPlugin,
   HookToLoaderResolutionWebpackPlugin,
@@ -15,34 +16,8 @@ import {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-logger.setNameSpaces([
-  { namespace: "webpack:compilation", id: "webpack" },
-  {
-    namespace: "webpack:compilation:deleteFilesWebpackPlugin",
-    id: "deleteFilesWebpackPlugin",
-  },
-  {
-    namespace: "webpack:compilation:finishCompilationOnErrorWebpackPlugin",
-    id: "finishCompilationOnErrorWebpackPlugin",
-  },
-  {
-    namespace: "webpack:compilation:hookToLoaderResolutionWebpackPlugin",
-    id: "hookToLoaderResolutionWebpackPlugin",
-  },
-  {
-    namespace: "webpack:compilation:watchOwnFilesWebpackPlugin",
-    id: "watchOwnFilesWebpackPlugin",
-  },
-  {
-    namespace: "webpack:compilation:removeImportsWebpackPlugin",
-    id: "removeImportsWebpackPlugin",
-  },
-  {
-    namespace: "webpack:compilation:statsPrintWebpackPlugin",
-    id: "statsPrintWebpackPlugin",
-  },
-]);
 
+configureKotiiLogger();
 export default (options) => {
   //   loggas.webpack.debug("THE PROCESS", process.env.APPCONTEXT);
   loggas.webpack.debug("THE STUFF THAT IS", options);
@@ -91,6 +66,7 @@ export default (options) => {
     mode: process.env.NODE_ENV,
     infrastructureLogging: { level: "none" },
     stats: "errors-only",
+    devtool: "eval",
     output: {
       filename: "server.bundle.js",
       path:
@@ -234,29 +210,42 @@ export default (options) => {
           test: /\.xml$/i,
           use: ["xml-loader"],
         },
-
         {
-          test: /\.(svg|jpg|jpeg|gif)$/i,
-          loader: "file-loader",
-          options: getFileLoaderOptions(),
-        },
-        {
-          test: /\.png$/i,
+          test: /\.(png|svg|jpg|jpeg|gif)$/i,
           use: [
             {
-              loader: options.useInlinedPngs
-                ? "syncAssets-loader"
-                : "file-loader",
-              options: options.useInlinedPngs
-                ? {
-                    referenceAssetsPath: kotiiKotiiLandPath,
-                    assetsFile: "assets.manifest.json",
-                    fileFormat: "json",
-                  }
-                : getFileLoaderOptions(),
+              loader: "syncAssets-loader",
+              options: {
+                referenceAssetsPath: kotiiKotiiLandPath,
+                assetsFile: "assets.manifest.json",
+                fileFormat: "json",
+              },
             },
           ],
         },
+
+        // {
+        //   test: /\.(svg|jpg|jpeg|gif)$/i,
+        //   loader: "file-loader",
+        //   options: getFileLoaderOptions(),
+        // },
+        // {
+        //   test: /\.png$/i,
+        //   use: [
+        //     {
+        //       loader: options.useInlinedPngs
+        //         ? "syncAssets-loader"
+        //         : "file-loader",
+        //       options: options.useInlinedPngs
+        //         ? {
+        //             referenceAssetsPath: kotiiKotiiLandPath,
+        //             assetsFile: "assets.manifest.json",
+        //             fileFormat: "json",
+        //           }
+        //         : getFileLoaderOptions(),
+        //     },
+        //   ],
+        // },
         {
           test: /\.m?js?x$/,
           resolve: {
@@ -365,6 +354,22 @@ export default (options) => {
         },
         loggas
       ),
+      new CopyAssetsWebpackPlugin(
+        {
+          referenceAssetsPath: kotiiKotiiLandPath,
+          assetsFile: "assets.manifest.json",
+          fileFormat: "json",
+          extra: {
+            inline: options.inline,
+            emitFile: true,
+            emitPath:
+              options?.build && options.build
+                ? options.staticFolder
+                : `${env.appBuildFolder}`,
+          },
+        },
+        loggas
+      ),
       new StatsPrintWebpackPlugin(loggas),
     ],
   };
@@ -375,3 +380,37 @@ const getFileLoaderOptions = () => {
     name: "[name].[ext]",
   };
 };
+
+function configureKotiiLogger() {
+  logger.setNameSpaces([
+    { namespace: "webpack:compilation", id: "webpack" },
+    {
+      namespace: "webpack:compilation:deleteFilesWebpackPlugin",
+      id: "deleteFilesWebpackPlugin",
+    },
+    {
+      namespace: "webpack:compilation:finishCompilationOnErrorWebpackPlugin",
+      id: "finishCompilationOnErrorWebpackPlugin",
+    },
+    {
+      namespace: "webpack:compilation:hookToLoaderResolutionWebpackPlugin",
+      id: "hookToLoaderResolutionWebpackPlugin",
+    },
+    {
+      namespace: "webpack:compilation:watchOwnFilesWebpackPlugin",
+      id: "watchOwnFilesWebpackPlugin",
+    },
+    {
+      namespace: "webpack:compilation:removeImportsWebpackPlugin",
+      id: "removeImportsWebpackPlugin",
+    },
+    {
+      namespace: "webpack:compilation:copyAssetsWebpackPlugin",
+      id: "copyAssetsWebpackPlugin",
+    },
+    {
+      namespace: "webpack:compilation:statsPrintWebpackPlugin",
+      id: "statsPrintWebpackPlugin",
+    },
+  ]);
+}

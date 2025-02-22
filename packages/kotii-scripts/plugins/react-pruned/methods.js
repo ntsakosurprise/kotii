@@ -8,7 +8,7 @@ methods.init = function () {
   this.listens({
     "handle-react-view": this.handleReactView.bind(this),
     "take-ssr-routes": this.handleSsrRoutes.bind(this),
-    "handle-react-static": this.handleReactStaticViews.bind(this)
+    "handle-react-static": this.handleReactStaticViews.bind(this),
   });
 };
 methods.handleSsrRoutes = function (data) {
@@ -23,7 +23,7 @@ methods.handleReactView = function (data) {
   self.effectsData = {};
   self.debug("THE VIEW DATA", data);
   self.debug("ServerStyleSheet", ServerStyleSheet);
-  self.runReactView(data).then(html => {
+  self.runReactView(data).then((html) => {
     self.callback(null, html);
   });
 };
@@ -33,24 +33,22 @@ methods.handleReactStaticViews = function (data) {
   self.callback = data.callback;
   self.effectsData = {};
   self.debug("THE VIEW DATA", data);
-  const {
-    views
-  } = data;
-  let mappedPromises = views.map(async view => {
+  const { views } = data;
+  let mappedPromises = views.map(async (view) => {
     let gotHtmlView = await self.runReactView({
       view: {
-        match: view.path
+        match: view.path,
       },
       route: view,
-      staticRender: true
+      staticRender: true,
     });
     // self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
     return {
       content: gotHtmlView,
-      name: view.name
+      name: view.name,
     };
   });
-  Promise.all(mappedPromises).then(htmlViews => {
+  Promise.all(mappedPromises).then((htmlViews) => {
     // self.debug("ALL VIEWS PROMISES MAPPED", htmlViews);
     self.callback(htmlViews);
   });
@@ -66,19 +64,11 @@ methods.runReactView = function (data) {
     // GlobalStyle,
     createReduxStore,
     HeadHelmet,
-    meta
+    meta,
   } = self;
-  const {
-    view,
-    staticRender = false,
-    route = null
-  } = data;
-  const {
-    app
-  } = meta;
-  const {
-    stateVendor = ""
-  } = app;
+  const { view, staticRender = false, route = null } = data;
+  const { app } = meta;
+  const { stateVendor = "" } = app;
 
   // const Layout = (props) => {
   //   return (
@@ -102,13 +92,13 @@ methods.runReactView = function (data) {
   // };
 
   // Grab the initial state from our Redux store
-  return new Promise(async resolve => {
+  return new Promise(async (resolve) => {
     const store = stateVendor === "redux" ? createReduxStore() : {};
     let stateData = await self.getStateDataFromServer({
       routePath: view.match,
       store,
       staticRender,
-      route
+      route,
     });
     if (!staticRender) {
       await self.runComponentEffects(view.match);
@@ -117,10 +107,20 @@ methods.runReactView = function (data) {
         await self.runComponentEffects(view.match, route);
       }
     }
-    let layoutStaticAbsolutePath = process.env.NODE_ENV == "development" ? `/src/components/startup/index.jsx` : `/src/components/startup/index.js`;
-    let layoutRoot = await self.doImport(`${layoutStaticAbsolutePath}`, true, false);
+    let layoutStaticAbsolutePath =
+      process.env.NODE_ENV == "development"
+        ? `/src/components/startup/index.jsx`
+        : `/src/components/startup/index.js`;
+    let layoutRoot = await self.doImport(
+      `${layoutStaticAbsolutePath}`,
+      true,
+      false
+    );
     if (!self.comps) {
-      let compsAbsolutePath = process.env.NODE_ENV == "development" ? `/kotii-land/dev/pages.js` : `.kotii-land/pages.js`;
+      let compsAbsolutePath =
+        process.env.NODE_ENV == "development"
+          ? `/kotii-land/dev/pages.js`
+          : `.kotii-land/bundle-imports.js`;
       self.comps = await self.doImport(`${compsAbsolutePath}`, true, false);
     }
     let effectsStore = self.effectsData;
@@ -135,34 +135,60 @@ methods.runReactView = function (data) {
     const sheet = new ServerStyleSheet();
     let goodies = self.comps;
     try {
-      html = renderToString(sheet.collectStyles(!layoutRoot ? /*#__PURE__*/React.createElement(Router, {
-        ssrPath: view.match
-      }, REACTAPP({
-        storeFromSource: store,
-        goodies,
-        effectsStore
-      })) : layoutRoot.Layout && layoutRoot.Root ? /*#__PURE__*/React.createElement(Router, {
-        ssrPath: view.match
-      }, REACTAPP({
-        appWrapper: layoutRoot.Root,
-        layout: layoutRoot.Layout,
-        storeFromSource: store,
-        goodies,
-        effectsStore
-      })) : layoutRoot.Layout ? /*#__PURE__*/React.createElement(Router, {
-        ssrPath: view.match
-      }, REACTAPP({
-        layout: layoutRoot.Layout,
-        storeFromSource: store,
-        goodies,
-        effectsStore
-      })) : /*#__PURE__*/React.createElement(Router, {
-        ssrPath: view.match
-      }, REACTAPP({
-        appWrapper: layoutRoot.Root,
-        storeFromSource: store,
-        effectsStore
-      }))));
+      html = renderToString(
+        sheet.collectStyles(
+          !layoutRoot
+            ? /*#__PURE__*/ React.createElement(
+                Router,
+                {
+                  ssrPath: view.match,
+                },
+                REACTAPP({
+                  storeFromSource: store,
+                  goodies,
+                  effectsStore,
+                })
+              )
+            : layoutRoot.Layout && layoutRoot.Root
+            ? /*#__PURE__*/ React.createElement(
+                Router,
+                {
+                  ssrPath: view.match,
+                },
+                REACTAPP({
+                  appWrapper: layoutRoot.Root,
+                  layout: layoutRoot.Layout,
+                  storeFromSource: store,
+                  goodies,
+                  effectsStore,
+                })
+              )
+            : layoutRoot.Layout
+            ? /*#__PURE__*/ React.createElement(
+                Router,
+                {
+                  ssrPath: view.match,
+                },
+                REACTAPP({
+                  layout: layoutRoot.Layout,
+                  storeFromSource: store,
+                  goodies,
+                  effectsStore,
+                })
+              )
+            : /*#__PURE__*/ React.createElement(
+                Router,
+                {
+                  ssrPath: view.match,
+                },
+                REACTAPP({
+                  appWrapper: layoutRoot.Root,
+                  storeFromSource: store,
+                  effectsStore,
+                })
+              )
+        )
+      );
       const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
       self.styledTags = styleTags;
       self.debug("STYLED-COMPONENTS STYLE TAGS", styleTags);
@@ -189,7 +215,7 @@ methods.runReactView = function (data) {
       preloadedState: finalState,
       staticRender,
       view,
-      head: helmetGenerated
+      head: helmetGenerated,
     });
     self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
     resolve(fullPage);
@@ -202,7 +228,7 @@ methods.renderFullPage = function () {
     staticRender,
     view,
     head,
-    scripts = []
+    scripts = [],
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
   const self = this;
   if (!self.styleTags) self.doKotiiStyles();
@@ -216,8 +242,7 @@ methods.renderFullPage = function () {
     ${head?.link.toString()}
     ${self.styledTags}
     ${self.styleTags}
-   
-    
+      
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
@@ -229,13 +254,13 @@ methods.renderFullPage = function () {
 };
 methods.includeScripts = function (preloadedState) {
   const self = this;
-  const {
-    serialize
-  } = self;
+  const { serialize } = self;
   return `
    <script>
      window.__PRELOADED_STATE__ = ${serialize(preloadedState)}
-     window.__KOTII_EFFECTS_STATE__ = ${serialize(JSON.stringify(self.effectsData))}
+     window.__KOTII_EFFECTS_STATE__ = ${serialize(
+       JSON.stringify(self.effectsData)
+     )}
     
    </script>
    <script src="/server.bundle.js" ></script>
@@ -246,7 +271,7 @@ methods.getStateDataFromServer = function () {
     routePath,
     store,
     staticRender = false,
-    route
+    route,
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
   const self = this;
   const routes = !staticRender ? self.ssrRoutes : [route];
@@ -259,14 +284,15 @@ methods.getStateDataFromServer = function () {
         return route.requiresData(store);
       }
     });
-    Promise.all(dataFetchPromises).then(resolveData => {
+    Promise.all(dataFetchPromises).then((resolveData) => {
       self.debug("THE RESOLVED DATA", resolveData);
       resolve(resolveData);
     });
   });
 };
 methods.runComponentEffects = function (routePath) {
-  let specialRoute = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  let specialRoute =
+    arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
   const self = this;
   const routes = !specialRoute ? self.ssrRoutes : [specialRoute];
   const effect_id_prefix = "kotii_eff_id_";
@@ -277,58 +303,64 @@ methods.runComponentEffects = function (routePath) {
     let effectsRoute = self.getEffectsRouteList(routes, routePath);
     if (!effectsRoute) return resolve(true);
     self.debug("THE EFFECTS ROUTE", effectsRoute);
-    let effectsToRun = effectsRoute.effectsToRun instanceof Array ? effectsRoute.effectsToRun : [effectsRoute.effectsToRun];
+    let effectsToRun =
+      effectsRoute.effectsToRun instanceof Array
+        ? effectsRoute.effectsToRun
+        : [effectsRoute.effectsToRun];
     let routeId = effectsRoute.name;
     self.debug("THE EFFECTS TO RUN", effectsToRun);
     let effectsPromises = effectsToRun.map((effectToRun, ID) => {
       let effectID = `${effect_id_prefix}${ID + 1}`;
       return new Promise((resolve, reject) => {
-        effectToRun().then(data => {
-          self.debug("Kotii effect react:data", data);
-          if (!self.effectsData["effectsCount"]) {
-            self.effectsData["effectsCount"] = ID + 1;
-          } else {
-            self.effectsData["effectsCount"] = ID + 1;
-          }
-          if (!self.effectsData["componentName"]) self.effectsData["componentName"] = routeId;
-          if (!self.effectsData[routeId]) self.effectsData[routeId] = {};
-          // self.effectsData[routeId][effectID] = data
-          if (!self.effectsData[routeId]["data"]) {
-            self.effectsData[routeId]["data"] = {};
-            self.effectsData[routeId].data[effectID] = {
-              userData: data,
-              isFirstTimeRun: true
-            };
-            // self.effectsData.data[routeId] = data
-            self.debug("Kotii effect react: self.effects", self.effectsData);
-          } else {
-            self.effectsData[routeId].data[effectID] = {
-              userData: data,
-              isFirstTimeRun: true
-            };
-          }
-          resolve(true);
-        }).catch(err => {
-          self.debug("Kotii effect react:err", err);
-          if (!self.effectsData[routeId]) self.effectsData[routeId] = {};
-          if (!self.effectsData[routeId]["errors"]) {
-            self.effectsData[routeId]["errors"] = {};
-            self.effectsData[routeId].errors[effectID] = {
-              error: err,
-              isFirstTimeRun: true
-            };
-          } else {
-            self.effectsData[routeId].errors[effectID] = {
-              error: err,
-              isFirstTimeRun: true
-            };
-          }
-          resolve(true);
-        });
+        effectToRun()
+          .then((data) => {
+            self.debug("Kotii effect react:data", data);
+            if (!self.effectsData["effectsCount"]) {
+              self.effectsData["effectsCount"] = ID + 1;
+            } else {
+              self.effectsData["effectsCount"] = ID + 1;
+            }
+            if (!self.effectsData["componentName"])
+              self.effectsData["componentName"] = routeId;
+            if (!self.effectsData[routeId]) self.effectsData[routeId] = {};
+            // self.effectsData[routeId][effectID] = data
+            if (!self.effectsData[routeId]["data"]) {
+              self.effectsData[routeId]["data"] = {};
+              self.effectsData[routeId].data[effectID] = {
+                userData: data,
+                isFirstTimeRun: true,
+              };
+              // self.effectsData.data[routeId] = data
+              self.debug("Kotii effect react: self.effects", self.effectsData);
+            } else {
+              self.effectsData[routeId].data[effectID] = {
+                userData: data,
+                isFirstTimeRun: true,
+              };
+            }
+            resolve(true);
+          })
+          .catch((err) => {
+            self.debug("Kotii effect react:err", err);
+            if (!self.effectsData[routeId]) self.effectsData[routeId] = {};
+            if (!self.effectsData[routeId]["errors"]) {
+              self.effectsData[routeId]["errors"] = {};
+              self.effectsData[routeId].errors[effectID] = {
+                error: err,
+                isFirstTimeRun: true,
+              };
+            } else {
+              self.effectsData[routeId].errors[effectID] = {
+                error: err,
+                isFirstTimeRun: true,
+              };
+            }
+            resolve(true);
+          });
       });
     });
     self.debug("THE EFFECTS PROMISES", effectsPromises);
-    Promise.all(effectsPromises).then(resolveData => {
+    Promise.all(effectsPromises).then((resolveData) => {
       self.debug("THE RESOLVED EFFECTS DATA", resolveData);
       resolve(resolveData);
     });
@@ -336,14 +368,16 @@ methods.runComponentEffects = function (routePath) {
 };
 methods.getEffectsRouteList = function (routes, routePath) {
   let effectsRouteList = [];
-  effectsRouteList = routes.filter(route => {
+  effectsRouteList = routes.filter((route) => {
     if (route.path === routePath && route?.hasEffectsToRun) return true;
   });
   return effectsRouteList.length > 0 ? effectsRouteList[0] : null;
 };
 methods.doImport = function (toImport) {
-  let all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-  let check = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+  let all =
+    arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  let check =
+    arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
   const self = this;
   const pao = self.pao;
   const loadFile = pao.pa_loadFile;
@@ -352,19 +386,31 @@ methods.doImport = function (toImport) {
   return new Promise((resolve, reject) => {
     // const manifestFile = loadFileSync(toImport);
     // resolve({ module: imported.meta });
-    loadFile(toImport, all, check).then(imported => {
-      self.debug("Module has successfully been imported:", imported);
-      resolve(imported);
-    }).catch(err => {
-      self.debug(`importing module:${toImport}, has failed with an error:${err}`);
-      reject(err);
-    });
+    loadFile(toImport, all, check)
+      .then((imported) => {
+        self.debug("Module has successfully been imported:", imported);
+        resolve(imported);
+      })
+      .catch((err) => {
+        self.debug(
+          `importing module:${toImport}, has failed with an error:${err}`
+        );
+        reject(err);
+      });
   });
 };
 methods.doKotiiStyles = function () {
   const self = this;
-  const jsonStyles = fs.existsSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`) ? JSON.parse(fs.readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`)) : null;
-  self.styleTags = jsonStyles ? `<style>${jsonStyles.toString().replaceAll(",", " ")}</style>` : "";
+  const jsonStyles = fs.existsSync(
+    `${kotiiKotiiLandPath}${path.sep}dev/styles.json`
+  )
+    ? JSON.parse(
+        fs.readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`)
+      )
+    : null;
+  self.styleTags = jsonStyles
+    ? `<style>${jsonStyles.toString().replaceAll(",", " ")}</style>`
+    : "";
 };
 
 // methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
