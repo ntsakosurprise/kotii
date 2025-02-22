@@ -1,3 +1,4 @@
+import CopyAssetsWebpackPlugin from "./copyAssetsWebpackPlugin.js";
 import DeleteFilesWebpackPlugin from "./deleteHotFilesWebpackPlugin.js";
 import FinishCompilationOnErrorWebpackPlugin from "./finishCompilationOnErrorWebpackPlugin.js";
 import GetStatsWebpackPlugin from "./getStatsWebpackPlugin.js";
@@ -13,4 +14,5 @@ export {
   HookToLoaderResolutionWebpackPlugin,
   GetStatsWebpackPlugin,
   StatsPrintWebpackPlugin,
+  CopyAssetsWebpackPlugin,
 };
