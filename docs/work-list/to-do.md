@@ -9,8 +9,8 @@
 - `Configure images in the framework`
 - `Add functionality for static generator to fetch data from api`
 - Set SPA to be handled by kotiijs server
-- Clean-up custom nodejs loaders
-- Fix manipulation of babel-json file in server-build
+- `Clean-up custom nodejs loaders`
+- `Fix manipulation of babel-json file in server-build`
 - `Double-check that `env` plugin properly loads dotenv files`
 - Set up lazy-load of components or on the fly rendering
 - Write docs for `run-local` scripts
@@ -26,8 +26,8 @@
 - `Add support for fonts`
 - `Hydrate other assets like css, etc`
 - `Add support for protected routes or views`
-- Generate kotii production build
-- Generate kotii static site
+- `Generate kotii production build`
+- `Generate kotii static site`
 
 ### Features
 
