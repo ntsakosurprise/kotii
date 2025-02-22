@@ -1,6 +1,6 @@
 const methods = {};
+import path from "node:path";
 import { kotiiKotiiLandPath } from "../../kotii_paths.js";
-
 methods.init = function () {
   this.listens({
     "create-file-routes": this.handleFileRoutes.bind(this),
@@ -260,6 +260,24 @@ methods.getItemPathAndFile = function (item) {
   return new Promise((res, rej) => {
     let splitPatternMatch = patternMatch.split("/");
     let splitLen = splitPatternMatch.length;
+    let workDir = process.cwd();
+    let pathSplit = workDir.split(path.sep);
+    let userFolder = pathSplit[pathSplit.length - 1];
+    let cwdPos = item.indexOf(userFolder);
+    let absolutePath = item.substring(cwdPos, item.length);
+    let sourcePos = absolutePath.indexOf("src");
+    let requiredPath = absolutePath.substring(sourcePos, absolutePath.length);
+    console.log(
+      "THE PAGE WORK DIR",
+      workDir,
+      cwdPos,
+      absolutePath,
+      requiredPath
+    );
+    let absolutePathPre =
+      process.env.NODE_ENV === "development" ? "kotii-dev" : "kotii-prod";
+    let absSrc = `${path.sep}${absolutePathPre}${path.sep}${requiredPath}`;
+
     self.debug("THE PAGES matched", patternMatch);
     self.debug("THE ITEM", item);
     //self.debug("THE LOADED FILE", loadFileSync(item));
@@ -283,6 +301,7 @@ methods.getItemPathAndFile = function (item) {
                 camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
               ),
         component: item,
+        componentAbsolutePath: absSrc,
         componentPath: item,
         componentRaw: imported.default,
         getServerState,
