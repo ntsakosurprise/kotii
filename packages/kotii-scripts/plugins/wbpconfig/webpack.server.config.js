@@ -149,10 +149,10 @@ export default (options) => {
           `${kotiiRootPath}`,
           "webpack-loaders/eslint-loader/index.cjs"
         ),
-        // "kotii-prettier-loader": path.resolve(
-        //   `${kotiiRootPath}`,
-        //   "webpack-loaders/prettier-loader/index.cjs"
-        // ),
+        "kotii-prettier-loader": path.resolve(
+          `${kotiiRootPath}`,
+          "webpack-loaders/prettier-loader/index.cjs"
+        ),
         // "test-styles-loader": path.resolve(
         //   `${kotiiRootPath}`,
         //   "webpack-loaders/testStyles.cjs"
