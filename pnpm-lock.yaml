@@ -1079,6 +1079,9 @@ importers:
       eslint:
         specifier: ^7.10.0
         version: 7.32.0
+      eslint-plugin-react:
+        specifier: ^7.30.1
+        version: 7.35.0(eslint@7.32.0)
       fast-xml-parser:
         specifier: ^4.5.1
         version: 4.5.1
@@ -8163,7 +8166,7 @@ packages:
     version: 1.0.0
 
   kotii-templates@file:packages/kotii-templates/kotii-templates-1.0.0.tgz:
-    resolution: {integrity: sha512-Qsv1CNw49GsffleMtll8LcVGMFB4/gNNQaGt7kWG14rJ047A9ehGTpbphuoZD9re9JVKrRkNnZPJF0gvhZN90g==, tarball: file:packages/kotii-templates/kotii-templates-1.0.0.tgz}
+    resolution: {integrity: sha512-uhA4FAN5AzNAr00zgWXMESX3ANlPBe3HDJlb36drMbY1SFm+xMb5TP/IqYOdaQ8ozSNOO+sgKeYclnVJ7wF7Jg==, tarball: file:packages/kotii-templates/kotii-templates-1.0.0.tgz}
     version: 1.0.0
     engines: {node: '>=17.2.0', npm: '>=8.19.2', yarn: '>=1.22.11'}
 
@@ -18231,6 +18234,28 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
+
+  eslint-plugin-react@7.35.0(eslint@7.32.0):
+    dependencies:
+      array-includes: 3.1.8
+      array.prototype.findlast: 1.2.5
+      array.prototype.flatmap: 1.3.2
+      array.prototype.tosorted: 1.1.4
+      doctrine: 2.1.0
+      es-iterator-helpers: 1.0.19
+      eslint: 7.32.0
+      estraverse: 5.3.0
+      hasown: 2.0.2
+      jsx-ast-utils: 3.3.5
+      minimatch: 3.1.2
+      object.entries: 1.1.8
+      object.fromentries: 2.0.8
+      object.values: 1.2.0
+      prop-types: 15.8.1
+      resolve: 2.0.0-next.5
+      semver: 6.3.1
+      string.prototype.matchall: 4.0.11
+      string.prototype.repeat: 1.0.0
 
   eslint-plugin-react@7.35.0(eslint@8.57.0):
     dependencies:

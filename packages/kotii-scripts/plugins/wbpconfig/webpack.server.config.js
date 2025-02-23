@@ -145,6 +145,14 @@ export default (options) => {
           `${kotiiRootPath}`,
           "webpack-loaders/handleSyncLoaderStyles.cjs"
         ),
+        "kotii-eslint-loader": path.resolve(
+          `${kotiiRootPath}`,
+          "webpack-loaders/eslint-loader/index.cjs"
+        ),
+        // "kotii-prettier-loader": path.resolve(
+        //   `${kotiiRootPath}`,
+        //   "webpack-loaders/prettier-loader/index.cjs"
+        // ),
         // "test-styles-loader": path.resolve(
         //   `${kotiiRootPath}`,
         //   "webpack-loaders/testStyles.cjs"
@@ -167,15 +175,31 @@ export default (options) => {
           exclude: !isProjectPNPM
             ? /node_modules\/(?!kotii-scripts).+/
             : /node_modules\/\.pnpm\/node_modules\/(?!kotii-scripts)/,
-          use: {
-            loader: "babel-loader",
-            options: {
-              presets: [
-                ["@babel/preset-env"],
-                ["@babel/preset-react", { runtime: "automatic" }],
-              ],
+          use: [
+            {
+              loader: "babel-loader",
+              options: {
+                presets: [
+                  ["@babel/preset-env"],
+                  ["@babel/preset-react", { runtime: "automatic" }],
+                ],
+              },
             },
-          },
+            {
+              loader: "kotii-eslint-loader",
+              options: {
+                lintDirectory: env.appSrc,
+                configPath: `${kotiiRootPath}/webpack-loaders/eslint-loader/eslint.config.cjs`,
+              },
+            },
+            // {
+            //   loader: "kotii-prettier-loader",
+            //   options: {
+            //     prettifyDirectory: env.appSrc,
+            //     configPath: `${kotiiRootPath}/webpack-loaders/prettier-loader/prettier.config.cjs`,
+            //   },
+            // },
+          ],
         },
         {
           test: /\.html$/,
