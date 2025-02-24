@@ -15,6 +15,7 @@ import names from "../state/places.json";
 import Reminder from "../state/reminder.csv";
 import User from "../state/user.xml";
 import * as actions from "../store/home/actions.js";
+import "../style-tailwind.css";
 import "../styles/index.css";
 
 const Main = styled("div")({
