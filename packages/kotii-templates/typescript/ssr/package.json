@@ -1,0 +1,24 @@
+{
+  "name": "spa",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "main": "index.js",
+  "type": "module",
+  "repository": {
+    "type": "git"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "dependencies": {
+    "glob": "^10.3.10",
+    "kotii-logger": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-logger/kotii-logger-1.0.0.tgz",
+    "kotii-scripts": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-scripts/kotii-scripts-1.0.0.tgz",
+    "react-icons": "^4.11.0",
+    "react-markdown": "^8.0.0",
+    "react-router-dom": "^6.20.1",
+    "styled-components": "^6.1.1"
+  }
+}
