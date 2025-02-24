@@ -233,8 +233,7 @@ methods.renderFullPage = function ({
     ${head?.link.toString()}
     ${self.styledTags}
     ${self.styleTags}
-   
-    
+    <link rel="stylesheet" type="text/css" href="/tailwind.css">
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
