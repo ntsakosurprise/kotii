@@ -153,6 +153,10 @@ export default (options) => {
           `${kotiiRootPath}`,
           "webpack-loaders/prettier-loader/index.cjs"
         ),
+        "kotii-postcss-loader": path.resolve(
+          `${kotiiRootPath}`,
+          "webpack-loaders/postcss-loader/index.cjs"
+        ),
         // "test-styles-loader": path.resolve(
         //   `${kotiiRootPath}`,
         //   "webpack-loaders/testStyles.cjs"
@@ -222,6 +226,14 @@ export default (options) => {
                 referenceAssetsPath: `${kotiiKotiiLandPath}/dev`,
                 assetsFile: "styles-css-modules.json",
                 fileFormat: "json",
+              },
+            },
+            {
+              loader: "kotii-postcss-loader",
+              options: {
+                tailwindConfig: `${kotiiRootPath}/webpack-loaders/postcss-loader/tailwind.config.cjs`,
+                contentPath: env.appSrc,
+                mainCssFilename: "global.css",
               },
             },
           ],
