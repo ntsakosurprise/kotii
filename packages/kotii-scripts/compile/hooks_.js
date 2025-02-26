@@ -4,7 +4,6 @@ import { loggas, logger } from "kotii-logger";
 import { isBuiltin } from "node:module";
 import { pathToFileURL } from "node:url";
 import path from "path";
-import babelJson from "../babel.server.json" assert { type: "json" };
 import {
   lessToCssConverter,
   renderCssModules,
@@ -33,6 +32,16 @@ let FILE_LOADER_DEFAULT = {
   output: "public/imgs",
   // inlinePngs: true,
 };
+const KOTII_USER_LAND_ALIASES = {
+  layout: {
+    alias: "/kotii-user-land-aliase/src/components/startup/index",
+    value: "/src/components/startup/index",
+  },
+  redux: {
+    alias: "/kotii-user-land-aliase/src/store/index",
+    value: "/src/store/index",
+  },
+};
 
 let cssSpecifiers = [".css", ".scss", ".sass", ".less", ".styl"];
 let fileSpecifiers = [".gif", ".png", ".svg", ".jpg", ".jpeg"];
@@ -51,6 +60,8 @@ logger.setNameSpaces([
 
 let extJsx = ".jsx";
 let extJS = ".js";
+let extTsx = ".tsx";
+let extTs = ".ts";
 let fileLoaderExts = [
   ".png",
   ".jpg",
@@ -88,6 +99,8 @@ export async function load(url, context, nextLoad) {
   if (
     (fileExtension === extJsx ||
       fileExtension === extJS ||
+      fileExtension === extTs ||
+      fileExtension === extTsx ||
       fileLoaderExts.includes(fileExtension)) &&
     !isBuiltin(fileName)
   ) {
@@ -95,11 +108,19 @@ export async function load(url, context, nextLoad) {
     let source = null;
     let options = null;
 
-    if (fileExtension === extJsx || fileExtension === extJS) {
+    if (
+      fileExtension === extJsx ||
+      fileExtension === extJS ||
+      fileExtension === extTs ||
+      fileExtension === extTsx
+    ) {
       loggas.load.debug("JSX SECTION");
       options = {
-        presets: ["@babel/preset-react"],
-        plugins: ["@babel/plugin-syntax-import-assertions"],
+        presets: ["@babel/preset-react", "@babel/preset-typescript"],
+        plugins: [
+          "@babel/plugin-syntax-import-assertions",
+          "@babel/plugin-transform-typescript",
+        ],
       };
       loggas.load.debug("READING FILE", fileExtension, url);
       let urlInstance = new URL(url).pathname;
@@ -141,6 +162,16 @@ export async function load(url, context, nextLoad) {
         } else {
           return nextLoad(url);
         }
+      } else if (fileExtension === extTs) {
+        console.log("THE FILE IS TS");
+        source = fs.readFileSync(urlInstance, {
+          encoding: "utf-8",
+        });
+      } else if (fileExtension === extTsx) {
+        console.log("THE FILE IS TSX");
+        source = fs.readFileSync(urlInstance, {
+          encoding: "utf-8",
+        });
       }
     } else if (fileLoaderExts.includes(fileExtension)) {
       loggas.load.debug("The PNG", fileExtension, meta && meta.useInlinedPngs);
@@ -183,7 +214,6 @@ export async function load(url, context, nextLoad) {
 
       loggas.load.debug("filename.pathname", fileName, pathName);
 
-      loggas.load.debug("FileName source", source);
       return {
         format: "module",
         shortCircuit: true,
@@ -193,9 +223,10 @@ export async function load(url, context, nextLoad) {
       source = await nextLoad(url, { ...context, format });
     }
     let rawSource = typeof source === "string" ? source : source.source;
+
     let result = fileLoaderExts.includes(fileExtension)
       ? babel.transformFileSync(source, options)
-      : babel.transform(rawSource, options || babelJson);
+      : babel.transform(rawSource, { filename: url, presets: options.presets });
     if (fileLoaderExts.includes(fileExtension)) {
       loggas.load.debug("TRANSFORM RESULT", result);
     }
@@ -236,6 +267,8 @@ export async function resolve(specifier, context, nextResolve) {
   if (specifier.indexOf("../kotii-land/dev") >= 0) {
     loggas.resolve.debug("ALSO HANDLED BY LOADERS", meta);
   }
+  shouldTerminate = resolveUserlandImports(specifier);
+  if (shouldTerminate) return shouldTerminate;
   shouldTerminate = resolveAliasedImports(specifier);
   if (shouldTerminate) return shouldTerminate;
   shouldTerminate = resolveKotiiLandImports(specifier);
@@ -502,6 +535,62 @@ const resolveKotiiUserApiPlugins = (specifier) => {
   } else {
     return false;
   }
+};
+
+const resolveUserlandImports = (specifier) => {
+  loggas.resolve.debug("KOTII LAND USER LAND", specifier);
+  if (!isBuiltin(specifier) && /^\/kotii-user-land-aliase\//.test(specifier)) {
+    loggas.resolve.debug("THE SPECIFIER FOR PAGES PATH", specifier);
+    let basePath = getPagesBasePath(specifier);
+    // console.log(
+    //   "THE KOTII ALIAS SPECIFIER",
+    //   specifier,
+    //   KOTII_USER_LAND_ALIASES[
+    //     Object.keys(KOTII_USER_LAND_ALIASES).filter(
+    //       (aliase) => KOTII_USER_LAND_ALIASES[aliase].alias === specifier
+    //     )[0]
+    //   ].value
+    // );
+
+    let aliaseTruePath = Object.keys(KOTII_USER_LAND_ALIASES).filter(
+      (aliase) => KOTII_USER_LAND_ALIASES[aliase].alias === specifier
+    );
+    let aliaseTruePathValue = KOTII_USER_LAND_ALIASES[aliaseTruePath[0]].value;
+    let aliasePossiblePath = `${basePath}${aliaseTruePathValue}`;
+    console.log("THE ALIAS POSSIBLE", aliasePossiblePath);
+
+    try {
+      let livingPath = guessPathExtension(aliasePossiblePath);
+      return {
+        url: pathToFileURL(`${livingPath}`).href,
+        shortCircuit: true,
+      };
+    } catch (error) {
+      console.log("THE APP HAS ERRORED", error);
+    }
+  } else {
+    return false;
+  }
+};
+
+const guessPathExtension = (guessPath) => {
+  console.log("THE GUESS PATH", guessPath);
+
+  let livingExtension = guessPath;
+  for (let ext = 0; ext < extensions.length; ext++) {
+    console.log("THE LOOP", ext);
+    let guessPathWithExtension = `${guessPath}${extensions[ext]}`;
+    if (fs.existsSync(guessPathWithExtension)) {
+      livingExtension = guessPathWithExtension;
+      break;
+    }
+  }
+  if (livingExtension === guessPath)
+    throw new Error(
+      `Node-Kotiijs-Resolve: requested file does not exist:${livingExtension}`
+    );
+  console.log("THE LIVING EXTENSION", livingExtension);
+  return livingExtension;
 };
 
 /**

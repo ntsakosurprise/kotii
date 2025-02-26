@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import detectPort from "detect-port";
 import portFinder from "portfinder";
-
 const methods = {};
 methods.init = function () {
   // self.debug('Bitbucket has been initialised')
@@ -81,12 +80,16 @@ methods.getAppInContextResources = function (environment = false) {
     self.debug("THE TEMPLATE app FOLDER", appFolder);
     let appFolderSplit = appFolder.split("/");
     self.debug("THE");
+    let indexPath = self.getFilePath(appFolder, "src/index.js");
+    const appIndexFile = !fs.existsSync(indexPath)
+      ? indexPath.replace(".js", ".ts")
+      : indexPath;
     const resources = {
       appEnv: self.getEnvFilePath(appFolder),
       appFolder: self.getFilePath(appFolder, "."),
       appName: appFolderSplit[appFolderSplit.length - 1],
       appSsl: self.getFilePath(appFolder, "ssl"),
-      appIndexFile: self.getFilePath(appFolder, "src/index.js"),
+      appIndexFile: appIndexFile,
       appPagesFolder: self.getFilePath(appFolder, "src/pages"),
       appSrc: self.getFilePath(appFolder, "src"),
       appTsConfig: self.getFilePath(appFolder, "tsconfig.ts"),

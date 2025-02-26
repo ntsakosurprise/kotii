@@ -16,6 +16,7 @@ import {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const guessExtensions = [".js", ".jsx", ".ts", ".tsx"];
 
 configureKotiiLogger();
 export default (options) => {
@@ -98,7 +99,7 @@ export default (options) => {
     //   }),
     // ],
     resolve: {
-      extensions: [".js", ".jsx", ".png", ".jpg"], // tell webpack to use these extenstions to resolve imported files[for importing without specifying the extension name]
+      extensions: [".js", ".jsx", ".ts", ".tsx", ".png", ".jpg"], // tell webpack to use these extenstions to resolve imported files[for importing without specifying the extension name]
       alias: {
         ...options.appManifest.aliases,
         "react-router-dom": path.resolve(
@@ -109,6 +110,12 @@ export default (options) => {
           `${env.appFolder}/node_modules/react-router`
         ),
         "kotii-scripts": path.resolve(`${scriptsWebpackResolve}`),
+        "/kotii-user-land-aliase/src/store/index": guessPathExtension(
+          `${env.appSrc}/store/index`
+        ),
+        "/kotii-user-land-aliase/src/startup/index": guessPathExtension(
+          `${env.appSrc}/components/startup/index`
+        ),
       }, // Alias references to files and folders inorder to use absolute paths in your file imports
       fallback: {
         fs: false,
@@ -157,6 +164,7 @@ export default (options) => {
           `${kotiiRootPath}`,
           "webpack-loaders/postcss-loader/index.cjs"
         ),
+
         // "test-styles-loader": path.resolve(
         //   `${kotiiRootPath}`,
         //   "webpack-loaders/testStyles.cjs"
@@ -196,6 +204,46 @@ export default (options) => {
                 configPath: `${kotiiRootPath}/webpack-loaders/eslint-loader/eslint.config.cjs`,
               },
             },
+            // {
+            //   loader: "kotii-prettier-loader",
+            //   options: {
+            //     prettifyDirectory: env.appSrc,
+            //     configPath: `${kotiiRootPath}/webpack-loaders/prettier-loader/prettier.config.cjs`,
+            //   },
+            // },
+          ],
+        },
+        {
+          test: /\.(?:ts|mts|cts|tsx)$/,
+          include: !isProjectPNPM
+            ? [path.resolve(scriptsPath, "/")]
+            : [
+                process.cwd(),
+                path.join(process.cwd(), "node_modules"),
+                path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
+              ],
+          // exclude: /node_modules\/(?!(kotii-scripts)\/).*/,
+          // include: [scriptsWebpackResolve],
+          exclude: !isProjectPNPM
+            ? /node_modules\/(?!kotii-scripts).+/
+            : /node_modules\/\.pnpm\/node_modules\/(?!kotii-scripts)/,
+          use: [
+            // {
+            //   loader:"babel-loader",
+            //   options: {
+            //     presets: [
+            //       ["@babel/preset-env"],
+            //       ["@babel/preset-react", { runtime: "automatic" }],
+            //     ],
+            //   },
+            // },
+            {
+              loader: "ts-loader",
+              options: {
+                configFile: `${kotiiRootPath}/plugins/wbpconfig/tsconfig.json`,
+              },
+            },
+
             // {
             //   loader: "kotii-prettier-loader",
             //   options: {
@@ -449,4 +497,24 @@ function configureKotiiLogger() {
       id: "statsPrintWebpackPlugin",
     },
   ]);
+}
+
+function guessPathExtension(guessPath) {
+  console.log("THE GUESS PATH", guessPath);
+
+  let livingExtension = guessPath;
+  for (let ext = 0; ext < guessExtensions.length; ext++) {
+    console.log("THE LOOP", ext);
+    let guessPathWithExtension = `${guessPath}${guessExtensions[ext]}`;
+    if (fs.existsSync(guessPathWithExtension)) {
+      livingExtension = guessPathWithExtension;
+      break;
+    }
+  }
+  if (livingExtension === guessPath)
+    throw new Error(
+      `Node-Kotiijs-Resolve: requested file does not exist:${livingExtension}`
+    );
+  console.log("THE LIVING EXTENSION", livingExtension);
+  return livingExtension;
 }

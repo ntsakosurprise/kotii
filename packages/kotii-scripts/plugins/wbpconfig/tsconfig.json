@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+      "outDir": "/Users/surprisemashele/Apps/new-with-npm-t/build",
+      "target": "es5",
+      "module": "es6",
+      "jsx": "react",
+      "moduleResolution": "node",
+      "allowSyntheticDefaultImports": true
+    }
+  }

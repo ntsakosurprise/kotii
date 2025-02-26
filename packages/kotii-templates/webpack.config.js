@@ -34,7 +34,7 @@ const kotiiTemplates = {
     // }),
   ],
   resolve: {
-    extensions: [".js"],
+    extensions: [".js", ".ts"],
   },
   module: {
     rules: [

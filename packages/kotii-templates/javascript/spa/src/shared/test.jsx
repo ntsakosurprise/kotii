@@ -3,7 +3,6 @@ import React from "react";
 import SVGImage from "./svgImage.jsx";
 
 const capitalizeFirstLetter = (text) => {
-  console.log("The text Uppercasing;;;", text);
   return `${text.slice(0, 1).toUpperCase()}${text.slice(1)}`;
 };
 // const TextAsPaths = () => {
@@ -75,10 +74,8 @@ const capitalizeFirstLetter = (text) => {
 // };
 
 const xmlStyleToJs = (style) => {
-  console.log("splitingString", style);
   const jsStyle = {};
   const splitStyle = style.replace(/;$/, "").trim().split(";");
-  console.log("Split array", splitStyle);
 
   splitStyle.map((valuePair) => {
     const valuePairArray = valuePair.split(":");
@@ -95,7 +92,6 @@ const xmlStyleToJs = (style) => {
     jsStyle[camelCasedKey] = isStringValue ? value : parseInt(value);
   });
 
-  console.log("JSSTYLE", jsStyle);
   return jsStyle;
 };
 

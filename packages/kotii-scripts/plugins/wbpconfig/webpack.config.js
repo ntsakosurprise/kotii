@@ -87,6 +87,46 @@ export default () => {
           },
         },
         {
+          test: /\.(?:ts|mts|cts|tsx)$/,
+          include: !isProjectPNPM
+            ? [path.resolve(scriptsPath, "/")]
+            : [
+                process.cwd(),
+                path.join(process.cwd(), "node_modules"),
+                path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
+              ],
+          // exclude: /node_modules\/(?!(kotii-scripts)\/).*/,
+          // include: [scriptsWebpackResolve],
+          exclude: !isProjectPNPM
+            ? /node_modules\/(?!kotii-scripts).+/
+            : /node_modules\/\.pnpm\/node_modules\/(?!kotii-scripts)/,
+          use: [
+            // {
+            //   loader:"babel-loader",
+            //   options: {
+            //     presets: [
+            //       ["@babel/preset-env"],
+            //       ["@babel/preset-react", { runtime: "automatic" }],
+            //     ],
+            //   },
+            // },
+            {
+              loader: "ts-loader",
+              options: {
+                configFile: `${kotiiRootPath}/plugins/wbpconfig/tsconfig.json`,
+              },
+            },
+
+            // {
+            //   loader: "kotii-prettier-loader",
+            //   options: {
+            //     prettifyDirectory: env.appSrc,
+            //     configPath: `${kotiiRootPath}/webpack-loaders/prettier-loader/prettier.config.cjs`,
+            //   },
+            // },
+          ],
+        },
+        {
           test: /\.html$/,
           use: "html-loader",
         },
