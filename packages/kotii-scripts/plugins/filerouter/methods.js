@@ -236,7 +236,7 @@ methods.getItemPathAndFile = function (item) {
   const readFileSync = pao.pa_readFileSync;
   const capitalizeFirstLetter = pao.pa_capitalizeFirstLetter;
   const camelCase = pao.pa_camelCase;
-  const extMatchPattern = /\.jsx|\.ts|\.tsx|\.jsx|\.js$/g;
+  const extMatchPattern = /\.jsx|\.tsx|\.ts|\.js$/g;
   let fileAsComp = null;
 
   let gotEndpoint =
