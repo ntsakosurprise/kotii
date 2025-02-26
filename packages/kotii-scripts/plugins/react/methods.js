@@ -114,7 +114,7 @@ methods.runReactView = function (data) {
 
     let layoutStaticAbsolutePath =
       process.env.NODE_ENV == "development"
-        ? `/src/components/startup/index.jsx`
+        ? `/kotii-user-land-aliase/src/components/startup/index`
         : `/src/components/startup/index.js`;
     let layoutRoot = await self.doImport(
       `${layoutStaticAbsolutePath}`,
