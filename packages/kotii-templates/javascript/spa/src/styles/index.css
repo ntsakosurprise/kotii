@@ -1,3 +1,7 @@
-p {
-  color: "red";
+.text-color {
+  color: red !important;
+}
+
+.text-color-yellow {
+  color: red !important;
 }
