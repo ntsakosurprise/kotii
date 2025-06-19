@@ -2,6 +2,7 @@
 import Bitbucket from "./bitbucket/index.js";
 import Build from "./buildsc/index.js";
 import Cachr from "./cachr/index.js";
+import KotiiCatchAll from "./catch-all/catch-all.js";
 import Config from "./config/index.js";
 import Configstorer from "./configstore/index.js";
 import ContextApp from "./contextapp/index.js";
@@ -50,6 +51,7 @@ export { Env };
 export { Dev };
 export { ScriptsUtils };
 export { ServerSentEvents };
+export { KotiiCatchAll };
 export default {
   Interpreter,
   Scaffold,
@@ -78,4 +80,5 @@ export default {
   Static,
   Dev,
   ServerSentEvents,
+  KotiiCatchAll,
 };

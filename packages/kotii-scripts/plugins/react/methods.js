@@ -10,6 +10,7 @@ methods.init = function () {
     "handle-react-view": this.handleReactView.bind(this),
     "take-ssr-routes": this.handleSsrRoutes.bind(this),
     "handle-react-static": this.handleReactStaticViews.bind(this),
+    "handle-react-spa": this.handleReactSpa.bind(this),
   });
 };
 
@@ -55,6 +56,15 @@ methods.handleReactStaticViews = function (data) {
     // self.debug("ALL VIEWS PROMISES MAPPED", htmlViews);
     self.callback(htmlViews);
   });
+};
+methods.handleReactSpa = function (data) {
+  const self = this;
+  self.debug("Handling ReactView Event", data);
+
+  self.callback = data.callback;
+  // self.debug("THE VIEW DATA", data);
+  // self.debug("ServerStyleSheet", ServerStyleSheet);
+  self.callback(self.renderHtmlSpa());
 };
 methods.runReactView = function (data) {
   const self = this;
@@ -210,6 +220,23 @@ methods.runReactView = function (data) {
     self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
     resolve(fullPage);
   });
+};
+
+methods.renderHtmlSpa = function () {
+  const self = this;
+
+  return `
+		<!doctype html>
+		<html> 
+    <head>
+    <link rel="stylesheet" type="text/css" href="/tailwind.css">
+    </head>
+		<body>
+			<div id="root"></div>
+      <script src="/server.bundle.js" ></script>	
+		</body>
+		</html>
+    `;
 };
 
 methods.renderFullPage = function ({

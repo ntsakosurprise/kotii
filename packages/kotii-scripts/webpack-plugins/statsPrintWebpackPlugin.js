@@ -6,7 +6,7 @@ class StatsPrintWebpackPlugin {
   apply(compiler) {
     compiler.hooks.done.tap("StatsPrintWebpackPlugin", (stats) => {
       this.loggas.statsPrintWebpackPlugin.debug("Stats", stats);
-      console.log("THE STATS", stats);
+
       if (!process.env.KOTII_WEBPACK_COMPILATION_SET) {
         process.env.KOTII_WEBPACK_COMPILATION_SET = "true";
         this.loggas.statsPrintWebpackPlugin.info(
