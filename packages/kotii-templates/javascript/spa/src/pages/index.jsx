@@ -10,12 +10,12 @@ import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
 import { FaLongArrowAltRight } from "react-icons/fa/index.js";
 import { useDispatch, useSelector } from "react-redux";
+import "../global.css";
 import SVGConnections from "../shared/test.jsx";
 import names from "../state/places.json";
 import Reminder from "../state/reminder.csv";
 import User from "../state/user.xml";
 import * as actions from "../store/home/actions.js";
-import "../style-tailwind.css";
 import "../styles/index.css";
 
 const Main = styled("div")({

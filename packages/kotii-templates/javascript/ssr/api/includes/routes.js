@@ -11,6 +11,12 @@ export default [
     alias: "portfolio",
     type: "public",
   },
+  {
+    path: "/get-portfolio",
+    method: "GET",
+    alias: "portfolio",
+    type: "public",
+  },
 
   //   {
   //     path: "/test",
