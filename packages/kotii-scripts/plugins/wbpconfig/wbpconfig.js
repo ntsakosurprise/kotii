@@ -56,6 +56,17 @@ class WebpackConfig {
       methods.insertIdentifierImportDeclarations;
     this.addImportLineTAppJs = methods.addImportLineTAppJs;
     this.runOnceDone = methods.runOnceDone;
+
+    this.hookSocketToServer = methods.hookSocketToServer;
+    this.doOldSelectorUpdate = methods.doOldSelectorUpdate;
+    this.doNewSelectorUpdate = methods.doNewSelectorUpdate;
+    this.getCssUpdateContent = methods.getCssUpdateContent;
+    this.doNoneImportsCssUpdates = methods.doNoneImportsCssUpdates;
+    this.doImportsCssUpdates = methods.doImportsCssUpdates;
+    this.checkMatchType = methods.checkMatchType;
+    this.syncContentToParents = methods.syncContentToParents;
+    this.removeOutdatedCssFile = methods.removeOutdatedCssFile;
+    this.loadCssModuleDataFile = methods.loadCssModuleDataFile;
   }
 }
 export default WebpackConfig;
