@@ -27,7 +27,9 @@ const App = (appWrapper = null, layout = null) => {
   userLayout = layout;
   const app = process.env.KOTII_APP_META;
   console.log("THE EFFECTSTORE RAW", window.__KOTII_EFFECTS_STATE__);
-  const effectsStore = JSON.parse(window.__KOTII_EFFECTS_STATE__);
+  const effectsStore = window?.__KOTII_EFFECTS_STATE__
+    ? JSON.parse(window.__KOTII_EFFECTS_STATE__)
+    : null;
 
   loggas.appClient.debug("THE PROCESS.BROWSER.ENVS", process.env);
 
