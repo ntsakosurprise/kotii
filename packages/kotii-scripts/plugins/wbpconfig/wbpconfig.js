@@ -55,6 +55,7 @@ class WebpackConfig {
     this.insertIdentifierImportDeclarations =
       methods.insertIdentifierImportDeclarations;
     this.addImportLineTAppJs = methods.addImportLineTAppJs;
+    this.runOnceDone = methods.runOnceDone;
   }
 }
 export default WebpackConfig;

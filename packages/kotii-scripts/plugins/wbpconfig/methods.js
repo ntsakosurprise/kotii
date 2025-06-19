@@ -53,6 +53,7 @@ methods.handleWebpackConfig = function (data) {
                   useCustomDomain,
                   useAvailablePort: false,
                   domainName: addedHost.domainName,
+                  shouldWaitForSignal: true,
                   appOpts: {
                     key: certs.filesOutputPaths.key,
                     cert: certs.filesOutputPaths.key,
@@ -79,6 +80,7 @@ methods.handleWebpackConfig = function (data) {
       useAvailablePort: false,
       pageToOpen: useAsDefaultPage,
       domainName: useCustomDomain ? `${contextApp.appName}.com` : "localhost",
+      shouldWaitForSignal: true,
     };
     useCustomDomain
       ? (server["appOpts"] = {
@@ -166,6 +168,7 @@ methods.configureWebPack = function (
       contextApp.appManifest?.fileLoader?.inline
         ? contextApp.appManifest.fileLoader.inline
         : false,
+    runOnceDone: self.runOnceDone.bind(self),
   });
 
   self.debug("PROCESS.ENV", process.env);
@@ -186,7 +189,18 @@ methods.configureWebPack = function (
           compiler: wbpCompiler,
           webpackConfig: webpackConfigObject,
         },
-        { routes, api: contextApp.appApi },
+        {
+          routes:
+            contextApp.appManifest.app.type !== "spa"
+              ? routes
+              : [
+                  ...routes.filter((r) => r?.alias && r.alias === "home"),
+                  {
+                    catchAll: true,
+                  },
+                ],
+          api: contextApp.appApi,
+        },
         certDomainConfig
 
         // domain: [{ name: 'static', set: 'public' }]
@@ -257,11 +271,7 @@ methods.configureDevServer = function (
   };
 
   let wepackMiddlewares = null;
-  const serverType =
-    process.env?.ANZII_CLI_WITH_SERVER &&
-    process.env.ANZII_CLI_WITH_SERVER === "true"
-      ? "config-manual"
-      : "dev-server";
+  const serverType = "config-manual";
   serverType === "config-manual"
     ? (wepackMiddlewares = {
         webpackDevMiddleware: self.webpackDevMiddleware,
@@ -633,6 +643,14 @@ methods.addImportLineTAppJs = function () {
   ]);
   let newFileContent = `${buildImportString} ${generateBuildAst}`;
   saveToFile(buildPath, newFileContent);
+};
+methods.runOnceDone = function () {
+  const self = this;
+  // const { watched, persistent = true, ignored = null, events = null } = payload;
+  self.emit({
+    type: "open-browser-signal",
+    data: {},
+  });
 };
 
 export default methods;
