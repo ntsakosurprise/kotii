@@ -282,7 +282,8 @@ methods.includeScripts = function (preloadedState) {
      )}
     
    </script>
-   <script src="/server.bundle.js" ></script>
+   <script src="/server.js" ></script>
+   <script src="/kotii-client.js" ></script>
   `;
 };
 
