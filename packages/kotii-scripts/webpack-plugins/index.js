@@ -1,3 +1,4 @@
+import BroadcastCompilationWebpackPlugin from "./broadCastCompilationWebpackPlugin.js";
 import CopyAssetsWebpackPlugin from "./copyAssetsWebpackPlugin.js";
 import DeleteFilesWebpackPlugin from "./deleteHotFilesWebpackPlugin.js";
 import FinishCompilationOnErrorWebpackPlugin from "./finishCompilationOnErrorWebpackPlugin.js";
@@ -15,4 +16,5 @@ export {
   GetStatsWebpackPlugin,
   StatsPrintWebpackPlugin,
   CopyAssetsWebpackPlugin,
+  BroadcastCompilationWebpackPlugin,
 };
