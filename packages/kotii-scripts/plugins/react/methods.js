@@ -432,7 +432,9 @@ methods.doKotiiStyles = function () {
       )
     : null;
   self.styleTags = jsonStyles
-    ? `<style>${jsonStyles.toString().replaceAll(",", " ")}</style>`
+    ? `<style id="styles-tag">${jsonStyles
+        .toString()
+        .replaceAll(",", " ")}</style>`
     : "";
 };
 
