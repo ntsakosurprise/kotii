@@ -15,8 +15,9 @@ import names from "../state/places.json";
 import Reminder from "../state/reminder.csv";
 import User from "../state/user.xml";
 import * as actions from "../store/home/actions.js";
-import "../style-tailwind.css";
+import colorStyles from "../styles/color.module.less";
 import "../styles/index.css";
+// import "../global.css"
 
 const Main = styled("div")({
   display: "flex",
@@ -30,7 +31,7 @@ const Main = styled("div")({
 });
 const Hero = styled("div")(() => {
   return {
-    marginLeft: "10px",
+    marginLeft: "11px",
     width: "50%",
   };
 });
@@ -210,6 +211,7 @@ const Index = () => {
   loggas.app.log("THE CSV", Reminder);
   loggas.app.log("USER XML", User);
   loggas.app.log("NAMES", names);
+  console.log("THE COLOR STYLES", colorStyles);
   // const peopleList = useSelector((state) => {
   //   loggas.app.log("STATE RECEIVED", state);
   //   return state.homeReducer.people;
@@ -231,31 +233,56 @@ const Index = () => {
     if (!user) dispatch(actions.showUser());
     dispatch(actions.hidePeopleList());
   };
-  loggas.app.log("User data from useUniversalEffect", data, error);
+  loggas.app.log(
+    "User data from useUniversalEffect  ffgfgfgfgffgffggfgffggfgfgfgfgffggfgfgffgfggfggffggfgffggfgfgfgggf",
+    data,
+    error
+  );
   return (
-    <Main>
+    <Main className="app-background">
       <Head title={"Kotii Framework Boilerplate"} />
       <Hero>
         <HeroText>
-          Edit, save, and see your changes reflected in real-time. Get started
-          by going to:
+          sbhale, saved, and see your changes reflected in real-time. Get
+          started by going to:
         </HeroText>
         {/* <Hero>{names[0]}</Hero> */}
         <Path />
         <StyledButton>
           <ButtonBackCard />
           {/* <ButtonFrontCard onClick={doList}>Learn More </ButtonFrontCard> */}
-          <ButtonFrontCard>Learn More </ButtonFrontCard>
+          <ButtonFrontCard>My Button </ButtonFrontCard>
         </StyledButton>
 
         {/* {peopleList ? <PeopleList people={peopleList} /> : null} */}
         {user ? <UserComp user={user} /> : null}
-        <p className="text-color">
+        {/* <p className={`text-color ${colorStyles["green"]}`}>
           The effect DATA: {data?.actor?.age || "nothing"}
+        </p> */}
+        <p className={`${colorStyles["green"]}`} id="kotii-test-element">
+          The effecT DATA: {dataTwo?.actor?.age || "nothing"}
         </p>
-        <p className="text-color-yellow">
+        <p id="check-id">The check DATA id: nothing</p>
+        <p id="check-id-2">another check DATA id: nothing</p>
+        <p id="check-id-3">
+          another check DATA id: nothing
+          <span>I'm a span with color</span>
+          <small>I'm a small with color</small>
+          <strong>I'm a strong with color</strong>
+          <blockquote>next sibling</blockquote>
+        </p>
+        {/* <p className="text-color-yellow text-lg test-class" id="kotii-test-element">
           The effect DATA: {dataTwo?.actor?.age || "nothing"}
-        </p>
+        </p> */}
+        <p className="text-color-yellow">THE REGULAR CSS FILE</p>
+        <p className="text-2xl">THIS IS TAILWIND CLASS</p>
+        <div className="app-background-bg" style={{ width: 300, height: 300 }}>
+          <p>THIS IS INCLUDE NESTED</p>
+          <div className="app-background-bg-deeply" style={{ width: "80%" }}>
+            <p>THIS IS DEEPLY</p>
+          </div>
+        </div>
+
         {/* <img src={connectionsSvg} width={50} alt="connections svg" /> */}
       </Hero>
       <SVG>

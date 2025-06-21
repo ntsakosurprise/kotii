@@ -1,6 +1,6 @@
 import { Head } from "kotii-scripts";
 import React, { useEffect, useState } from "react";
-import "../styles/color.less";
+import "../styles/color.module.less";
 const About = () => {
   const [users, setUsers] = useState([]);
   const requestData = async () => {
@@ -51,6 +51,7 @@ const About = () => {
   };
 
   console.log("THE ABOUT PAGE");
+  console.log("logiy");
   return (
     <div>
       <Head title={"About page kotii"} />
