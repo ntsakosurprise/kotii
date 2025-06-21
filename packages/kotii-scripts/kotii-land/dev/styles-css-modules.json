@@ -1,0 +1,2454 @@
+{
+  "../styles/index.css": {
+    "cssAst": {
+      "raws": {
+        "semicolon": false,
+        "after": "\n"
+      },
+      "type": "root",
+      "nodes": [
+        {
+          "raws": {
+            "before": "\n",
+            "left": " ",
+            "right": " "
+          },
+          "type": "comment",
+          "source": {
+            "end": {
+              "column": 38,
+              "line": 2,
+              "offset": 39
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 2,
+              "offset": 1
+            }
+          },
+          "text": "INCLUDED_CSS_HEAD: ./include.css"
+        },
+        {
+          "raws": {
+            "before": " \n",
+            "left": " ",
+            "right": " "
+          },
+          "type": "comment",
+          "source": {
+            "end": {
+              "column": 45,
+              "line": 3,
+              "offset": 86
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 3,
+              "offset": 41
+            }
+          },
+          "text": "INCLUDED_CSS_HEAD: ./include_nested.css"
+        },
+        {
+          "raws": {
+            "before": " ",
+            "left": " ",
+            "right": " "
+          },
+          "type": "comment",
+          "source": {
+            "end": {
+              "column": 98,
+              "line": 3,
+              "offset": 139
+            },
+            "inputId": 0,
+            "start": {
+              "column": 47,
+              "line": 3,
+              "offset": 87
+            }
+          },
+          "text": "INCLUDED_CSS_HEAD: ./include_nested_deeply.css"
+        },
+        {
+          "raws": {
+            "before": " \n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n    ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 40,
+                  "line": 5,
+                  "offset": 209
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 5,
+                  "line": 5,
+                  "offset": 173
+                }
+              },
+              "prop": "background-color",
+              "value": "rgb(11, 207, 241)"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 6,
+              "offset": 211
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 4,
+              "offset": 141
+            }
+          },
+          "selector": ".app-background-bg-deeply"
+        },
+        {
+          "raws": {
+            "before": " ",
+            "left": " ",
+            "right": " "
+          },
+          "type": "comment",
+          "source": {
+            "end": {
+              "column": 56,
+              "line": 6,
+              "offset": 266
+            },
+            "inputId": 0,
+            "start": {
+              "column": 3,
+              "line": 6,
+              "offset": 212
+            }
+          },
+          "text": "INCLUDED_CSS_FOOTER: ./include_nested_deeply.css"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n    ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 38,
+                  "line": 8,
+                  "offset": 326
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 5,
+                  "line": 8,
+                  "offset": 292
+                }
+              },
+              "prop": "background-color",
+              "value": "rgb(89, 9, 238)"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 9,
+              "offset": 328
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 7,
+              "offset": 267
+            }
+          },
+          "selector": ".app-background-bg"
+        },
+        {
+          "raws": {
+            "before": " ",
+            "left": " ",
+            "right": " "
+          },
+          "type": "comment",
+          "source": {
+            "end": {
+              "column": 49,
+              "line": 9,
+              "offset": 376
+            },
+            "inputId": 0,
+            "start": {
+              "column": 3,
+              "line": 9,
+              "offset": 329
+            }
+          },
+          "text": "INCLUDED_CSS_FOOTER: ./include_nested.css"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n    ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 39,
+                  "line": 11,
+                  "offset": 434
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 5,
+                  "line": 11,
+                  "offset": 399
+                }
+              },
+              "prop": "background-color",
+              "value": "rgb(255, 0, 234)"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 12,
+              "offset": 436
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 10,
+              "offset": 377
+            }
+          },
+          "selector": ".app-background"
+        },
+        {
+          "raws": {
+            "before": " ",
+            "left": " ",
+            "right": " "
+          },
+          "type": "comment",
+          "source": {
+            "end": {
+              "column": 42,
+              "line": 12,
+              "offset": 477
+            },
+            "inputId": 0,
+            "start": {
+              "column": 3,
+              "line": 12,
+              "offset": 437
+            }
+          },
+          "text": "INCLUDED_CSS_FOOTER: ./include.css"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "left": " ",
+            "right": " "
+          },
+          "type": "comment",
+          "source": {
+            "end": {
+              "column": 40,
+              "line": 13,
+              "offset": 518
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 13,
+              "offset": 478
+            }
+          },
+          "text": "INCLUDED_CSS_HEAD: ./include_2.css"
+        },
+        {
+          "raws": {
+            "before": " \n\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n    ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 39,
+                  "line": 16,
+                  "offset": 580
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 5,
+                  "line": 16,
+                  "offset": 545
+                }
+              },
+              "prop": "background-color",
+              "value": "rgb(145, 255, 0)"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 17,
+              "offset": 582
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 15,
+              "offset": 521
+            }
+          },
+          "selector": ".app-background-2"
+        },
+        {
+          "raws": {
+            "before": " ",
+            "left": " ",
+            "right": " "
+          },
+          "type": "comment",
+          "source": {
+            "end": {
+              "column": 44,
+              "line": 17,
+              "offset": 625
+            },
+            "inputId": 0,
+            "start": {
+              "column": 3,
+              "line": 17,
+              "offset": 583
+            }
+          },
+          "text": "INCLUDED_CSS_FOOTER: ./include_2.css"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "left": " ",
+            "right": " "
+          },
+          "type": "comment",
+          "source": {
+            "end": {
+              "column": 40,
+              "line": 18,
+              "offset": 666
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 18,
+              "offset": 626
+            }
+          },
+          "text": "INCLUDED_CSS_HEAD: ./include_3.css"
+        },
+        {
+          "raws": {
+            "before": " \n\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n    ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 39,
+                  "line": 21,
+                  "offset": 728
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 5,
+                  "line": 21,
+                  "offset": 693
+                }
+              },
+              "prop": "background-color",
+              "value": "rgb(237, 253, 9)"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 22,
+              "offset": 730
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 20,
+              "offset": 669
+            }
+          },
+          "selector": ".app-background-3"
+        },
+        {
+          "raws": {
+            "before": " ",
+            "left": " ",
+            "right": " "
+          },
+          "type": "comment",
+          "source": {
+            "end": {
+              "column": 44,
+              "line": 22,
+              "offset": 773
+            },
+            "inputId": 0,
+            "start": {
+              "column": 3,
+              "line": 22,
+              "offset": 731
+            }
+          },
+          "text": "INCLUDED_CSS_FOOTER: ./include_3.css"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 36,
+                  "line": 24,
+                  "offset": 824
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 24,
+                  "offset": 790
+                }
+              },
+              "prop": "color",
+              "important": true,
+              "value": "rgb(38, 0, 255)"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 25,
+              "offset": 826
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 23,
+              "offset": 774
+            }
+          },
+          "selector": ".text-color"
+        },
+        {
+          "raws": {
+            "before": "\n\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 37,
+                  "line": 28,
+                  "offset": 886
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 28,
+                  "offset": 851
+                }
+              },
+              "prop": "color",
+              "important": true,
+              "value": "rgb(105, 51, 26)"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 29,
+              "offset": 888
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 27,
+              "offset": 828
+            }
+          },
+          "selector": ".text-color-yellow"
+        }
+      ],
+      "source": {
+        "end": {
+          "column": 1,
+          "line": 30,
+          "offset": 889
+        },
+        "inputId": 0,
+        "start": {
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        }
+      },
+      "inputs": [
+        {
+          "hasBOM": false,
+          "css": "\n/* INCLUDED_CSS_HEAD: ./include.css */ \n/* INCLUDED_CSS_HEAD: ./include_nested.css */ /* INCLUDED_CSS_HEAD: ./include_nested_deeply.css */ \n.app-background-bg-deeply {\n    background-color: rgb(11, 207, 241);\n} /* INCLUDED_CSS_FOOTER: ./include_nested_deeply.css */\n.app-background-bg {\n    background-color: rgb(89, 9, 238);\n} /* INCLUDED_CSS_FOOTER: ./include_nested.css */\n.app-background {\n    background-color: rgb(255, 0, 234);\n} /* INCLUDED_CSS_FOOTER: ./include.css */\n/* INCLUDED_CSS_HEAD: ./include_2.css */ \n\n.app-background-2 {\n    background-color: rgb(145, 255, 0);\n} /* INCLUDED_CSS_FOOTER: ./include_2.css */\n/* INCLUDED_CSS_HEAD: ./include_3.css */ \n\n.app-background-3 {\n    background-color: rgb(237, 253, 9);\n} /* INCLUDED_CSS_FOOTER: ./include_3.css */\n.text-color {\n  color: rgb(38, 0, 255) !important;\n}\n\n.text-color-yellow {\n  color: rgb(105, 51, 26) !important;\n}\n",
+          "id": "<input css tuYs1O>"
+        }
+      ]
+    },
+    "css": null,
+    "pathContext": {
+      "fileRelativePath": "./src/styles/index.css",
+      "fileRoot": "/Users/surprisemashele/Apps/new-with-npm",
+      "fileUserRequest": "../styles/index.css",
+      "fileFullPath": "/Users/surprisemashele/Apps/new-with-npm/src/styles/index.css"
+    },
+    "imports": {
+      "/Users/surprisemashele/Apps/new-with-npm/src/styles/index.css": {
+        "inputBefore": "\n@import url(\"./include.css\");\n@import url(\"./include_2.css\");\n@import url(\"./include_3.css\");\n.text-color {\n  color: rgb(38, 0, 255) !important;\n}\n\n.text-color-yellow {\n  color: rgb(105, 51, 26) !important;\n}\n",
+        "inputBeforeAst": {
+          "raws": {
+            "semicolon": false,
+            "after": "\n"
+          },
+          "type": "root",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n",
+                "between": "",
+                "afterName": " "
+              },
+              "type": "atrule",
+              "name": "import",
+              "source": {
+                "end": {
+                  "column": 29,
+                  "line": 2,
+                  "offset": 30
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 1,
+                  "line": 2,
+                  "offset": 1
+                }
+              },
+              "params": "url(\"./include.css\")"
+            },
+            {
+              "raws": {
+                "before": "\n",
+                "between": "",
+                "afterName": " "
+              },
+              "type": "atrule",
+              "name": "import",
+              "source": {
+                "end": {
+                  "column": 31,
+                  "line": 3,
+                  "offset": 62
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 1,
+                  "line": 3,
+                  "offset": 31
+                }
+              },
+              "params": "url(\"./include_2.css\")"
+            },
+            {
+              "raws": {
+                "before": "\n",
+                "between": "",
+                "afterName": " "
+              },
+              "type": "atrule",
+              "name": "import",
+              "source": {
+                "end": {
+                  "column": 31,
+                  "line": 4,
+                  "offset": 94
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 1,
+                  "line": 4,
+                  "offset": 63
+                }
+              },
+              "params": "url(\"./include_3.css\")"
+            },
+            {
+              "raws": {
+                "before": "\n",
+                "between": " ",
+                "semicolon": true,
+                "after": "\n"
+              },
+              "type": "rule",
+              "nodes": [
+                {
+                  "raws": {
+                    "before": "\n  ",
+                    "between": ": "
+                  },
+                  "type": "decl",
+                  "source": {
+                    "end": {
+                      "column": 36,
+                      "line": 6,
+                      "offset": 145
+                    },
+                    "inputId": 0,
+                    "start": {
+                      "column": 3,
+                      "line": 6,
+                      "offset": 111
+                    }
+                  },
+                  "prop": "color",
+                  "important": true,
+                  "value": "rgb(38, 0, 255)"
+                }
+              ],
+              "source": {
+                "end": {
+                  "column": 1,
+                  "line": 7,
+                  "offset": 147
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 1,
+                  "line": 5,
+                  "offset": 95
+                }
+              },
+              "selector": ".text-color"
+            },
+            {
+              "raws": {
+                "before": "\n\n",
+                "between": " ",
+                "semicolon": true,
+                "after": "\n"
+              },
+              "type": "rule",
+              "nodes": [
+                {
+                  "raws": {
+                    "before": "\n  ",
+                    "between": ": "
+                  },
+                  "type": "decl",
+                  "source": {
+                    "end": {
+                      "column": 37,
+                      "line": 10,
+                      "offset": 207
+                    },
+                    "inputId": 0,
+                    "start": {
+                      "column": 3,
+                      "line": 10,
+                      "offset": 172
+                    }
+                  },
+                  "prop": "color",
+                  "important": true,
+                  "value": "rgb(105, 51, 26)"
+                }
+              ],
+              "source": {
+                "end": {
+                  "column": 1,
+                  "line": 11,
+                  "offset": 209
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 1,
+                  "line": 9,
+                  "offset": 149
+                }
+              },
+              "selector": ".text-color-yellow"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 12,
+              "offset": 210
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 1,
+              "offset": 0
+            }
+          },
+          "inputs": [
+            {
+              "hasBOM": false,
+              "css": "\n@import url(\"./include.css\");\n@import url(\"./include_2.css\");\n@import url(\"./include_3.css\");\n.text-color {\n  color: rgb(38, 0, 255) !important;\n}\n\n.text-color-yellow {\n  color: rgb(105, 51, 26) !important;\n}\n",
+              "id": "<input css CyWacY>"
+            }
+          ]
+        },
+        "parent": null,
+        "selfReferencePath": "/Users/surprisemashele/Apps/new-with-npm/src/styles/index.css",
+        "pathAsShortID": null,
+        "children": {
+          "./include.css": {
+            "path": "/Users/surprisemashele/Apps/new-with-npm/src/styles/include.css"
+          },
+          "./include_2.css": {
+            "path": "/Users/surprisemashele/Apps/new-with-npm/src/styles/include_2.css"
+          },
+          "./include_3.css": {
+            "path": "/Users/surprisemashele/Apps/new-with-npm/src/styles/include_3.css"
+          }
+        },
+        "inputAfter": "\n/* INCLUDED_CSS_HEAD: ./include.css */ \n/* INCLUDED_CSS_HEAD: ./include_nested.css */ /* INCLUDED_CSS_HEAD: ./include_nested_deeply.css */ \n.app-background-bg-deeply {\n    background-color: rgb(11, 207, 241);\n} /* INCLUDED_CSS_FOOTER: ./include_nested_deeply.css */\n.app-background-bg {\n    background-color: rgb(89, 9, 238);\n} /* INCLUDED_CSS_FOOTER: ./include_nested.css */\n.app-background {\n    background-color: rgb(255, 0, 234);\n} /* INCLUDED_CSS_FOOTER: ./include.css */\n/* INCLUDED_CSS_HEAD: ./include_2.css */ \n\n.app-background-2 {\n    background-color: rgb(145, 255, 0);\n} /* INCLUDED_CSS_FOOTER: ./include_2.css */\n/* INCLUDED_CSS_HEAD: ./include_3.css */ \n\n.app-background-3 {\n    background-color: rgb(237, 253, 9);\n} /* INCLUDED_CSS_FOOTER: ./include_3.css */\n.text-color {\n  color: rgb(38, 0, 255) !important;\n}\n\n.text-color-yellow {\n  color: rgb(105, 51, 26) !important;\n}\n"
+      },
+      "/Users/surprisemashele/Apps/new-with-npm/src/styles/include.css": {
+        "inputBefore": "\n@import url(\"./include_nested.css\");\n.app-background {\n    background-color: rgb(255, 0, 234);\n}",
+        "inputBeforeAst": {
+          "raws": {
+            "semicolon": false,
+            "after": ""
+          },
+          "type": "root",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n",
+                "between": "",
+                "afterName": " "
+              },
+              "type": "atrule",
+              "name": "import",
+              "source": {
+                "end": {
+                  "column": 36,
+                  "line": 2,
+                  "offset": 37
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 1,
+                  "line": 2,
+                  "offset": 1
+                }
+              },
+              "params": "url(\"./include_nested.css\")"
+            },
+            {
+              "raws": {
+                "before": "\n",
+                "between": " ",
+                "semicolon": true,
+                "after": "\n"
+              },
+              "type": "rule",
+              "nodes": [
+                {
+                  "raws": {
+                    "before": "\n    ",
+                    "between": ": "
+                  },
+                  "type": "decl",
+                  "source": {
+                    "end": {
+                      "column": 39,
+                      "line": 4,
+                      "offset": 95
+                    },
+                    "inputId": 0,
+                    "start": {
+                      "column": 5,
+                      "line": 4,
+                      "offset": 60
+                    }
+                  },
+                  "prop": "background-color",
+                  "value": "rgb(255, 0, 234)"
+                }
+              ],
+              "source": {
+                "end": {
+                  "column": 1,
+                  "line": 5,
+                  "offset": 97
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 1,
+                  "line": 3,
+                  "offset": 38
+                }
+              },
+              "selector": ".app-background"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 2,
+              "line": 5,
+              "offset": 97
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 1,
+              "offset": 0
+            }
+          },
+          "inputs": [
+            {
+              "hasBOM": false,
+              "css": "\n@import url(\"./include_nested.css\");\n.app-background {\n    background-color: rgb(255, 0, 234);\n}",
+              "id": "<input css PhdqwM>"
+            }
+          ]
+        },
+        "children": {
+          "./include_nested.css": {
+            "path": "/Users/surprisemashele/Apps/new-with-npm/src/styles/include_nested.css"
+          }
+        },
+        "inputAfter": "/* INCLUDED_CSS_HEAD: ./include.css */ \n/* INCLUDED_CSS_HEAD: ./include_nested.css */ /* INCLUDED_CSS_HEAD: ./include_nested_deeply.css */ \n.app-background-bg-deeply {\n    background-color: rgb(11, 207, 241);\n} /* INCLUDED_CSS_FOOTER: ./include_nested_deeply.css */\n.app-background-bg {\n    background-color: rgb(89, 9, 238);\n} /* INCLUDED_CSS_FOOTER: ./include_nested.css */\n.app-background {\n    background-color: rgb(255, 0, 234);\n} /* INCLUDED_CSS_FOOTER: ./include.css */",
+        "pathAsShortID": "./include.css",
+        "selfReferencePath": "/Users/surprisemashele/Apps/new-with-npm/src/styles/include.css",
+        "parent": {
+          "path": "/Users/surprisemashele/Apps/new-with-npm/src/styles/index.css"
+        }
+      },
+      "/Users/surprisemashele/Apps/new-with-npm/src/styles/include_nested.css": {
+        "inputBefore": "@import url(\"./include_nested_deeply.css\");\n.app-background-bg {\n    background-color: rgb(89, 9, 238);\n}",
+        "inputBeforeAst": {
+          "raws": {
+            "semicolon": false,
+            "after": ""
+          },
+          "type": "root",
+          "nodes": [
+            {
+              "raws": {
+                "before": "",
+                "between": "",
+                "afterName": " "
+              },
+              "type": "atrule",
+              "name": "import",
+              "source": {
+                "end": {
+                  "column": 43,
+                  "line": 1,
+                  "offset": 43
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 1,
+                  "line": 1,
+                  "offset": 0
+                }
+              },
+              "params": "url(\"./include_nested_deeply.css\")"
+            },
+            {
+              "raws": {
+                "before": "\n",
+                "between": " ",
+                "semicolon": true,
+                "after": "\n"
+              },
+              "type": "rule",
+              "nodes": [
+                {
+                  "raws": {
+                    "before": "\n    ",
+                    "between": ": "
+                  },
+                  "type": "decl",
+                  "source": {
+                    "end": {
+                      "column": 38,
+                      "line": 3,
+                      "offset": 103
+                    },
+                    "inputId": 0,
+                    "start": {
+                      "column": 5,
+                      "line": 3,
+                      "offset": 69
+                    }
+                  },
+                  "prop": "background-color",
+                  "value": "rgb(89, 9, 238)"
+                }
+              ],
+              "source": {
+                "end": {
+                  "column": 1,
+                  "line": 4,
+                  "offset": 105
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 1,
+                  "line": 2,
+                  "offset": 44
+                }
+              },
+              "selector": ".app-background-bg"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 2,
+              "line": 4,
+              "offset": 105
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 1,
+              "offset": 0
+            }
+          },
+          "inputs": [
+            {
+              "hasBOM": false,
+              "css": "@import url(\"./include_nested_deeply.css\");\n.app-background-bg {\n    background-color: rgb(89, 9, 238);\n}",
+              "id": "<input css iMz4Se>"
+            }
+          ]
+        },
+        "children": {
+          "./include_nested_deeply.css": {
+            "path": "/Users/surprisemashele/Apps/new-with-npm/src/styles/include_nested_deeply.css"
+          }
+        },
+        "inputAfter": "/* INCLUDED_CSS_HEAD: ./include_nested.css */ /* INCLUDED_CSS_HEAD: ./include_nested_deeply.css */ \n.app-background-bg-deeply {\n    background-color: rgb(11, 207, 241);\n} /* INCLUDED_CSS_FOOTER: ./include_nested_deeply.css */\n.app-background-bg {\n    background-color: rgb(89, 9, 238);\n} /* INCLUDED_CSS_FOOTER: ./include_nested.css */",
+        "pathAsShortID": "./include_nested.css",
+        "selfReferencePath": "/Users/surprisemashele/Apps/new-with-npm/src/styles/include_nested.css",
+        "parent": {
+          "path": "/Users/surprisemashele/Apps/new-with-npm/src/styles/include.css"
+        }
+      },
+      "/Users/surprisemashele/Apps/new-with-npm/src/styles/include_nested_deeply.css": {
+        "inputBefore": "\n.app-background-bg-deeply {\n    background-color: rgb(11, 207, 241);\n}",
+        "inputBeforeAst": {
+          "raws": {
+            "semicolon": false,
+            "after": ""
+          },
+          "type": "root",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n",
+                "between": " ",
+                "semicolon": true,
+                "after": "\n"
+              },
+              "type": "rule",
+              "nodes": [
+                {
+                  "raws": {
+                    "before": "\n    ",
+                    "between": ": "
+                  },
+                  "type": "decl",
+                  "source": {
+                    "end": {
+                      "column": 40,
+                      "line": 3,
+                      "offset": 69
+                    },
+                    "inputId": 0,
+                    "start": {
+                      "column": 5,
+                      "line": 3,
+                      "offset": 33
+                    }
+                  },
+                  "prop": "background-color",
+                  "value": "rgb(11, 207, 241)"
+                }
+              ],
+              "source": {
+                "end": {
+                  "column": 1,
+                  "line": 4,
+                  "offset": 71
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 1,
+                  "line": 2,
+                  "offset": 1
+                }
+              },
+              "selector": ".app-background-bg-deeply"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 2,
+              "line": 4,
+              "offset": 71
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 1,
+              "offset": 0
+            }
+          },
+          "inputs": [
+            {
+              "hasBOM": false,
+              "css": "\n.app-background-bg-deeply {\n    background-color: rgb(11, 207, 241);\n}",
+              "id": "<input css tR2_a4>"
+            }
+          ]
+        },
+        "inputAfter": "/* INCLUDED_CSS_HEAD: ./include_nested_deeply.css */ \n.app-background-bg-deeply {\n    background-color: rgb(11, 207, 241);\n} /* INCLUDED_CSS_FOOTER: ./include_nested_deeply.css */",
+        "pathAsShortID": "./include_nested_deeply.css",
+        "selfReferencePath": "/Users/surprisemashele/Apps/new-with-npm/src/styles/include_nested_deeply.css",
+        "parent": {
+          "path": "/Users/surprisemashele/Apps/new-with-npm/src/styles/include_nested.css"
+        }
+      },
+      "/Users/surprisemashele/Apps/new-with-npm/src/styles/include_2.css": {
+        "inputBefore": "\n\n.app-background-2 {\n    background-color: rgb(145, 255, 0);\n}",
+        "inputBeforeAst": {
+          "raws": {
+            "semicolon": false,
+            "after": ""
+          },
+          "type": "root",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n\n",
+                "between": " ",
+                "semicolon": true,
+                "after": "\n"
+              },
+              "type": "rule",
+              "nodes": [
+                {
+                  "raws": {
+                    "before": "\n    ",
+                    "between": ": "
+                  },
+                  "type": "decl",
+                  "source": {
+                    "end": {
+                      "column": 39,
+                      "line": 4,
+                      "offset": 61
+                    },
+                    "inputId": 0,
+                    "start": {
+                      "column": 5,
+                      "line": 4,
+                      "offset": 26
+                    }
+                  },
+                  "prop": "background-color",
+                  "value": "rgb(145, 255, 0)"
+                }
+              ],
+              "source": {
+                "end": {
+                  "column": 1,
+                  "line": 5,
+                  "offset": 63
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 1,
+                  "line": 3,
+                  "offset": 2
+                }
+              },
+              "selector": ".app-background-2"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 2,
+              "line": 5,
+              "offset": 63
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 1,
+              "offset": 0
+            }
+          },
+          "inputs": [
+            {
+              "hasBOM": false,
+              "css": "\n\n.app-background-2 {\n    background-color: rgb(145, 255, 0);\n}",
+              "id": "<input css MHVny2>"
+            }
+          ]
+        },
+        "inputAfter": "/* INCLUDED_CSS_HEAD: ./include_2.css */ \n\n.app-background-2 {\n    background-color: rgb(145, 255, 0);\n} /* INCLUDED_CSS_FOOTER: ./include_2.css */",
+        "pathAsShortID": "./include_2.css",
+        "selfReferencePath": "/Users/surprisemashele/Apps/new-with-npm/src/styles/include_2.css",
+        "parent": {
+          "path": "/Users/surprisemashele/Apps/new-with-npm/src/styles/index.css"
+        }
+      },
+      "/Users/surprisemashele/Apps/new-with-npm/src/styles/include_3.css": {
+        "inputBefore": "\n\n.app-background-3 {\n    background-color: rgb(237, 253, 9);\n}",
+        "inputBeforeAst": {
+          "raws": {
+            "semicolon": false,
+            "after": ""
+          },
+          "type": "root",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n\n",
+                "between": " ",
+                "semicolon": true,
+                "after": "\n"
+              },
+              "type": "rule",
+              "nodes": [
+                {
+                  "raws": {
+                    "before": "\n    ",
+                    "between": ": "
+                  },
+                  "type": "decl",
+                  "source": {
+                    "end": {
+                      "column": 39,
+                      "line": 4,
+                      "offset": 61
+                    },
+                    "inputId": 0,
+                    "start": {
+                      "column": 5,
+                      "line": 4,
+                      "offset": 26
+                    }
+                  },
+                  "prop": "background-color",
+                  "value": "rgb(237, 253, 9)"
+                }
+              ],
+              "source": {
+                "end": {
+                  "column": 1,
+                  "line": 5,
+                  "offset": 63
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 1,
+                  "line": 3,
+                  "offset": 2
+                }
+              },
+              "selector": ".app-background-3"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 2,
+              "line": 5,
+              "offset": 63
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 1,
+              "offset": 0
+            }
+          },
+          "inputs": [
+            {
+              "hasBOM": false,
+              "css": "\n\n.app-background-3 {\n    background-color: rgb(237, 253, 9);\n}",
+              "id": "<input css 8VsBmN>"
+            }
+          ]
+        },
+        "inputAfter": "/* INCLUDED_CSS_HEAD: ./include_3.css */ \n\n.app-background-3 {\n    background-color: rgb(237, 253, 9);\n} /* INCLUDED_CSS_FOOTER: ./include_3.css */",
+        "pathAsShortID": "./include_3.css",
+        "selfReferencePath": "/Users/surprisemashele/Apps/new-with-npm/src/styles/include_3.css",
+        "parent": {
+          "path": "/Users/surprisemashele/Apps/new-with-npm/src/styles/index.css"
+        }
+      }
+    }
+  },
+  "../styles/color.module.less": {
+    "modules": {
+      "header": "header_VKi1r_t78",
+      "green": "green_mt3rd_PyD"
+    },
+    "pathContext": {
+      "fileRelativePath": "./src/styles/color.module.less",
+      "fileRoot": "/Users/surprisemashele/Apps/new-with-npm",
+      "fileUserRequest": "../styles/color.module.less",
+      "fileFullPath": "/Users/surprisemashele/Apps/new-with-npm/src/styles/color.module.less"
+    },
+    "currentOriginalAst": {
+      "raws": {
+        "semicolon": false,
+        "after": "\n"
+      },
+      "type": "root",
+      "nodes": [
+        {
+          "raws": {
+            "before": "",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 14,
+                  "line": 2,
+                  "offset": 24
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 2,
+                  "offset": 12
+                }
+              },
+              "prop": "width",
+              "value": "10px"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 15,
+                  "line": 3,
+                  "offset": 40
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 3,
+                  "offset": 27
+                }
+              },
+              "prop": "height",
+              "value": "20px"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 28,
+                  "line": 4,
+                  "offset": 69
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 4,
+                  "offset": 43
+                }
+              },
+              "prop": "background-color",
+              "value": "\"brown\""
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 5,
+              "offset": 71
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 1,
+              "offset": 0
+            }
+          },
+          "selector": ".header"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 28,
+                  "line": 7,
+                  "offset": 109
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 7,
+                  "offset": 83
+                }
+              },
+              "prop": "color",
+              "important": true,
+              "value": "#e6e7e0"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 18,
+                  "line": 8,
+                  "offset": 128
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 8,
+                  "offset": 112
+                }
+              },
+              "prop": "font-size",
+              "value": "30px"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 28,
+                  "line": 9,
+                  "offset": 157
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 9,
+                  "offset": 131
+                }
+              },
+              "prop": "background-color",
+              "value": "#0a0a0a"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 21,
+                  "line": 10,
+                  "offset": 179
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 10,
+                  "offset": 160
+                }
+              },
+              "prop": "font-style",
+              "value": "italic"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 22,
+                  "line": 11,
+                  "offset": 202
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 11,
+                  "offset": 182
+                }
+              },
+              "prop": "font-weight",
+              "value": "bolder"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 121,
+                  "line": 12,
+                  "offset": 324
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 12,
+                  "offset": 205
+                }
+              },
+              "prop": "font-family",
+              "value": "'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 13,
+              "offset": 326
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 6,
+              "offset": 72
+            }
+          },
+          "selector": ".green"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 21,
+                  "line": 15,
+                  "offset": 354
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 15,
+                  "offset": 335
+                }
+              },
+              "prop": "border-radius",
+              "value": "8px"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 28,
+                  "line": 16,
+                  "offset": 383
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 16,
+                  "offset": 357
+                }
+              },
+              "prop": "border",
+              "value": "solid 2px #181718"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 17,
+              "offset": 385
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 14,
+              "offset": 327
+            }
+          },
+          "selector": "img"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 17,
+                  "line": 19,
+                  "offset": 415
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 19,
+                  "offset": 400
+                }
+              },
+              "prop": "color",
+              "value": "#80f711"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 20,
+              "offset": 417
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 18,
+              "offset": 386
+            }
+          },
+          "selector": "#check-id"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 17,
+                  "line": 22,
+                  "offset": 449
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 22,
+                  "offset": 434
+                }
+              },
+              "prop": "color",
+              "value": "#f73f11"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 23,
+              "offset": 451
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 21,
+              "offset": 418
+            }
+          },
+          "selector": "#check-id-2"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 17,
+                  "line": 25,
+                  "offset": 483
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 25,
+                  "offset": 468
+                }
+              },
+              "prop": "color",
+              "value": "#11f779"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 26,
+              "offset": 485
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 24,
+              "offset": 452
+            }
+          },
+          "selector": "#check-id-3"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 17,
+                  "line": 28,
+                  "offset": 522
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 28,
+                  "offset": 507
+                }
+              },
+              "prop": "color",
+              "value": "#5611f7"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 29,
+              "offset": 524
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 27,
+              "offset": 486
+            }
+          },
+          "selector": "#check-id-3 span"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 35,
+                  "line": 31,
+                  "offset": 582
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 31,
+                  "offset": 549
+                }
+              },
+              "prop": "color",
+              "value": "rgba(247, 17, 159, 0.219)"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 32,
+              "offset": 584
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 30,
+              "offset": 525
+            }
+          },
+          "selector": "#check-id-3 > small"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 17,
+                  "line": 34,
+                  "offset": 633
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 34,
+                  "offset": 618
+                }
+              },
+              "prop": "color",
+              "value": "#3307f5"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 22,
+                  "line": 35,
+                  "offset": 656
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 35,
+                  "offset": 636
+                }
+              },
+              "prop": "font-weight",
+              "value": "bolder"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 36,
+              "offset": 658
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 33,
+              "offset": 585
+            }
+          },
+          "selector": "#check-id-3 > small + strong"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 17,
+                  "line": 38,
+                  "offset": 720
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 38,
+                  "offset": 705
+                }
+              },
+              "prop": "color",
+              "value": "#141416"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 22,
+                  "line": 39,
+                  "offset": 743
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 39,
+                  "offset": 723
+                }
+              },
+              "prop": "font-weight",
+              "value": "bolder"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 18,
+                  "line": 40,
+                  "offset": 762
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 40,
+                  "offset": 746
+                }
+              },
+              "prop": "font-size",
+              "value": "30px"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 41,
+              "offset": 764
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 37,
+              "offset": 659
+            }
+          },
+          "selector": "#check-id-3 > small + strong ~ blockquote"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 17,
+                  "line": 43,
+                  "offset": 832
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 43,
+                  "offset": 817
+                }
+              },
+              "prop": "color",
+              "value": "#1744da"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 44,
+              "offset": 834
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 42,
+              "offset": 765
+            }
+          },
+          "selector": "#check-id-3 > small + strong ~ blockquote:hover"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 18,
+                  "line": 46,
+                  "offset": 911
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 46,
+                  "offset": 895
+                }
+              },
+              "prop": "font-size",
+              "value": "50px"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 47,
+              "offset": 913
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 45,
+              "offset": 835
+            }
+          },
+          "selector": "#check-id-3 > small + strong ~ blockquote::first-letter"
+        }
+      ],
+      "source": {
+        "end": {
+          "column": 1,
+          "line": 48,
+          "offset": 914
+        },
+        "inputId": 0,
+        "start": {
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        }
+      },
+      "inputs": [
+        {
+          "hasBOM": false,
+          "css": ".header {\n  width: 10px;\n  height: 20px;\n  background-color: \"brown\";\n}\n.green {\n  color: #e6e7e0 !important;\n  font-size: 30px;\n  background-color: #0a0a0a;\n  font-style: italic;\n  font-weight: bolder;\n  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;\n}\nimg {\n  border-radius: 8px;\n  border: solid 2px #181718;\n}\n#check-id {\n  color: #80f711;\n}\n#check-id-2 {\n  color: #f73f11;\n}\n#check-id-3 {\n  color: #11f779;\n}\n#check-id-3 span {\n  color: #5611f7;\n}\n#check-id-3 > small {\n  color: rgba(247, 17, 159, 0.219);\n}\n#check-id-3 > small + strong {\n  color: #3307f5;\n  font-weight: bolder;\n}\n#check-id-3 > small + strong ~ blockquote {\n  color: #141416;\n  font-weight: bolder;\n  font-size: 30px;\n}\n#check-id-3 > small + strong ~ blockquote:hover {\n  color: #1744da;\n}\n#check-id-3 > small + strong ~ blockquote::first-letter {\n  font-size: 50px;\n}\n",
+          "id": "<input css uxGm_j>"
+        }
+      ]
+    }
+  },
+  "./todo.module.less": {
+    "modules": {
+      "scoped-text": "scoped-text_5IhLn_AxW",
+      "scoped-text-two": "scoped-text-two_hJl1v_gQW",
+      "scoped-text-three": "scoped-text-three_AQ7Fd_j3P",
+      "scoped-text-four": "scoped-text-four_bK0gq_inw"
+    },
+    "pathContext": {
+      "fileRelativePath": "./src/pages/todo/todo.module.less",
+      "fileRoot": "/Users/surprisemashele/Apps/new-with-npm",
+      "fileUserRequest": "./todo.module.less",
+      "fileFullPath": "/Users/surprisemashele/Apps/new-with-npm/src/pages/todo/todo.module.less"
+    },
+    "currentOriginalAst": {
+      "raws": {
+        "semicolon": false,
+        "after": "\n"
+      },
+      "type": "root",
+      "nodes": [
+        {
+          "raws": {
+            "before": "",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 26,
+                  "line": 2,
+                  "offset": 41
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 2,
+                  "offset": 17
+                }
+              },
+              "prop": "color",
+              "important": true,
+              "value": "green"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 18,
+                  "line": 3,
+                  "offset": 60
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 3,
+                  "offset": 44
+                }
+              },
+              "prop": "font-size",
+              "value": "10px"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 4,
+              "offset": 62
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 1,
+              "offset": 0
+            }
+          },
+          "selector": ".scoped-text"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 35,
+                  "line": 6,
+                  "offset": 117
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 6,
+                  "offset": 84
+                }
+              },
+              "prop": "color",
+              "value": "rgba(252, 160, 21, 0.959)"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 18,
+                  "line": 7,
+                  "offset": 136
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 7,
+                  "offset": 120
+                }
+              },
+              "prop": "font-size",
+              "value": "15px"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 8,
+              "offset": 138
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 5,
+              "offset": 63
+            }
+          },
+          "selector": ".scoped-text-two"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 17,
+                  "line": 10,
+                  "offset": 177
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 10,
+                  "offset": 162
+                }
+              },
+              "prop": "color",
+              "value": "#55afd3"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 18,
+                  "line": 11,
+                  "offset": 196
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 11,
+                  "offset": 180
+                }
+              },
+              "prop": "font-size",
+              "value": "19px"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 12,
+              "offset": 198
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 9,
+              "offset": 139
+            }
+          },
+          "selector": ".scoped-text-three"
+        },
+        {
+          "raws": {
+            "before": "\n",
+            "between": " ",
+            "semicolon": true,
+            "after": "\n"
+          },
+          "type": "rule",
+          "nodes": [
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 36,
+                  "line": 14,
+                  "offset": 255
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 14,
+                  "offset": 221
+                }
+              },
+              "prop": "color",
+              "value": "rgba(211, 101, 147, 0.911)"
+            },
+            {
+              "raws": {
+                "before": "\n  ",
+                "between": ": "
+              },
+              "type": "decl",
+              "source": {
+                "end": {
+                  "column": 18,
+                  "line": 15,
+                  "offset": 274
+                },
+                "inputId": 0,
+                "start": {
+                  "column": 3,
+                  "line": 15,
+                  "offset": 258
+                }
+              },
+              "prop": "font-size",
+              "value": "25px"
+            }
+          ],
+          "source": {
+            "end": {
+              "column": 1,
+              "line": 16,
+              "offset": 276
+            },
+            "inputId": 0,
+            "start": {
+              "column": 1,
+              "line": 13,
+              "offset": 199
+            }
+          },
+          "selector": ".scoped-text-four"
+        }
+      ],
+      "source": {
+        "end": {
+          "column": 1,
+          "line": 17,
+          "offset": 277
+        },
+        "inputId": 0,
+        "start": {
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        }
+      },
+      "inputs": [
+        {
+          "hasBOM": false,
+          "css": ".scoped-text {\n  color: green !important;\n  font-size: 10px;\n}\n.scoped-text-two {\n  color: rgba(252, 160, 21, 0.959);\n  font-size: 15px;\n}\n.scoped-text-three {\n  color: #55afd3;\n  font-size: 19px;\n}\n.scoped-text-four {\n  color: rgba(211, 101, 147, 0.911);\n  font-size: 25px;\n}\n",
+          "id": "<input css 26_nSy>"
+        }
+      ]
+    }
+  }
+}

@@ -1,7 +1,11 @@
+
+@import url("./include.css");
+@import url("./include_2.css");
+@import url("./include_3.css");
 .text-color {
-  color: red !important;
+  color: rgb(38, 0, 255) !important;
 }
 
 .text-color-yellow {
-  color: red !important;
+  color: rgb(26, 102, 105) !important;
 }

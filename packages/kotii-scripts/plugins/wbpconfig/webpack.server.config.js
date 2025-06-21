@@ -1,10 +1,13 @@
 import fs from "fs";
 import { loggas, logger } from "kotii-logger";
+// import syncStylesLoader from "kotii-sync-styles-loader"
+// import stylesHmr from "kotii-styles-hmr"
 import path from "path";
 import { fileURLToPath } from "url";
 import webpack from "webpack";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../../kotii_paths.js";
 import {
+  BroadcastCompilationWebpackPlugin,
   CopyAssetsWebpackPlugin,
   DeleteFilesWebpackPlugin,
   FinishCompilationOnErrorWebpackPlugin,
@@ -62,14 +65,17 @@ export default (options) => {
       options?.build && options.build
         ? env.appIndexFile
         : ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
+    watchOptions: {
+      ignored: ["**/*.{css,scss,sass,less,styl}", "**/node_modules"],
+    },
 
     context: env.appFolder,
     mode: process.env.NODE_ENV,
-    infrastructureLogging: { level: "none" },
-    stats: "errors-only",
+    // infrastructureLogging: { level: "none" },
+    // stats: "errors-only",
     devtool: "eval",
     output: {
-      filename: "server.bundle.js",
+      filename: "server.js",
       path:
         options?.build && options.build
           ? options.staticFolder
@@ -144,25 +150,25 @@ export default (options) => {
           `${kotiiRootPath}`,
           "webpack-loaders/syncAssetsLoader.cjs"
         ),
-        "sync-styles-loader": path.resolve(
+        "kotii-styles-hmr-loader": path.resolve(
           `${kotiiRootPath}`,
-          "webpack-loaders/syncStylesLoader.cjs"
+          "webpack-loaders/handleStylesLoader.cjs"
         ),
-        "handle-sync-styles-loader": path.resolve(
+        // "kotii-eslint-loader": path.resolve(
+        //   `${kotiiRootPath}`,
+        //   "webpack-loaders/eslint-loader/index.cjs"
+        // ),
+        // "kotii-prettier-loader": path.resolve(
+        //   `${kotiiRootPath}`,
+        //   "webpack-loaders/prettier-loader/index.cjs"
+        // ),
+        // "kotii-postcss-loader": path.resolve(
+        //   `${kotiiRootPath}`,
+        //   "webpack-loaders/postcss-loader/index.cjs"
+        // ),
+        "kotii-add-hot-loader": path.resolve(
           `${kotiiRootPath}`,
-          "webpack-loaders/handleSyncLoaderStyles.cjs"
-        ),
-        "kotii-eslint-loader": path.resolve(
-          `${kotiiRootPath}`,
-          "webpack-loaders/eslint-loader/index.cjs"
-        ),
-        "kotii-prettier-loader": path.resolve(
-          `${kotiiRootPath}`,
-          "webpack-loaders/prettier-loader/index.cjs"
-        ),
-        "kotii-postcss-loader": path.resolve(
-          `${kotiiRootPath}`,
-          "webpack-loaders/postcss-loader/index.cjs"
+          "webpack-loaders/add-hot-loader/index.cjs"
         ),
 
         // "test-styles-loader": path.resolve(
@@ -189,6 +195,12 @@ export default (options) => {
             : /node_modules\/\.pnpm\/node_modules\/(?!kotii-scripts)/,
           use: [
             {
+              loader: "kotii-add-hot-loader",
+              options: {
+                entryFile: env.appIndexFile,
+              },
+            },
+            {
               loader: "babel-loader",
               options: {
                 presets: [
@@ -197,13 +209,13 @@ export default (options) => {
                 ],
               },
             },
-            {
-              loader: "kotii-eslint-loader",
-              options: {
-                lintDirectory: env.appSrc,
-                configPath: `${kotiiRootPath}/webpack-loaders/eslint-loader/eslint.config.cjs`,
-              },
-            },
+            // {
+            //   loader: "kotii-eslint-loader",
+            //   options: {
+            //     lintDirectory: env.appSrc,
+            //     configPath: `${kotiiRootPath}/webpack-loaders/eslint-loader/eslint.config.cjs`,
+            //   },
+            // },
             // {
             //   loader: "kotii-prettier-loader",
             //   options: {
@@ -238,6 +250,12 @@ export default (options) => {
             //   },
             // },
             {
+              loader: "kotii-add-hot-loader",
+              options: {
+                entryFile: env.appIndexFile,
+              },
+            },
+            {
               loader: "ts-loader",
               options: {
                 configFile: `${kotiiRootPath}/plugins/wbpconfig/tsconfig.json`,
@@ -261,29 +279,29 @@ export default (options) => {
           test: /\.(css|sass|scss|less|styl)$/i,
           use: [
             {
-              loader: "handle-sync-styles-loader",
+              loader: "kotii-styles-hmr-loader",
               options: {
                 referenceAssetsPath: `${kotiiKotiiLandPath}/dev`,
                 assetsFile: "styles-css-modules.json",
                 fileFormat: "json",
               },
             },
-            {
-              loader: "sync-styles-loader",
-              options: {
-                referenceAssetsPath: `${kotiiKotiiLandPath}/dev`,
-                assetsFile: "styles-css-modules.json",
-                fileFormat: "json",
-              },
-            },
-            {
-              loader: "kotii-postcss-loader",
-              options: {
-                tailwindConfig: `${kotiiRootPath}/webpack-loaders/postcss-loader/tailwind.config.cjs`,
-                contentPath: env.appSrc,
-                mainCssFilename: "global.css",
-              },
-            },
+            // {
+            //   loader: "kotii-sync-styles-loader",
+            //   options: {
+            //     referenceAssetsPath: `${kotiiKotiiLandPath}/dev`,
+            //     assetsFile: "styles-css-modules.json",
+            //     fileFormat: "json",
+            //   },
+            // },
+            // {
+            //   loader: "kotii-postcss-loader",
+            //   options: {
+            //     tailwindConfig: `${kotiiRootPath}/webpack-loaders/postcss-loader/tailwind.config.cjs`,
+            //     contentPath: env.appSrc,
+            //     mainCssFilename: "global.css",
+            //   },
+            // },
           ],
         },
         {
@@ -308,79 +326,12 @@ export default (options) => {
           ],
         },
 
-        // {
-        //   test: /\.(svg|jpg|jpeg|gif)$/i,
-        //   loader: "file-loader",
-        //   options: getFileLoaderOptions(),
-        // },
-        // {
-        //   test: /\.png$/i,
-        //   use: [
-        //     {
-        //       loader: options.useInlinedPngs
-        //         ? "syncAssets-loader"
-        //         : "file-loader",
-        //       options: options.useInlinedPngs
-        //         ? {
-        //             referenceAssetsPath: kotiiKotiiLandPath,
-        //             assetsFile: "assets.manifest.json",
-        //             fileFormat: "json",
-        //           }
-        //         : getFileLoaderOptions(),
-        //     },
-        //   ],
-        // },
         {
           test: /\.m?js?x$/,
           resolve: {
             fullySpecified: false, // disable the behaviour
           },
         },
-        /*Choose only one of the following two: if you're using
-                  plain CSS, use the first one, and if you're using a
-                  preprocessor, in this case SASS, use the second one*/
-        // {
-        //   test: /\.css$/,
-        //   use: ["style-loader", "css-loader"],
-        // },
-        // {
-        //   test: /\.less$/i,
-        //   use: [
-        //     // compiles Less to CSS
-        //     "style-loader",
-        //     "css-loader",
-        //     "less-loader",
-        //   ],
-        // },
-        // {
-        //   test: /\.s[ac]ss$/i,
-        //   use: [
-        //     // Creates `style` nodes from JS strings
-        //     "style-loader",
-        //     // Translates CSS into CommonJS
-        //     "css-loader",
-        //     // Compiles Sass to CSS
-        //     "sass-loader",
-        //   ],
-        // },
-        // {
-        //   test: /\.styl$/,
-        //   use: [
-        //     "style-loader",
-        //     "css-loader",
-        //     {
-        //       loader: "stylus-loader",
-        //       options: {
-        //         webpackImporter: false,
-        //       },
-        //     },
-        //   ],
-        // },
-
-        // {
-        //   test: /\.scss$/,
-        //   use: ["style-loader", "css-loader", "sass-loader"],
-        // },
       ],
     },
 
@@ -418,7 +369,12 @@ export default (options) => {
       ),
       new WatchOwnFilesWebpackPlugin(
         {
-          filesToWatch: `${options.pagesFolder}`,
+          // filesToWatch: `${options.pagesFolder}`,
+          filesToWatch: [
+            `${options.appSrc}/**/*.{css,scss,sass,less,styl}`,
+            `${options.pagesFolder}`,
+          ],
+          kotiiKotiiLandPath: kotiiKotiiLandPath,
           runOnComplete: options.runOnComplete,
           notifyClient: options.notifyClient,
         },
@@ -441,6 +397,7 @@ export default (options) => {
       new CopyAssetsWebpackPlugin(
         {
           referenceAssetsPath: kotiiKotiiLandPath,
+          kotiiRootPath: kotiiRootPath,
           assetsFile: "assets.manifest.json",
           fileFormat: "json",
           extra: {
@@ -454,7 +411,24 @@ export default (options) => {
         },
         loggas
       ),
+      // new CopyAssetsWebpackPlugin(
+      //   {
+      //     referenceAssetsPath: kotiiKotiiLandPath,
+      //     assetsFile: "assets.manifest.json",
+      //     fileFormat: "json",
+      //     extra: {
+      //       inline: options.inline,
+      //       emitFile: true,
+      //       emitPath:
+      //         options?.build && options.build
+      //           ? options.staticFolder
+      //           : `${env.appBuildFolder}`,
+      //     },
+      //   },
+      //   loggas
+      // ),
       new StatsPrintWebpackPlugin(loggas),
+      new BroadcastCompilationWebpackPlugin(options.runOnceDone, loggas),
     ],
   };
 };
@@ -495,6 +469,10 @@ function configureKotiiLogger() {
     {
       namespace: "webpack:compilation:statsPrintWebpackPlugin",
       id: "statsPrintWebpackPlugin",
+    },
+    {
+      namespace: "webpack:compilation:broadcastCompilationWebpackPlugin",
+      id: "broadcastCompilationWebpackPlugin",
     },
   ]);
 }

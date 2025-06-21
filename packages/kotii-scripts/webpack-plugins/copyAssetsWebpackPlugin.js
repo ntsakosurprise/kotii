@@ -16,6 +16,11 @@ class CopyAssetsWebpackPlugin {
       this.loggas.copyAssetsWebpackPlugin.debug(
         "PLUGIN:: Copy Asssets Webpack plugin"
       );
+      console.log("THE ASSETS PATH FOR SYNC", this.options);
+      fs.copyFileSync(
+        `${this.options.kotiiRootPath}/client-tools/index.js`,
+        `${path.resolve(this.options.extra.emitPath, "kotii-client.js")}`
+      );
       if (!this.assetsManifestData)
         this.assetsManifestData = getAssetsManifest(this.options);
       emitFilesInOutputDir(this.options, this.assetsManifestData);

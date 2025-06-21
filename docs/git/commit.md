@@ -33,7 +33,7 @@
 
 ### Commit References
 
-- It should include identifiable references such links to tickets or related resources
+- It should include identifiable references such as links to tickets or related resources
 - It can include inline-links
 - It can include links as references
 

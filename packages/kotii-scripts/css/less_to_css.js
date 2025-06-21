@@ -2,6 +2,7 @@ import less from "less";
 import fs from "node:fs";
 
 export default (lessFile, lessFileName) => {
+  console.log("LESS FILE.NAME",lessFile,lessFileName)
   return new Promise((resolve) => {
     less
       .render(fs.readFileSync(lessFile, { encoding: "utf8" }), {

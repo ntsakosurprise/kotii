@@ -1,6 +1,8 @@
 const methods = {};
 import fs from "fs";
 import path from "path";
+import WebSocket, { WebSocketServer } from "ws";
+import { compareCss, createCssAst, mergeCssFiles } from "../../css/index.js";
 import { kotiiKotiiLandPath } from "../../kotii_paths.js";
 
 methods.init = function () {
@@ -53,9 +55,13 @@ methods.handleWebpackConfig = function (data) {
                   useCustomDomain,
                   useAvailablePort: false,
                   domainName: addedHost.domainName,
+                  shouldWaitForSignal: true,
                   appOpts: {
                     key: certs.filesOutputPaths.key,
                     cert: certs.filesOutputPaths.key,
+                  },
+                  useSockets: {
+                    hookSocketToServer: self.hookSocketToServer.bind(self),
                   },
                 };
                 server["APP_URL"] = `${useHttps ? "https" : "http"}://${
@@ -79,6 +85,10 @@ methods.handleWebpackConfig = function (data) {
       useAvailablePort: false,
       pageToOpen: useAsDefaultPage,
       domainName: useCustomDomain ? `${contextApp.appName}.com` : "localhost",
+      shouldWaitForSignal: true,
+      useSockets: {
+        hookSocketToServer: self.hookSocketToServer.bind(self),
+      },
     };
     useCustomDomain
       ? (server["appOpts"] = {
@@ -157,6 +167,7 @@ methods.configureWebPack = function (
       contextApp.appManifest.static
     )}`,
     pagesFolder: contextApp.appPagesFolder,
+    appSrc: contextApp.appSrc,
     runOnComplete: self.testRunFromWebpack.bind(self),
     closeWatcher: self.closeWatcher.bind(self),
     notifyClient: self.notifyClient.bind(self),
@@ -166,6 +177,7 @@ methods.configureWebPack = function (
       contextApp.appManifest?.fileLoader?.inline
         ? contextApp.appManifest.fileLoader.inline
         : false,
+    runOnceDone: self.runOnceDone.bind(self),
   });
 
   self.debug("PROCESS.ENV", process.env);
@@ -186,7 +198,18 @@ methods.configureWebPack = function (
           compiler: wbpCompiler,
           webpackConfig: webpackConfigObject,
         },
-        { routes, api: contextApp.appApi },
+        {
+          routes:
+            contextApp.appManifest.app.type !== "spa"
+              ? routes
+              : [
+                  ...routes.filter((r) => r?.alias && r.alias === "home"),
+                  {
+                    catchAll: true,
+                  },
+                ],
+          api: contextApp.appApi,
+        },
         certDomainConfig
 
         // domain: [{ name: 'static', set: 'public' }]
@@ -257,11 +280,7 @@ methods.configureDevServer = function (
   };
 
   let wepackMiddlewares = null;
-  const serverType =
-    process.env?.ANZII_CLI_WITH_SERVER &&
-    process.env.ANZII_CLI_WITH_SERVER === "true"
-      ? "config-manual"
-      : "dev-server";
+  const serverType = "config-manual";
   serverType === "config-manual"
     ? (wepackMiddlewares = {
         webpackDevMiddleware: self.webpackDevMiddleware,
@@ -371,6 +390,7 @@ methods.removePagesImport = function () {
 
 methods.testRunFromWebpack = function (watchPath, runStatus) {
   const self = this;
+  const stylExtensions = [".css", ".scss", ".styl", ".less", ".sass"];
   self.debug("TEST RUN FROM WEBPACK", self.removePagesImport, watchPath);
   self.watchFile(watchPath, {
     add: (addPath, stats) => {
@@ -414,24 +434,159 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
       //   self.fileIsAddOrDelProcessed = false
       // }
     },
-    change: (addPath, stats) => {
-      if (self.addedEmptyFiles && self.addedEmptyFiles.includes(addPath)) {
-        if (self.addedEmptyFiles.length === 1) {
-          self.addedEmptyFiles = null;
-          self.restartSever(addPath, "changeEmpyFile");
-        } else {
-          self.debug(
-            "WATCHR:: ONCHANGE MANY FILES",
-            self.addedEmptyFiles,
-            self.addedEmptyFiles.indexOf(addPath)
+    change: async (addPath, stats) => {
+      console.log("A FILE HAS CHANGED", addPath);
+      self.debug("CHANGE EVENT OCCURED ON", addPath, stats);
+      if (stylExtensions.includes(path.extname(addPath))) {
+        self.debug("CHANGED FILE IS CSS");
+        //  const stylesModulesPath = `${kotiiKotiiLandPath}/dev/styles-css-modules.json`
+        //  const stylesMeta = JSON.parse(
+        //   fs.readFileSync(stylesModulesPath, {
+        //     encoding: "utf8",
+        //   })
+        // );
+        if (!self?.stylesMeta) self.loadCssModuleDataFile();
+
+        let stylesMeta = self.stylesMeta;
+        let moduleInfo = null;
+        let pathContext = null;
+        let possilbeImports = null;
+        let possibleMatch = null;
+        let currentMetaKey = null;
+        for (let fileAsModule in stylesMeta) {
+          console.log("The current fileAsModule", fileAsModule);
+          moduleInfo = stylesMeta[fileAsModule];
+          pathContext = moduleInfo.pathContext;
+          possilbeImports = moduleInfo?.imports || null;
+          //  let fileID = self.getFileID(pathContext,possilbeImports)
+          possibleMatch = self.checkMatchType(
+            pathContext,
+            possilbeImports,
+            addPath
           );
-          self.splice(self.addedEmptyFiles.indexOf(addPath), 1);
+          console.log("THE POSSIBLE MATCH", possibleMatch);
+          if (possibleMatch.pathMatched) {
+            currentMetaKey = fileAsModule;
+            break;
+          }
+        }
+
+        if (possibleMatch && possibleMatch?.pathMatched) {
+          let extension = path.extname(addPath);
+          let changeFilename = addPath.substring(
+            addPath.lastIndexOf("/"),
+            addPath.length
+          );
+          console.log("THE EXTENSION TO TEST", extension);
+          let updatedContent = await self.getCssUpdateContent({
+            addPath,
+            extension,
+            changeFilename,
+          });
+
+          const matchedInfo = possibleMatch.importsMatch
+            ? possilbeImports[addPath]
+            : moduleInfo;
+          const updatedContentAst = createCssAst([updatedContent]);
+          const currentOriginalAst = possibleMatch.importsMatch
+            ? matchedInfo.inputBeforeAst
+            : matchedInfo.currentOriginalAst;
+
+          compareCss(currentOriginalAst, updatedContentAst).then(
+            async (compareResults) => {
+              const content = {};
+              let updatedImports = null;
+              console.log("THE COMPARE RESULTS", compareResults);
+              if (compareResults.update?.importsUpdates) {
+                updatedImports = await self.doImportsCssUpdates(
+                  compareResults,
+                  content,
+                  matchedInfo,
+                  possilbeImports,
+                  updatedContent,
+                  updatedContentAst
+                );
+              }
+              if (compareResults.update?.updateContent) {
+                self.doNoneImportsCssUpdates(
+                  compareResults,
+                  content,
+                  moduleInfo
+                );
+              }
+              //  matchedInfo.inputBeforeAst = updatedContentAst
+
+              self.notifyClient({
+                name: "kotii-client-css-update",
+                updateType: "immediate",
+                content,
+              });
+
+              console.log(
+                "POSSIBLE IMPORTS BEFORE UPDATE",
+                JSON.stringify(possilbeImports)
+              );
+              console.log(
+                "IMPORTS AFTER UPDATES",
+                JSON.stringify(updatedImports)
+              );
+
+              if (possibleMatch?.importsMatch) {
+                if (updatedImports) {
+                  stylesMeta[currentMetaKey].imports = { ...updatedImports };
+                } else {
+                  stylesMeta[currentMetaKey].imports[addPath] = {
+                    ...matchedInfo,
+                    inputBeforeAst: updatedContentAst,
+                    inputBefore: updatedContent,
+                  };
+                }
+              } else {
+                stylesMeta[currentMetaKey].currentOriginalAst =
+                  updatedContentAst;
+              }
+
+              // possibleMatch?.importsMatch
+              // ? updatedImports ? stylesMeta[currentMetaKey].imports = {...updatedImports} :  stylesMeta[currentMetaKey].imports[addPath].inputBeforeAst = updatedContentAst
+              // : stylesMeta[currentMetaKey].currentOriginalAst = updatedContentAst
+
+              // console.log("styles meta after update", JSON.stringify(stylesMeta[currentMetaKey]))
+
+              // !possibleMatch?.importsMatch ? stylesMeta[fileAsModule] = moduleInfo : null
+              // console.log("Update content AST AFTER SAVE", stylesMeta[fileAsModule])
+              // fs.writeFile(stylesModulesPath,JSON.stringify(stylesMeta,null,2),(err)=>{
+              //   console.log("file save update",err)
+              // })
+            }
+          );
+
+          //  diffLines(currentOriginalAst, updatedContent,(results)=>{
+          //    console.log("Diff results",results)
+          //  })
+        }
+        //  console.log("THE STYLES MODULELS PATH",stylesMeta, Object.keys(stylesMeta))
+        //  const updatedContent = fs.readFileSync(addPath,{encoding: "utf-8"})
+        //  self.debug("The updated content",updatedContent)
+        //  self.notifyClient()
+      } else {
+        if (self.addedEmptyFiles && self.addedEmptyFiles.includes(addPath)) {
+          if (self.addedEmptyFiles.length === 1) {
+            self.addedEmptyFiles = null;
+            self.restartSever(addPath, "changeEmpyFile");
+          } else {
+            self.debug(
+              "WATCHR:: ONCHANGE MANY FILES",
+              self.addedEmptyFiles,
+              self.addedEmptyFiles.indexOf(addPath)
+            );
+            self.splice(self.addedEmptyFiles.indexOf(addPath), 1);
+          }
         }
       }
     },
   });
 };
-methods.notifyClient = function () {
+methods.notifyClient = function (updateInfo) {
   const self = this;
 
   // axios.get("http://localhost:8004/re-initiate-socket/renitiate").then(response => {
@@ -439,18 +594,12 @@ methods.notifyClient = function () {
   // 	self.pao.pa_wiLog(response.data)
 
   //   }).catch(err => {reject(err);});
-  self.emit({
-    type: "send-event-to-client",
-    data: {
-      payload: {
-        event: { name: "kotii-client-reload", content: { user: "Ntsako" } },
-      },
-      callback: (data = null) => {
-        self.debug("SERVER SENT EVENT SENT");
-        self.debug("Event has been successfully sent to client", data);
-        // process.exit(1)
-      },
-    },
+
+  self.wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      console.log("send data to client with socket", updateInfo);
+      client.send(JSON.stringify(updateInfo));
+    }
   });
 };
 
@@ -633,6 +782,409 @@ methods.addImportLineTAppJs = function () {
   ]);
   let newFileContent = `${buildImportString} ${generateBuildAst}`;
   saveToFile(buildPath, newFileContent);
+};
+methods.runOnceDone = function () {
+  const self = this;
+  // const { watched, persistent = true, ignored = null, events = null } = payload;
+  self.emit({
+    type: "open-browser-signal",
+    data: {},
+  });
+};
+
+methods.hookSocketToServer = function (server) {
+  const self = this;
+  self.debug("HOOKING SOCKET TO SERVER");
+  self.wss = new WebSocketServer({ server });
+
+  self.wss.on("connection", (ws) => {
+    console.log("Client connected");
+    self.webSocketConnection = ws;
+
+    // ws.on('message', message => {
+    //   console.log('Received message:', message);
+    //   wss.clients.forEach(client => { // Broadcast to all clients
+    //     if (client !== ws && client.readyState === WebSocket.OPEN) {
+    //       client.send(message);
+    //     }
+    //   });
+    // });
+
+    ws.on("close", () => {
+      console.log("Client disconnected");
+    });
+  });
+};
+
+methods.doOldSelectorUpdate = function (
+  oldSelectorsUpdate,
+  moduleInfo,
+  content
+) {
+  const self = this;
+
+  let modulesClassMaps = moduleInfo.modules;
+  let oldSelectorsKeys = Object.keys(oldSelectorsUpdate);
+  let referenceOfSelectorInTheBrowser = "";
+
+  oldSelectorsKeys.forEach((oldSelectorKey) => {
+    if (oldSelectorKey.indexOf(".") === 0) {
+      if (modulesClassMaps?.modules) {
+        let originalClassName = oldSelectorKey.substring(
+          1,
+          oldSelectorKey.length
+        );
+        referenceOfSelectorInTheBrowser = `.${modulesClassMaps[originalClassName]}`;
+      } else {
+        referenceOfSelectorInTheBrowser = oldSelectorKey;
+      }
+    } else {
+      referenceOfSelectorInTheBrowser = oldSelectorKey;
+    }
+    if (!content["oldSelectorsUpdate"]) {
+      content["oldSelectorsUpdate"] = [
+        {
+          selector: referenceOfSelectorInTheBrowser,
+          selectorCss: oldSelectorsUpdate[oldSelectorKey],
+        },
+      ];
+    } else {
+      content.oldSelectorsUpdate.push({
+        selector: referenceOfSelectorInTheBrowser,
+        selectorCss: oldSelectorsUpdate[oldSelectorKey],
+      });
+    }
+  });
+};
+methods.doNewSelectorUpdate = function (selectorsUpdate, moduleInfo, content) {
+  const self = this;
+
+  let modulesClassMaps = moduleInfo.modules;
+  let selectorsKeys = Object.keys(selectorsUpdate);
+
+  selectorsKeys.forEach((selectorKey) => {
+    if (!content["newSelectorsUpdate"]) {
+      content["newSelectorsUpdate"] = [
+        {
+          selector: selectorKey,
+          selectorCss: selectorsUpdate[selectorKey],
+        },
+      ];
+    } else {
+      content.newSelectorsUpdate.push({
+        selector: selectorKey,
+        selectorCss: selectorsUpdate[selectorKey],
+      });
+    }
+  });
+};
+methods.doRemoveSelectorUpdate = function (
+  removeSelectorsUpdate,
+  moduleInfo,
+  content
+) {
+  const self = this;
+
+  content["removeSelectorsUpdate"] = removeSelectorsUpdate;
+};
+methods.getCssUpdateContent = async function (options) {
+  const self = this;
+  const { addPath, changeFilename, extension } = options;
+  console.log("CHnage extension", addPath, changeFilename, extension);
+
+  switch (extension) {
+    case ".css":
+      return fs.readFileSync(addPath, {
+        encoding: "utf8",
+      });
+
+    // case '.less': return lessToCssConverter(addPath,changeFilename)
+    // case '.sass':
+    // break;
+    // case ".scss":
+    // break;
+    // case '.stylus':
+    // break;
+    default:
+      throw new Error("The CSS UPTAR");
+  }
+};
+
+methods.doImportsCssUpdates = async function (
+  cssUpdateResults,
+  content,
+  matchedInfo,
+  imports,
+  currentFileInput,
+  updateAst
+) {
+  const self = this;
+  console.log("THE CSS UPDATE RESULTS", cssUpdateResults);
+  let preRegexLeftPattern = `\\/\\*\\s*(INCLUDED_CSS)_HEAD:\\s*(`;
+  let preRegexRightPattern = `)\\s*\\*\\/([\\S\\s]*?)\\/\\*\\s*\\1_FOOTER:\\s*\\2\\s(\\*\\/)$`;
+  let regexPatterns = { preRegexLeftPattern, preRegexRightPattern };
+  // let IMPORT_FILE_TEXT_REGEX = new RegExp(`\/\*\s*(INCLUDED_CSS)_HEAD:\s*(${escapedFileName})\s*\*\/([\S\s]*?)\/\*\s*\1_FOOTER:\s*\2\s(\*\/)$`,"gim")
+
+  const { update } = cssUpdateResults;
+  const { importsUpdates } = update;
+  const { importRemovals = null, newImports = null } = importsUpdates;
+  console.log("THE IMPORT REMOVALS", importRemovals);
+
+  if (importRemovals) {
+    console.log("Import removals");
+    console.log("THE IMPORTS", imports);
+    if (!content?.removeImportsUpdate) content["removeImportsUpdate"] = [];
+
+    imports[matchedInfo.selfReferencePath] = {
+      ...matchedInfo,
+      inputBefore: currentFileInput,
+      inputBeforeAst: updateAst,
+    };
+    importRemovals.forEach((toRemoveKey) => {
+      let escapedFileName = toRemoveKey.replace(/[^a-zA-Z0-9]/g, "\\$&");
+      let regexString = `${preRegexLeftPattern}${escapedFileName}${preRegexRightPattern}`;
+      content.removeImportsUpdate.push(regexString);
+      // let IMPORT_FILE_TEXT_REGEX = new RegExp(regexString,"gim")
+      // console.log("THE IMPORT REGEX", IMPORT_FILE_TEXT_REGEX)
+      // console.log("THE MATCHED INFO", matchedInfo)
+      let removePath = matchedInfo.children[toRemoveKey].path;
+      let toRemoveObject = imports[removePath];
+      // console.log("THE PATH", removePath)
+      // console.log("JSON.STRINGIFYIED", JSON.stringify(imports))
+      // console.log("IMPORTS",imports,removePath)
+      // let testSTring = matchedInfo.inputAfter
+      // console.log("THE TEST STRING", testSTring)
+      // console.log("Results of checking string",IMPORT_FILE_TEXT_REGEX.test(testSTring))
+      // console.log("Results of checking string.replaced",testSTring.replace(IMPORT_FILE_TEXT_REGEX,""))
+      console.log("THE OBJECT TO REMOVE", toRemoveObject);
+
+      self.removeOutdatedCssFile(
+        imports[matchedInfo.selfReferencePath],
+        "",
+        toRemoveObject.pathAsShortID,
+        imports,
+        regexPatterns
+      );
+      delete imports[removePath];
+    });
+  }
+  // console.log("THE CONTENT AFTER ALL", content)
+
+  if (newImports) {
+    // for(let newImport in newImports){
+    if (!content?.addImportsUpdate) content["addImportsUpdate"] = [];
+    console.log("THE CURRENT FILE INPUT", currentFileInput);
+
+    let mergeResults = await mergeCssFiles(currentFileInput, {
+      parent: matchedInfo?.parent || null,
+      pathAsShortID: matchedInfo.pathAsShortID,
+      shouldWrapFile: true,
+      // selfReferencePath: matchedInfo.selfReferencePath,
+      pathContext: {
+        fileFullPath: matchedInfo.selfReferencePath,
+      },
+    });
+    imports = { ...imports, ...mergeResults.imports };
+
+    let updateImportsParent = imports[matchedInfo.parent.path];
+    self.syncContentToParents(
+      updateImportsParent,
+      imports[matchedInfo.selfReferencePath].inputAfter,
+      matchedInfo.pathAsShortID,
+      imports,
+      regexPatterns
+    );
+    console.log("THE IMPORTS AS", imports[matchedInfo.parent.path]);
+    console.log("THE MERGE RESULTS", mergeResults);
+    // let sendKeys = Object.keys(mergeResults.imports)
+    console.log("THE PARENT UPDATE IMPORT", updateImportsParent);
+    console.log("THE IMPORTS WITH POTENTIAL UPDATES", imports);
+
+    let updatesImportsParentID = updateImportsParent.pathAsShortID.replace(
+      /[^a-zA-Z0-9]/g,
+      "\\$&"
+    );
+    let regexString = `${preRegexLeftPattern}${updatesImportsParentID}${preRegexRightPattern}`;
+    content.addImportsUpdate.push({
+      addString: updateImportsParent.inputAfter,
+      addPattern: regexString,
+    });
+    //}
+  }
+  return imports;
+};
+methods.doNoneImportsCssUpdates = function (
+  noneCssUpdates,
+  content,
+  moduleInfo
+) {
+  const self = this;
+
+  const { update } = noneCssUpdates;
+
+  console.log("COMPARE RESULTS.UPDATE", update);
+  console.log("COMPARE RESULTS.UPDATE.UPDATECONTENT", update.updateContent);
+  console.log(
+    "COMPARE RESULTS.UPDATE.UPDATECONTENT",
+    update.updateContent.oldSelectors
+  );
+  let updateContent = update.updateContent;
+  let oldSelectorsUpdate = updateContent?.oldSelectors;
+
+  let domUpdateTypesKeys = Object.keys(updateContent);
+
+  domUpdateTypesKeys.forEach((updateTypeKey) => {
+    let currentUpdateType = updateContent[updateTypeKey];
+    switch (updateTypeKey) {
+      case "oldSelectors":
+        self.doOldSelectorUpdate(currentUpdateType, moduleInfo, content);
+
+        break;
+      case "newSelectors":
+        self.doNewSelectorUpdate(currentUpdateType, moduleInfo, content);
+        break;
+      case "removeSelectors":
+        content["removeSelectorsUpdate"] = currentUpdateType;
+        break;
+      case "removeSelectorsProps":
+        content["removeSelectorsPropsUpdate"] = currentUpdateType;
+        break;
+      default:
+        throw new Error("Update type unknown");
+    }
+  });
+
+  // self.notifyClient({
+  //   name: "kotii-client-css-update",
+  //   updateType: "immediate",
+  //   content
+  // })
+
+  // possilbeImports && possilbeImports[addPath]
+  // ? possilbeImports[addPath].inputBeforeAst = updatedContentAst
+  // : moduleInfo.currentOriginalAst = updatedContentAst
+
+  // possilbeImports && possilbeImports[addPath] ? null : stylesMeta[fileAsModule] = moduleInfo
+  // // console.log("Update content AST AFTER SAVE", stylesMeta[fileAsModule])
+  // fs.writeFile(stylesModulesPath,JSON.stringify(stylesMeta,null,2),(err)=>{
+  //   console.log("file save update",err)
+  // })
+};
+methods.checkMatchType = function (pathContext, imports, addPath) {
+  const self = this;
+  let matchType = {};
+
+  if (pathContext.fileFullPath === addPath) {
+    matchType["pathMatched"] = true;
+    matchType["importsMatch"] = false;
+  } else if (imports && imports[addPath]) {
+    matchType["pathMatched"] = true;
+    matchType["importsMatch"] = true;
+  } else {
+    matchType["pathMatched"] = false;
+  }
+  return matchType;
+  // pathContext.fileFullPath === addPath ? matchType["importsMatch"] = false:
+};
+methods.syncContentToParents = function (
+  syncFile,
+  replaceString,
+  replaceName,
+  imports,
+  patterns
+) {
+  const self = this;
+  console.log("REPLACE NAME", replaceName);
+  console.log("THE SYNC FILE", syncFile);
+  console.log("THE REPLACE STRING", replaceString);
+  console.log("FILE NAME IS", syncFile?.pathAsShortID);
+
+  const { preRegexLeftPattern, preRegexRightPattern } = patterns;
+
+  let escapedFileName = replaceName.replace(/[^a-zA-Z0-9]/g, "\\$&");
+  let regexString = `${preRegexLeftPattern}${escapedFileName}${preRegexRightPattern}`;
+  let IMPORT_FILE_TEXT_REGEX = new RegExp(regexString, "gim");
+  // let syncFileParent = imports[syncFile.parent?.path]
+  // console.log()
+  console.log("THE REGEX STRING", regexString);
+  console.log("THE REGEX", IMPORT_FILE_TEXT_REGEX);
+
+  syncFile.inputAfter = syncFile.inputAfter.replace(
+    IMPORT_FILE_TEXT_REGEX,
+    replaceString
+  );
+  console.log(
+    "INPUT MATCHED",
+    IMPORT_FILE_TEXT_REGEX.test(syncFile.inputAfter)
+  );
+  imports[syncFile.selfReferencePath].inputAfter = syncFile.inputAfter;
+
+  if (syncFile?.parent) {
+    self.syncContentToParents(
+      imports[syncFile.parent.path],
+      syncFile.inputAfter,
+      syncFile.pathAsShortID,
+      imports,
+      patterns
+    );
+  }
+};
+methods.removeOutdatedCssFile = function (
+  syncFile,
+  replaceString,
+  replaceName,
+  imports,
+  patterns
+) {
+  const self = this;
+  console.log("REPLACE NAME", replaceName);
+  console.log("THE SYNC FILE", syncFile);
+  console.log("THE REPLACE STRING", replaceString);
+  console.log("FILE NAME IS", syncFile?.pathAsShortID);
+
+  const { preRegexLeftPattern, preRegexRightPattern } = patterns;
+
+  let escapedFileName = replaceName.replace(/[^a-zA-Z0-9]/g, "\\$&");
+  let regexString = `${preRegexLeftPattern}${escapedFileName}${preRegexRightPattern}`;
+  console.log("THE REGEX STRING", regexString);
+  let IMPORT_FILE_TEXT_REGEX = new RegExp(regexString, "gim");
+  console.log("THE REGEX", IMPORT_FILE_TEXT_REGEX);
+  console.log(
+    "INPUT MATCHED",
+    IMPORT_FILE_TEXT_REGEX.test(syncFile.inputAfter)
+  );
+  syncFile.inputAfter = syncFile.inputAfter.replace(
+    IMPORT_FILE_TEXT_REGEX,
+    replaceString
+  );
+
+  imports[syncFile.selfReferencePath].inputAfter = syncFile.inputAfter;
+
+  if (syncFile?.parent) {
+    self.removeOutdatedCssFile(
+      imports[syncFile.parent.path],
+      "",
+      replaceName,
+      imports,
+      patterns
+    );
+  }
+};
+
+methods.loadCssModuleDataFile = function () {
+  const self = this;
+  const stylesModulesPath = `${kotiiKotiiLandPath}/dev/styles-css-modules.json`;
+  self["stylesMeta"] = JSON.parse(
+    fs.readFileSync(stylesModulesPath, {
+      encoding: "utf8",
+    })
+  );
+
+  //  fs.readFile(stylesModulesPath,{encoding:"utf-8"},(rawData)=>{
+
+  //    self["stylesMeta"] = JSON.parse(rawData)
+  //    console.log("THE CSS FILE IS LOADED",self.stylesMeta)
+  //  })
 };
 
 export default methods;

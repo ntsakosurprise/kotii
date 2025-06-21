@@ -58,6 +58,8 @@ class ReactView {
     this.getEffectsRouteList = methods.getEffectsRouteList;
     this.includeScripts = methods.includeScripts;
     this.doKotiiStyles = methods.doKotiiStyles;
+    this.renderHtmlSpa = methods.renderHtmlSpa;
+    this.handleReactSpa = methods.handleReactSpa;
   }
 }
 
