@@ -1,32 +1,8 @@
-import createRandomName from "./createRandomName.js";
-const plugin = (opts = {}) => {
-  console.log("POSTCSSPLUGIN OPTS", opts);
 
-  let cssFileStylesMap = {};
-  return {
-    postcssPlugin: "postcss-css-modules",
-    Rule: (ruleNode) => {
-      let selectorName = ruleNode.selector;
-      if (selectorName[0] === ".") {
-        let nameWithoutPeriod = selectorName.substr(1, selectorName.length);
-        let scopedClassName = `${selectorName}_${createRandomName(
-          5
-        )}_${createRandomName(3)}`;
-        cssFileStylesMap[nameWithoutPeriod] = scopedClassName.substr(
-          1,
-          scopedClassName.length
-        );
+import transformCssPlugin from "./transform-class/index.js" 
+import compareCssPlugin from "./compare-css/index.js"
+import mergeCssFilesPlugin from "./merge-files/index.js"
 
-        ruleNode.selector = scopedClassName;
-      }
-    },
-    OnceExit(css) {
-      console.log("THE JSON MAP", cssFileStylesMap);
-      css["modulesMap"] = cssFileStylesMap;
-    },
-  };
-};
-
-plugin.postcss = true;
-
-export default plugin;
+export {
+  transformCssPlugin, compareCssPlugin, mergeCssFilesPlugin
+}
