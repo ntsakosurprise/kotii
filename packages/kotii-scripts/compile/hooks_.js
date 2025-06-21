@@ -21,6 +21,7 @@ let timerActive = false;
 let metaChecked = false;
 let workdir = `${process.cwd()}`;
 let GLOBAL_STYLES_REGEX = /global\.+/;
+let CSS_MODULES_REGEX = /\.module\./;
 let JSON_STYLES_PATH = `${kotiiKotiiLandPath}/dev/styles.json`;
 let JSON_STYLES_MAP_PATH = `${kotiiKotiiLandPath}/dev/styles-css-modules.json`;
 let JSON_STYLES_PATH_FIRSTTIME_USE = false;
@@ -32,6 +33,7 @@ let FILE_LOADER_DEFAULT = {
   output: "public/imgs",
   // inlinePngs: true,
 };
+
 const KOTII_USER_LAND_ALIASES = {
   layout: {
     alias: "/kotii-user-land-aliase/src/components/startup/index",
@@ -715,6 +717,19 @@ const getCssFromSass = async (fileUrl, fName) => {
   let cssFromSass = sassToCssConverter(fileUrl);
   let modulesResult = "";
   if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
+    if (!CSS_MODULES_REGEX.test(fileUrl)) {
+      saveStyles(cssFromSass);
+      modulesResult = await renderCssModules(
+        cssFromSass,
+        kotiiModulesMeta,
+        MODULES_SPECIFIERS[fileUrl]
+      );
+      saveCssModulesMap(MODULES_SPECIFIERS[fileUrl].shortName, {
+        currentOriginalAst: modulesResult.cssAst,
+        pathContext: modulesResult.pathContext,
+      });
+      return `export default ${JSON.stringify(fName)}`;
+    }
     modulesResult = await renderCssModules(
       cssFromSass,
       kotiiModulesMeta,
@@ -741,16 +756,30 @@ const getCssFromLess = async (fileUrl, fName) => {
   let modulesResult = "";
 
   if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
+    if (!CSS_MODULES_REGEX.test(fileUrl)) {
+      saveStyles(cssFromLess);
+      modulesResult = await renderCssModules(
+        cssFromLess,
+        kotiiModulesMeta,
+        MODULES_SPECIFIERS[fileUrl]
+      );
+      saveCssModulesMap(MODULES_SPECIFIERS[fileUrl].shortName, {
+        currentOriginalAst: modulesResult.cssAst,
+        pathContext: modulesResult.pathContext,
+      });
+      return `export default ${JSON.stringify(fName)}`;
+    }
     modulesResult = await renderCssModules(
       cssFromLess,
       kotiiModulesMeta,
-      MODULES_SPECIFIERS[fileUrl]
+      MODULES_SPECIFIERS[fileUrl],
+      true
     );
     saveStyles(modulesResult.css);
-    saveCssModulesMap(
-      MODULES_SPECIFIERS[fileUrl].shortName,
-      modulesResult.cssModules
-    );
+    saveCssModulesMap(MODULES_SPECIFIERS[fileUrl].shortName, {
+      ...modulesResult.cssModules,
+      currentOriginalAst: modulesResult.cssAst,
+    });
   } else {
     console.log("THE URL CONTAINS GLOBAL", fileUrl);
     saveStyles(cssFromLess);
@@ -768,6 +797,19 @@ const getCssFromStylus = async (fileUrl, fName) => {
   let cssFromStylus = await stylusToCssConverter(fileUrl, fName);
   let modulesResult = "";
   if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
+    if (!CSS_MODULES_REGEX.test(fileUrl)) {
+      saveStyles(cssFromStylus);
+      modulesResult = await renderCssModules(
+        cssFromStylus,
+        kotiiModulesMeta,
+        MODULES_SPECIFIERS[fileUrl]
+      );
+      saveCssModulesMap(MODULES_SPECIFIERS[fileUrl].shortName, {
+        currentOriginalAst: modulesResult.cssAst,
+        pathContext: modulesResult.pathContext,
+      });
+      return `export default ${JSON.stringify(fName)}`;
+    }
     modulesResult = await renderCssModules(
       cssFromStylus,
       kotiiModulesMeta,
@@ -794,7 +836,23 @@ const getCss = async (fileUrl, fName) => {
 
   let cssContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
   let modulesResult = "";
+  console.log("IS CSS MODULE", CSS_MODULES_REGEX.test(fileUrl));
   if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
+    if (!CSS_MODULES_REGEX.test(fileUrl)) {
+      modulesResult = await renderCssModules(
+        cssContent,
+        kotiiModulesMeta,
+        MODULES_SPECIFIERS[fileUrl]
+      );
+      saveStyles(modulesResult.css);
+      saveCssModulesMap(MODULES_SPECIFIERS[fileUrl].shortName, {
+        // currentOriginalAst:modulesResult.cssAst,
+        // pathContext: modulesResult.pathContext
+        ...modulesResult,
+        css: null,
+      });
+      return `export default ${JSON.stringify(fName)}`;
+    }
     modulesResult = await renderCssModules(
       cssContent,
       kotiiModulesMeta,
@@ -870,9 +928,7 @@ const saveCssModulesMap = (id, idModules) => {
     newJson[id] = idModules;
   }
 
-  fs.writeFileSync(JSON_STYLES_MAP_PATH, JSON.stringify(newJson, null, 2), {
-    encoding: "utf8",
-  });
+  fs.writeFileSync(JSON_STYLES_MAP_PATH, JSON.stringify(newJson, null, 2));
 };
 
 const storeCssModuleSpecifier = (pathContext) => {
