@@ -1,8 +1,7 @@
 const methods = {};
 import fs from "fs";
 import path from "path";
-// import WebSocket from "ws"
-import { WebSocketServer } from "ws";
+import WebSocket, { WebSocketServer } from "ws";
 import { compareCss, createCssAst, mergeCssFiles } from "../../css/index.js";
 import { kotiiKotiiLandPath } from "../../kotii_paths.js";
 
@@ -61,6 +60,9 @@ methods.handleWebpackConfig = function (data) {
                     key: certs.filesOutputPaths.key,
                     cert: certs.filesOutputPaths.key,
                   },
+                  useSockets: {
+                    hookSocketToServer: self.hookSocketToServer.bind(self),
+                  },
                 };
                 server["APP_URL"] = `${useHttps ? "https" : "http"}://${
                   server.domainName
@@ -84,6 +86,9 @@ methods.handleWebpackConfig = function (data) {
       pageToOpen: useAsDefaultPage,
       domainName: useCustomDomain ? `${contextApp.appName}.com` : "localhost",
       shouldWaitForSignal: true,
+      useSockets: {
+        hookSocketToServer: self.hookSocketToServer.bind(self),
+      },
     };
     useCustomDomain
       ? (server["appOpts"] = {
@@ -162,6 +167,7 @@ methods.configureWebPack = function (
       contextApp.appManifest.static
     )}`,
     pagesFolder: contextApp.appPagesFolder,
+    appSrc: contextApp.appSrc,
     runOnComplete: self.testRunFromWebpack.bind(self),
     closeWatcher: self.closeWatcher.bind(self),
     notifyClient: self.notifyClient.bind(self),
@@ -384,6 +390,7 @@ methods.removePagesImport = function () {
 
 methods.testRunFromWebpack = function (watchPath, runStatus) {
   const self = this;
+  const stylExtensions = [".css", ".scss", ".styl", ".less", ".sass"];
   self.debug("TEST RUN FROM WEBPACK", self.removePagesImport, watchPath);
   self.watchFile(watchPath, {
     add: (addPath, stats) => {
@@ -579,7 +586,7 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
     },
   });
 };
-methods.notifyClient = function () {
+methods.notifyClient = function (updateInfo) {
   const self = this;
 
   // axios.get("http://localhost:8004/re-initiate-socket/renitiate").then(response => {
@@ -587,18 +594,12 @@ methods.notifyClient = function () {
   // 	self.pao.pa_wiLog(response.data)
 
   //   }).catch(err => {reject(err);});
-  self.emit({
-    type: "send-event-to-client",
-    data: {
-      payload: {
-        event: { name: "kotii-client-reload", content: { user: "Ntsako" } },
-      },
-      callback: (data = null) => {
-        self.debug("SERVER SENT EVENT SENT");
-        self.debug("Event has been successfully sent to client", data);
-        // process.exit(1)
-      },
-    },
+
+  self.wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      console.log("send data to client with socket", updateInfo);
+      client.send(JSON.stringify(updateInfo));
+    }
   });
 };
 
@@ -1076,7 +1077,7 @@ methods.checkMatchType = function (pathContext, imports, addPath) {
   if (pathContext.fileFullPath === addPath) {
     matchType["pathMatched"] = true;
     matchType["importsMatch"] = false;
-  } else if (imports[addPath]) {
+  } else if (imports && imports[addPath]) {
     matchType["pathMatched"] = true;
     matchType["importsMatch"] = true;
   } else {
