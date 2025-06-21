@@ -65,6 +65,9 @@ export default (options) => {
       options?.build && options.build
         ? env.appIndexFile
         : ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
+    watchOptions: {
+      ignored: ["**/*.{css,scss,sass,less,styl}", "**/node_modules"],
+    },
 
     context: env.appFolder,
     mode: process.env.NODE_ENV,
