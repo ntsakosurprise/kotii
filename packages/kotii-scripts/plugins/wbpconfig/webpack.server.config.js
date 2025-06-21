@@ -68,11 +68,11 @@ export default (options) => {
 
     context: env.appFolder,
     mode: process.env.NODE_ENV,
-    infrastructureLogging: { level: "none" },
-    stats: "errors-only",
+    // infrastructureLogging: { level: "none" },
+    // stats: "errors-only",
     devtool: "eval",
     output: {
-      filename: "server.bundle.js",
+      filename: "server.js",
       path:
         options?.build && options.build
           ? options.staticFolder
@@ -147,26 +147,22 @@ export default (options) => {
           `${kotiiRootPath}`,
           "webpack-loaders/syncAssetsLoader.cjs"
         ),
-        // "sync-styles-loader": path.resolve(
+        "kotii-styles-hmr-loader": path.resolve(
+          `${kotiiRootPath}`,
+          "webpack-loaders/handleStylesLoader.cjs"
+        ),
+        // "kotii-eslint-loader": path.resolve(
         //   `${kotiiRootPath}`,
-        //   "webpack-loaders/syncStylesLoader.cjs"
+        //   "webpack-loaders/eslint-loader/index.cjs"
         // ),
-        // "handle-sync-styles-loader": path.resolve(
+        // "kotii-prettier-loader": path.resolve(
         //   `${kotiiRootPath}`,
-        //   "webpack-loaders/handleSyncLoaderStyles.cjs"
+        //   "webpack-loaders/prettier-loader/index.cjs"
         // ),
-        "kotii-eslint-loader": path.resolve(
-          `${kotiiRootPath}`,
-          "webpack-loaders/eslint-loader/index.cjs"
-        ),
-        "kotii-prettier-loader": path.resolve(
-          `${kotiiRootPath}`,
-          "webpack-loaders/prettier-loader/index.cjs"
-        ),
-        "kotii-postcss-loader": path.resolve(
-          `${kotiiRootPath}`,
-          "webpack-loaders/postcss-loader/index.cjs"
-        ),
+        // "kotii-postcss-loader": path.resolve(
+        //   `${kotiiRootPath}`,
+        //   "webpack-loaders/postcss-loader/index.cjs"
+        // ),
         "kotii-add-hot-loader": path.resolve(
           `${kotiiRootPath}`,
           "webpack-loaders/add-hot-loader/index.cjs"
@@ -210,13 +206,13 @@ export default (options) => {
                 ],
               },
             },
-            {
-              loader: "kotii-eslint-loader",
-              options: {
-                lintDirectory: env.appSrc,
-                configPath: `${kotiiRootPath}/webpack-loaders/eslint-loader/eslint.config.cjs`,
-              },
-            },
+            // {
+            //   loader: "kotii-eslint-loader",
+            //   options: {
+            //     lintDirectory: env.appSrc,
+            //     configPath: `${kotiiRootPath}/webpack-loaders/eslint-loader/eslint.config.cjs`,
+            //   },
+            // },
             // {
             //   loader: "kotii-prettier-loader",
             //   options: {
@@ -276,35 +272,35 @@ export default (options) => {
           test: /\.html$/,
           use: "html-loader",
         },
-        // {
-        //   test: /\.(css|sass|scss|less|styl)$/i,
-        //   use: [
-        //     {
-        //       loader: "kotii-styles-hmr-loader",
-        //       options: {
-        //         referenceAssetsPath: `${kotiiKotiiLandPath}/dev`,
-        //         assetsFile: "styles-css-modules.json",
-        //         fileFormat: "json",
-        //       },
-        //     },
-        //     {
-        //       loader: "kotii-sync-styles-loader",
-        //       options: {
-        //         referenceAssetsPath: `${kotiiKotiiLandPath}/dev`,
-        //         assetsFile: "styles-css-modules.json",
-        //         fileFormat: "json",
-        //       },
-        //     },
-        //     {
-        //       loader: "kotii-postcss-loader",
-        //       options: {
-        //         tailwindConfig: `${kotiiRootPath}/webpack-loaders/postcss-loader/tailwind.config.cjs`,
-        //         contentPath: env.appSrc,
-        //         mainCssFilename: "global.css",
-        //       },
-        //     },
-        //   ],
-        // },
+        {
+          test: /\.(css|sass|scss|less|styl)$/i,
+          use: [
+            {
+              loader: "kotii-styles-hmr-loader",
+              options: {
+                referenceAssetsPath: `${kotiiKotiiLandPath}/dev`,
+                assetsFile: "styles-css-modules.json",
+                fileFormat: "json",
+              },
+            },
+            // {
+            //   loader: "kotii-sync-styles-loader",
+            //   options: {
+            //     referenceAssetsPath: `${kotiiKotiiLandPath}/dev`,
+            //     assetsFile: "styles-css-modules.json",
+            //     fileFormat: "json",
+            //   },
+            // },
+            // {
+            //   loader: "kotii-postcss-loader",
+            //   options: {
+            //     tailwindConfig: `${kotiiRootPath}/webpack-loaders/postcss-loader/tailwind.config.cjs`,
+            //     contentPath: env.appSrc,
+            //     mainCssFilename: "global.css",
+            //   },
+            // },
+          ],
+        },
         {
           test: /\.(csv|tsv)$/i,
           use: ["csv-loader"],
@@ -327,79 +323,12 @@ export default (options) => {
           ],
         },
 
-        // {
-        //   test: /\.(svg|jpg|jpeg|gif)$/i,
-        //   loader: "file-loader",
-        //   options: getFileLoaderOptions(),
-        // },
-        // {
-        //   test: /\.png$/i,
-        //   use: [
-        //     {
-        //       loader: options.useInlinedPngs
-        //         ? "syncAssets-loader"
-        //         : "file-loader",
-        //       options: options.useInlinedPngs
-        //         ? {
-        //             referenceAssetsPath: kotiiKotiiLandPath,
-        //             assetsFile: "assets.manifest.json",
-        //             fileFormat: "json",
-        //           }
-        //         : getFileLoaderOptions(),
-        //     },
-        //   ],
-        // },
         {
           test: /\.m?js?x$/,
           resolve: {
             fullySpecified: false, // disable the behaviour
           },
         },
-        /*Choose only one of the following two: if you're using
-                  plain CSS, use the first one, and if you're using a
-                  preprocessor, in this case SASS, use the second one*/
-        // {
-        //   test: /\.css$/,
-        //   use: ["style-loader", "css-loader"],
-        // },
-        // {
-        //   test: /\.less$/i,
-        //   use: [
-        //     // compiles Less to CSS
-        //     "style-loader",
-        //     "css-loader",
-        //     "less-loader",
-        //   ],
-        // },
-        // {
-        //   test: /\.s[ac]ss$/i,
-        //   use: [
-        //     // Creates `style` nodes from JS strings
-        //     "style-loader",
-        //     // Translates CSS into CommonJS
-        //     "css-loader",
-        //     // Compiles Sass to CSS
-        //     "sass-loader",
-        //   ],
-        // },
-        // {
-        //   test: /\.styl$/,
-        //   use: [
-        //     "style-loader",
-        //     "css-loader",
-        //     {
-        //       loader: "stylus-loader",
-        //       options: {
-        //         webpackImporter: false,
-        //       },
-        //     },
-        //   ],
-        // },
-
-        // {
-        //   test: /\.scss$/,
-        //   use: ["style-loader", "css-loader", "sass-loader"],
-        // },
       ],
     },
 
@@ -437,7 +366,12 @@ export default (options) => {
       ),
       new WatchOwnFilesWebpackPlugin(
         {
-          filesToWatch: `${options.pagesFolder}`,
+          // filesToWatch: `${options.pagesFolder}`,
+          filesToWatch: [
+            `${options.appSrc}/**/*.{css,scss,sass,less,styl}`,
+            `${options.pagesFolder}`,
+          ],
+          kotiiKotiiLandPath: kotiiKotiiLandPath,
           runOnComplete: options.runOnComplete,
           notifyClient: options.notifyClient,
         },
@@ -460,6 +394,7 @@ export default (options) => {
       new CopyAssetsWebpackPlugin(
         {
           referenceAssetsPath: kotiiKotiiLandPath,
+          kotiiRootPath: kotiiRootPath,
           assetsFile: "assets.manifest.json",
           fileFormat: "json",
           extra: {
@@ -473,6 +408,22 @@ export default (options) => {
         },
         loggas
       ),
+      // new CopyAssetsWebpackPlugin(
+      //   {
+      //     referenceAssetsPath: kotiiKotiiLandPath,
+      //     assetsFile: "assets.manifest.json",
+      //     fileFormat: "json",
+      //     extra: {
+      //       inline: options.inline,
+      //       emitFile: true,
+      //       emitPath:
+      //         options?.build && options.build
+      //           ? options.staticFolder
+      //           : `${env.appBuildFolder}`,
+      //     },
+      //   },
+      //   loggas
+      // ),
       new StatsPrintWebpackPlugin(loggas),
       new BroadcastCompilationWebpackPlugin(options.runOnceDone, loggas),
     ],
