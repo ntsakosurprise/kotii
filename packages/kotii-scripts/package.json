@@ -172,6 +172,7 @@
   "files": [
     "templates/",
     "compile/",
+    "client-tools/",
     "plugins/",
     "css/",
     "postcss-plugins/",
