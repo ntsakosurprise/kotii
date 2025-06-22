@@ -1,4 +1,5 @@
 const methods = {};
+const MATCH_REMOTE_RESOURCE_REGEX = /(https|http):+\/\//i;
 import fs from "fs";
 import path from "path";
 import WebSocket, { WebSocketServer } from "ws";
@@ -487,10 +488,14 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
           const matchedInfo = possibleMatch.importsMatch
             ? possilbeImports[addPath]
             : moduleInfo;
+
+          self.debug("THE MATCHED INFO", matchedInfo);
           const updatedContentAst = createCssAst([updatedContent]);
           const currentOriginalAst = possibleMatch.importsMatch
             ? matchedInfo.inputBeforeAst
-            : matchedInfo.currentOriginalAst;
+            : matchedInfo?.currentOriginalAst
+            ? matchedInfo.currentOriginalAst
+            : matchedInfo.cssAst;
 
           compareCss(currentOriginalAst, updatedContentAst).then(
             async (compareResults) => {
@@ -531,9 +536,16 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
                 JSON.stringify(updatedImports)
               );
 
-              if (possibleMatch?.importsMatch) {
+              if (
+                possibleMatch?.importsMatch ||
+                (!possibleMatch?.importsMatch && updatedImports)
+              ) {
                 if (updatedImports) {
-                  stylesMeta[currentMetaKey].imports = { ...updatedImports };
+                  if (!updatedImports?.isNull) {
+                    stylesMeta[currentMetaKey].imports = { ...updatedImports };
+                  } else {
+                    stylesMeta[currentMetaKey]["imports"] = null;
+                  }
                 } else {
                   stylesMeta[currentMetaKey].imports[addPath] = {
                     ...matchedInfo,
@@ -545,6 +557,7 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
                 stylesMeta[currentMetaKey].currentOriginalAst =
                   updatedContentAst;
               }
+              console.log("THE STYLES META KEY", stylesMeta[currentMetaKey]);
 
               // possibleMatch?.importsMatch
               // ? updatedImports ? stylesMeta[currentMetaKey].imports = {...updatedImports} :  stylesMeta[currentMetaKey].imports[addPath].inputBeforeAst = updatedContentAst
@@ -929,6 +942,7 @@ methods.doImportsCssUpdates = async function (
   const { importsUpdates } = update;
   const { importRemovals = null, newImports = null } = importsUpdates;
   console.log("THE IMPORT REMOVALS", importRemovals);
+  console.log("THE NEW IMPORTS", newImports);
 
   if (importRemovals) {
     console.log("Import removals");
@@ -941,74 +955,176 @@ methods.doImportsCssUpdates = async function (
       inputBeforeAst: updateAst,
     };
     importRemovals.forEach((toRemoveKey) => {
-      let escapedFileName = toRemoveKey.replace(/[^a-zA-Z0-9]/g, "\\$&");
-      let regexString = `${preRegexLeftPattern}${escapedFileName}${preRegexRightPattern}`;
-      content.removeImportsUpdate.push(regexString);
-      // let IMPORT_FILE_TEXT_REGEX = new RegExp(regexString,"gim")
-      // console.log("THE IMPORT REGEX", IMPORT_FILE_TEXT_REGEX)
-      // console.log("THE MATCHED INFO", matchedInfo)
-      let removePath = matchedInfo.children[toRemoveKey].path;
-      let toRemoveObject = imports[removePath];
-      // console.log("THE PATH", removePath)
-      // console.log("JSON.STRINGIFYIED", JSON.stringify(imports))
-      // console.log("IMPORTS",imports,removePath)
-      // let testSTring = matchedInfo.inputAfter
-      // console.log("THE TEST STRING", testSTring)
-      // console.log("Results of checking string",IMPORT_FILE_TEXT_REGEX.test(testSTring))
-      // console.log("Results of checking string.replaced",testSTring.replace(IMPORT_FILE_TEXT_REGEX,""))
-      console.log("THE OBJECT TO REMOVE", toRemoveObject);
+      if (!MATCH_REMOTE_RESOURCE_REGEX.test(toRemoveKey)) {
+        let escapedFileName = toRemoveKey.replace(/[^a-zA-Z0-9]/g, "\\$&");
+        let regexString = `${preRegexLeftPattern}${escapedFileName}${preRegexRightPattern}`;
+        content.removeImportsUpdate.push(regexString);
+        // let IMPORT_FILE_TEXT_REGEX = new RegExp(regexString,"gim")
+        // console.log("THE IMPORT REGEX", IMPORT_FILE_TEXT_REGEX)
+        // console.log("THE MATCHED INFO", matchedInfo)
+        let removePath = matchedInfo.children[toRemoveKey].path;
+        let toRemoveObject = imports[removePath];
+        // console.log("THE PATH", removePath)
+        // console.log("JSON.STRINGIFYIED", JSON.stringify(imports))
+        // console.log("IMPORTS",imports,removePath)
+        // let testSTring = matchedInfo.inputAfter
+        // console.log("THE TEST STRING", testSTring)
+        // console.log("Results of checking string",IMPORT_FILE_TEXT_REGEX.test(testSTring))
+        // console.log("Results of checking string.replaced",testSTring.replace(IMPORT_FILE_TEXT_REGEX,""))
+        console.log("THE OBJECT TO REMOVE", toRemoveObject);
 
-      self.removeOutdatedCssFile(
-        imports[matchedInfo.selfReferencePath],
-        "",
-        toRemoveObject.pathAsShortID,
-        imports,
-        regexPatterns
-      );
-      delete imports[removePath];
+        self.removeOutdatedCssFile(
+          imports[matchedInfo.selfReferencePath],
+          toRemoveObject,
+          "",
+          toRemoveObject.pathAsShortID,
+          imports,
+          regexPatterns
+        );
+        delete matchedInfo.children[toRemoveKey];
+        delete imports[removePath];
+      } else {
+        let urlEscaped = toRemoveKey.replace(/[^a-zA-Z0-9]/g, "\\$&");
+        let regexString = `(\\s\\n\\r)*@import\\s*url\\(.*(${urlEscaped})["']\\)[;\\s]`;
+        console.log("REMOVING URL BASED STRING", toRemoveKey, urlEscaped);
+        content.removeImportsUpdate.push(regexString);
+        return imports;
+      }
     });
+    if (!matchedInfo?.parent && Object.keys(matchedInfo.children).length <= 0) {
+      return { isNull: true };
+    }
   }
   // console.log("THE CONTENT AFTER ALL", content)
 
   if (newImports) {
     // for(let newImport in newImports){
+
     if (!content?.addImportsUpdate) content["addImportsUpdate"] = [];
+    let newImportsKeys = Object.keys(newImports);
+    let remoteImports = newImportsKeys.filter((key) => {
+      console.log("NEW IMPORTS FILTER ITEM", key);
+      console.log("FILTER ITEM REGEX", MATCH_REMOTE_RESOURCE_REGEX.test(key));
+      if (MATCH_REMOTE_RESOURCE_REGEX.test(key)) return true;
+    });
+    console.log("NEW IMPORTS KEYS", newImportsKeys);
+    console.log("FILTERED REMOTE", remoteImports);
+    if (remoteImports && remoteImports.length >= 0) {
+      console.log("THE NEW IMPORTS KEYS is url");
+      imports[matchedInfo.selfReferencePath].inputBefore = currentFileInput;
+      imports[matchedInfo.selfReferencePath].inputBeforeAst = updateAst;
+      let remoteImportsSting = "";
+      remoteImports.forEach((remoteImport) => {
+        remoteImportsSting = `${remoteImportsSting} @import ${remoteImport}\n`;
+      });
+      content.addImportsUpdate.push({
+        addString: remoteImportsSting,
+        addCssToParentStart: true,
+      });
+
+      if (newImportsKeys.length === remoteImports.length) {
+        return imports;
+      }
+    }
     console.log("THE CURRENT FILE INPUT", currentFileInput);
+    console.log("ELEMENT BEFORE", JSON.stringify(matchedInfo));
 
-    let mergeResults = await mergeCssFiles(currentFileInput, {
-      parent: matchedInfo?.parent || null,
-      pathAsShortID: matchedInfo.pathAsShortID,
-      shouldWrapFile: true,
-      // selfReferencePath: matchedInfo.selfReferencePath,
-      pathContext: {
-        fileFullPath: matchedInfo.selfReferencePath,
-      },
-    });
+    let mergeResults = await mergeCssFiles(
+      currentFileInput,
+      !imports
+        ? matchedInfo
+        : {
+            parent: matchedInfo?.parent || null,
+            pathAsShortID: matchedInfo.pathAsShortID,
+            shouldWrapFile: matchedInfo?.pathAsShortID ? true : null,
+            // selfReferencePath: matchedInfo.selfReferencePath,
+            pathContext: {
+              fileFullPath: matchedInfo.selfReferencePath,
+            },
+          }
+    );
+
+    if (!imports) {
+      console.log("NO IMPORTS MERGE RESULTS", mergeResults);
+      imports = { ...mergeResults.imports };
+      content.addImportsUpdate.push({
+        addString: mergeResults.input,
+        addCssToParentStart: true,
+      });
+
+      return imports;
+    }
     imports = { ...imports, ...mergeResults.imports };
+    console.log("THE MATCHED IMPORTS", matchedInfo);
+    console.log("THE MERGE RESULTS", mergeResults.imports);
 
-    let updateImportsParent = imports[matchedInfo.parent.path];
-    self.syncContentToParents(
-      updateImportsParent,
-      imports[matchedInfo.selfReferencePath].inputAfter,
-      matchedInfo.pathAsShortID,
-      imports,
-      regexPatterns
-    );
-    console.log("THE IMPORTS AS", imports[matchedInfo.parent.path]);
-    console.log("THE MERGE RESULTS", mergeResults);
-    // let sendKeys = Object.keys(mergeResults.imports)
-    console.log("THE PARENT UPDATE IMPORT", updateImportsParent);
-    console.log("THE IMPORTS WITH POTENTIAL UPDATES", imports);
+    let updateImportsParent = matchedInfo?.parent
+      ? imports[matchedInfo.parent.path]
+      : null;
+    if (updateImportsParent) {
+      self.syncContentToParents(
+        updateImportsParent,
+        imports[matchedInfo.selfReferencePath].inputAfter,
+        matchedInfo.pathAsShortID,
+        imports,
+        regexPatterns
+      );
+      let updatesImportsParentID = null;
+      let addCssToParentStart = false;
+      console.log("THE IMPORTS AS", imports[matchedInfo.parent.path]);
+      console.log("THE MERGE RESULTS", mergeResults);
+      // let sendKeys = Object.keys(mergeResults.imports)
+      console.log("THE PARENT UPDATE IMPORT", updateImportsParent);
+      console.log("THE IMPORTS WITH POTENTIAL UPDATES", imports);
 
-    let updatesImportsParentID = updateImportsParent.pathAsShortID.replace(
-      /[^a-zA-Z0-9]/g,
-      "\\$&"
-    );
-    let regexString = `${preRegexLeftPattern}${updatesImportsParentID}${preRegexRightPattern}`;
-    content.addImportsUpdate.push({
-      addString: updateImportsParent.inputAfter,
-      addPattern: regexString,
-    });
+      if (updateImportsParent?.pathAsShortID) {
+        updatesImportsParentID = updateImportsParent.pathAsShortID.replace(
+          /[^a-zA-Z0-9]/g,
+          "\\$&"
+        );
+      } else {
+        if (
+          updateImportsParent.inputAfter.indexOf(matchedInfo.pathAsShortID) >= 0
+        ) {
+          updatesImportsParentID = matchedInfo.pathAsShortID.replace(
+            /[^a-zA-Z0-9]/g,
+            "\\$&"
+          );
+        } else {
+          addCssToParentStart = true;
+        }
+      }
+      let regexString = !addCssToParentStart
+        ? `${preRegexLeftPattern}${updatesImportsParentID}${preRegexRightPattern}`
+        : null;
+      content.addImportsUpdate.push({
+        addString: updateImportsParent.inputAfter,
+        addPattern: regexString,
+        addCssToParentStart,
+      });
+    } else {
+      console.log("ADD TO PARENT FRONT");
+      let oldChildren = Object.keys(matchedInfo.children);
+      let newChildren = Object.keys(
+        imports[matchedInfo.selfReferencePath].children
+      );
+      console.log("OLD KIDS", oldChildren);
+      console.log("NEW KIDS", newChildren);
+
+      let newChildrenKeys = newChildren.filter(
+        (item) => !oldChildren.includes(item)
+      );
+      console.log("NEW CHILDREN KEYS", newChildrenKeys);
+      newChildrenKeys.forEach((childKey) => {
+        let keyPathInParent =
+          imports[matchedInfo.selfReferencePath].children[childKey].path;
+        content.addImportsUpdate.push({
+          addString: imports[keyPathInParent].inputAfter,
+          addCssToParentStart: true,
+        });
+      });
+    }
+
     //}
   }
   return imports;
@@ -1074,12 +1190,12 @@ methods.checkMatchType = function (pathContext, imports, addPath) {
   const self = this;
   let matchType = {};
 
-  if (pathContext.fileFullPath === addPath) {
-    matchType["pathMatched"] = true;
-    matchType["importsMatch"] = false;
-  } else if (imports && imports[addPath]) {
+  if (imports && imports[addPath]) {
     matchType["pathMatched"] = true;
     matchType["importsMatch"] = true;
+  } else if (pathContext.fileFullPath === addPath) {
+    matchType["pathMatched"] = true;
+    matchType["importsMatch"] = false;
   } else {
     matchType["pathMatched"] = false;
   }
@@ -1131,6 +1247,7 @@ methods.syncContentToParents = function (
 };
 methods.removeOutdatedCssFile = function (
   syncFile,
+  toRemove,
   replaceString,
   replaceName,
   imports,
@@ -1141,6 +1258,8 @@ methods.removeOutdatedCssFile = function (
   console.log("THE SYNC FILE", syncFile);
   console.log("THE REPLACE STRING", replaceString);
   console.log("FILE NAME IS", syncFile?.pathAsShortID);
+  console.log("THE PATTERns", patterns);
+  console.log("TO REMOVE OBJECT", toRemove);
 
   const { preRegexLeftPattern, preRegexRightPattern } = patterns;
 
@@ -1160,9 +1279,14 @@ methods.removeOutdatedCssFile = function (
 
   imports[syncFile.selfReferencePath].inputAfter = syncFile.inputAfter;
 
+  if (toRemove.children) {
+    self.recursivelyRemoveChildren(toRemove, imports);
+  }
+
   if (syncFile?.parent) {
     self.removeOutdatedCssFile(
       imports[syncFile.parent.path],
+      toRemove,
       "",
       replaceName,
       imports,
@@ -1185,6 +1309,25 @@ methods.loadCssModuleDataFile = function () {
   //    self["stylesMeta"] = JSON.parse(rawData)
   //    console.log("THE CSS FILE IS LOADED",self.stylesMeta)
   //  })
+};
+
+methods.recursivelyRemoveChildren = function (childrenParent, imports) {
+  const self = this;
+  let children = childrenParent.children;
+  let childrenKeys = Object.keys(children);
+  console.log("CHILDREN PARENT", childrenParent);
+  childrenKeys.forEach((childKey) => {
+    console.log("CHILDREN.KEY.FOREACH", childKey);
+    if (imports[children[childKey].path]?.children) {
+      self.recursivelyRemoveChildren(imports[children[childKey].path], imports);
+    }
+    //  console.log("DELETE CHILD KEY", childKey)
+    //  let childPathAsID = imports[children[childKey].path].pathAsShortID
+    //  console.log("CHILD PATH AS ID", childPathAsID)
+
+    delete imports[children[childKey].path];
+    //  delete imports[childrenParent.selfReferencePath].children[childPathAsID]
+  });
 };
 
 export default methods;

@@ -1735,6 +1735,7 @@ const updateDomBySelectorRemoveProps = function (selectorCss) {
 const updateDomByFileRemoval = function (removals) {
   setTargetStylesheet();
   for (let removeItem = 0; removeItem < removals.length; removeItem++) {
+    setTargetStylesheet();
     let regex = new RegExp(removals[removeItem], "gim");
     console.log(
       "THE NEW ITEM",
@@ -1750,17 +1751,25 @@ const updateDomByFileRemoval = function (removals) {
 const updateDomByFileAddition = function (additions) {
   setTargetStylesheet();
   for (let addItem = 0; addItem < additions.length; addItem++) {
-    let regex = new RegExp(additions[addItem].addPattern, "gim");
-    console.log(
-      "NEW FILE TEXT MATCHED",
-      regex.test(additions[addItem].addString)
-    );
-    TARGET_UPDATE_STYLESHEET.ownerNode.textContent =
-      TARGET_UPDATE_STYLESHEET.ownerNode.textContent.replace(
-        regex,
-        additions[addItem].addString
+    setTargetStylesheet();
+    if (additions[addItem].addPattern !== undefined) {
+      let regex = new RegExp(additions[addItem].addPattern, "gim");
+      console.log(
+        "NEW FILE TEXT MATCHED",
+        regex.test(additions[addItem].addString)
       );
-    console.log("THE MODIFIED TEXT", TARGET_UPDATE_STYLESHEET.ownerNode);
+      TARGET_UPDATE_STYLESHEET.ownerNode.textContent =
+        TARGET_UPDATE_STYLESHEET.ownerNode.textContent.replace(
+          regex,
+          additions[addItem].addString
+        );
+      console.log("THE MODIFIED TEXT", TARGET_UPDATE_STYLESHEET.ownerNode);
+    } else {
+      console.log("NEW PARENT ADDITION");
+      TARGET_UPDATE_STYLESHEET.ownerNode.textContent =
+        additions[addItem].addString +
+        TARGET_UPDATE_STYLESHEET.ownerNode.textContent;
+    }
   }
 
   //  let classList = SUKU.get_class_list(classElements)

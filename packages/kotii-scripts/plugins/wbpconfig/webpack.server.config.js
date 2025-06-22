@@ -150,9 +150,9 @@ export default (options) => {
           `${kotiiRootPath}`,
           "webpack-loaders/syncAssetsLoader.cjs"
         ),
-        "kotii-styles-hmr-loader": path.resolve(
+        "sync-styles-loader": path.resolve(
           `${kotiiRootPath}`,
-          "webpack-loaders/handleStylesLoader.cjs"
+          "webpack-loaders/syncStylesLoader.cjs"
         ),
         // "kotii-eslint-loader": path.resolve(
         //   `${kotiiRootPath}`,
@@ -279,7 +279,7 @@ export default (options) => {
           test: /\.(css|sass|scss|less|styl)$/i,
           use: [
             {
-              loader: "kotii-styles-hmr-loader",
+              loader: "sync-styles-loader",
               options: {
                 referenceAssetsPath: `${kotiiKotiiLandPath}/dev`,
                 assetsFile: "styles-css-modules.json",

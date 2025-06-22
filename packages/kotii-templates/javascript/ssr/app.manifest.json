@@ -3,6 +3,10 @@
     "type": "ssr",
     "stateVendor": "redux"
   },
+  "appStyles": {
+    "styleType": "external",
+    "fileName": "styles.css"
+  },
   "useHttps": true,
   "useCustomDomain": true,
   "useSetPort": true,
