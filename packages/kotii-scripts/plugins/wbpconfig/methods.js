@@ -1,4 +1,5 @@
 const methods = {};
+const MATCH_REMOTE_RESOURCE_REGEX = /(https|http):+\/\//i;
 import fs from "fs";
 import path from "path";
 import WebSocket, { WebSocketServer } from "ws";
@@ -954,33 +955,41 @@ methods.doImportsCssUpdates = async function (
       inputBeforeAst: updateAst,
     };
     importRemovals.forEach((toRemoveKey) => {
-      let escapedFileName = toRemoveKey.replace(/[^a-zA-Z0-9]/g, "\\$&");
-      let regexString = `${preRegexLeftPattern}${escapedFileName}${preRegexRightPattern}`;
-      content.removeImportsUpdate.push(regexString);
-      // let IMPORT_FILE_TEXT_REGEX = new RegExp(regexString,"gim")
-      // console.log("THE IMPORT REGEX", IMPORT_FILE_TEXT_REGEX)
-      // console.log("THE MATCHED INFO", matchedInfo)
-      let removePath = matchedInfo.children[toRemoveKey].path;
-      let toRemoveObject = imports[removePath];
-      // console.log("THE PATH", removePath)
-      // console.log("JSON.STRINGIFYIED", JSON.stringify(imports))
-      // console.log("IMPORTS",imports,removePath)
-      // let testSTring = matchedInfo.inputAfter
-      // console.log("THE TEST STRING", testSTring)
-      // console.log("Results of checking string",IMPORT_FILE_TEXT_REGEX.test(testSTring))
-      // console.log("Results of checking string.replaced",testSTring.replace(IMPORT_FILE_TEXT_REGEX,""))
-      console.log("THE OBJECT TO REMOVE", toRemoveObject);
+      if (!MATCH_REMOTE_RESOURCE_REGEX.test(toRemoveKey)) {
+        let escapedFileName = toRemoveKey.replace(/[^a-zA-Z0-9]/g, "\\$&");
+        let regexString = `${preRegexLeftPattern}${escapedFileName}${preRegexRightPattern}`;
+        content.removeImportsUpdate.push(regexString);
+        // let IMPORT_FILE_TEXT_REGEX = new RegExp(regexString,"gim")
+        // console.log("THE IMPORT REGEX", IMPORT_FILE_TEXT_REGEX)
+        // console.log("THE MATCHED INFO", matchedInfo)
+        let removePath = matchedInfo.children[toRemoveKey].path;
+        let toRemoveObject = imports[removePath];
+        // console.log("THE PATH", removePath)
+        // console.log("JSON.STRINGIFYIED", JSON.stringify(imports))
+        // console.log("IMPORTS",imports,removePath)
+        // let testSTring = matchedInfo.inputAfter
+        // console.log("THE TEST STRING", testSTring)
+        // console.log("Results of checking string",IMPORT_FILE_TEXT_REGEX.test(testSTring))
+        // console.log("Results of checking string.replaced",testSTring.replace(IMPORT_FILE_TEXT_REGEX,""))
+        console.log("THE OBJECT TO REMOVE", toRemoveObject);
 
-      self.removeOutdatedCssFile(
-        imports[matchedInfo.selfReferencePath],
-        toRemoveObject,
-        "",
-        toRemoveObject.pathAsShortID,
-        imports,
-        regexPatterns
-      );
-      delete matchedInfo.children[toRemoveKey];
-      delete imports[removePath];
+        self.removeOutdatedCssFile(
+          imports[matchedInfo.selfReferencePath],
+          toRemoveObject,
+          "",
+          toRemoveObject.pathAsShortID,
+          imports,
+          regexPatterns
+        );
+        delete matchedInfo.children[toRemoveKey];
+        delete imports[removePath];
+      } else {
+        let urlEscaped = toRemoveKey.replace(/[^a-zA-Z0-9]/g, "\\$&");
+        let regexString = `(\\s\\n\\r)*@import\\s*url\\(.*(${urlEscaped})["']\\)[;\\s]`;
+        console.log("REMOVING URL BASED STRING", toRemoveKey, urlEscaped);
+        content.removeImportsUpdate.push(regexString);
+        return imports;
+      }
     });
     if (!matchedInfo?.parent && Object.keys(matchedInfo.children).length <= 0) {
       return { isNull: true };
@@ -990,7 +999,33 @@ methods.doImportsCssUpdates = async function (
 
   if (newImports) {
     // for(let newImport in newImports){
+
     if (!content?.addImportsUpdate) content["addImportsUpdate"] = [];
+    let newImportsKeys = Object.keys(newImports);
+    let remoteImports = newImportsKeys.filter((key) => {
+      console.log("NEW IMPORTS FILTER ITEM", key);
+      console.log("FILTER ITEM REGEX", MATCH_REMOTE_RESOURCE_REGEX.test(key));
+      if (MATCH_REMOTE_RESOURCE_REGEX.test(key)) return true;
+    });
+    console.log("NEW IMPORTS KEYS", newImportsKeys);
+    console.log("FILTERED REMOTE", remoteImports);
+    if (remoteImports && remoteImports.length >= 0) {
+      console.log("THE NEW IMPORTS KEYS is url");
+      imports[matchedInfo.selfReferencePath].inputBefore = currentFileInput;
+      imports[matchedInfo.selfReferencePath].inputBeforeAst = updateAst;
+      let remoteImportsSting = "";
+      remoteImports.forEach((remoteImport) => {
+        remoteImportsSting = `${remoteImportsSting} @import ${remoteImport}\n`;
+      });
+      content.addImportsUpdate.push({
+        addString: remoteImportsSting,
+        addCssToParentStart: true,
+      });
+
+      if (newImportsKeys.length === remoteImports.length) {
+        return imports;
+      }
+    }
     console.log("THE CURRENT FILE INPUT", currentFileInput);
     console.log("ELEMENT BEFORE", JSON.stringify(matchedInfo));
 
