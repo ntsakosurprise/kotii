@@ -487,10 +487,14 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
           const matchedInfo = possibleMatch.importsMatch
             ? possilbeImports[addPath]
             : moduleInfo;
+
+          self.debug("THE MATCHED INFO", matchedInfo);
           const updatedContentAst = createCssAst([updatedContent]);
           const currentOriginalAst = possibleMatch.importsMatch
             ? matchedInfo.inputBeforeAst
-            : matchedInfo.currentOriginalAst;
+            : matchedInfo?.currentOriginalAst
+            ? matchedInfo.currentOriginalAst
+            : matchedInfo.cssAst;
 
           compareCss(currentOriginalAst, updatedContentAst).then(
             async (compareResults) => {
@@ -531,9 +535,16 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
                 JSON.stringify(updatedImports)
               );
 
-              if (possibleMatch?.importsMatch) {
+              if (
+                possibleMatch?.importsMatch ||
+                (!possibleMatch?.importsMatch && updatedImports)
+              ) {
                 if (updatedImports) {
-                  stylesMeta[currentMetaKey].imports = { ...updatedImports };
+                  if (!updatedImports?.isNull) {
+                    stylesMeta[currentMetaKey].imports = { ...updatedImports };
+                  } else {
+                    stylesMeta[currentMetaKey]["imports"] = null;
+                  }
                 } else {
                   stylesMeta[currentMetaKey].imports[addPath] = {
                     ...matchedInfo,
@@ -545,6 +556,7 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
                 stylesMeta[currentMetaKey].currentOriginalAst =
                   updatedContentAst;
               }
+              console.log("THE STYLES META KEY", stylesMeta[currentMetaKey]);
 
               // possibleMatch?.importsMatch
               // ? updatedImports ? stylesMeta[currentMetaKey].imports = {...updatedImports} :  stylesMeta[currentMetaKey].imports[addPath].inputBeforeAst = updatedContentAst
@@ -929,6 +941,7 @@ methods.doImportsCssUpdates = async function (
   const { importsUpdates } = update;
   const { importRemovals = null, newImports = null } = importsUpdates;
   console.log("THE IMPORT REMOVALS", importRemovals);
+  console.log("THE NEW IMPORTS", newImports);
 
   if (importRemovals) {
     console.log("Import removals");
@@ -960,13 +973,18 @@ methods.doImportsCssUpdates = async function (
 
       self.removeOutdatedCssFile(
         imports[matchedInfo.selfReferencePath],
+        toRemoveObject,
         "",
         toRemoveObject.pathAsShortID,
         imports,
         regexPatterns
       );
+      delete matchedInfo.children[toRemoveKey];
       delete imports[removePath];
     });
+    if (!matchedInfo?.parent && Object.keys(matchedInfo.children).length <= 0) {
+      return { isNull: true };
+    }
   }
   // console.log("THE CONTENT AFTER ALL", content)
 
@@ -974,41 +992,104 @@ methods.doImportsCssUpdates = async function (
     // for(let newImport in newImports){
     if (!content?.addImportsUpdate) content["addImportsUpdate"] = [];
     console.log("THE CURRENT FILE INPUT", currentFileInput);
+    console.log("ELEMENT BEFORE", JSON.stringify(matchedInfo));
 
-    let mergeResults = await mergeCssFiles(currentFileInput, {
-      parent: matchedInfo?.parent || null,
-      pathAsShortID: matchedInfo.pathAsShortID,
-      shouldWrapFile: true,
-      // selfReferencePath: matchedInfo.selfReferencePath,
-      pathContext: {
-        fileFullPath: matchedInfo.selfReferencePath,
-      },
-    });
+    let mergeResults = await mergeCssFiles(
+      currentFileInput,
+      !imports
+        ? matchedInfo
+        : {
+            parent: matchedInfo?.parent || null,
+            pathAsShortID: matchedInfo.pathAsShortID,
+            shouldWrapFile: matchedInfo?.pathAsShortID ? true : null,
+            // selfReferencePath: matchedInfo.selfReferencePath,
+            pathContext: {
+              fileFullPath: matchedInfo.selfReferencePath,
+            },
+          }
+    );
+
+    if (!imports) {
+      console.log("NO IMPORTS MERGE RESULTS", mergeResults);
+      imports = { ...mergeResults.imports };
+      content.addImportsUpdate.push({
+        addString: mergeResults.input,
+        addCssToParentStart: true,
+      });
+
+      return imports;
+    }
     imports = { ...imports, ...mergeResults.imports };
+    console.log("THE MATCHED IMPORTS", matchedInfo);
+    console.log("THE MERGE RESULTS", mergeResults.imports);
 
-    let updateImportsParent = imports[matchedInfo.parent.path];
-    self.syncContentToParents(
-      updateImportsParent,
-      imports[matchedInfo.selfReferencePath].inputAfter,
-      matchedInfo.pathAsShortID,
-      imports,
-      regexPatterns
-    );
-    console.log("THE IMPORTS AS", imports[matchedInfo.parent.path]);
-    console.log("THE MERGE RESULTS", mergeResults);
-    // let sendKeys = Object.keys(mergeResults.imports)
-    console.log("THE PARENT UPDATE IMPORT", updateImportsParent);
-    console.log("THE IMPORTS WITH POTENTIAL UPDATES", imports);
+    let updateImportsParent = matchedInfo?.parent
+      ? imports[matchedInfo.parent.path]
+      : null;
+    if (updateImportsParent) {
+      self.syncContentToParents(
+        updateImportsParent,
+        imports[matchedInfo.selfReferencePath].inputAfter,
+        matchedInfo.pathAsShortID,
+        imports,
+        regexPatterns
+      );
+      let updatesImportsParentID = null;
+      let addCssToParentStart = false;
+      console.log("THE IMPORTS AS", imports[matchedInfo.parent.path]);
+      console.log("THE MERGE RESULTS", mergeResults);
+      // let sendKeys = Object.keys(mergeResults.imports)
+      console.log("THE PARENT UPDATE IMPORT", updateImportsParent);
+      console.log("THE IMPORTS WITH POTENTIAL UPDATES", imports);
 
-    let updatesImportsParentID = updateImportsParent.pathAsShortID.replace(
-      /[^a-zA-Z0-9]/g,
-      "\\$&"
-    );
-    let regexString = `${preRegexLeftPattern}${updatesImportsParentID}${preRegexRightPattern}`;
-    content.addImportsUpdate.push({
-      addString: updateImportsParent.inputAfter,
-      addPattern: regexString,
-    });
+      if (updateImportsParent?.pathAsShortID) {
+        updatesImportsParentID = updateImportsParent.pathAsShortID.replace(
+          /[^a-zA-Z0-9]/g,
+          "\\$&"
+        );
+      } else {
+        if (
+          updateImportsParent.inputAfter.indexOf(matchedInfo.pathAsShortID) >= 0
+        ) {
+          updatesImportsParentID = matchedInfo.pathAsShortID.replace(
+            /[^a-zA-Z0-9]/g,
+            "\\$&"
+          );
+        } else {
+          addCssToParentStart = true;
+        }
+      }
+      let regexString = !addCssToParentStart
+        ? `${preRegexLeftPattern}${updatesImportsParentID}${preRegexRightPattern}`
+        : null;
+      content.addImportsUpdate.push({
+        addString: updateImportsParent.inputAfter,
+        addPattern: regexString,
+        addCssToParentStart,
+      });
+    } else {
+      console.log("ADD TO PARENT FRONT");
+      let oldChildren = Object.keys(matchedInfo.children);
+      let newChildren = Object.keys(
+        imports[matchedInfo.selfReferencePath].children
+      );
+      console.log("OLD KIDS", oldChildren);
+      console.log("NEW KIDS", newChildren);
+
+      let newChildrenKeys = newChildren.filter(
+        (item) => !oldChildren.includes(item)
+      );
+      console.log("NEW CHILDREN KEYS", newChildrenKeys);
+      newChildrenKeys.forEach((childKey) => {
+        let keyPathInParent =
+          imports[matchedInfo.selfReferencePath].children[childKey].path;
+        content.addImportsUpdate.push({
+          addString: imports[keyPathInParent].inputAfter,
+          addCssToParentStart: true,
+        });
+      });
+    }
+
     //}
   }
   return imports;
@@ -1074,12 +1155,12 @@ methods.checkMatchType = function (pathContext, imports, addPath) {
   const self = this;
   let matchType = {};
 
-  if (pathContext.fileFullPath === addPath) {
-    matchType["pathMatched"] = true;
-    matchType["importsMatch"] = false;
-  } else if (imports && imports[addPath]) {
+  if (imports && imports[addPath]) {
     matchType["pathMatched"] = true;
     matchType["importsMatch"] = true;
+  } else if (pathContext.fileFullPath === addPath) {
+    matchType["pathMatched"] = true;
+    matchType["importsMatch"] = false;
   } else {
     matchType["pathMatched"] = false;
   }
@@ -1131,6 +1212,7 @@ methods.syncContentToParents = function (
 };
 methods.removeOutdatedCssFile = function (
   syncFile,
+  toRemove,
   replaceString,
   replaceName,
   imports,
@@ -1141,6 +1223,8 @@ methods.removeOutdatedCssFile = function (
   console.log("THE SYNC FILE", syncFile);
   console.log("THE REPLACE STRING", replaceString);
   console.log("FILE NAME IS", syncFile?.pathAsShortID);
+  console.log("THE PATTERns", patterns);
+  console.log("TO REMOVE OBJECT", toRemove);
 
   const { preRegexLeftPattern, preRegexRightPattern } = patterns;
 
@@ -1160,9 +1244,14 @@ methods.removeOutdatedCssFile = function (
 
   imports[syncFile.selfReferencePath].inputAfter = syncFile.inputAfter;
 
+  if (toRemove.children) {
+    self.recursivelyRemoveChildren(toRemove, imports);
+  }
+
   if (syncFile?.parent) {
     self.removeOutdatedCssFile(
       imports[syncFile.parent.path],
+      toRemove,
       "",
       replaceName,
       imports,
@@ -1185,6 +1274,25 @@ methods.loadCssModuleDataFile = function () {
   //    self["stylesMeta"] = JSON.parse(rawData)
   //    console.log("THE CSS FILE IS LOADED",self.stylesMeta)
   //  })
+};
+
+methods.recursivelyRemoveChildren = function (childrenParent, imports) {
+  const self = this;
+  let children = childrenParent.children;
+  let childrenKeys = Object.keys(children);
+  console.log("CHILDREN PARENT", childrenParent);
+  childrenKeys.forEach((childKey) => {
+    console.log("CHILDREN.KEY.FOREACH", childKey);
+    if (imports[children[childKey].path]?.children) {
+      self.recursivelyRemoveChildren(imports[children[childKey].path], imports);
+    }
+    //  console.log("DELETE CHILD KEY", childKey)
+    //  let childPathAsID = imports[children[childKey].path].pathAsShortID
+    //  console.log("CHILD PATH AS ID", childPathAsID)
+
+    delete imports[children[childKey].path];
+    //  delete imports[childrenParent.selfReferencePath].children[childPathAsID]
+  });
 };
 
 export default methods;

@@ -67,6 +67,7 @@ class WebpackConfig {
     this.syncContentToParents = methods.syncContentToParents;
     this.removeOutdatedCssFile = methods.removeOutdatedCssFile;
     this.loadCssModuleDataFile = methods.loadCssModuleDataFile;
+    this.recursivelyRemoveChildren = methods.recursivelyRemoveChildren;
   }
 }
 export default WebpackConfig;
