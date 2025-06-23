@@ -947,7 +947,7 @@ const storeFileModuleSpecifier = (pathContext) => {
   };
 };
 
-const processImageFiles = (fullUrl, filename, fileExtension) => {
+export const processImageFiles = (fullUrl, filename, fileExtension) => {
   console.log("META.FILELOADER", meta);
   let fileLoaderConfig =
     meta && meta.fileLoader ? meta.fileLoader : FILE_LOADER_DEFAULT;
