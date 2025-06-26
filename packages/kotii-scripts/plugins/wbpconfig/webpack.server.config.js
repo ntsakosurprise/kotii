@@ -396,18 +396,34 @@ export default (options) => {
       ),
       new CopyAssetsWebpackPlugin(
         {
-          referenceAssetsPath: kotiiKotiiLandPath,
-          kotiiRootPath: kotiiRootPath,
-          assetsFile: "assets.manifest.json",
-          fileFormat: "json",
-          extra: {
-            inline: options.inline,
-            emitFile: true,
-            emitPath:
-              options?.build && options.build
-                ? options.staticFolder
-                : `${env.appBuildFolder}`,
-          },
+          files: [
+            {
+              referenceAssetsPath: kotiiKotiiLandPath,
+              kotiiRootPath: kotiiRootPath,
+              assetsFile: "assets.manifest.json",
+              fileFormat: "json",
+              extra: {
+                inline: options.inline,
+                emitFile: true,
+                emitPath:
+                  options?.build && options.build
+                    ? options.staticFolder
+                    : `${env.appBuildFolder}`,
+              },
+            },
+            {
+              fileEmitter: options.appManifest?.appStyles
+                ? options.createCssStyles
+                : false,
+              extra: {
+                build:
+                  options?.build && options.build
+                    ? options.staticFolder
+                    : `${env.appBuildFolder}`,
+                appStyles: options?.appManifest?.appStyles || null,
+              },
+            },
+          ],
         },
         loggas
       ),
