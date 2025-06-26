@@ -427,15 +427,21 @@ methods.doKotiiStyles = function () {
   const jsonStyles = fs.existsSync(
     `${kotiiKotiiLandPath}${path.sep}dev/styles.json`
   )
-    ? JSON.parse(
-        fs.readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`)
-      )
+    ? !process?.useLinkStyleTag
+      ? JSON.parse(
+          fs.readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`)
+        )
+      : true
     : null;
-  self.styleTags = jsonStyles
-    ? `<style id="styles-tag">${jsonStyles
-        .toString()
-        .replaceAll(",", " ")}</style>`
-    : "";
+
+  if (!jsonStyles) return null;
+  if (process?.useLinkStyleTag) {
+    self.styleTags = `<link rel="stylesheet" id="styles-tag" type="text/css" href="/${process.styleSheetName}">`;
+  } else {
+    self.styleTags = `<style id="styles-tag">${jsonStyles
+      .toString()
+      .replaceAll(",", " ")}</style>`;
+  }
 };
 
 // methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
