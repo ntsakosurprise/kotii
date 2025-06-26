@@ -12,6 +12,7 @@ module.exports = async function (jsFilleContent, map) {
     return asyncCallback(null, jsFilleContent);
   try {
     if (!esLinter) esLinter = await createLinter(options);
+    console.log("ESLINT LINTER", esLinter);
     const lintResults = await esLinter.linter.lintFiles([this.resource]);
     const resultText = esLinter.formatter.format(lintResults);
 
