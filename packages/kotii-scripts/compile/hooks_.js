@@ -308,7 +308,7 @@ export async function resolve(specifier, context, nextResolve) {
   named "AppGlobals" that should resolve to the exact location of the file/module
  
  */
-const resolveAliasedImports = (specifier) => {
+export const resolveAliasedImports = (specifier) => {
   if (!isBuiltin(specifier) && doMeta(specifier)) {
     let specifierAlias = meta.aliases[specifier];
     loggas.resolve.debug("SPECIAL ALIAS", specifier, specifierAlias);
@@ -365,7 +365,7 @@ const resolveAliasedImports = (specifier) => {
  * development
  *
  */
-const resolveKotiiLandImports = (specifier) => {
+export const resolveKotiiLandImports = (specifier) => {
   if (!isBuiltin(specifier) && /\.kotii-land\/(pages|routes)/.test(specifier)) {
     loggas.resolve.debug("THE PAGES PATH KOTII LAND PATH");
     let basePath = getPagesBasePath(specifier);
@@ -399,7 +399,7 @@ const resolveKotiiLandImports = (specifier) => {
  * to re-look this approach and resolve the pages imports better.
  *
  */
-const resolvePagesImports = (specifier) => {
+export const resolvePagesImports = (specifier) => {
   loggas.resolve.debug("THE PAGES IMPORT", specifier);
   if (!isBuiltin(specifier) && /^\/src\//.test(specifier)) {
     loggas.resolve.debug("THE SPECIFIER FOR PAGES PATH", specifier);
@@ -436,7 +436,7 @@ const resolvePagesImports = (specifier) => {
  * use nodejs' default resolve hook.
  *
  */
-const resolveKotiiScriptsImports = (specifier) => {
+export const resolveKotiiScriptsImports = (specifier) => {
   loggas.resolve.debug(
     "KOTII SCRIPTS IMPORTS",
     specifier,
@@ -476,7 +476,7 @@ const resolveKotiiScriptsImports = (specifier) => {
  * development time. This is mainly done for modules in /kotii-land
  *
  */
-const resolveKotiiScriptsInternalImports = (specifier) => {
+export const resolveKotiiScriptsInternalImports = (specifier) => {
   if (!isBuiltin(specifier) && /^\/kotii-land/.test(specifier)) {
     // console.log("THE SPECIFIER FOR KOTII-SCRIPTS PATH", specifier);
     // let kotiiExportsPath = fs.existsSync(path.join(workdir, "node_modules"))
@@ -522,7 +522,7 @@ const resolveKotiiScriptsInternalImports = (specifier) => {
  * the current user's enviroment.
  *
  */
-const resolveKotiiUserApiPlugins = (specifier) => {
+export const resolveKotiiUserApiPlugins = (specifier) => {
   if (!isBuiltin(specifier) && /^\/kotii-user-api/.test(specifier)) {
     let basePath = getPagesBasePath();
     loggas.resolve.debug("API PLUGINS PATH", basePath);
@@ -539,7 +539,7 @@ const resolveKotiiUserApiPlugins = (specifier) => {
   }
 };
 
-const resolveUserlandImports = (specifier) => {
+export const resolveUserlandImports = (specifier) => {
   loggas.resolve.debug("KOTII LAND USER LAND", specifier);
   if (!isBuiltin(specifier) && /^\/kotii-user-land-aliase\//.test(specifier)) {
     loggas.resolve.debug("THE SPECIFIER FOR PAGES PATH", specifier);
@@ -575,7 +575,7 @@ const resolveUserlandImports = (specifier) => {
   }
 };
 
-const guessPathExtension = (guessPath) => {
+export const guessPathExtension = (guessPath) => {
   console.log("THE GUESS PATH", guessPath);
 
   let livingExtension = guessPath;
@@ -604,7 +604,7 @@ const guessPathExtension = (guessPath) => {
  *
  */
 
-const getPagesBasePath = () => {
+export const getPagesBasePath = () => {
   let nodeModulesPath = `${path.join(workdir, "node_modules")}`;
   let kotiiPath = `${path.join(workdir, "..")}`;
 
@@ -626,7 +626,7 @@ const getPagesBasePath = () => {
  * contains information about the user's project configurations. This configuration may include `aliases`
  * key that maps a name and an absolute path that should be resolved to some file(s)
  */
-const doMeta = (specifier) => {
+export const doMeta = (specifier) => {
   if (meta && meta?.aliases) {
     return meta.aliases[specifier];
   } else {
@@ -634,7 +634,7 @@ const doMeta = (specifier) => {
   }
 };
 
-const loadMeta = () => {
+export const loadMeta = () => {
   loggas.resolve.debug("LOAD META CALLED");
   let metaPath = path.resolve(workdir, "app.manifest.json");
 
@@ -649,7 +649,7 @@ const loadMeta = () => {
   }
 };
 
-const saveKotiiAssetsMeta = () => {
+export const saveKotiiAssetsMeta = () => {
   let metaPath = path.resolve(kotiiKotiiLandPath, "assets.manifest.json");
 
   fs.writeFileSync(metaPath, JSON.stringify(kotiiAssetsMeta, null, 2));
@@ -657,7 +657,7 @@ const saveKotiiAssetsMeta = () => {
   // metaChecked = true;
 };
 
-const doInlinedPngs = (fileUrl, fName) => {
+export const doInlinedPngs = (fileUrl, fName) => {
   loggas.load.debug("DO PNG GETS A CALL", fileUrl);
   if (meta && meta.useInlinedPngs) {
     let pngContent = fs.readFileSync(fileUrl, { encoding: "base64" });
@@ -873,7 +873,7 @@ const getCss = async (fileUrl, fName) => {
   return `export default ${JSON.stringify(modulesResult.cssModules.modules)}`;
 };
 
-const saveStyles = (styles) => {
+export const saveStyles = (styles) => {
   console.log("MANIPULATE STYLES, PATH TO STYLES", JSON_STYLES_PATH);
 
   let json = null;
@@ -899,7 +899,7 @@ const saveStyles = (styles) => {
   });
 };
 
-const saveCssModulesMap = (id, idModules) => {
+export const saveCssModulesMap = (id, idModules) => {
   console.log("css modules map", id, JSON_STYLES_MAP_PATH);
 
   let json = null;
@@ -931,7 +931,7 @@ const saveCssModulesMap = (id, idModules) => {
   fs.writeFileSync(JSON_STYLES_MAP_PATH, JSON.stringify(newJson, null, 2));
 };
 
-const storeCssModuleSpecifier = (pathContext) => {
+export const storeCssModuleSpecifier = (pathContext) => {
   console.log("THE PATH CONTEXT", pathContext);
   MODULES_SPECIFIERS[pathContext.fileFullPath] = {
     shortName: pathContext.fileUserRequest,
@@ -940,7 +940,7 @@ const storeCssModuleSpecifier = (pathContext) => {
   loggas.resolve.debug("THE MODULES SPECIFIER", MODULES_SPECIFIERS);
 };
 
-const storeFileModuleSpecifier = (pathContext) => {
+export const storeFileModuleSpecifier = (pathContext) => {
   MODULES_FILE_SPECIFIER[pathContext.fileFullPath] = {
     shortName: pathContext.fileUserRequest,
     pathContext,
