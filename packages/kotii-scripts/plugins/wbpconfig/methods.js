@@ -22,10 +22,12 @@ methods.handleWebpackConfig = function (data) {
     useCustomDomain = false,
     useHttps = false,
     useAsDefaultPage = "/",
+    appStyles = null,
   } = contextApp.appManifest;
   self.debug("WEBPACK DATA PAYLOAD", data.payload.build);
   // self.debug("SELF. AFTER SETTING CALLBACK", self);
   // self.debug("THE NODE ENV", process.env.NODE_ENV);
+
   if (!fs.existsSync(contextApp.appSsl) && useHttps) {
     // if (
     //   !self.checkIfIsFile(
@@ -179,6 +181,7 @@ methods.configureWebPack = function (
         ? contextApp.appManifest.fileLoader.inline
         : false,
     runOnceDone: self.runOnceDone.bind(self),
+    createCssStyles: self.createCssStyles.bind(self),
   });
 
   self.debug("PROCESS.ENV", process.env);
@@ -1328,6 +1331,34 @@ methods.recursivelyRemoveChildren = function (childrenParent, imports) {
     delete imports[children[childKey].path];
     //  delete imports[childrenParent.selfReferencePath].children[childPathAsID]
   });
+};
+
+methods.createCssStyles = async function (appStyles, appBuildFolder) {
+  const self = this;
+  let useTagKeys = ["style", "link"];
+  if (!appStyles?.useTag)
+    throw new Error("app.manifest.appStyles expects useTag key");
+  if (typeof appStyles.useTag !== "string")
+    throw new Error("app.manifest.appStyles should be a string");
+  if (typeof appStyles.useTag !== "string")
+    throw new Error("app.manifest.appStyles should be a string");
+  if (!useTagKeys.includes(appStyles.useTag.toLowerCase()))
+    throw new Error(
+      "app.manifest.appStyles.useTag should be either a link or style value"
+    );
+  if (appStyles.useTag.toLowerCase() == "link") {
+    let stylesPath = `${kotiiKotiiLandPath}/dev/styles.json`;
+    let fileName = appStyles?.fileName ? appStyles.fileName : "style.css";
+    process["useLinkStyleTag"] = true;
+    process["styleSheetName"] = fileName;
+
+    let stylesString = JSON.parse(
+      fs.readFileSync(stylesPath, { encoding: "utf-8" })
+    )
+      .toString()
+      .replaceAll(",", " ");
+    fs.writeFileSync(`${appBuildFolder}/${fileName}`, stylesString);
+  }
 };
 
 export default methods;
