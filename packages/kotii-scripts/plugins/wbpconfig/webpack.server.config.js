@@ -146,13 +146,13 @@ export default (options) => {
     },
     resolveLoader: {
       alias: {
-        "syncAssets-loader": path.resolve(
+        "sync-assets-loader": path.resolve(
           `${kotiiRootPath}`,
-          "webpack-loaders/syncAssetsLoader.cjs"
+          "webpack-loaders/sync-assets-loader/index.cjs"
         ),
-        "sync-styles-loader": path.resolve(
+        "sync-css-modules-loader": path.resolve(
           `${kotiiRootPath}`,
-          "webpack-loaders/syncStylesLoader.cjs"
+          "webpack-loaders/sync-css-modules-loader/index.cjs"
         ),
         // "kotii-eslint-loader": path.resolve(
         //   `${kotiiRootPath}`,
@@ -162,10 +162,10 @@ export default (options) => {
         //   `${kotiiRootPath}`,
         //   "webpack-loaders/prettier-loader/index.cjs"
         // ),
-        // "kotii-postcss-loader": path.resolve(
-        //   `${kotiiRootPath}`,
-        //   "webpack-loaders/postcss-loader/index.cjs"
-        // ),
+        "kotii-postcss-loader": path.resolve(
+          `${kotiiRootPath}`,
+          "webpack-loaders/postcss-loader/index.cjs"
+        ),
         "kotii-add-hot-loader": path.resolve(
           `${kotiiRootPath}`,
           "webpack-loaders/add-hot-loader/index.cjs"
@@ -279,7 +279,7 @@ export default (options) => {
           test: /\.(css|sass|scss|less|styl)$/i,
           use: [
             {
-              loader: "sync-styles-loader",
+              loader: "sync-css-modules-loader",
               options: {
                 referenceAssetsPath: `${kotiiKotiiLandPath}/dev`,
                 assetsFile: "styles-css-modules.json",
@@ -294,14 +294,14 @@ export default (options) => {
             //     fileFormat: "json",
             //   },
             // },
-            // {
-            //   loader: "kotii-postcss-loader",
-            //   options: {
-            //     tailwindConfig: `${kotiiRootPath}/webpack-loaders/postcss-loader/tailwind.config.cjs`,
-            //     contentPath: env.appSrc,
-            //     mainCssFilename: "global.css",
-            //   },
-            // },
+            {
+              loader: "kotii-postcss-loader",
+              options: {
+                tailwindConfig: `${kotiiRootPath}/webpack-loaders/postcss-loader/tailwind.config.cjs`,
+                contentPath: env.appSrc,
+                mainCssFilename: "global.css",
+              },
+            },
           ],
         },
         {
@@ -316,7 +316,7 @@ export default (options) => {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
           use: [
             {
-              loader: "syncAssets-loader",
+              loader: "sync-assets-loader",
               options: {
                 referenceAssetsPath: kotiiKotiiLandPath,
                 assetsFile: "assets.manifest.json",

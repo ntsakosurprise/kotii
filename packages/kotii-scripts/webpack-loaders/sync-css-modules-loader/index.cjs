@@ -2,11 +2,7 @@ const path = require("path");
 const fs = require("fs");
 let assetsManifestData = null;
 
-module.exports = function (cssContent) {
-  console.log(
-    "SyncStylesLoader context",
-    this._module.resourceResolveData.relativePath
-  );
+module.exports = function () {
   const relativeFilePath = this._module.resourceResolveData.relativePath;
   let options = this.getOptions();
 
@@ -25,7 +21,6 @@ module.exports = function (cssContent) {
   }
 
   let content = getFileContent(relativeFilePath);
-  console.log("THE CONTENT", content);
 
   return `export default ${JSON.stringify(content)}`;
 

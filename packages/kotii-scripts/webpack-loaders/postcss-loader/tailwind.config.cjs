@@ -1,6 +1,3 @@
-// module.exports = (tailwindCompileFiles) => {
-//   return
-// };
 const path = require("path");
 
 module.exports = function (content) {
