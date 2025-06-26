@@ -2,6 +2,7 @@ const fs = require("fs");
 module.exports = function (content) {
   try {
     let options = this.getOptions();
+
     if (options.entryFile === this.resource) {
       const jsFile = fs.readFileSync(this.resource);
       const newSource = `${jsFile}
