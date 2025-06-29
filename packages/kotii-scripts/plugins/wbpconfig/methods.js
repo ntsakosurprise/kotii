@@ -942,6 +942,7 @@ methods.doImportsCssUpdates = async function (
   if (importRemovals) {
     console.log("Import removals");
     console.log("THE IMPORTS", imports);
+    let buildForCssFile = [];
     if (!content?.removeImportsUpdate) content["removeImportsUpdate"] = [];
 
     // update the object that represents the current file new content and ast object.
@@ -967,6 +968,14 @@ methods.doImportsCssUpdates = async function (
 
         let removePath = matchedInfo.children[toRemoveKey].path; // file path to remove
         let toRemoveObject = imports[removePath]; // object to remove representing some file
+
+        if (process?.useLinkStyleTag) {
+          self.buildListToRemoveOnClient(
+            toRemoveObject,
+            buildForCssFile,
+            imports
+          );
+        }
 
         // Remove outdated css file from the file representer object
         self.removeOutdatedCssFile(
@@ -1451,6 +1460,45 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
       .toString()
       .replaceAll(",", " ");
     fs.writeFileSync(`${appBuildFolder}/${fileName}`, stylesString);
+  }
+};
+
+methods.buildListToRemoveOnClient = function (toBuildFor, built, imports) {
+  const self = this;
+
+  toBuildFor.inputBeforeAst.nodes.forEach((node) => {
+    if (node.type === "rule") {
+      built.push([node.selector]);
+    }
+  });
+
+  if (toBuildFor.children) {
+    toBuildFor.forEach((toBuildForChild) => {
+      let childObject = imports[toBuildForChild.path];
+      self.buildListToRemoveOnClient(childObject, built, imports);
+    });
+  }
+};
+
+methods.buildListToAddOnClient = function (toBuildFor, built, imports) {
+  const self = this;
+
+  toBuildFor.inputBeforeAst.nodes.forEach((node) => {
+    if (node.type === "rule") {
+      let cssRule = `${node.selector} {`;
+      node.nodes.forEach((nestNode) => {
+        cssRule += `${nestNode.prop}: ${nestNode.value} `;
+      });
+      cssRule += "}";
+      built.push(cssRule);
+    }
+  });
+
+  if (toBuildFor.children) {
+    toBuildFor.forEach((toBuildForChild) => {
+      let childObject = imports[toBuildForChild.path];
+      self.buildListToRemoveOnClient(childObject, built, imports);
+    });
   }
 };
 
