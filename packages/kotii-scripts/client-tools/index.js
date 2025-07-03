@@ -1535,6 +1535,7 @@ const SUKU = (function () {
   }; // End of return framework
 })();
 let TARGET_UPDATE_STYLESHEET = null;
+
 // let IMPORT_FILE_TEXT_REGEX = new RegExp(`\/\*\s*(INCLUDED_CSS)_HEAD:\s*(${escapedFileName})\s*\*\/([\S\s]*?)\/\*\s*\1_FOOTER:\s*\2\s(\*\/)$`,"gim")
 const startUpApp = function () {
   // listenToServerEvents()
@@ -1666,6 +1667,10 @@ const beginDomUpdate = function (content) {
       updateDomByFileRemoval(content[contentItem]);
     } else if (contentItem === "addImportsUpdate") {
       updateDomByFileAddition(content[contentItem]);
+    } else if (contentItem === "removeImportCssFile") {
+      updateDomByFileRemovalLinkTag(content[contentItem]);
+    } else if (contentItem === "addImportCssFile") {
+      updateDomByFileAdditionLinkTag(content[contentItem]);
     }
   }
   // if(target === "class-props"){
@@ -1776,6 +1781,32 @@ const updateDomByFileAddition = function (additions) {
   //  console.log("ELEMENTS ATTACHED TO CLASS", classElements)
 };
 
+const updateDomByFileRemovalLinkTag = function (removals) {
+  setTargetStylesheetLink();
+
+  for (let removeItem = 0; removeItem < removals.length; removeItem++) {
+    for (let i = 0; i < TARGET_UPDATE_STYLESHEET.cssRules.length; i++) {
+      const rule = TARGET_UPDATE_STYLESHEET.cssRules[i];
+      if (rule.selectorText === removals[removeItem]) {
+        TARGET_UPDATE_STYLESHEET.deleteRule(i);
+        break;
+      }
+    }
+  }
+};
+
+const updateDomByFileAdditionLinkTag = function (additions) {
+  console.log("ADDITION LINK");
+  setTargetStylesheetLink();
+  for (let addItem = 0; addItem < additions.length; addItem++) {
+    console.log("INSERT RULE", additions[addItem]);
+    TARGET_UPDATE_STYLESHEET.insertRule(
+      additions[addItem],
+      TARGET_UPDATE_STYLESHEET.cssRules.length
+    );
+  }
+};
+
 const setTargetStylesheet = () => {
   if (!TARGET_UPDATE_STYLESHEET || !TARGET_UPDATE_STYLESHEET.ownerNode) {
     let styleSheets = document.styleSheets;
@@ -1784,6 +1815,24 @@ const setTargetStylesheet = () => {
         styleSheets[sheet].ownerNode?.id &&
         styleSheets[sheet].ownerNode.id === "styles-tag"
       ) {
+        TARGET_UPDATE_STYLESHEET = styleSheets[sheet];
+        break;
+      }
+    }
+  }
+};
+
+const setTargetStylesheetLink = () => {
+  console.log("TARGET LINK STYLESHEET");
+  if (!TARGET_UPDATE_STYLESHEET) {
+    console.log("Stylesheet not set");
+    let styleSheets = document.styleSheets;
+    for (let sheet = 0; sheet < styleSheets.length; sheet++) {
+      if (
+        styleSheets[sheet].ownerNode?.id &&
+        styleSheets[sheet].ownerNode.id === "styles-tag"
+      ) {
+        console.log("TARGET STYLESHEET FOUND");
         TARGET_UPDATE_STYLESHEET = styleSheets[sheet];
         break;
       }
