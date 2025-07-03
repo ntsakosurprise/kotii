@@ -473,6 +473,7 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
             break;
           }
         }
+        console.log("THE MODULE INFO", moduleInfo);
 
         if (possibleMatch && possibleMatch?.pathMatched) {
           let extension = path.extname(addPath);
@@ -520,7 +521,8 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
                   matchedInfo,
                   possilbeImports,
                   updatedContent,
-                  updatedContentAst
+                  updatedContentAst,
+                  moduleInfo
                 );
               }
               // Run for none-imports updates
@@ -924,7 +926,8 @@ methods.doImportsCssUpdates = async function (
   matchedInfo,
   imports,
   currentFileInput,
-  updateAst
+  updateAst,
+  moduleInfo
 ) {
   const self = this;
   console.log("THE CSS UPDATE RESULTS", cssUpdateResults);
@@ -943,7 +946,8 @@ methods.doImportsCssUpdates = async function (
     console.log("Import removals");
     console.log("THE IMPORTS", imports);
     let buildForCssFile = [];
-    if (!content?.removeImportsUpdate) content["removeImportsUpdate"] = [];
+    if (!content?.removeImportsUpdate && !process?.useLinkStyleTag)
+      content["removeImportsUpdate"] = [];
 
     // update the object that represents the current file new content and ast object.
     imports[matchedInfo.selfReferencePath] = {
@@ -962,9 +966,11 @@ methods.doImportsCssUpdates = async function (
          * on the client.The client takes the regex string and constructs a regex from it.
          * On successful match of the pattern on the client, the removal file's content is removed
          */
-        let escapedFileName = toRemoveKey.replace(/[^a-zA-Z0-9]/g, "\\$&");
-        let regexString = `${preRegexLeftPattern}${escapedFileName}${preRegexRightPattern}`;
-        content.removeImportsUpdate.push(regexString);
+        if (!process?.useLinkStyleTag) {
+          let escapedFileName = toRemoveKey.replace(/[^a-zA-Z0-9]/g, "\\$&");
+          let regexString = `${preRegexLeftPattern}${escapedFileName}${preRegexRightPattern}`;
+          content.removeImportsUpdate.push(regexString);
+        }
 
         let removePath = matchedInfo.children[toRemoveKey].path; // file path to remove
         let toRemoveObject = imports[removePath]; // object to remove representing some file
@@ -1002,17 +1008,24 @@ methods.doImportsCssUpdates = async function (
       }
     });
 
+    if (buildForCssFile.length > 0) {
+      console.log("BUIID FOR REmove", buildForCssFile);
+      content["removeImportCssFile"] = buildForCssFile;
+    }
     /** If the file being changed is the head file, and it does not have children after
      * the removal process, resets the [imports] key inside of the stylesMeta object
      * by only returning an object with [isNull] key.
      */
     if (!matchedInfo?.parent && Object.keys(matchedInfo.children).length <= 0) {
+      moduleInfo.cssAst = updateAst;
       return { isNull: true };
     }
   }
 
   if (newImports) {
-    if (!content?.addImportsUpdate) content["addImportsUpdate"] = [];
+    let buildForCssFileAdd = [];
+    if (!content?.addImportsUpdate && !process?.useLinkStyleTag)
+      content["addImportsUpdate"] = [];
     let newImportsKeys = Object.keys(newImports);
     /* Loop through import keys to check if they represent remote css files.
        Remote imports are handled differently on kotii js
@@ -1022,7 +1035,7 @@ methods.doImportsCssUpdates = async function (
     });
 
     // Handle remote imports if they exist
-    if (remoteImports && remoteImports.length >= 0) {
+    if (remoteImports && remoteImports.length > 0) {
       imports[matchedInfo.selfReferencePath].inputBefore = currentFileInput;
       imports[matchedInfo.selfReferencePath].inputBeforeAst = updateAst;
       let remoteImportsSting = ""; // use this to store all remote imports
@@ -1071,17 +1084,41 @@ methods.doImportsCssUpdates = async function (
     */
     if (!imports) {
       console.log("NO IMPORTS MERGE RESULTS", mergeResults);
+      if (buildForCssFileAdd.length > 0) {
+        console.log("BUIID FOR ADD", buildForCssFileAdd);
+        content["addImportCssFile"] = buildForCssFileAdd;
+      }
+
       imports = { ...mergeResults.imports };
-      content.addImportsUpdate.push({
-        addString: mergeResults.input,
-        addCssToParentStart: true,
-      });
+      if (process?.useLinkStyleTag) {
+        console.log("Process Use ", matchedInfo);
+
+        self.buildListToAddOnClient(
+          imports[matchedInfo.pathContext.fileFullPath].children,
+          buildForCssFileAdd,
+          imports
+        );
+      }
+      if (!process?.useLinkStyleTag) {
+        content.addImportsUpdate.push({
+          addString: mergeResults.input,
+          addCssToParentStart: true,
+        });
+      }
 
       return imports;
     }
     imports = { ...imports, ...mergeResults.imports };
     console.log("THE MATCHED IMPORTS", matchedInfo);
     console.log("THE MERGE RESULTS", mergeResults.imports);
+
+    if (process?.useLinkStyleTag) {
+      self.buildListToAddOnClient(
+        imports[matchedInfo.selfReferencePath].children,
+        buildForCssFileAdd,
+        imports
+      );
+    }
 
     /*
      Check if the current file has a parent. If a current file has a parent,
@@ -1144,14 +1181,18 @@ methods.doImportsCssUpdates = async function (
         during resolving and loading process. When it's the HeadFile, we only add child
         content at the beginning of the file on the client.
       */
-      let regexString = !addCssToParentStart
-        ? `${preRegexLeftPattern}${updatesImportsParentID}${preRegexRightPattern}`
-        : null;
-      content.addImportsUpdate.push({
-        addString: updateImportsParent.inputAfter,
-        addPattern: regexString,
-        addCssToParentStart,
-      });
+
+      if (!process.useLinkStyleTag) {
+        let regexString = !addCssToParentStart
+          ? `${preRegexLeftPattern}${updatesImportsParentID}${preRegexRightPattern}`
+          : null;
+
+        content.addImportsUpdate.push({
+          addString: updateImportsParent.inputAfter,
+          addPattern: regexString,
+          addCssToParentStart,
+        });
+      }
     } else {
       let oldChildren = Object.keys(matchedInfo.children);
       let newChildren = Object.keys(
@@ -1166,15 +1207,23 @@ methods.doImportsCssUpdates = async function (
       newChildrenKeys.forEach((childKey) => {
         let keyPathInParent =
           imports[matchedInfo.selfReferencePath].children[childKey].path;
-        content.addImportsUpdate.push({
-          addString: imports[keyPathInParent].inputAfter,
-          addCssToParentStart: true,
-        });
+        if (!process?.useLinkStyleTag) {
+          content.addImportsUpdate.push({
+            addString: imports[keyPathInParent].inputAfter,
+            addCssToParentStart: true,
+          });
+        }
       });
+    }
+
+    console.log("BUIID FOR ADD", buildForCssFileAdd);
+    if (buildForCssFileAdd.length > 0) {
+      content["addImportCssFile"] = buildForCssFileAdd;
     }
 
     //}
   }
+
   return imports;
 };
 methods.doNoneImportsCssUpdates = function (
@@ -1465,16 +1514,21 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
 
 methods.buildListToRemoveOnClient = function (toBuildFor, built, imports) {
   const self = this;
+  console.log("TO BUILD FOR", toBuildFor);
 
   toBuildFor.inputBeforeAst.nodes.forEach((node) => {
     if (node.type === "rule") {
-      built.push([node.selector]);
+      built.push(node.selector);
     }
   });
 
   if (toBuildFor.children) {
-    toBuildFor.forEach((toBuildForChild) => {
-      let childObject = imports[toBuildForChild.path];
+    console.log("TO BUILD CHILDREN", toBuildFor.children);
+    let childrenKeys = Object.keys(toBuildFor.children);
+    console.log("CHILDREN KEYS", childrenKeys);
+    childrenKeys.forEach((toBuildForChildKey) => {
+      console.log("To build for key", toBuildFor);
+      let childObject = imports[toBuildFor.children[toBuildForChildKey].path];
       self.buildListToRemoveOnClient(childObject, built, imports);
     });
   }
@@ -1482,24 +1536,25 @@ methods.buildListToRemoveOnClient = function (toBuildFor, built, imports) {
 
 methods.buildListToAddOnClient = function (toBuildFor, built, imports) {
   const self = this;
+  console.log("BUILD FOR OBJECT", toBuildFor);
 
-  toBuildFor.inputBeforeAst.nodes.forEach((node) => {
-    if (node.type === "rule") {
-      let cssRule = `${node.selector} {`;
-      node.nodes.forEach((nestNode) => {
-        cssRule += `${nestNode.prop}: ${nestNode.value} `;
-      });
-      cssRule += "}";
-      built.push(cssRule);
+  let toBuildForKeys = Object.keys(toBuildFor);
+  toBuildForKeys.forEach((fileKey) => {
+    let file = imports[toBuildFor[fileKey].path];
+    file.inputBeforeAst.nodes.forEach((node) => {
+      if (node.type === "rule") {
+        let cssRule = `${node.selector} {`;
+        node.nodes.forEach((nestNode) => {
+          cssRule += `${nestNode.prop}: ${nestNode.value} `;
+        });
+        cssRule += "}";
+        built.push(cssRule);
+      }
+    });
+    if (file?.children) {
+      self.buildListToAddOnClient(file.children, built, imports);
     }
   });
-
-  if (toBuildFor.children) {
-    toBuildFor.forEach((toBuildForChild) => {
-      let childObject = imports[toBuildForChild.path];
-      self.buildListToRemoveOnClient(childObject, built, imports);
-    });
-  }
 };
 
 export default methods;
