@@ -5,9 +5,12 @@ import { mergeCssFilesPlugin } from "../postcss-plugins/index.js";
 import createCssAst from "./create_css_ast.js";
 
 const MATCH_IMPORT_LINE_REGEX = /(\s\n\r)*@import\s*(.*)\.+(css)["']\)[;\s]/gm;
+const MATCH_REMOTE_IMPORT_LINE_REGEX =
+  /(\s\n\r)*@import\s*(.*)(https|http)(.*)\.+(css)["']\)[;\s]/gm;
 const MATCH_REMOTE_RESOURCE_REGEX = /(https|http):+\/\//i;
 const INCLUDE_PRE_TEXT = "INCLUDED_CSS_HEAD:";
 const INCLUDE_POST_TEXT = "INCLUDED_CSS_FOOTER:";
+let REMOTE_IMPORTS_STRING = [];
 const mergeCssFiles = function (cssInput, moduleMeta) {
   // let readFiles = [{
   //   fileContent: cssInput,
@@ -15,6 +18,7 @@ const mergeCssFiles = function (cssInput, moduleMeta) {
   //   parent: null
   // }]
   let loopThroughFiles = true;
+
   console.log("THE COPIED AST", cssInput);
 
   return new Promise(async (resolve) => {
@@ -36,7 +40,12 @@ const mergeCssFiles = function (cssInput, moduleMeta) {
         input: cssInput,
       });
     } else {
-      let inputToModify = recursivelyCombineCss(cssInput, moduleMeta, imports);
+      let inputToModify = recursivelyCombineCss(
+        cssInput,
+        moduleMeta,
+        imports,
+        REMOTE_IMPORTS_STRING
+      );
 
       imports[Object.keys(imports)[0]]["inputAfter"] =
         moduleMeta?.shouldWrapFile
@@ -48,7 +57,20 @@ const mergeCssFiles = function (cssInput, moduleMeta) {
           : inputToModify;
 
       //  console.log("THE IMPORTS MODIFY OBJ", JSON.stringify(imports))
-      return resolve({ input: inputToModify, imports });
+      console.log("THE IMPORT STRING", REMOTE_IMPORTS_STRING);
+
+      let resultsData = {
+        input: MATCH_REMOTE_IMPORT_LINE_REGEX.test(inputToModify)
+          ? inputToModify.replace(MATCH_REMOTE_IMPORT_LINE_REGEX, "")
+          : `${inputToModify}`,
+        imports,
+      };
+      if (REMOTE_IMPORTS_STRING.length > 0) {
+        console.log("REMOTE IMPORTS", JSON.stringify(REMOTE_IMPORTS_STRING));
+        resultsData["allImports"] = REMOTE_IMPORTS_STRING;
+        REMOTE_IMPORTS_STRING = [];
+      }
+      return resolve(resultsData);
     }
 
     //  while(loopThroughFiles){
@@ -88,6 +110,10 @@ const recursivelyCombineCss = (cssInput, moduleMeta, imports = null) => {
       MATCH_REMOTE_RESOURCE_REGEX.test(importStatement)
     );
     if (!MATCH_REMOTE_RESOURCE_REGEX.test(importStatement)) return true;
+    REMOTE_IMPORTS_STRING.push(`${importStatement}\n`);
+    // let replaced = inputToModify.replace(importStatement, "");
+    // console.log("THE REPLACED IMPORT STATEMENT", replaced);
+    console.log("THE UPDATED INPUT STRING", inputToModify);
   });
 
   matches.forEach((match, i) => {
@@ -101,6 +127,7 @@ const recursivelyCombineCss = (cssInput, moduleMeta, imports = null) => {
         inputBefore: fileContents,
         inputBeforeAst: createCssAst([fileContents]),
       };
+
     if (imports[parentPath]?.children)
       imports[parentPath].children[importsPath] = {
         path: filePath,
