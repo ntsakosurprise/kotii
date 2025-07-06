@@ -1000,10 +1000,18 @@ methods.doImportsCssUpdates = async function (
          * only create a regex string that will match the import line string on the client
          * the client takes this string and constructs a regex from it.
          */
-        let urlEscaped = toRemoveKey.replace(/[^a-zA-Z0-9]/g, "\\$&");
-        let regexString = `(\\s\\n\\r)*@import\\s*url\\(.*(${urlEscaped})["']\\)[;\\s]`;
-
-        content.removeImportsUpdate.push(regexString);
+        if (!process?.useLinkStyleTag) {
+          let urlEscaped = toRemoveKey.replace(/[^a-zA-Z0-9]/g, "\\$&");
+          let regexString = `(\\s\\n\\r)*@import\\s*url\\(.*(${urlEscaped})["']\\)[;\\s]`;
+          content.removeImportsUpdate.push(regexString);
+        } else {
+          let importString = `@import url(${toRemoveKey})`;
+          if (!content?.removeImportCssFile) {
+            content["removeImportCssFile"] = [importString];
+          } else {
+            content.removeImportCssFile.push(importString);
+          }
+        }
         return imports;
       }
     });
@@ -1044,11 +1052,22 @@ methods.doImportsCssUpdates = async function (
         remoteImportsSting = `${remoteImportsSting} @import ${remoteImport}\n`;
       });
 
-      // set string in an object to send to the client
-      content.addImportsUpdate.push({
-        addString: remoteImportsSting,
-        addCssToParentStart: true,
-      });
+      if (!process?.useLinkStyleTag) {
+        // set string in an object to send to the client
+        content.addImportsUpdate.push({
+          addString: remoteImportsSting,
+          addCssToParentStart: true,
+        });
+      } else {
+        // set string in an object to send to the client
+        if (!content?.addAtImportCssFile) {
+          content["addAtImportCssFile"] = remoteImportsSting.split("\n");
+        }
+        // content.addImportsUpdate.push({
+        //   addString: remoteImportsSting,
+        //   addCssToParentStart: true,
+        // });
+      }
 
       // Return here if [newImportsKeys] only contains remote imports
       if (newImportsKeys.length === remoteImports.length) {
@@ -1104,6 +1123,8 @@ methods.doImportsCssUpdates = async function (
           addString: mergeResults.input,
           addCssToParentStart: true,
         });
+      } else if (buildForCssFileAdd.length > 0) {
+        content["addImportCssFile"] = buildForCssFileAdd;
       }
 
       return imports;
