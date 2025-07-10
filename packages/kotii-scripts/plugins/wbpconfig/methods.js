@@ -3,7 +3,14 @@ const MATCH_REMOTE_RESOURCE_REGEX = /(https|http):+\/\//i;
 import fs from "fs";
 import path from "path";
 import WebSocket, { WebSocketServer } from "ws";
-import { compareCss, createCssAst, mergeCssFiles } from "../../css/index.js";
+import {
+  compareCss,
+  createCssAst,
+  lessToCssConverter,
+  mergeCssFiles,
+  sassToCssConverter,
+  stylusToCssConverter,
+} from "../../css/index.js";
 import { kotiiKotiiLandPath } from "../../kotii_paths.js";
 
 methods.init = function () {
@@ -473,7 +480,6 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
             break;
           }
         }
-        console.log("THE MODULE INFO", moduleInfo);
 
         if (possibleMatch && possibleMatch?.pathMatched) {
           let extension = path.extname(addPath);
@@ -541,15 +547,6 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
                 content,
               });
 
-              console.log(
-                "POSSIBLE IMPORTS BEFORE UPDATE",
-                JSON.stringify(possilbeImports)
-              );
-              console.log(
-                "IMPORTS AFTER UPDATES",
-                JSON.stringify(updatedImports)
-              );
-
               /**
                * Update css meta data object with lates changes
                */
@@ -607,7 +604,6 @@ methods.notifyClient = function (updateInfo) {
 
   self.wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
-      console.log("send data to client with socket", updateInfo);
       client.send(JSON.stringify(updateInfo));
     }
   });
@@ -808,17 +804,7 @@ methods.hookSocketToServer = function (server) {
   self.wss = new WebSocketServer({ server });
 
   self.wss.on("connection", (ws) => {
-    console.log("Client connected");
     self.webSocketConnection = ws;
-
-    // ws.on('message', message => {
-    //   console.log('Received message:', message);
-    //   wss.clients.forEach(client => { // Broadcast to all clients
-    //     if (client !== ws && client.readyState === WebSocket.OPEN) {
-    //       client.send(message);
-    //     }
-    //   });
-    // });
 
     ws.on("close", () => {
       console.log("Client disconnected");
@@ -833,13 +819,13 @@ methods.doOldSelectorUpdate = function (
 ) {
   const self = this;
 
-  let modulesClassMaps = moduleInfo.modules;
+  let modulesClassMaps = moduleInfo.modules || null;
   let oldSelectorsKeys = Object.keys(oldSelectorsUpdate);
   let referenceOfSelectorInTheBrowser = "";
 
   oldSelectorsKeys.forEach((oldSelectorKey) => {
     if (oldSelectorKey.indexOf(".") === 0) {
-      if (modulesClassMaps?.modules) {
+      if (modulesClassMaps) {
         let originalClassName = oldSelectorKey.substring(
           1,
           oldSelectorKey.length
@@ -900,7 +886,6 @@ methods.doRemoveSelectorUpdate = function (
 methods.getCssUpdateContent = async function (options) {
   const self = this;
   const { addPath, changeFilename, extension } = options;
-  console.log("CHnage extension", addPath, changeFilename, extension);
 
   switch (extension) {
     case ".css":
@@ -908,13 +893,13 @@ methods.getCssUpdateContent = async function (options) {
         encoding: "utf8",
       });
 
-    // case '.less': return lessToCssConverter(addPath,changeFilename)
-    // case '.sass':
-    // break;
-    // case ".scss":
-    // break;
-    // case '.stylus':
-    // break;
+    case ".less":
+      return lessToCssConverter(addPath, changeFilename);
+    case ".sass":
+    case ".scss":
+      return sassToCssConverter(addPath);
+    case ".stylus":
+      return stylusToCssConverter(addPath, changeFilename);
     default:
       throw new Error("The CSS UPTAR");
   }
@@ -930,7 +915,7 @@ methods.doImportsCssUpdates = async function (
   moduleInfo
 ) {
   const self = this;
-  console.log("THE CSS UPDATE RESULTS", cssUpdateResults);
+
   let preRegexLeftPattern = `\\/\\*\\s*(INCLUDED_CSS)_HEAD:\\s*(`;
   let preRegexRightPattern = `)\\s*\\*\\/([\\S\\s]*?)\\/\\*\\s*\\1_FOOTER:\\s*\\2\\s(\\*\\/)$`;
   let regexPatterns = { preRegexLeftPattern, preRegexRightPattern };
@@ -939,12 +924,8 @@ methods.doImportsCssUpdates = async function (
   const { update } = cssUpdateResults;
   const { importsUpdates } = update;
   const { importRemovals = null, newImports = null } = importsUpdates;
-  console.log("THE IMPORT REMOVALS", importRemovals);
-  console.log("THE NEW IMPORTS", newImports);
 
   if (importRemovals) {
-    console.log("Import removals");
-    console.log("THE IMPORTS", imports);
     let buildForCssFile = [];
     if (!content?.removeImportsUpdate && !process?.useLinkStyleTag)
       content["removeImportsUpdate"] = [];
@@ -1017,7 +998,6 @@ methods.doImportsCssUpdates = async function (
     });
 
     if (buildForCssFile.length > 0) {
-      console.log("BUIID FOR REmove", buildForCssFile);
       content["removeImportCssFile"] = buildForCssFile;
     }
     /** If the file being changed is the head file, and it does not have children after
@@ -1074,8 +1054,6 @@ methods.doImportsCssUpdates = async function (
         return imports;
       }
     }
-    console.log("THE CURRENT FILE INPUT", currentFileInput);
-    console.log("ELEMENT BEFORE", JSON.stringify(matchedInfo));
 
     /* Merge the new imports to be a single file of content where a child content is
        marked by a special css comment that distinguishes it as a new file.
@@ -1102,16 +1080,12 @@ methods.doImportsCssUpdates = async function (
       files before and these are its imports currently.
     */
     if (!imports) {
-      console.log("NO IMPORTS MERGE RESULTS", mergeResults);
       if (buildForCssFileAdd.length > 0) {
-        console.log("BUIID FOR ADD", buildForCssFileAdd);
         content["addImportCssFile"] = buildForCssFileAdd;
       }
 
       imports = { ...mergeResults.imports };
       if (process?.useLinkStyleTag) {
-        console.log("Process Use ", matchedInfo);
-
         self.buildListToAddOnClient(
           imports[matchedInfo.pathContext.fileFullPath].children,
           buildForCssFileAdd,
@@ -1130,8 +1104,6 @@ methods.doImportsCssUpdates = async function (
       return imports;
     }
     imports = { ...imports, ...mergeResults.imports };
-    console.log("THE MATCHED IMPORTS", matchedInfo);
-    console.log("THE MERGE RESULTS", mergeResults.imports);
 
     if (process?.useLinkStyleTag) {
       self.buildListToAddOnClient(
@@ -1237,7 +1209,6 @@ methods.doImportsCssUpdates = async function (
       });
     }
 
-    console.log("BUIID FOR ADD", buildForCssFileAdd);
     if (buildForCssFileAdd.length > 0) {
       content["addImportCssFile"] = buildForCssFileAdd;
     }
@@ -1256,12 +1227,6 @@ methods.doNoneImportsCssUpdates = function (
 
   const { update } = noneCssUpdates;
 
-  console.log("COMPARE RESULTS.UPDATE", update);
-  console.log("COMPARE RESULTS.UPDATE.UPDATECONTENT", update.updateContent);
-  console.log(
-    "COMPARE RESULTS.UPDATE.UPDATECONTENT",
-    update.updateContent.oldSelectors
-  );
   let updateContent = update.updateContent;
   let oldSelectorsUpdate = updateContent?.oldSelectors;
 
@@ -1272,7 +1237,6 @@ methods.doNoneImportsCssUpdates = function (
     switch (updateTypeKey) {
       case "oldSelectors":
         self.doOldSelectorUpdate(currentUpdateType, moduleInfo, content);
-
         break;
       case "newSelectors":
         self.doNewSelectorUpdate(currentUpdateType, moduleInfo, content);
@@ -1287,22 +1251,6 @@ methods.doNoneImportsCssUpdates = function (
         throw new Error("Update type unknown");
     }
   });
-
-  // self.notifyClient({
-  //   name: "kotii-client-css-update",
-  //   updateType: "immediate",
-  //   content
-  // })
-
-  // possilbeImports && possilbeImports[addPath]
-  // ? possilbeImports[addPath].inputBeforeAst = updatedContentAst
-  // : moduleInfo.currentOriginalAst = updatedContentAst
-
-  // possilbeImports && possilbeImports[addPath] ? null : stylesMeta[fileAsModule] = moduleInfo
-  // // console.log("Update content AST AFTER SAVE", stylesMeta[fileAsModule])
-  // fs.writeFile(stylesModulesPath,JSON.stringify(stylesMeta,null,2),(err)=>{
-  //   console.log("file save update",err)
-  // })
 };
 methods.checkMatchType = function (pathContext, imports, addPath) {
   const self = this;
@@ -1341,29 +1289,18 @@ methods.syncContentToParents = function (
   patterns
 ) {
   const self = this;
-  console.log("REPLACE NAME", replaceName);
-  console.log("THE SYNC FILE", syncFile);
-  console.log("THE REPLACE STRING", replaceString);
-  console.log("FILE NAME IS", syncFile?.pathAsShortID);
 
   const { preRegexLeftPattern, preRegexRightPattern } = patterns;
 
   let escapedFileName = replaceName.replace(/[^a-zA-Z0-9]/g, "\\$&");
   let regexString = `${preRegexLeftPattern}${escapedFileName}${preRegexRightPattern}`;
   let IMPORT_FILE_TEXT_REGEX = new RegExp(regexString, "gim");
-  // let syncFileParent = imports[syncFile.parent?.path]
-  // console.log()
-  console.log("THE REGEX STRING", regexString);
-  console.log("THE REGEX", IMPORT_FILE_TEXT_REGEX);
 
   syncFile.inputAfter = syncFile.inputAfter.replace(
     IMPORT_FILE_TEXT_REGEX,
     replaceString
   );
-  console.log(
-    "INPUT MATCHED",
-    IMPORT_FILE_TEXT_REGEX.test(syncFile.inputAfter)
-  );
+
   imports[syncFile.selfReferencePath].inputAfter = syncFile.inputAfter;
 
   if (syncFile?.parent) {
@@ -1402,12 +1339,6 @@ methods.removeOutdatedCssFile = function (
   patterns
 ) {
   const self = this;
-  console.log("REPLACE NAME", replaceName);
-  console.log("THE SYNC FILE", syncFile);
-  console.log("THE REPLACE STRING", replaceString);
-  console.log("FILE NAME IS", syncFile?.pathAsShortID);
-  console.log("THE PATTERns", patterns);
-  console.log("TO REMOVE OBJECT", toRemove);
 
   const { preRegexLeftPattern, preRegexRightPattern } = patterns;
 
@@ -1415,11 +1346,6 @@ methods.removeOutdatedCssFile = function (
   // Create regex string to match this content of this child from parent
   let regexString = `${preRegexLeftPattern}${escapedFileName}${preRegexRightPattern}`;
   let IMPORT_FILE_TEXT_REGEX = new RegExp(regexString, "gim"); // create regex
-  // console.log("THE REGEX", IMPORT_FILE_TEXT_REGEX);
-  // console.log(
-  //   "INPUT MATCHED",
-  //   IMPORT_FILE_TEXT_REGEX.test(syncFile.inputAfter)
-  // );
 
   // Replace child content from parent using regex pattern
   syncFile.inputAfter = syncFile.inputAfter.replace(
@@ -1488,9 +1414,6 @@ methods.recursivelyRemoveChildren = function (childrenParent, imports) {
     if (imports[children[childKey].path]?.children) {
       self.recursivelyRemoveChildren(imports[children[childKey].path], imports);
     }
-    //  console.log("DELETE CHILD KEY", childKey)
-    //  let childPathAsID = imports[children[childKey].path].pathAsShortID
-    //  console.log("CHILD PATH AS ID", childPathAsID)
 
     delete imports[children[childKey].path];
     //  delete imports[childrenParent.selfReferencePath].children[childPathAsID]
@@ -1535,7 +1458,6 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
 
 methods.buildListToRemoveOnClient = function (toBuildFor, built, imports) {
   const self = this;
-  console.log("TO BUILD FOR", toBuildFor);
 
   toBuildFor.inputBeforeAst.nodes.forEach((node) => {
     if (node.type === "rule") {
@@ -1544,11 +1466,9 @@ methods.buildListToRemoveOnClient = function (toBuildFor, built, imports) {
   });
 
   if (toBuildFor.children) {
-    console.log("TO BUILD CHILDREN", toBuildFor.children);
     let childrenKeys = Object.keys(toBuildFor.children);
-    console.log("CHILDREN KEYS", childrenKeys);
+
     childrenKeys.forEach((toBuildForChildKey) => {
-      console.log("To build for key", toBuildFor);
       let childObject = imports[toBuildFor.children[toBuildForChildKey].path];
       self.buildListToRemoveOnClient(childObject, built, imports);
     });
@@ -1557,7 +1477,6 @@ methods.buildListToRemoveOnClient = function (toBuildFor, built, imports) {
 
 methods.buildListToAddOnClient = function (toBuildFor, built, imports) {
   const self = this;
-  console.log("BUILD FOR OBJECT", toBuildFor);
 
   let toBuildForKeys = Object.keys(toBuildFor);
   toBuildForKeys.forEach((fileKey) => {
