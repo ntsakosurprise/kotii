@@ -13,18 +13,26 @@ class CopyAssetsWebpackPlugin {
   }
   apply(compiler) {
     compiler.hooks.afterEmit.tap("CopyAssetsWebpackPlugin", () => {
+      // if (appStyles) self.createCssStyles(appStyles, contextApp.appBuildFolder);
       this.loggas.copyAssetsWebpackPlugin.debug(
         "PLUGIN:: Copy Asssets Webpack plugin"
       );
       console.log("THE ASSETS PATH FOR SYNC", this.options);
-      fs.copyFileSync(
-        `${this.options.kotiiRootPath}/client-tools/index.js`,
-        `${path.resolve(this.options.extra.emitPath, "kotii-client.js")}`
-      );
-      if (!this.assetsManifestData)
-        this.assetsManifestData = getAssetsManifest(this.options);
-      emitFilesInOutputDir(this.options, this.assetsManifestData);
-      // console.log("THE ASSETS MANIFEST", this.assetsManifestData);
+      let files = this.options.files;
+      files.forEach((fileItem) => {
+        if (!fileItem?.fileEmitter) {
+          fs.copyFileSync(
+            `${fileItem.kotiiRootPath}/client-tools/index.js`,
+            `${path.resolve(fileItem.extra.emitPath, "kotii-client.js")}`
+          );
+          if (!this.assetsManifestData)
+            this.assetsManifestData = getAssetsManifest(fileItem);
+          emitFilesInOutputDir(fileItem, this.assetsManifestData);
+          // console.log("THE ASSETS MANIFEST", this.assetsManifestData);
+        } else {
+          fileItem.fileEmitter(fileItem.extra.appStyles, fileItem.extra.build);
+        }
+      });
     });
   }
 }

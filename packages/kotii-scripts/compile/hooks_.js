@@ -844,7 +844,7 @@ const getCss = async (fileUrl, fName) => {
         kotiiModulesMeta,
         MODULES_SPECIFIERS[fileUrl]
       );
-      saveStyles(modulesResult.css);
+      saveStyles(modulesResult.css, modulesResult?.allImports || null);
       saveCssModulesMap(MODULES_SPECIFIERS[fileUrl].shortName, {
         // currentOriginalAst:modulesResult.cssAst,
         // pathContext: modulesResult.pathContext
@@ -873,7 +873,7 @@ const getCss = async (fileUrl, fName) => {
   return `export default ${JSON.stringify(modulesResult.cssModules.modules)}`;
 };
 
-export const saveStyles = (styles) => {
+export const saveStyles = (styles, remoteImports = null) => {
   console.log("MANIPULATE STYLES, PATH TO STYLES", JSON_STYLES_PATH);
 
   let json = null;
@@ -890,9 +890,16 @@ export const saveStyles = (styles) => {
   }
   let newJson = !json ? json : JSON.parse(json);
   if (!newJson || newJson.length === 0) {
-    newJson = [styles];
+    newJson = remoteImports
+      ? [`${remoteImports.toString()} ${styles}`]
+      : [styles];
   } else {
-    newJson.push(styles);
+    if (remoteImports) {
+      newJson.unshift(remoteImports.toString());
+      newJson.push(styles);
+    } else {
+      newJson.push(styles);
+    }
   }
   fs.writeFileSync(JSON_STYLES_PATH, JSON.stringify(newJson), {
     encoding: "utf8",

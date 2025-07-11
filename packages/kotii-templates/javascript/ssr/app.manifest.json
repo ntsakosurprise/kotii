@@ -5,7 +5,7 @@
   },
   "appStyles": {
     "styleType": "external",
-    "fileName": "styles.css"
+    "fileName": "kotii-styles.css"
   },
   "useHttps": true,
   "useCustomDomain": true,
