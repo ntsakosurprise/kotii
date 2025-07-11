@@ -165,12 +165,10 @@ export async function load(url, context, nextLoad) {
           return nextLoad(url);
         }
       } else if (fileExtension === extTs) {
-        console.log("THE FILE IS TS");
         source = fs.readFileSync(urlInstance, {
           encoding: "utf-8",
         });
       } else if (fileExtension === extTsx) {
-        console.log("THE FILE IS TSX");
         source = fs.readFileSync(urlInstance, {
           encoding: "utf-8",
         });
@@ -334,9 +332,6 @@ export const resolveAliasedImports = (specifier) => {
     }
     loggas.resolve.debug("THE META SPECIFIER", specifierAlias, fileUrlExt);
     loggas.resolve.debug("PATH TO FILE", `${fileUrl}`);
-    // console.log("Processing PNG OR CSS", specifier);
-    // let url = new URL(specifier, parentURL);
-    // console.log("PNG URL", url.href);
 
     return { url: fileUrl, shortCircuit: true };
   } else {
@@ -376,7 +371,7 @@ export const resolveKotiiLandImports = (specifier) => {
         ? path.resolve(basePath, ".kotii-land/pages.js")
         : path.resolve(basePath, ".kotii-land/routes.js");
     loggas.resolve.debug("THE FULL PATH", fullPath);
-    // console.log("THE BASE PATH", workdir);
+
     return {
       url: pathToFileURL(fullPath).href,
       shortCircuit: true,
@@ -443,11 +438,6 @@ export const resolveKotiiScriptsImports = (specifier) => {
     /^kotii-scripts/.test(specifier)
   );
   if (!isBuiltin(specifier) && /^kotii-scripts/.test(specifier)) {
-    // let kotiiExportsPath = fs.existsSync(path.join(workdir, "node_modules"))
-    //   ? path.join(workdir, "node_modules/kotii-scripts/kotii-land/dev/app_.js")
-    //   : `${workdir}${sep}kotii-land/dev/app_.js/`;
-
-    // console.log("THE PATH AS URL", pathToFileURL(kotiiExportsPath).href);
     let kotiiExportsPath = `${kotiiKotiiLandPath}/dev/app_.js`;
     let urlLized = pathToFileURL(kotiiExportsPath).href;
     loggas.resolve.debug(
@@ -478,12 +468,6 @@ export const resolveKotiiScriptsImports = (specifier) => {
  */
 export const resolveKotiiScriptsInternalImports = (specifier) => {
   if (!isBuiltin(specifier) && /^\/kotii-land/.test(specifier)) {
-    // console.log("THE SPECIFIER FOR KOTII-SCRIPTS PATH", specifier);
-    // let kotiiExportsPath = fs.existsSync(path.join(workdir, "node_modules"))
-    //   ? path.join(workdir, `node_modules/kotii-scripts/${specifier}`)
-    //   : `${workdir}${sep}kotii-land/dev/app_.js/`;
-    // console.log("THE PATH AS URL", pathToFileURL(kotiiExportsPath).href);
-
     let kotiiExportsPath = `${kotiiRootPath}${specifier}`;
     let urlLized = pathToFileURL(kotiiExportsPath).href;
     loggas.resolve.debug(
@@ -529,7 +513,7 @@ export const resolveKotiiUserApiPlugins = (specifier) => {
 
     let fullPath = path.resolve(basePath, "api/index.js");
     loggas.resolve.debug("THE FULL PATH", fullPath);
-    // console.log("THE BASE PATH", workdir);
+
     return {
       url: pathToFileURL(fullPath).href,
       shortCircuit: true,
@@ -544,22 +528,12 @@ export const resolveUserlandImports = (specifier) => {
   if (!isBuiltin(specifier) && /^\/kotii-user-land-aliase\//.test(specifier)) {
     loggas.resolve.debug("THE SPECIFIER FOR PAGES PATH", specifier);
     let basePath = getPagesBasePath(specifier);
-    // console.log(
-    //   "THE KOTII ALIAS SPECIFIER",
-    //   specifier,
-    //   KOTII_USER_LAND_ALIASES[
-    //     Object.keys(KOTII_USER_LAND_ALIASES).filter(
-    //       (aliase) => KOTII_USER_LAND_ALIASES[aliase].alias === specifier
-    //     )[0]
-    //   ].value
-    // );
 
     let aliaseTruePath = Object.keys(KOTII_USER_LAND_ALIASES).filter(
       (aliase) => KOTII_USER_LAND_ALIASES[aliase].alias === specifier
     );
     let aliaseTruePathValue = KOTII_USER_LAND_ALIASES[aliaseTruePath[0]].value;
     let aliasePossiblePath = `${basePath}${aliaseTruePathValue}`;
-    console.log("THE ALIAS POSSIBLE", aliasePossiblePath);
 
     try {
       let livingPath = guessPathExtension(aliasePossiblePath);
@@ -576,11 +550,8 @@ export const resolveUserlandImports = (specifier) => {
 };
 
 export const guessPathExtension = (guessPath) => {
-  console.log("THE GUESS PATH", guessPath);
-
   let livingExtension = guessPath;
   for (let ext = 0; ext < extensions.length; ext++) {
-    console.log("THE LOOP", ext);
     let guessPathWithExtension = `${guessPath}${extensions[ext]}`;
     if (fs.existsSync(guessPathWithExtension)) {
       livingExtension = guessPathWithExtension;
@@ -591,7 +562,7 @@ export const guessPathExtension = (guessPath) => {
     throw new Error(
       `Node-Kotiijs-Resolve: requested file does not exist:${livingExtension}`
     );
-  console.log("THE LIVING EXTENSION", livingExtension);
+
   return livingExtension;
 };
 
@@ -676,44 +647,10 @@ export const doInlinedPngs = (fileUrl, fName) => {
     return `export default ${JSON.stringify(fName)}`;
   }
 };
-const doSvgs = (fileUrl, fName) => {
-  loggas.load.debug("DO SVG GETS A CALL", fileUrl);
-
-  let svgContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
-  // const b64 = pngContent.toString("base64");
-  // let dataURI = `data:image/png;base64,${b64}`;
-  // kotiiAssetsMeta[fileUrl] = svgContent;
-  // if (!timerActive) {
-  //   timerActive = true;
-  //   setTimeout(() => {
-  //     timerActive = false;
-  //     saveKotiiAssetsMeta();
-  //   }, 1000);
-  // }
-  console.log("THE SVG CONTENT", svgContent);
-  return `export default ${JSON.stringify(svgContent)}`;
-};
-const doStyles = (fileUrl, fName) => {
-  loggas.load.debug("DO STYLES GETS A CALL", fileUrl);
-
-  let svgContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
-  // const b64 = pngContent.toString("base64");
-  // let dataURI = `data:image/png;base64,${b64}`;
-  // kotiiAssetsMeta[fileUrl] = svgContent;
-  // if (!timerActive) {
-  //   timerActive = true;
-  //   setTimeout(() => {
-  //     timerActive = false;
-  //     saveKotiiAssetsMeta();
-  //   }, 1000);
-  // }
-  console.log("THE SVG CONTENT", svgContent);
-  return `export default ${JSON.stringify(svgContent)}`;
-};
 
 const getCssFromSass = async (fileUrl, fName) => {
   loggas.load.debug("SASS TO CSSS", fileUrl);
-  console.log("THE MODULE SPECIFIER");
+
   let cssFromSass = sassToCssConverter(fileUrl);
   let modulesResult = "";
   if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
@@ -741,7 +678,6 @@ const getCssFromSass = async (fileUrl, fName) => {
       modulesResult.cssModules
     );
   } else {
-    console.log("THE URL CONTAINS GLOBAL", fileUrl);
     saveStyles(cssFromSass);
     return `export default ${JSON.stringify(fName)}`;
   }
@@ -781,12 +717,9 @@ const getCssFromLess = async (fileUrl, fName) => {
       currentOriginalAst: modulesResult.cssAst,
     });
   } else {
-    console.log("THE URL CONTAINS GLOBAL", fileUrl);
     saveStyles(cssFromLess);
     return `export default ${JSON.stringify(fName)}`;
   }
-
-  console.log("THE CSS CONVERTED LESS", modulesResult.ccsModules);
 
   return `export default ${JSON.stringify(modulesResult.cssModules.modules)}`;
 };
@@ -815,7 +748,6 @@ const getCssFromStylus = async (fileUrl, fName) => {
       kotiiModulesMeta,
       MODULES_SPECIFIERS[fileUrl]
     );
-    console.log("THE CSS CONVERTED LESS", modulesResult.cssModules);
 
     saveStyles(modulesResult.css);
     saveCssModulesMap(
@@ -823,7 +755,6 @@ const getCssFromStylus = async (fileUrl, fName) => {
       modulesResult.cssModules
     );
   } else {
-    console.log("THE URL CONTAINS GLOBAL", fileUrl);
     saveStyles(cssFromStylus);
     return `export default ${JSON.stringify(fName)}`;
   }
@@ -836,7 +767,7 @@ const getCss = async (fileUrl, fName) => {
 
   let cssContent = fs.readFileSync(fileUrl, { encoding: "utf8" });
   let modulesResult = "";
-  console.log("IS CSS MODULE", CSS_MODULES_REGEX.test(fileUrl));
+
   if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
     if (!CSS_MODULES_REGEX.test(fileUrl)) {
       modulesResult = await renderCssModules(
@@ -858,14 +789,13 @@ const getCss = async (fileUrl, fName) => {
       kotiiModulesMeta,
       MODULES_SPECIFIERS[fileUrl]
     );
-    console.log("THE CSS CONVERTED LESS", modulesResult.cssModules);
+
     saveStyles(modulesResult.css);
     saveCssModulesMap(
       MODULES_SPECIFIERS[fileUrl].shortName,
       modulesResult.cssModules
     );
   } else {
-    console.log("THE URL CONTAINS GLOBAL", fileUrl);
     saveStyles(cssContent);
     return `export default ${JSON.stringify(fName)}`;
   }
@@ -874,8 +804,6 @@ const getCss = async (fileUrl, fName) => {
 };
 
 export const saveStyles = (styles, remoteImports = null) => {
-  console.log("MANIPULATE STYLES, PATH TO STYLES", JSON_STYLES_PATH);
-
   let json = null;
   if (!JSON_STYLES_PATH_FIRSTTIME_USE && fs.existsSync(JSON_STYLES_PATH)) {
     JSON_STYLES_PATH_FIRSTTIME_USE = true;
@@ -907,8 +835,6 @@ export const saveStyles = (styles, remoteImports = null) => {
 };
 
 export const saveCssModulesMap = (id, idModules) => {
-  console.log("css modules map", id, JSON_STYLES_MAP_PATH);
-
   let json = null;
   if (
     !JSON_STYLES_PATH_MAP_FIRSTTIME_USE &&
@@ -939,7 +865,6 @@ export const saveCssModulesMap = (id, idModules) => {
 };
 
 export const storeCssModuleSpecifier = (pathContext) => {
-  console.log("THE PATH CONTEXT", pathContext);
   MODULES_SPECIFIERS[pathContext.fileFullPath] = {
     shortName: pathContext.fileUserRequest,
     pathContext,
@@ -955,7 +880,6 @@ export const storeFileModuleSpecifier = (pathContext) => {
 };
 
 export const processImageFiles = (fullUrl, filename, fileExtension) => {
-  console.log("META.FILELOADER", meta);
   let fileLoaderConfig =
     meta && meta.fileLoader ? meta.fileLoader : FILE_LOADER_DEFAULT;
   let fileConfig = {
