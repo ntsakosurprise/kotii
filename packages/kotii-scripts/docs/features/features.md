@@ -1,10 +1,11 @@
-# FEATURE OF KOTII JS META FRAMEWORK
+# FEATURES OF KOTII JS META FRAMEWORK
 
 # MAIN FEATURES
 
 - [Server Side Rendering](./serverSideRendendering.md)
 - [Single Page Application](./finishCompilationOnErrorWebpackPlugin.md)
 - [Static Side Generation](./ssg.md)
+- [Markdown-Produced Blog](./ssg.md)
 - [CSS Handling And Hot Reload](./cssHotReload.md)
 - [File-Based Routing](./fileBasedRouting.md)
 - [API Integration](./apiIntegration.md)
