@@ -396,34 +396,7 @@ export default (options) => {
       ),
       new CopyAssetsWebpackPlugin(
         {
-          files: [
-            {
-              referenceAssetsPath: kotiiKotiiLandPath,
-              kotiiRootPath: kotiiRootPath,
-              assetsFile: "assets.manifest.json",
-              fileFormat: "json",
-              extra: {
-                inline: options.inline,
-                emitFile: true,
-                emitPath:
-                  options?.build && options.build
-                    ? options.staticFolder
-                    : `${env.appBuildFolder}`,
-              },
-            },
-            {
-              fileEmitter: options.appManifest?.appStyles
-                ? options.createCssStyles
-                : false,
-              extra: {
-                build:
-                  options?.build && options.build
-                    ? options.staticFolder
-                    : `${env.appBuildFolder}`,
-                appStyles: options?.appManifest?.appStyles || null,
-              },
-            },
-          ],
+          files: getCopyFiles(options, env),
         },
         loggas
       ),
@@ -449,10 +422,38 @@ export default (options) => {
   };
 };
 
-const getFileLoaderOptions = () => {
-  return {
-    name: "[name].[ext]",
-  };
+const getCopyFiles = (options, env) => {
+  let files = [
+    {
+      referenceAssetsPath: kotiiKotiiLandPath,
+      kotiiRootPath: kotiiRootPath,
+      assetsFile: "assets.manifest.json",
+      fileFormat: "json",
+      extra: {
+        inline: options.inline,
+        emitFile: true,
+        emitPath:
+          options?.build && options.build
+            ? options.staticFolder
+            : `${env.appBuildFolder}`,
+      },
+    },
+  ];
+
+  if (options.appManifest?.appStyles) {
+    files.push({
+      fileEmitter: options.createCssStyles,
+      extra: {
+        build:
+          options?.build && options.build
+            ? options.staticFolder
+            : `${env.appBuildFolder}`,
+        appStyles: options?.appManifest?.appStyles || null,
+      },
+    });
+  }
+
+  return files;
 };
 
 function configureKotiiLogger() {

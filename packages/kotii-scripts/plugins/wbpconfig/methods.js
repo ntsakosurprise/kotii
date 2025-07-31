@@ -23,7 +23,7 @@ methods.handleWebpackConfig = function (data) {
   // self.debug("SELF BEFORE", self);
   self["callback"] = data.callback;
   const loadFile = self.pao.pa_loadFile;
-  const { contextApp } = data.payload;
+  const { contextApp, build = false } = data.payload;
   const { appEnv = "" } = contextApp;
   const {
     useCustomDomain = false,
@@ -35,18 +35,7 @@ methods.handleWebpackConfig = function (data) {
   // self.debug("SELF. AFTER SETTING CALLBACK", self);
   // self.debug("THE NODE ENV", process.env.NODE_ENV);
 
-  if (!fs.existsSync(contextApp.appSsl) && useHttps) {
-    // if (
-    //   !self.checkIfIsFile(
-    //     path.resolve(contextApp.appFolder, "certsConfig.json")
-    //   )
-    // ) {
-    //   throw new Error(
-    //     "App is set to use https, but certs.json file is not yet defined"
-    //   );
-    // } else {
-
-    // }
+  if (!fs.existsSync(contextApp.appSsl) && useHttps && !build) {
     fs.mkdirSync(contextApp.appSsl);
     process.env["ANZII_APP_USE_HTTPS"] = true;
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
