@@ -177,7 +177,9 @@ methods.configureWebPack = function (
         ? contextApp.appManifest.fileLoader.inline
         : false,
     runOnceDone: self.runOnceDone.bind(self),
-    createCssStyles: self.createCssStyles.bind(self),
+    createCssStyles: contextApp.appManifest?.appStyles
+      ? self.createCssStyles.bind(self)
+      : null,
   });
 
   self.debug("PROCESS.ENV", process.env);
