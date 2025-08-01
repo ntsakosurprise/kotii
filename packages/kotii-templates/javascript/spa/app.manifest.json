@@ -3,6 +3,10 @@
     "type": "spa",
     "stateVendor": "redux"
   },
+  "appStyles": {
+    "useTag": "link",
+    "fileName": "kotii-styles.css"
+  },
   "useHttps": true,
   "useCustomDomain": true,
   "useSetPort": true,
