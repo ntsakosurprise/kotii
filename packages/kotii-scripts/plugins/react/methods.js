@@ -258,9 +258,9 @@ methods.renderFullPage = function ({
     ${head?.title.toString()}
     ${head?.meta.toString()}
     ${head?.link.toString()}
-    ${self.styledTags}
-    ${self.styleTags}
-    <link rel="stylesheet" type="text/css" href="/tailwind.css">
+    ${self?.styledTags || ""}
+    ${self?.styleTags || ""}
+
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
@@ -434,11 +434,19 @@ methods.doKotiiStyles = function () {
       : true
     : null;
 
+  if (process?.tailwindGenerated)
+    self.styleTags = `<link rel="stylesheet" type="text/css" href="/tailwind.css">`;
   if (!jsonStyles) return null;
   if (process?.useLinkStyleTag) {
-    self.styleTags = `<link rel="stylesheet" id="styles-tag" type="text/css" href="/${process.styleSheetName}">`;
+    self.styleTags = `${
+      self?.styleTags || ""
+    }<link rel="stylesheet" id="styles-tag" type="text/css" href="/${
+      process.styleSheetName
+    }">`;
   } else {
-    self.styleTags = `<style id="styles-tag">${jsonStyles
+    self.styleTags = `${
+      self?.styleTags || ""
+    }<style id="styles-tag">${jsonStyles
       .toString()
       .replaceAll(",", " ")}</style>`;
   }
