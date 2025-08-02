@@ -180,6 +180,7 @@ methods.configureWebPack = function (
     createCssStyles: contextApp.appManifest?.appStyles
       ? self.createCssStyles.bind(self)
       : null,
+    tailwindConfig: contextApp?.appTailwindConfig || null,
   });
 
   self.debug("PROCESS.ENV", process.env);
