@@ -297,7 +297,9 @@ export default (options) => {
             {
               loader: "kotii-postcss-loader",
               options: {
-                tailwindConfig: `${kotiiRootPath}/webpack-loaders/postcss-loader/tailwind.config.cjs`,
+                tailwindConfig:
+                  options?.tailwindConfig ||
+                  `${kotiiRootPath}/webpack-loaders/postcss-loader/tailwind.config.cjs`,
                 contentPath: env.appSrc,
                 mainCssFilename: "global.css",
               },
