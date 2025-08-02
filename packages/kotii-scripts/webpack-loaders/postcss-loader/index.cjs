@@ -15,6 +15,7 @@ module.exports = async function (cssContent) {
     `${filePath}`,
     options
   );
+  process["tailwindGenerated"] = "true";
   this.emitFile("tailwind.css", result.css);
 
   asyncCallback(null, cssContent);
