@@ -13,8 +13,7 @@ module.exports = async function (cssContent) {
     cssContent,
     filePath,
     `${filePath}`,
-    options,
-    tsConfigReader
+    options
   );
   process["tailwindGenerated"] = "true";
   this.emitFile("tailwind.css", result.css);
