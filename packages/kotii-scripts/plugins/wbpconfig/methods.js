@@ -131,6 +131,7 @@ methods.configureWebPack = function (
   const self = this;
   const pao = self.pao;
   // const getWorkingDir = pao.p_getWorkingFolder;
+  const loadFile = self.pao.pa_loadFile;
   const cwd = pao.pa_getWorkingFolder();
   const { webpack, setContextEnv } = self;
   const { routes = null, contextApp, build = false } = payload;
@@ -181,6 +182,7 @@ methods.configureWebPack = function (
       ? self.createCssStyles.bind(self)
       : null,
     tailwindConfig: contextApp?.appTailwindConfig || null,
+    tsConfigReader: loadFile,
   });
 
   self.debug("PROCESS.ENV", process.env);
