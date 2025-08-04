@@ -85,6 +85,7 @@ methods.getAppInContextResources = function (environment = false) {
       ? indexPath.replace(".js", ".ts")
       : indexPath;
     const tailwindPath = self.getFilePath(appFolder, "tailwind.config.js");
+    const tailwindCjsPath = self.getFilePath(appFolder, "tailwind.config.cjs");
     const tsConfigPath = self.getFilePath(appFolder, "tsconfig.ts");
     const jsConfigPath = self.getFilePath(appFolder, "tsconfig.js");
     const resources = {
@@ -126,7 +127,11 @@ methods.getAppInContextResources = function (environment = false) {
       )
         ? true
         : null,
-      appTailwindConfig: self.checkIfIsFile(tailwindPath) ? tailwindPath : null,
+      appTailwindConfig: self.checkIfIsFile(tailwindPath)
+        ? tailwindPath
+        : self.checkIfIsFile(tailwindCjsPath)
+        ? tailwindCjsPath
+        : null,
       appTsConfig: self.checkIfIsFile(tsConfigPath) ? tsConfigPath : null,
       appJsConfig: self.checkIfIsFile(jsConfigPath) ? jsConfigPath : null,
     };
