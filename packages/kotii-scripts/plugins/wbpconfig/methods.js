@@ -132,6 +132,7 @@ methods.configureWebPack = function (
   const pao = self.pao;
   // const getWorkingDir = pao.p_getWorkingFolder;
   const loadFile = self.pao.pa_loadFile;
+  const readFileSync = pao.pa_readFileSync;
   const cwd = pao.pa_getWorkingFolder();
   const { webpack, setContextEnv } = self;
   const { routes = null, contextApp, build = false } = payload;
@@ -182,7 +183,11 @@ methods.configureWebPack = function (
       ? self.createCssStyles.bind(self)
       : null,
     tailwindConfig: contextApp?.appTailwindConfig || null,
-    tsConfigReader: loadFile,
+    tsConfigReaders: {
+      commonJs: loadFile,
+      esmJs: self.dynamicImport.bind(self),
+    },
+    fileReader: readFileSync,
   });
 
   self.debug("PROCESS.ENV", process.env);
@@ -1489,6 +1494,13 @@ methods.buildListToAddOnClient = function (toBuildFor, built, imports) {
       self.buildListToAddOnClient(file.children, built, imports);
     }
   });
+};
+
+methods.dynamicImport = async function (fil) {
+  const self = this;
+  self.debug("TAILWIND CONFIG OPTIONS: CALL", fil);
+  const open = await import(fil);
+  return open;
 };
 
 export default methods;

@@ -71,6 +71,7 @@ class WebpackConfig {
     this.createCssStyles = methods.createCssStyles;
     this.buildListToRemoveOnClient = methods.buildListToRemoveOnClient;
     this.buildListToAddOnClient = methods.buildListToAddOnClient;
+    this.dynamicImport = methods.dynamicImport;
   }
 }
 export default WebpackConfig;

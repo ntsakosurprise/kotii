@@ -301,7 +301,8 @@ export default (options) => {
                   options?.tailwindConfig ||
                   `${kotiiRootPath}/webpack-loaders/postcss-loader/tailwind.config.cjs`,
                 contentPath: env.appSrc,
-                tsConfigReader: options.tsConfigReader,
+                tsConfigReaders: options.tsConfigReaders,
+                fileReader: options.fileReader,
                 mainCssFilename: "global.css",
               },
             },
