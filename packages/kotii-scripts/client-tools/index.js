@@ -1535,6 +1535,9 @@ const SUKU = (function () {
   }; // End of return framework
 })();
 let TARGET_UPDATE_STYLESHEET = null;
+let TARGET_UPDATE_STYLESHEET_TAILWIND = null;
+let TARGET_UPDATE_STYLESHEET_KOTII = null;
+let CURRENT_STYLESHEET_VENDOR = null;
 
 // let IMPORT_FILE_TEXT_REGEX = new RegExp(`\/\*\s*(INCLUDED_CSS)_HEAD:\s*(${escapedFileName})\s*\*\/([\S\s]*?)\/\*\s*\1_FOOTER:\s*\2\s(\*\/)$`,"gim")
 const startUpApp = function () {
@@ -1581,6 +1584,9 @@ const listenToServerEvents = function (evData) {
       if (data.update && data.update.type === "immediate") {
         let update = data.update;
         let updateData = update.data;
+        CURRENT_STYLESHEET_VENDOR = update.vendor ? update.vendor : "kotii";
+        console.log("THE CURRENT STYLESHEET VENDOR", CURRENT_STYLESHEET_VENDOR);
+
         beginDomUpdate(update.target, updateData);
       }
     }
@@ -1615,6 +1621,9 @@ const listenToWebSocketEvents = function () {
       console.log("UPDATE DATA kotii-client-css-update", data.content);
       if (data?.content && data.updateType === "immediate") {
         console.log("IS DATA UPDATE");
+
+        CURRENT_STYLESHEET_VENDOR = data?.vendor ? data.vendor : "kotii";
+        console.log("THE CURRENT STYLESHEET VENDOR", CURRENT_STYLESHEET_VENDOR);
         beginDomUpdate(data.content);
       }
     }
@@ -1785,10 +1794,10 @@ const updateDomByFileRemovalLinkTag = function (removals) {
   setTargetStylesheetLink();
 
   for (let removeItem = 0; removeItem < removals.length; removeItem++) {
-    for (let i = 0; i < TARGET_UPDATE_STYLESHEET.cssRules.length; i++) {
-      const rule = TARGET_UPDATE_STYLESHEET.cssRules[i];
+    for (let i = 0; i < TARGET_UPDATE_STYLESHEET_KOTII.cssRules.length; i++) {
+      const rule = TARGET_UPDATE_STYLESHEET_KOTII.cssRules[i];
       if (rule.selectorText === removals[removeItem]) {
-        TARGET_UPDATE_STYLESHEET.deleteRule(i);
+        TARGET_UPDATE_STYLESHEET_KOTII.deleteRule(i);
         break;
       }
     }
@@ -1798,11 +1807,16 @@ const updateDomByFileRemovalLinkTag = function (removals) {
 const updateDomByFileAdditionLinkTag = function (additions) {
   console.log("ADDITION LINK");
   setTargetStylesheetLink();
+  let stylesheetSource =
+    CURRENT_STYLESHEET_VENDOR === "kotii"
+      ? TARGET_UPDATE_STYLESHEET_KOTII
+      : TARGET_UPDATE_STYLESHEET_TAILWIND;
   for (let addItem = 0; addItem < additions.length; addItem++) {
     console.log("INSERT RULE", additions[addItem]);
-    TARGET_UPDATE_STYLESHEET.insertRule(
+
+    stylesheetSource.insertRule(
       additions[addItem],
-      TARGET_UPDATE_STYLESHEET.cssRules.length
+      stylesheetSource.cssRules.length
     );
   }
 };
@@ -1824,20 +1838,40 @@ const setTargetStylesheet = () => {
 
 const setTargetStylesheetLink = () => {
   console.log("TARGET LINK STYLESHEET");
-  if (!TARGET_UPDATE_STYLESHEET) {
-    console.log("Stylesheet not set");
-    let styleSheets = document.styleSheets;
-    for (let sheet = 0; sheet < styleSheets.length; sheet++) {
-      if (
-        styleSheets[sheet].ownerNode?.id &&
-        styleSheets[sheet].ownerNode.id === "styles-tag"
-      ) {
-        console.log("TARGET STYLESHEET FOUND");
-        TARGET_UPDATE_STYLESHEET = styleSheets[sheet];
-        break;
-      }
+  if (
+    CURRENT_STYLESHEET_VENDOR === "tailwind" &&
+    !TARGET_UPDATE_STYLESHEET_TAILWIND
+  ) {
+    TARGET_UPDATE_STYLESHEET_TAILWIND = searchForStylesheet(
+      "tailwind-stylesheet-link"
+    );
+  } else if (
+    CURRENT_STYLESHEET_VENDOR === "kotii" &&
+    !TARGET_UPDATE_STYLESHEET_KOTII
+  ) {
+    TARGET_UPDATE_STYLESHEET_KOTII = searchForStylesheet(
+      "kotii-stylesheet-link"
+    );
+  }
+  // if (!TARGET_UPDATE_STYLESHEET) {
+  //   console.log("Stylesheet not set");
+  // }
+};
+const searchForStylesheet = (styleSheetID) => {
+  let styleSheets = document.styleSheets;
+  let currentVendorSheet = null;
+  for (let sheet = 0; sheet < styleSheets.length; sheet++) {
+    if (
+      styleSheets[sheet].ownerNode?.id &&
+      styleSheets[sheet].ownerNode.id === styleSheetID
+    ) {
+      console.log("TARGET STYLESHEET FOUND");
+
+      currentVendorSheet = styleSheets[sheet];
+      break;
     }
   }
+  return currentVendorSheet;
 };
 
 const randomClassStrings = [
