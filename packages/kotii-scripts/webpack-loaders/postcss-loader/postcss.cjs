@@ -4,6 +4,7 @@ const postcssNested = require("postcss-nested");
 const tailwindcss = require("tailwindcss");
 const path = require("path");
 let tailwindConfig = null;
+let tailwindRootFile = "";
 
 const fs = require("fs");
 
