@@ -1,7 +1,13 @@
 const methods = {};
 const MATCH_REMOTE_RESOURCE_REGEX = /(https|http):+\/\//i;
+let tailwindConfig = null;
+let tailwindRootFile = "";
+import autoprefixer from "autoprefixer";
 import fs from "fs";
 import path from "path";
+import postcss from "postcss";
+import postcssNested from "postcss-nested";
+import tailwindcss from "tailwindcss";
 import WebSocket, { WebSocketServer } from "ws";
 import {
   compareCss,
@@ -12,6 +18,7 @@ import {
   stylusToCssConverter,
 } from "../../css/index.js";
 import { kotiiKotiiLandPath } from "../../kotii_paths.js";
+import createRandomeName from "./createRandomName.js";
 
 methods.init = function () {
   this.listens({
@@ -183,11 +190,13 @@ methods.configureWebPack = function (
       ? self.createCssStyles.bind(self)
       : null,
     tailwindConfig: contextApp?.appTailwindConfig || null,
-    tsConfigReaders: {
-      commonJs: loadFile,
-      esmJs: self.dynamicImport.bind(self),
-    },
-    fileReader: readFileSync,
+    runForTailwindCss: self.runForTailwindCss.bind(self),
+    saveTailwindResources: self.saveTailwindResources.bind(self),
+    // tsConfigReaders: {
+    //   commonJs: loadFile,
+    //   esmJs: self.dynamicImport.bind(self),
+    // },
+    // fileReader: readFileSync,
   });
 
   self.debug("PROCESS.ENV", process.env);
@@ -1501,6 +1510,173 @@ methods.dynamicImport = async function (fil) {
   self.debug("TAILWIND CONFIG OPTIONS: CALL", fil);
   const open = await import(fil);
   return open;
+};
+
+methods.runForTailwindCss = async function (options) {
+  const self = this;
+
+  const {
+    tailwindConfig,
+    buildFolder,
+    tailwindMainContent,
+    sourceFile,
+    toSource,
+  } = self.tailwindCssInfo;
+
+  self.debug("THE TAILWIND CSS OPTIONS", self.tailwindCssInfo);
+
+  return new Promise(async (resolve) => {
+    postcss([
+      autoprefixer,
+      postcssNested,
+      tailwindcss({
+        config:
+          typeof tailwindConfig == "function"
+            ? tailwindConfig()
+            : tailwindConfig.default,
+      }),
+    ])
+      .process(tailwindMainContent, {
+        from: sourceFile,
+        to: toSource,
+      })
+      .then((result) => {
+        try {
+          // resolve({
+          //   css: result.css,
+          // });
+          let tailwindStyleSheetName = !process?.tailwindStyleSheetName
+            ? `tailwind-${createRandomeName(5).toLowerCase()}.css`
+            : process.tailwindStyleSheetName;
+          process["tailwindGenerated"] = "true";
+          process["tailwindStyleSheetName"] = tailwindStyleSheetName;
+
+          console.log("THE STYLESHEET NAME", tailwindStyleSheetName);
+
+          let tailwindFilePath = `${buildFolder}/${tailwindStyleSheetName}`;
+          self.info("NEW CSS", result.css);
+          if (!fs.existsSync(tailwindFilePath)) {
+            fs.writeFileSync(tailwindFilePath, result.css);
+            self.tailwindCssInfo["tailwindProcessedCss"] = result.css;
+            self.info("TAILWIND CSS IS COMPILED!");
+            return;
+          }
+
+          // let oldCss = fs.readFileSync(tailwindFilePath, {
+          //   encoding: "utf8",
+          // });
+          let oldCss = self.tailwindCssInfo.tailwindProcessedCss;
+          let newCss = result.css;
+          // self.debug("NEW CSS", newCss);
+          // self.debug("OLD CSS", oldCss);
+
+          let diffResults = self.diffTailwindCss(newCss, oldCss);
+          // if(!diffResults) return
+          console.log("THE DIFF RESULTS", diffResults);
+
+          self.info("TAILWIND CSS IS RE-COMPILED!");
+        } catch (error) {
+          console.log("CSS SAVING ERROR", error);
+        }
+      });
+  });
+};
+
+methods.saveTailwindResources = async function (options) {
+  const self = this;
+  const pao = self.pao;
+  // const getWorkingDir = pao.p_getWorkingFolder;
+  const loadFile = self.pao.pa_loadFile;
+  const readFileSync = pao.pa_readFileSync;
+  const {
+    tailwindConfigPath = null,
+    rootFile = null,
+    tailwindFrom = null,
+    tailwindTo = null,
+    tailwindMainContent = null,
+    buildFolder,
+  } = options;
+
+  if (!tailwindConfig) {
+    const fileExt = path.extname(tailwindConfigPath);
+
+    if (
+      fileExt === ".js" &&
+      readFileSync(tailwindConfigPath).indexOf("module.exports") >= 0
+    ) {
+      throw new Error(
+        `File: ${path.basename(
+          tailwindConfigPath
+        )} should use commonjs with a .cjs extension`
+      );
+    } else if (fileExt === ".cjs") {
+      tailwindConfig = await loadFile(tailwindConfigPath);
+    } else {
+      tailwindConfig = await self.dynamicImport(tailwindConfigPath);
+    }
+    // tailwindConfig = await tsConfigReader(options.tailwindConfig);
+    // console.log("THE TAILWIND CONFIG", tailwindConfig);
+    //require(options.tailwindConfig);
+  }
+
+  self.tailwindCssInfo = {
+    tailwindMainContent: tailwindMainContent,
+    sourceFile: tailwindFrom,
+    toSource: tailwindTo,
+    buildFolder,
+    tailwindConfig,
+  };
+};
+
+methods.diffTailwindCss = function (newCss, oldCss) {
+  const self = this;
+
+  const oldClasses = new Set(self.extractTailwindClasses(oldCss));
+  const newClasses = new Set(self.extractTailwindClasses(newCss));
+
+  const addedClasses = [...newClasses].filter((c) => !oldClasses.has(c));
+  const removedClasses = [...oldClasses].filter((c) => !newClasses.has(c));
+  console.log("THE ADDED CLASSES", addedClasses);
+  console.log("THE REMOVED CLASSES", removedClasses);
+
+  if (addedClasses?.length > 0) {
+    self.findAddedTailwindClassContent(newCss, addedClasses);
+  }
+};
+
+methods.extractTailwindClasses = function (css) {
+  const self = this;
+  return [...css.matchAll(/\.(.*?)\s*{/g)]
+    .map((m) => m[1])
+    .filter((c) => !c.includes(":"));
+};
+
+methods.findAddedTailwindClassContent = function (css, classNames) {
+  console.log("THE CLASS", css);
+  console.log("CLASSES", classNames);
+  const self = this;
+
+  let content = { addImportCssFile: [] };
+  postcss.parse(css).walkRules((rule) => {
+    console.log("ADDED CLASSE", rule.selector);
+    if (classNames.includes(rule.selector.substring(1))) {
+      // classNames[classNames.indexOf(rule.selector)];
+
+      content.addImportCssFile.push(rule.toString());
+      console.log("ADDED CLASSE CONTENT", rule.toString()); // Full block including nested content
+    }
+  });
+  console.log("TAILWIND CONTENT", content);
+  self.tailwindCssInfo.tailwindProcessedCss = `${
+    self.tailwindCssInfo.tailwindProcessedCss
+  } ${content.addImportCssFile.join("")}`;
+  self.notifyClient({
+    name: "kotii-client-css-update",
+    updateType: "immediate",
+    vendor: "tailwind",
+    content: content,
+  });
+  // return content;
 };
 
 export default methods;
