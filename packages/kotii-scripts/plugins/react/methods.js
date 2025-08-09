@@ -435,14 +435,12 @@ methods.doKotiiStyles = function () {
     : null;
 
   if (process?.tailwindGenerated)
-    self.styleTags = `<link rel="stylesheet" type="text/css" href="/tailwind.css">`;
+    self.styleTags = `<link rel="stylesheet" id="styles-tag" type="text/css" href="/${process.tailwindStyleSheetName}">`;
   if (!jsonStyles) return null;
   if (process?.useLinkStyleTag) {
     self.styleTags = `${
       self?.styleTags || ""
-    }<link rel="stylesheet" id="styles-tag" type="text/css" href="/${
-      process.styleSheetName
-    }">`;
+    }<link rel="stylesheet" type="text/css" href="/${process.styleSheetName}">`;
   } else {
     self.styleTags = `${
       self?.styleTags || ""
