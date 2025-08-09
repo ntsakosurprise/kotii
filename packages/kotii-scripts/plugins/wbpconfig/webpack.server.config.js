@@ -301,8 +301,10 @@ export default (options) => {
                   options?.tailwindConfig ||
                   `${kotiiRootPath}/webpack-loaders/postcss-loader/tailwind.config.cjs`,
                 contentPath: env.appSrc,
-                tsConfigReaders: options.tsConfigReaders,
-                fileReader: options.fileReader,
+                // tsConfigReaders: options.tsConfigReaders,
+                // fileReader: options.fileReader,
+                buildFolder: env.appBuildFolder,
+                saveTailwindResources: options.saveTailwindResources,
                 mainCssFilename: "global.css",
               },
             },
@@ -420,7 +422,9 @@ export default (options) => {
       //   },
       //   loggas
       // ),
-      new StatsPrintWebpackPlugin(loggas),
+      new StatsPrintWebpackPlugin(loggas, {
+        runForTailwindCss: options.runForTailwindCss,
+      }),
       new BroadcastCompilationWebpackPlugin(options.runOnceDone, loggas),
     ],
   };
