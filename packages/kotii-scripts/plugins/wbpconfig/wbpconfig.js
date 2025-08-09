@@ -72,6 +72,11 @@ class WebpackConfig {
     this.buildListToRemoveOnClient = methods.buildListToRemoveOnClient;
     this.buildListToAddOnClient = methods.buildListToAddOnClient;
     this.dynamicImport = methods.dynamicImport;
+    this.runForTailwindCss = methods.runForTailwindCss;
+    this.saveTailwindResources = methods.saveTailwindResources;
+    this.diffTailwindCss = methods.diffTailwindCss;
+    this.extractTailwindClasses = methods.extractTailwindClasses;
+    this.findAddedTailwindClassContent = methods.findAddedTailwindClassContent;
   }
 }
 export default WebpackConfig;
