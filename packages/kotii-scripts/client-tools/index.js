@@ -1635,10 +1635,9 @@ const listenToWebSocketEvents = function () {
   };
 };
 const checkForKotiiLinkStylesheetMap = function () {
-  console.log("THE PROCESS KEY", window.__KOTII_APP_URL__);
   KOTII_JS_STYLESHEET_MAP =
-    typeof window.__KOTII_APP_STYLESHEET__ != undefined
-      ? window.__KOTII_APP_STYLESHEET__
+    typeof window.__KOTII_APP_URL__ != undefined
+      ? window.__KOTII_APP_URL__
       : null;
   // setTimeout(() => {
   //   SUKU.ajax_get(
