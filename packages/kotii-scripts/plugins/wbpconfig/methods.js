@@ -1,7 +1,13 @@
 const methods = {};
 const MATCH_REMOTE_RESOURCE_REGEX = /(https|http):+\/\//i;
+let tailwindConfig = null;
+let tailwindRootFile = "";
+import autoprefixer from "autoprefixer";
 import fs from "fs";
 import path from "path";
+import postcss from "postcss";
+import postcssNested from "postcss-nested";
+import tailwindcss from "tailwindcss";
 import WebSocket, { WebSocketServer } from "ws";
 import {
   compareCss,
@@ -12,6 +18,7 @@ import {
   stylusToCssConverter,
 } from "../../css/index.js";
 import { kotiiKotiiLandPath } from "../../kotii_paths.js";
+import createRandomeName from "./createRandomName.js";
 
 methods.init = function () {
   this.listens({
@@ -23,7 +30,7 @@ methods.handleWebpackConfig = function (data) {
   // self.debug("SELF BEFORE", self);
   self["callback"] = data.callback;
   const loadFile = self.pao.pa_loadFile;
-  const { contextApp } = data.payload;
+  const { contextApp, build = false } = data.payload;
   const { appEnv = "" } = contextApp;
   const {
     useCustomDomain = false,
@@ -35,18 +42,7 @@ methods.handleWebpackConfig = function (data) {
   // self.debug("SELF. AFTER SETTING CALLBACK", self);
   // self.debug("THE NODE ENV", process.env.NODE_ENV);
 
-  if (!fs.existsSync(contextApp.appSsl) && useHttps) {
-    // if (
-    //   !self.checkIfIsFile(
-    //     path.resolve(contextApp.appFolder, "certsConfig.json")
-    //   )
-    // ) {
-    //   throw new Error(
-    //     "App is set to use https, but certs.json file is not yet defined"
-    //   );
-    // } else {
-
-    // }
+  if (!fs.existsSync(contextApp.appSsl) && useHttps && !build) {
     fs.mkdirSync(contextApp.appSsl);
     process.env["ANZII_APP_USE_HTTPS"] = true;
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
@@ -142,6 +138,8 @@ methods.configureWebPack = function (
   const self = this;
   const pao = self.pao;
   // const getWorkingDir = pao.p_getWorkingFolder;
+  const loadFile = self.pao.pa_loadFile;
+  const readFileSync = pao.pa_readFileSync;
   const cwd = pao.pa_getWorkingFolder();
   const { webpack, setContextEnv } = self;
   const { routes = null, contextApp, build = false } = payload;
@@ -188,7 +186,17 @@ methods.configureWebPack = function (
         ? contextApp.appManifest.fileLoader.inline
         : false,
     runOnceDone: self.runOnceDone.bind(self),
-    createCssStyles: self.createCssStyles.bind(self),
+    createCssStyles: contextApp.appManifest?.appStyles
+      ? self.createCssStyles.bind(self)
+      : null,
+    tailwindConfig: contextApp?.appTailwindConfig || null,
+    runForTailwindCss: self.runForTailwindCss.bind(self),
+    saveTailwindResources: self.saveTailwindResources.bind(self),
+    // tsConfigReaders: {
+    //   commonJs: loadFile,
+    //   esmJs: self.dynamicImport.bind(self),
+    // },
+    // fileReader: readFileSync,
   });
 
   self.debug("PROCESS.ENV", process.env);
@@ -499,7 +507,6 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
             ? possilbeImports[addPath]
             : moduleInfo;
 
-          self.debug("THE MATCHED INFO", matchedInfo);
           const updatedContentAst = createCssAst([updatedContent]); // create ast of the current file
           const currentOriginalAst = possibleMatch.importsMatch
             ? matchedInfo.inputBeforeAst
@@ -540,15 +547,72 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
                 );
               }
 
-              // Send update results to client using websockets
-              self.notifyClient({
-                name: "kotii-client-css-update",
-                updateType: "immediate",
-                content,
-              });
+              // Check if styles are served through a css link file
+              // If they are set keys to let the client know that this
+              // is for a file
+
+              if (process?.useLinkStyleTag) {
+                if (content?.newSelectorsUpdate) {
+                  content["addImportCssFile"] = content.newSelectorsUpdate.map(
+                    (selectCssRule) => {
+                      return selectCssRule.selectorCss;
+                    }
+                  );
+                  delete content.newSelectorsUpdate;
+                }
+
+                if (content?.oldSelectorsUpdate) {
+                  content["removeAddImportCssFile"] =
+                    content.oldSelectorsUpdate.map((selectCssRule) => {
+                      let storedSelectorCss =
+                        self.stylesObject[selectCssRule.selector];
+
+                      Object.keys(selectCssRule.selectorCss.propsValue).forEach(
+                        (key) => {
+                          storedSelectorCss[key] =
+                            selectCssRule.selectorCss.propsValue[key];
+                        }
+                      );
+                      self.stylesObject[selectCssRule.selector] =
+                        storedSelectorCss;
+                      let cssBuilt = ``;
+                      Object.keys(storedSelectorCss).forEach((keyy) => {
+                        cssBuilt = `${cssBuilt} ${keyy}: ${storedSelectorCss[keyy]};`;
+                      });
+                      return `${selectCssRule.selector} {${cssBuilt}}`;
+                    });
+
+                  delete content.oldSelectorsUpdate;
+                }
+
+                if (content?.removeSelectorsUpdate) {
+                  content["removeImportCssFile"] =
+                    content.removeSelectorsUpdate;
+                  delete content.removeSelectorsUpdate;
+                  content.removeImportCssFile.forEach((removeSelector) => {
+                    if (self.stylesObject[removeSelector])
+                      delete self.stylesObject[removeSelector];
+                  });
+                }
+
+                // Send update results to client using websockets
+                self.notifyClient({
+                  name: "kotii-client-css-update",
+                  updateType: "immediate",
+                  vendor: "kotii",
+                  content,
+                });
+              } else {
+                // Send update results to client using websockets
+                self.notifyClient({
+                  name: "kotii-client-css-update",
+                  updateType: "immediate",
+                  content,
+                });
+              }
 
               /**
-               * Update css meta data object with lates changes
+               * Update css meta data object with latest changes
                */
 
               if (
@@ -1452,6 +1516,21 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
     )
       .toString()
       .replaceAll(",", " ");
+    let styleAst = createCssAst([stylesString]);
+
+    self.stylesObject = {};
+    styleAst.nodes.forEach((rule) => {
+      if (rule.type.toLowerCase() !== "comment") {
+        self.stylesObject[rule.selector] = {};
+        rule.nodes.forEach((ruleProps) => {
+          self.stylesObject[rule.selector][ruleProps.prop] =
+            ruleProps?.important
+              ? `${ruleProps.value} !important`
+              : ruleProps.value;
+        });
+      }
+    });
+
     fs.writeFileSync(`${appBuildFolder}/${fileName}`, stylesString);
   }
 };
@@ -1495,6 +1574,155 @@ methods.buildListToAddOnClient = function (toBuildFor, built, imports) {
       self.buildListToAddOnClient(file.children, built, imports);
     }
   });
+};
+
+methods.dynamicImport = async function (fil) {
+  const self = this;
+  self.debug("TAILWIND CONFIG OPTIONS: CALL", fil);
+  const open = await import(fil);
+  return open;
+};
+
+methods.runForTailwindCss = async function (options) {
+  const self = this;
+
+  const {
+    tailwindConfig,
+    buildFolder,
+    tailwindMainContent,
+    sourceFile,
+    toSource,
+  } = self.tailwindCssInfo;
+
+  return new Promise(async (resolve) => {
+    postcss([
+      autoprefixer,
+      postcssNested,
+      tailwindcss({
+        config:
+          typeof tailwindConfig == "function"
+            ? tailwindConfig()
+            : tailwindConfig.default,
+      }),
+    ])
+      .process(tailwindMainContent, {
+        from: sourceFile,
+        to: toSource,
+      })
+      .then((result) => {
+        try {
+          let tailwindStyleSheetName = !process?.tailwindStyleSheetName
+            ? `tailwind-${createRandomeName(5).toLowerCase()}.css`
+            : process.tailwindStyleSheetName;
+          process["tailwindGenerated"] = "true";
+          process["tailwindStyleSheetName"] = tailwindStyleSheetName;
+          let tailwindFilePath = `${buildFolder}/${tailwindStyleSheetName}`;
+
+          if (!fs.existsSync(tailwindFilePath)) {
+            fs.writeFileSync(tailwindFilePath, result.css);
+            self.tailwindCssInfo["tailwindProcessedCss"] = result.css;
+
+            return;
+          }
+
+          let oldCss = self.tailwindCssInfo.tailwindProcessedCss;
+          let newCss = result.css;
+          // self.debug("NEW CSS", newCss);
+          // self.debug("OLD CSS", oldCss);
+
+          self.diffTailwindCss(newCss, oldCss);
+          // if(!diffResults) return
+        } catch (error) {
+          console.log("CSS SAVING ERROR", error);
+        }
+      });
+  });
+};
+
+methods.saveTailwindResources = async function (options) {
+  const self = this;
+  const pao = self.pao;
+  // const getWorkingDir = pao.p_getWorkingFolder;
+  const loadFile = self.pao.pa_loadFile;
+  const readFileSync = pao.pa_readFileSync;
+  const {
+    tailwindConfigPath = null,
+    rootFile = null,
+    tailwindFrom = null,
+    tailwindTo = null,
+    tailwindMainContent = null,
+    buildFolder,
+  } = options;
+
+  if (!tailwindConfig) {
+    const fileExt = path.extname(tailwindConfigPath);
+
+    if (
+      fileExt === ".js" &&
+      readFileSync(tailwindConfigPath).indexOf("module.exports") >= 0
+    ) {
+      throw new Error(
+        `File: ${path.basename(
+          tailwindConfigPath
+        )} should use commonjs with a .cjs extension`
+      );
+    } else if (fileExt === ".cjs") {
+      tailwindConfig = await loadFile(tailwindConfigPath);
+    } else {
+      tailwindConfig = await self.dynamicImport(tailwindConfigPath);
+    }
+  }
+
+  self.tailwindCssInfo = {
+    tailwindMainContent: tailwindMainContent,
+    sourceFile: tailwindFrom,
+    toSource: tailwindTo,
+    buildFolder,
+    tailwindConfig,
+  };
+};
+
+methods.diffTailwindCss = function (newCss, oldCss) {
+  const self = this;
+
+  const oldClasses = new Set(self.extractTailwindClasses(oldCss));
+  const newClasses = new Set(self.extractTailwindClasses(newCss));
+
+  const addedClasses = [...newClasses].filter((c) => !oldClasses.has(c));
+  const removedClasses = [...oldClasses].filter((c) => !newClasses.has(c));
+
+  if (addedClasses?.length > 0) {
+    self.findAddedTailwindClassContent(newCss, addedClasses);
+  }
+};
+
+methods.extractTailwindClasses = function (css) {
+  const self = this;
+  return [...css.matchAll(/\.(.*?)\s*{/g)]
+    .map((m) => m[1])
+    .filter((c) => !c.includes(":"));
+};
+
+methods.findAddedTailwindClassContent = function (css, classNames) {
+  const self = this;
+
+  let content = { addImportCssFile: [] };
+  postcss.parse(css, { from: undefined }).walkRules((rule) => {
+    if (classNames.includes(rule.selector.substring(1))) {
+      content.addImportCssFile.push(rule.toString());
+    }
+  });
+
+  self.tailwindCssInfo.tailwindProcessedCss = `${
+    self.tailwindCssInfo.tailwindProcessedCss
+  } ${content.addImportCssFile.join("")}`;
+  self.notifyClient({
+    name: "kotii-client-css-update",
+    updateType: "immediate",
+    vendor: "tailwind",
+    content: content,
+  });
+  // return content;
 };
 
 export default methods;

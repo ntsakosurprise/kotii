@@ -5,8 +5,8 @@ const AppProvider = props => {
     layout,
     appWrapper
   } = props;
-  const effectsStore = typeof window !== "undefined" ? JSON.parse(window.__KOTII_EFFECTS_STATE__) : props.effectsStore;
-  typeof window !== "undefined" ? delete window.__KOTII_EFFECTS_STATE__ : null;
+  const effectsStore = typeof window !== "undefined" && window?.__KOTII_EFFECTS_STATE__ ? JSON.parse(window.__KOTII_EFFECTS_STATE__) : props?.effectsStore ? props.effectsStore : null;
+  typeof window !== "undefined" && window?.__KOTII_EFFECTS_STATE__ ? delete window.__KOTII_EFFECTS_STATE__ : null;
   // effectsStore["isFirstTimeRun"] = true;
 
   return /*#__PURE__*/React.createElement(AppContext.Provider, {

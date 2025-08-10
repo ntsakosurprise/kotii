@@ -258,9 +258,9 @@ methods.renderFullPage = function ({
     ${head?.title.toString()}
     ${head?.meta.toString()}
     ${head?.link.toString()}
-    ${self.styledTags}
-    ${self.styleTags}
-    <link rel="stylesheet" type="text/css" href="/tailwind.css">
+    ${self?.styledTags || ""}
+    ${self?.styleTags || ""}
+
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
@@ -280,7 +280,8 @@ methods.includeScripts = function (preloadedState) {
      window.__KOTII_EFFECTS_STATE__ = ${serialize(
        JSON.stringify(self.effectsData)
      )}
-    
+     window.__KOTII_APP_URL__ = ${JSON.stringify(process?.env?.KOTII_APP_URL)}
+   
    </script>
    <script src="/server.js" ></script>
    <script src="/kotii-client.js" ></script>
@@ -434,11 +435,19 @@ methods.doKotiiStyles = function () {
       : true
     : null;
 
+  if (process?.tailwindGenerated)
+    self.styleTags = `<link rel="stylesheet" id="tailwind-stylesheet-link" type="text/css" href="/${process.tailwindStyleSheetName}">`;
   if (!jsonStyles) return null;
   if (process?.useLinkStyleTag) {
-    self.styleTags = `<link rel="stylesheet" id="styles-tag" type="text/css" href="/${process.styleSheetName}">`;
+    self.styleTags = `${
+      self?.styleTags || ""
+    }<link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="/${
+      process.styleSheetName
+    }">`;
   } else {
-    self.styleTags = `<style id="styles-tag">${jsonStyles
+    self.styleTags = `${
+      self?.styleTags || ""
+    }<style id="styles-tag">${jsonStyles
       .toString()
       .replaceAll(",", " ")}</style>`;
   }

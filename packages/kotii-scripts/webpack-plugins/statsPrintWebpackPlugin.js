@@ -1,11 +1,16 @@
 class StatsPrintWebpackPlugin {
-  constructor(loggas) {
+  constructor(loggas, options) {
     this.loggas = loggas;
+    this.options = options;
     this.loggas.statsPrintWebpackPlugin.debug("");
   }
   apply(compiler) {
     compiler.hooks.done.tap("StatsPrintWebpackPlugin", (stats) => {
       this.loggas.statsPrintWebpackPlugin.debug("Stats", stats);
+
+      if (process?.runTailwindCss) {
+        this.options.runForTailwindCss();
+      }
 
       if (!process.env.KOTII_WEBPACK_COMPILATION_SET) {
         process.env.KOTII_WEBPACK_COMPILATION_SET = "true";

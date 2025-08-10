@@ -1,8 +1,11 @@
 import postcss from "postcss";
 
-export default (inputCss = [], opts) => {
+export default (inputCss = [], opts = null) => {
   let asts = inputCss.map((css) => {
-    return postcss.parse(css, opts);
+    return postcss.parse(
+      css,
+      !opts ? { from: undefined, to: undefined } : opts
+    );
   });
 
   if (asts.length === 1) return asts[0];

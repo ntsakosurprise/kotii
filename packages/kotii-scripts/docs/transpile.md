@@ -4,7 +4,7 @@ Kotii transpile is used to transpile some internal files and plugins from a jsx 
 
 Reason
 
-We transpile these files ahead of time to prevent transpilation during run-time. The transpilation process is resource-heavy as it involves nodejs's I/O operations. Pre-transpiling these files ensures that they are ready for normal, minimal loading by nodejs' runtime, this in turn helps improve nodejs's load time.
+We transpile these files ahead of time to prevent transpilation at production run-time. The transpilation process is resource-heavy as it involves nodejs's I/O operations. Pre-transpiling these files ensures that they are ready for normal, minimal loading by nodejs' runtime, this in turn helps improve nodejs's load time.
 
 How to transpile
 

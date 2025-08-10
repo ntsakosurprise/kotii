@@ -84,6 +84,10 @@ methods.getAppInContextResources = function (environment = false) {
     const appIndexFile = !fs.existsSync(indexPath)
       ? indexPath.replace(".js", ".ts")
       : indexPath;
+    const tailwindPath = self.getFilePath(appFolder, "tailwind.config.js");
+    const tailwindCjsPath = self.getFilePath(appFolder, "tailwind.config.cjs");
+    const tsConfigPath = self.getFilePath(appFolder, "tsconfig.ts");
+    const jsConfigPath = self.getFilePath(appFolder, "tsconfig.js");
     const resources = {
       appEnv: self.getEnvFilePath(appFolder),
       appFolder: self.getFilePath(appFolder, "."),
@@ -92,8 +96,6 @@ methods.getAppInContextResources = function (environment = false) {
       appIndexFile: appIndexFile,
       appPagesFolder: self.getFilePath(appFolder, "src/pages"),
       appSrc: self.getFilePath(appFolder, "src"),
-      appTsConfig: self.getFilePath(appFolder, "tsconfig.ts"),
-      appJsConfig: self.getFilePath(appFolder, "tsconfig.js"),
       appIndexHtml: self.getFilePath(appFolder, "public/index.html"),
       appAssetsPublic: self.getFilePath(appFolder, "public"),
       appBuildFolder: self.getFilePath(cwd, "build"),
@@ -125,6 +127,13 @@ methods.getAppInContextResources = function (environment = false) {
       )
         ? true
         : null,
+      appTailwindConfig: self.checkIfIsFile(tailwindPath)
+        ? tailwindPath
+        : self.checkIfIsFile(tailwindCjsPath)
+        ? tailwindCjsPath
+        : null,
+      appTsConfig: self.checkIfIsFile(tsConfigPath) ? tsConfigPath : null,
+      appJsConfig: self.checkIfIsFile(jsConfigPath) ? jsConfigPath : null,
     };
     self.debug("THE RESOURCES", resources);
     // let appFileSavePath = `${resources.appSrc}/about_.js`;

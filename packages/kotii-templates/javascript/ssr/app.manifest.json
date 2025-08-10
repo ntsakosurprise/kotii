@@ -4,7 +4,7 @@
     "stateVendor": "redux"
   },
   "appStyles": {
-    "styleType": "external",
+    "useTag": "link",
     "fileName": "kotii-styles.css"
   },
   "useHttps": true,

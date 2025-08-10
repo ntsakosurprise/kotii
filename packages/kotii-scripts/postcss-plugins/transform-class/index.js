@@ -1,7 +1,5 @@
 import createRandomName from "../createRandomName.js";
 const plugin = (opts = {}) => {
-  console.log("POSTCSSPLUGIN OPTS", opts);
-
   let cssFileStylesMap = {};
   return {
     postcssPlugin: "transform-css-classes",
@@ -21,7 +19,6 @@ const plugin = (opts = {}) => {
       }
     },
     OnceExit(css) {
-      console.log("THE JSON MAP", cssFileStylesMap);
       css["modulesMap"] = cssFileStylesMap;
     },
   };
