@@ -60,6 +60,8 @@ class ReactView {
     this.doKotiiStyles = methods.doKotiiStyles;
     this.renderHtmlSpa = methods.renderHtmlSpa;
     this.handleReactSpa = methods.handleReactSpa;
+    this.handleSetHtmlPageSettings = methods.handleSetHtmlPageSettings;
+    this.doPageSettings = methods.doPageSettings;
   }
 }
 
