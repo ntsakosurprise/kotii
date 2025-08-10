@@ -60,7 +60,9 @@ const plugin = (oldAst, newAst) => {
                 updateContent["oldSelectors"] = {
                   [ruleNode.selector]: {
                     propsValue: {
-                      [rNode.prop]: rNode.value,
+                      [rNode.prop]: !rNode?.important
+                        ? rNode.value
+                        : `${rNode.value} !important`,
                     },
                   },
                 };
@@ -68,11 +70,15 @@ const plugin = (oldAst, newAst) => {
                 if (updateContent.oldSelectors[ruleNode.selector]) {
                   updateContent.oldSelectors[ruleNode.selector].propsValue[
                     rNode.prop
-                  ] = rNode.value;
+                  ] = rNode?.important
+                    ? rNode.value
+                    : `${rNode.value} !important`;
                 } else {
                   updateContent.oldSelectors[ruleNode.selector] = {
                     propsValue: {
-                      [rNode.prop]: rNode.value,
+                      [rNode.prop]: rNode?.important
+                        ? rNode.value
+                        : `${rNode.value} !important`,
                     },
                   };
                 }
@@ -83,7 +89,9 @@ const plugin = (oldAst, newAst) => {
               updateContent["oldSelectors"] = {
                 [ruleNode.selector]: {
                   propsValue: {
-                    [rNode.prop]: rNode.value,
+                    [rNode.prop]: rNode?.important
+                      ? rNode.value
+                      : `${rNode.value} !important`,
                   },
                 },
               };
@@ -91,11 +99,15 @@ const plugin = (oldAst, newAst) => {
               if (updateContent.oldSelectors[ruleNode.selector]) {
                 updateContent.oldSelectors[ruleNode.selector].propsValue[
                   rNode.prop
-                ] = rNode.value;
+                ] = rNode?.important
+                  ? rNode.value
+                  : `${rNode.value} !important`;
               } else {
                 updateContent.oldSelectors[ruleNode.selector].propsValue[
                   rNode.prop
-                ] = rNode.value;
+                ] = rNode?.important
+                  ? rNode.value
+                  : `${rNode.value} !important`;
               }
             }
           }
@@ -108,6 +120,7 @@ const plugin = (oldAst, newAst) => {
               oldAstExactNode.nodes[nodeDeclaresKeys[declareK].index].prop;
             let value =
               oldAstExactNode.nodes[nodeDeclaresKeys[declareK].index].prop;
+
             if (!updateContent.removeSelectorsProps) {
               updateContent["removeSelectorsProps"] = {
                 [ruleNode.selector]: {
