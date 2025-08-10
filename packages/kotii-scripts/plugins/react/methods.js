@@ -9,6 +9,7 @@ methods.init = function () {
   this.listens({
     "handle-react-view": this.handleReactView.bind(this),
     "take-ssr-routes": this.handleSsrRoutes.bind(this),
+    "set-html-page-settings": this.handleSetHtmlPageSettings.bind(this),
     "handle-react-static": this.handleReactStaticViews.bind(this),
     "handle-react-spa": this.handleReactSpa.bind(this),
   });
@@ -65,6 +66,12 @@ methods.handleReactSpa = function (data) {
   // self.debug("THE VIEW DATA", data);
   // self.debug("ServerStyleSheet", ServerStyleSheet);
   self.callback(self.renderHtmlSpa());
+};
+methods.handleSetHtmlPageSettings = function (data) {
+  const self = this;
+  self.debug("THE SSR ROUTES", data, data.payload);
+
+  self.htmlPageSettings = data.payload.htmlPageSettings;
 };
 methods.runReactView = function (data) {
   const self = this;
@@ -249,6 +256,7 @@ methods.renderFullPage = function ({
 } = props) {
   const self = this;
   if (!self.styleTags) self.doKotiiStyles();
+  if (self?.htmlPageSettings) self.doPageSettings();
 
   self.debug("THE PRELOADED STATE", preloadedState);
   return `
@@ -260,6 +268,8 @@ methods.renderFullPage = function ({
     ${head?.link.toString()}
     ${self?.styledTags || ""}
     ${self?.styleTags || ""}
+    ${self?.pageSettings || ""}
+
 
     </head>
 		<body ${head.bodyAttributes.toString()}>
@@ -274,6 +284,13 @@ methods.renderFullPage = function ({
 methods.includeScripts = function (preloadedState) {
   const self = this;
   const { serialize } = self;
+  let possibleExtraScripts = "";
+  if (self?.htmlPageSettings && self.htmlPageSettings?.scripts) {
+    self.htmlPageSettings.scripts.forEach((script) => {
+      possibleExtraScripts = `${possibleExtraScripts}\n <script src=${script.src}></script>`;
+    });
+  }
+
   return `
    <script>
      window.__PRELOADED_STATE__ = ${serialize(preloadedState)}
@@ -285,6 +302,7 @@ methods.includeScripts = function (preloadedState) {
    </script>
    <script src="/server.js" ></script>
    <script src="/kotii-client.js" ></script>
+   ${possibleExtraScripts}
   `;
 };
 
@@ -451,6 +469,28 @@ methods.doKotiiStyles = function () {
       .toString()
       .replaceAll(",", " ")}</style>`;
   }
+};
+
+methods.doPageSettings = function () {
+  const self = this;
+
+  let possibleMeta = "";
+  let possibleLinks = "";
+  if (self.htmlPageSettings?.meta) {
+    const meta = self.htmlPageSettings?.meta;
+    Object.keys(meta).forEach((metaKey) => {
+      possibleMeta = `${possibleMeta} <meta name="${metaKey}" content="${meta[metaKey]}" />`;
+    });
+  }
+
+  if (self.htmlPageSettings?.links) {
+    const links = self.htmlPageSettings.links;
+    links.forEach((link) => {
+      possibleLinks = `${possibleLinks} <link rel="stylesheet" href="${link.href}"`;
+    });
+  }
+
+  self.pageSettings = `${possibleMeta} ${possibleLinks}`;
 };
 
 // methods.renderFullPage = function (html, preloadedState, view, scripts = []) {

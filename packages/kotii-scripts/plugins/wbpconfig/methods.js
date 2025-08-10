@@ -42,6 +42,15 @@ methods.handleWebpackConfig = function (data) {
   // self.debug("SELF. AFTER SETTING CALLBACK", self);
   // self.debug("THE NODE ENV", process.env.NODE_ENV);
 
+  if (contextApp?.appManifest?.htmlSettings) {
+    self.emit({
+      type: "set-html-page-settings",
+      data: {
+        payload: { htmlPageSettings: contextApp.appManifest.htmlSettings },
+      },
+    });
+  }
+
   if (!fs.existsSync(contextApp.appSsl) && useHttps && !build) {
     fs.mkdirSync(contextApp.appSsl);
     process.env["ANZII_APP_USE_HTTPS"] = true;
