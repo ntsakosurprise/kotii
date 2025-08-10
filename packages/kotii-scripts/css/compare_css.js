@@ -8,7 +8,7 @@ const compareCss = function (oldCssAst, newCssAst) {
 
   return new Promise((resolve) => {
     postcss([compareCssPlugin(oldCssAst, newCssAst)])
-      .process(astToTransform)
+      .process(astToTransform, { from: undefined, to: undefined })
       .then((result) => {
         resolve({ compared: true, update: result.root.update });
       });

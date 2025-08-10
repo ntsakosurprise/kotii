@@ -29,7 +29,7 @@ const renderCssModules = function (
           });
 
         postcss([transformCssPlugin])
-          .process(astBefore)
+          .process(astBefore, { from: undefined, to: undefined })
           .then((result) => {
             opts[shortName] = {
               modules: { ...result.root.modulesMap },
