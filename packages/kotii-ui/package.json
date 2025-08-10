@@ -9,9 +9,6 @@
     "lib": "lib",
     "test": "__tests__"
   },
-  "files": [
-    "lib"
-  ],
   "publishConfig": {
     "access": "public"
   },
@@ -28,10 +25,10 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@storybook/cli": "^7.1.0",
-    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
-    "@types/jest": "^29.5.3",
+    "@types/jest": "^29.5.12",
     "@types/styled-components": "^5.1.26",
     "babel-cli": "^6.26.0",
     "babel-loader": "^8.2.3",
@@ -50,10 +47,14 @@
   "dependencies": {
     "@node-loader/babel": "^2.0.1",
     "@svgr/webpack": "^8.1.0",
+    "color": "^4.2.3",
     "grommet": "^2.33.1",
-    "kotii-utils": "workspace:kotii-utils@*",
+    "kotii-utils": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-utils/kotii-utils-0.0.0.tgz",
     "react-icons": "^4.11.0",
     "react-switch": "^7.0.0",
     "styled-components": "5.3.11"
-  }
+  },
+  "files": [
+    "index.js"
+  ]
 }
