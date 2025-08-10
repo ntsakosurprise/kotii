@@ -1648,9 +1648,8 @@ methods.runForTailwindCss = async function (options) {
           // self.debug("NEW CSS", newCss);
           // self.debug("OLD CSS", oldCss);
 
-          let diffResults = self.diffTailwindCss(newCss, oldCss);
+          self.diffTailwindCss(newCss, oldCss);
           // if(!diffResults) return
-          console.log("THE DIFF RESULTS", diffResults);
 
           self.info("TAILWIND CSS IS RE-COMPILED!");
         } catch (error) {
@@ -1692,9 +1691,6 @@ methods.saveTailwindResources = async function (options) {
     } else {
       tailwindConfig = await self.dynamicImport(tailwindConfigPath);
     }
-    // tailwindConfig = await tsConfigReader(options.tailwindConfig);
-    // console.log("THE TAILWIND CONFIG", tailwindConfig);
-    //require(options.tailwindConfig);
   }
 
   self.tailwindCssInfo = {
@@ -1714,8 +1710,6 @@ methods.diffTailwindCss = function (newCss, oldCss) {
 
   const addedClasses = [...newClasses].filter((c) => !oldClasses.has(c));
   const removedClasses = [...oldClasses].filter((c) => !newClasses.has(c));
-  console.log("THE ADDED CLASSES", addedClasses);
-  console.log("THE REMOVED CLASSES", removedClasses);
 
   if (addedClasses?.length > 0) {
     self.findAddedTailwindClassContent(newCss, addedClasses);
@@ -1730,21 +1724,15 @@ methods.extractTailwindClasses = function (css) {
 };
 
 methods.findAddedTailwindClassContent = function (css, classNames) {
-  console.log("THE CLASS", css);
-  console.log("CLASSES", classNames);
   const self = this;
 
   let content = { addImportCssFile: [] };
-  postcss.parse(css).walkRules((rule) => {
-    console.log("ADDED CLASSE", rule.selector);
+  postcss.parse(css, { from: undefined }).walkRules((rule) => {
     if (classNames.includes(rule.selector.substring(1))) {
-      // classNames[classNames.indexOf(rule.selector)];
-
       content.addImportCssFile.push(rule.toString());
-      console.log("ADDED CLASSE CONTENT", rule.toString()); // Full block including nested content
     }
   });
-  console.log("TAILWIND CONTENT", content);
+
   self.tailwindCssInfo.tailwindProcessedCss = `${
     self.tailwindCssInfo.tailwindProcessedCss
   } ${content.addImportCssFile.join("")}`;
