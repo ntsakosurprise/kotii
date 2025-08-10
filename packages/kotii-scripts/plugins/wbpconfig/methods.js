@@ -548,15 +548,60 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
                 );
               }
 
-              // Send update results to client using websockets
-              self.notifyClient({
-                name: "kotii-client-css-update",
-                updateType: "immediate",
-                content,
-              });
+              // Check if styles are served through a css link file
+              // If they are set keys to let the client know that this
+              // is for a file
+
+              if (
+                (process?.useLinkStyleTag && content?.newSelectorsUpdate) ||
+                content?.oldSelectorsUpdate
+              ) {
+                if (content?.newSelectorsUpdate) {
+                  content["addImportCssFile"] = content.newSelectorsUpdate.map(
+                    (selectCssRule) => {
+                      return selectCssRule.selectorCss;
+                    }
+                  );
+                  delete content.newSelectorsUpdate;
+                } else {
+                  content["removeAddImportCssFile"] =
+                    content.oldSelectorsUpdate.map((selectCssRule) => {
+                      let storedSelectorCss =
+                        self.stylesObject[selectCssRule.selector];
+
+                      Object.keys(selectCssRule.selectorCss.propsValue).forEach(
+                        (key) => {
+                          storedSelectorCss[key] =
+                            selectCssRule.selectorCss.propsValue[key];
+                        }
+                      );
+
+                      return `${
+                        selectCssRule.selector
+                      } ${storedSelectorCss.toString()}`;
+                    });
+                  self.stylesObject[selectCssRule.selector] = storedSelectorCss;
+                  delete content.oldSelectorsUpdate;
+                }
+
+                // Send update results to client using websockets
+                self.notifyClient({
+                  name: "kotii-client-css-update",
+                  updateType: "immediate",
+                  vendor: "kotii",
+                  content,
+                });
+              } else {
+                // Send update results to client using websockets
+                self.notifyClient({
+                  name: "kotii-client-css-update",
+                  updateType: "immediate",
+                  content,
+                });
+              }
 
               /**
-               * Update css meta data object with lates changes
+               * Update css meta data object with latest changes
                */
 
               if (
@@ -1460,6 +1505,18 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
     )
       .toString()
       .replaceAll(",", " ");
+    let styleAst = createCssAst([stylesString]);
+    console.log("THE STYLE AST", styleAst.nodes);
+    self.stylesObject = {};
+    styleAst.nodes.forEach((rule) => {
+      if (rule.type.toLowerCase() !== "comment") {
+        self.stylesObject[rule.selector] = {};
+        rule.nodes.forEach((ruleProps) => {
+          self.stylesObject[rule.selector][ruleProps.prop] = ruleProps.value;
+        });
+      }
+    });
+    console.log("THE STYLES OBJECT", self.stylesObject);
     fs.writeFileSync(`${appBuildFolder}/${fileName}`, stylesString);
   }
 };
