@@ -1538,10 +1538,11 @@ let TARGET_UPDATE_STYLESHEET = null;
 let TARGET_UPDATE_STYLESHEET_TAILWIND = null;
 let TARGET_UPDATE_STYLESHEET_KOTII = null;
 let CURRENT_STYLESHEET_VENDOR = null;
-
+let KOTII_JS_STYLESHEET_MAP = null;
 // let IMPORT_FILE_TEXT_REGEX = new RegExp(`\/\*\s*(INCLUDED_CSS)_HEAD:\s*(${escapedFileName})\s*\*\/([\S\s]*?)\/\*\s*\1_FOOTER:\s*\2\s(\*\/)$`,"gim")
 const startUpApp = function () {
   // listenToServerEvents()
+  checkForKotiiLinkStylesheetMap();
   listenToWebSocketEvents();
   initiateFileSwap();
 };
@@ -1633,6 +1634,26 @@ const listenToWebSocketEvents = function () {
     console.log("Disconnected from server");
   };
 };
+const checkForKotiiLinkStylesheetMap = function () {
+  console.log("THE PROCESS KEY", window.__KOTII_APP_URL__);
+  KOTII_JS_STYLESHEET_MAP =
+    typeof window.__KOTII_APP_STYLESHEET__ != undefined
+      ? window.__KOTII_APP_STYLESHEET__
+      : null;
+  // setTimeout(() => {
+  //   SUKU.ajax_get(
+  //     window.__KOTII_APP_URL__,
+  //     {},
+  //     (serverData) => {
+  //       console.log("REQUEST TO THE SERVER HAS SUCCEDED", serverData);
+  //     },
+  //     (failErr) => {
+  //       console.log("THE REQUEST TO SERVER FAILED", failErr);
+  //     },
+  //     "get"
+  //   );
+  // }, 0);
+};
 
 const beginDomUpdate = function (content) {
   console.log("DOM BEGINS");
@@ -1679,6 +1700,9 @@ const beginDomUpdate = function (content) {
     } else if (contentItem === "removeImportCssFile") {
       updateDomByFileRemovalLinkTag(content[contentItem]);
     } else if (contentItem === "addImportCssFile") {
+      updateDomByFileAdditionLinkTag(content[contentItem]);
+    } else if (contentItem === "removeAddImportCssFile") {
+      updateDomByFileRemovalLinkTag(content[contentItem]);
       updateDomByFileAdditionLinkTag(content[contentItem]);
     }
   }
