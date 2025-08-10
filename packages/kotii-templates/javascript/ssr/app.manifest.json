@@ -7,6 +7,25 @@
     "useTag": "link",
     "fileName": "kotii-styles.css"
   },
+  "htmlSettings": {
+    "title": "My App",
+    "meta": {
+      "viewport": "width=device-width, initial-scale=1, shrink-to-fit=no",
+      "theme-color": "#4285f4"
+    },
+    "scripts": [
+      {
+        "name": "my-test-script.js",
+        "src": "https//:www.my-test-script.com"
+      }
+    ],
+    "links": [
+      {
+        "href": "https://www.w3schools.com/w3css/5/w3.css",
+        "options": { "id": "my-test-id" }
+      }
+    ]
+  },
   "useHttps": true,
   "useCustomDomain": true,
   "useSetPort": true,
