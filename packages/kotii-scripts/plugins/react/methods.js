@@ -280,7 +280,8 @@ methods.includeScripts = function (preloadedState) {
      window.__KOTII_EFFECTS_STATE__ = ${serialize(
        JSON.stringify(self.effectsData)
      )}
-    
+     window.__KOTII_APP_URL__ = ${JSON.stringify(process?.env?.KOTII_APP_URL)}
+   
    </script>
    <script src="/server.js" ></script>
    <script src="/kotii-client.js" ></script>
