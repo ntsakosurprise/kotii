@@ -507,7 +507,6 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
             ? possilbeImports[addPath]
             : moduleInfo;
 
-          self.debug("THE MATCHED INFO", matchedInfo);
           const updatedContentAst = createCssAst([updatedContent]); // create ast of the current file
           const currentOriginalAst = possibleMatch.importsMatch
             ? matchedInfo.inputBeforeAst
@@ -563,15 +562,10 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
                 }
 
                 if (content?.oldSelectorsUpdate) {
-                  console.log("CONTENT:", content);
-                  console.log("CONENT.OLD", content.oldSelectorsUpdate);
                   content["removeAddImportCssFile"] =
                     content.oldSelectorsUpdate.map((selectCssRule) => {
-                      console.log("CONTENT MAP", selectCssRule);
-                      console.log("SELF.STYLESOBJECT", self.stylesObject);
                       let storedSelectorCss =
                         self.stylesObject[selectCssRule.selector];
-                      console.log("STORED SELECTOR", storedSelectorCss);
 
                       Object.keys(selectCssRule.selectorCss.propsValue).forEach(
                         (key) => {
@@ -1523,13 +1517,12 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
       .toString()
       .replaceAll(",", " ");
     let styleAst = createCssAst([stylesString]);
-    console.log("THE STYLE AST", styleAst.nodes);
+
     self.stylesObject = {};
     styleAst.nodes.forEach((rule) => {
       if (rule.type.toLowerCase() !== "comment") {
         self.stylesObject[rule.selector] = {};
         rule.nodes.forEach((ruleProps) => {
-          console.log("THE PROP", ruleProps.prop, "VALUE", ruleProps.value);
           self.stylesObject[rule.selector][ruleProps.prop] =
             ruleProps?.important
               ? `${ruleProps.value} !important`
@@ -1537,7 +1530,7 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
         });
       }
     });
-    console.log("THE STYLES OBJECT", self.stylesObject);
+
     fs.writeFileSync(`${appBuildFolder}/${fileName}`, stylesString);
   }
 };
@@ -1601,8 +1594,6 @@ methods.runForTailwindCss = async function (options) {
     toSource,
   } = self.tailwindCssInfo;
 
-  self.debug("THE TAILWIND CSS OPTIONS", self.tailwindCssInfo);
-
   return new Promise(async (resolve) => {
     postcss([
       autoprefixer,
@@ -1620,29 +1611,20 @@ methods.runForTailwindCss = async function (options) {
       })
       .then((result) => {
         try {
-          // resolve({
-          //   css: result.css,
-          // });
           let tailwindStyleSheetName = !process?.tailwindStyleSheetName
             ? `tailwind-${createRandomeName(5).toLowerCase()}.css`
             : process.tailwindStyleSheetName;
           process["tailwindGenerated"] = "true";
           process["tailwindStyleSheetName"] = tailwindStyleSheetName;
-
-          console.log("THE STYLESHEET NAME", tailwindStyleSheetName);
-
           let tailwindFilePath = `${buildFolder}/${tailwindStyleSheetName}`;
-          self.info("NEW CSS", result.css);
+
           if (!fs.existsSync(tailwindFilePath)) {
             fs.writeFileSync(tailwindFilePath, result.css);
             self.tailwindCssInfo["tailwindProcessedCss"] = result.css;
-            self.info("TAILWIND CSS IS COMPILED!");
+
             return;
           }
 
-          // let oldCss = fs.readFileSync(tailwindFilePath, {
-          //   encoding: "utf8",
-          // });
           let oldCss = self.tailwindCssInfo.tailwindProcessedCss;
           let newCss = result.css;
           // self.debug("NEW CSS", newCss);
@@ -1650,8 +1632,6 @@ methods.runForTailwindCss = async function (options) {
 
           self.diffTailwindCss(newCss, oldCss);
           // if(!diffResults) return
-
-          self.info("TAILWIND CSS IS RE-COMPILED!");
         } catch (error) {
           console.log("CSS SAVING ERROR", error);
         }
