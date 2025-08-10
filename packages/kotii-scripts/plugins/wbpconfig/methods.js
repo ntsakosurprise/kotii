@@ -591,6 +591,16 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
                   delete content.oldSelectorsUpdate;
                 }
 
+                if (content?.removeSelectorsUpdate) {
+                  content["removeImportCssFile"] =
+                    content.removeSelectorsUpdate;
+                  delete content.removeSelectorsUpdate;
+                  content.removeImportCssFile.forEach((removeSelector) => {
+                    if (self.stylesObject[removeSelector])
+                      delete self.stylesObject[removeSelector];
+                  });
+                }
+
                 // Send update results to client using websockets
                 self.notifyClient({
                   name: "kotii-client-css-update",
