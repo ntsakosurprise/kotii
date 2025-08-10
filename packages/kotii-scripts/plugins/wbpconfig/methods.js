@@ -552,10 +552,7 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
               // If they are set keys to let the client know that this
               // is for a file
 
-              if (
-                (process?.useLinkStyleTag && content?.newSelectorsUpdate) ||
-                content?.oldSelectorsUpdate
-              ) {
+              if (process?.useLinkStyleTag) {
                 if (content?.newSelectorsUpdate) {
                   content["addImportCssFile"] = content.newSelectorsUpdate.map(
                     (selectCssRule) => {
@@ -563,11 +560,18 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
                     }
                   );
                   delete content.newSelectorsUpdate;
-                } else {
+                }
+
+                if (content?.oldSelectorsUpdate) {
+                  console.log("CONTENT:", content);
+                  console.log("CONENT.OLD", content.oldSelectorsUpdate);
                   content["removeAddImportCssFile"] =
                     content.oldSelectorsUpdate.map((selectCssRule) => {
+                      console.log("CONTENT MAP", selectCssRule);
+                      console.log("SELF.STYLESOBJECT", self.stylesObject);
                       let storedSelectorCss =
                         self.stylesObject[selectCssRule.selector];
+                      console.log("STORED SELECTOR", storedSelectorCss);
 
                       Object.keys(selectCssRule.selectorCss.propsValue).forEach(
                         (key) => {
@@ -575,12 +579,15 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
                             selectCssRule.selectorCss.propsValue[key];
                         }
                       );
-
-                      return `${
-                        selectCssRule.selector
-                      } ${storedSelectorCss.toString()}`;
+                      self.stylesObject[selectCssRule.selector] =
+                        storedSelectorCss;
+                      let cssBuilt = ``;
+                      Object.keys(storedSelectorCss).forEach((keyy) => {
+                        cssBuilt = `${cssBuilt} ${keyy}: ${storedSelectorCss[keyy]};`;
+                      });
+                      return `${selectCssRule.selector} {${cssBuilt}}`;
                     });
-                  self.stylesObject[selectCssRule.selector] = storedSelectorCss;
+
                   delete content.oldSelectorsUpdate;
                 }
 
@@ -1512,7 +1519,11 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
       if (rule.type.toLowerCase() !== "comment") {
         self.stylesObject[rule.selector] = {};
         rule.nodes.forEach((ruleProps) => {
-          self.stylesObject[rule.selector][ruleProps.prop] = ruleProps.value;
+          console.log("THE PROP", ruleProps.prop, "VALUE", ruleProps.value);
+          self.stylesObject[rule.selector][ruleProps.prop] =
+            ruleProps?.important
+              ? `${ruleProps.value} !important`
+              : ruleProps.value;
         });
       }
     });
