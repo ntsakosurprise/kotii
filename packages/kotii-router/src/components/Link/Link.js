@@ -1,8 +1,8 @@
 import React from "react";
 
-const Link = ({ goTo, children, ...props }) => {
+const Link = ({ goTo, isAbsolute = false, children, ...props }) => {
   return (
-    <a href={goTo} {...props}>
+    <a href={!isAbsolute ? `#${goTo}` : goTo} {...props}>
       {children}
     </a>
   );
