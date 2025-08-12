@@ -1,7 +1,8 @@
 import React, { createContext, useEffect, useState } from "react";
-import { extractPathFromString } from "../../utils";
+import { extractPathFromString, navigate } from "../../utils";
 
 export const KotiiRouterContenxt = createContext();
+
 const Router = ({ children }) => {
   const [cleanPath, setPath] = useState(
     extractPathFromString(window.location.hash) || "/"
@@ -23,7 +24,3 @@ const Router = ({ children }) => {
 };
 
 export default Router;
-
-export const navigate = (to) => {
-  window.location.hash = to;
-};
