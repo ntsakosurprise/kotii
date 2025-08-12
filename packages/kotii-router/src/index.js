@@ -1,3 +1,3 @@
-import { Link, Route, Router } from "./components";
+import { Link, Route, Router, Routes } from "./components";
 
-export { Router, Route, Link };
+export { Router, Route, Link, Routes };
