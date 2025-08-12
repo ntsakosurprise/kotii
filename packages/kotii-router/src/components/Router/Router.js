@@ -7,6 +7,11 @@ const Router = ({ children }) => {
   const [cleanPath, setPath] = useState(
     extractPathFromString(window.location.hash) || "/"
   );
+  const [params, setRouteParams] = useState(null);
+
+  const setParams = (params) => {
+    setRouteParams(params);
+  };
 
   useEffect(() => {
     const onChangeOfHash = () => {
@@ -17,10 +22,14 @@ const Router = ({ children }) => {
   }, []);
 
   return (
-    <KotiiRouterContenxt.Provider value={{ path: cleanPath, navigate }}>
+    <KotiiRouterContenxt.Provider
+      value={{ path: cleanPath, navigate, setParams }}
+    >
       {children}
     </KotiiRouterContenxt.Provider>
   );
 };
+
+export const useParams = () => {};
 
 export default Router;
