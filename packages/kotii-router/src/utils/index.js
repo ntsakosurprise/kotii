@@ -6,7 +6,10 @@ const extractPathFromString = (pathString) => {
 };
 
 export const navigate = (to) => {
-  window.location.hash = to;
+  //   window.location.hash = to;
+  window.history.pushState({}, "", to);
+  const navEvent = new PopStateEvent("popstate");
+  window.dispatchEvent(navEvent);
 };
 
 export const matchRoutePattern = (routeComponentPath, currentPath) => {
