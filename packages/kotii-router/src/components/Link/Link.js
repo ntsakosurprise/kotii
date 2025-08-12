@@ -1,15 +1,13 @@
 import React from "react";
+import { navigate } from "../../utils";
 
-const Link = ({ goTo, isAbsolute = false, children, ...props }) => {
+const Link = ({ to, isAbsolute = false, children, ...props }) => {
   const handleOnclick = (e) => {
     e.preventDefault();
+    navigate(to);
   };
   return (
-    <a
-      href={!isAbsolute ? `#${goTo}` : goTo}
-      onClick={handleOnclick}
-      {...props}
-    >
+    <a href={!isAbsolute ? `#${to}` : to} onClick={handleOnclick} {...props}>
       {children}
     </a>
   );
