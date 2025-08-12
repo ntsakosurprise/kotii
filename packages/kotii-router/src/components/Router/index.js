@@ -1,5 +1,2 @@
-import React from "react";
-
-const Router = () => {
-  return <div></div>;
-};
+import Router from "./Router.js";
+export default Router;
