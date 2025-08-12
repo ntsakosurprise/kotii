@@ -9,4 +9,8 @@ export const navigate = (to) => {
   window.location.hash = to;
 };
 
-export { extractPathFromString, navigate };
+export const matchRoutePattern = (routeComponentPath, currentPath) => {
+  if (routeComponentPath === currentPath) return true;
+  return false;
+};
+export { extractPathFromString, navigate, matchRoutePattern };
