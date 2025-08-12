@@ -5,4 +5,8 @@ const extractPathFromString = (pathString) => {
   return pathString;
 };
 
-export { extractPathFromString };
+export const navigate = (to) => {
+  window.location.hash = to;
+};
+
+export { extractPathFromString, navigate };
