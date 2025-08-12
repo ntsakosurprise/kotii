@@ -14,11 +14,16 @@ const Router = ({ children }) => {
   };
 
   useEffect(() => {
-    const onChangeOfHash = () => {
-      setPath(extractPathFromString(window.location.hash || "/"));
+    const onPopState = () => {
+      setPath(extractPathFromString(window.location.pathname || "/"));
     };
-    window.addEventListener("hashchange", onChangeOfHash);
-    return () => window.removeEventListener("hashchange", onChangeOfHash);
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+    // const onChangeOfHash = () => {
+    //   setPath(extractPathFromString(window.location.hash || "/"));
+    // };
+    // window.addEventListener("hashchange", onChangeOfHash);
+    // return () => window.removeEventListener("hashchange", onChangeOfHash);
   }, []);
 
   return (
