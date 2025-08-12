@@ -7,7 +7,7 @@ const Router = ({ children }) => {
   const [cleanPath, setPath] = useState(
     extractPathFromString(window.location.hash) || "/"
   );
-  const [params, setRouteParams] = useState(null);
+  const [params, setRouteParams] = useState({});
 
   const setParams = (params) => {
     setRouteParams(params);
@@ -23,13 +23,11 @@ const Router = ({ children }) => {
 
   return (
     <KotiiRouterContenxt.Provider
-      value={{ path: cleanPath, navigate, setParams }}
+      value={{ path: cleanPath, navigate, setParams, params }}
     >
       {children}
     </KotiiRouterContenxt.Provider>
   );
 };
-
-export const useParams = () => {};
 
 export default Router;
