@@ -3,9 +3,10 @@ import { matchRoutePattern } from "../../utils/index.js";
 import { KotiiRouterContenxt } from "../Router/Router.js";
 
 const Route = ({ component: Component, path }) => {
-  const { path: navPath } = useContext(KotiiRouterContenxt);
-  const isRouteMatched = matchRoutePattern(path, navPath);
-  if (isRouteMatched) {
+  const { path: navPath, seParams } = useContext(KotiiRouterContenxt);
+  const matchedRoute = matchRoutePattern(path, navPath);
+  if (matchedRoute) {
+    seParams(matchedRoute.params);
     return <Component />;
   }
   return null;
