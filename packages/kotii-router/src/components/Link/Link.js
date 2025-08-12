@@ -7,10 +7,15 @@ const Link = ({ to, isAbsolute = false, children, ...props }) => {
     navigate(to);
   };
   return (
-    <a href={!isAbsolute ? `#${to}` : to} onClick={handleOnclick} {...props}>
+    <a href={to} onClick={handleOnclick} {...props}>
       {children}
     </a>
   );
+  //   return (
+  //     <a href={!isAbsolute ? `#${to}` : to} onClick={handleOnclick} {...props}>
+  //       {children}
+  //     </a>
+  //   );
 };
 
 export default Link;
