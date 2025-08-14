@@ -3,9 +3,12 @@ import { extractPathFromString, navigate } from "../../utils/index.js";
 
 export const KotiiRouterContenxt = createContext();
 
-const Router = ({ children }) => {
+const Router = ({ children, isSsr = false, ssrPath = "/" }) => {
+  console.log("ROUTER RUNS");
   const [cleanPath, setPath] = useState(
-    extractPathFromString(window.location.pathname) || "/"
+    extractPathFromString(
+      typeof window !== "undefined" ? window.location.pathname : ssrPath
+    ) || "/"
   );
   const [params, setParams] = useState({});
 
@@ -15,7 +18,7 @@ const Router = ({ children }) => {
 
   useEffect(() => {
     const onPopState = () => {
-      setPath(extractPathFromString(window.location.pathname || "/home"));
+      setPath(extractPathFromString(window.location.pathname || "/"));
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -28,7 +31,7 @@ const Router = ({ children }) => {
 
   return (
     <KotiiRouterContenxt.Provider
-      value={{ path: cleanPath, navigate, setParams, params }}
+      value={{ path: cleanPath, navigate, setParams, params, basePath: "" }}
     >
       {children}
     </KotiiRouterContenxt.Provider>
