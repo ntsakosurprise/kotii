@@ -2,8 +2,10 @@ import { useContext } from "react";
 import { KotiiRouterContenxt } from "../components/Router/Router.tsx";
 
 export default useLocation = () => {
-  const { path } = useContext(KotiiRouterContenxt);
+  const { path, hash, search } = useContext(KotiiRouterContenxt);
   return {
-    location: path,
+    pathname: path,
+    search,
+    hash,
   };
 };
