@@ -1,5 +1,6 @@
-import React from "react";
-import { KotiiRouterContenxt } from "../Router/Router";
+import React, { useContext } from "react";
+import { matchRoutePattern } from "../../utils/index.js";
+import { KotiiRouterContenxt } from "../Router/Router.jsx";
 const Routes = ({ children }) => {
   const { path: currentPath, setParams } = useContext(KotiiRouterContenxt);
 
@@ -9,7 +10,7 @@ const Routes = ({ children }) => {
     if (elementToRender) return;
 
     const { path } = child.props;
-    const match = matchPath(path, currentPath);
+    const match = matchRoutePattern(path, currentPath);
 
     if (match) {
       setParams(match.params);

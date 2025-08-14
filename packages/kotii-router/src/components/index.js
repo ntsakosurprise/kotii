@@ -1,6 +1,6 @@
-import Link from "./Link";
-import Route from "./Route";
-import Router from "./Router";
-import { useParams } from "./Router/useParams";
-import Routes from "./Routes";
+import Link from "./Link/index.js";
+import Route from "./Route/index.js";
+import Router from "./Router/index.js";
+import { useParams } from "./Router/useParams.js";
+import Routes from "./Routes/index.js";
 export { Router, Route, Link, Routes, useParams };

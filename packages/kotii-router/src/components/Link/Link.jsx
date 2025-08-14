@@ -1,5 +1,5 @@
 import React from "react";
-import { navigate } from "../../utils";
+import { navigate } from "../../utils/index.js";
 
 const Link = ({ to, isAbsolute = false, children, ...props }) => {
   const handleOnclick = (e) => {

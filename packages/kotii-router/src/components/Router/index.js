@@ -1,2 +1,2 @@
-import Router from "./Router.js";
+import Router from "./Router.jsx";
 export default Router;

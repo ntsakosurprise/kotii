@@ -1,21 +1,21 @@
 import React, { createContext, useEffect, useState } from "react";
-import { extractPathFromString, navigate } from "../../utils";
+import { extractPathFromString, navigate } from "../../utils/index.js";
 
 export const KotiiRouterContenxt = createContext();
 
 const Router = ({ children }) => {
   const [cleanPath, setPath] = useState(
-    extractPathFromString(window.location.hash) || "/"
+    extractPathFromString(window.location.pathname) || "/"
   );
-  const [params, setRouteParams] = useState({});
+  const [params, setParams] = useState({});
 
-  const setParams = (params) => {
-    setRouteParams(params);
-  };
+  // const setParams = (params) => {
+  //   setRouteParams(params);
+  // };
 
   useEffect(() => {
     const onPopState = () => {
-      setPath(extractPathFromString(window.location.pathname || "/"));
+      setPath(extractPathFromString(window.location.pathname || "/home"));
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);

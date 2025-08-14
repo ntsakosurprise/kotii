@@ -1,3 +1,3 @@
-import Route from "./Route.js";
+import Route from "./Route.jsx";
 
 export default Route;
