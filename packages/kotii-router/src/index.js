@@ -1,3 +1,4 @@
-import { Link, Route, Router, Routes, useParams } from "./components/index.js";
+import { Link, Route, Router, Routes } from "./components/index.js";
+import { useLocation, useNavigate, useParams } from "./hooks/index.js";
 
-export { Router, Route, Link, Routes, useParams };
+export { Router, Route, Link, Routes, useParams, useNavigate, useLocation };
