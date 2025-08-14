@@ -3,7 +3,7 @@ import { extractPathFromString, navigate } from "../../utils/index.js";
 
 export const KotiiRouterContenxt = createContext();
 
-const Router = ({ children, isSsr = false, ssrPath = "/" }) => {
+const Router = ({ children, ssrPath = "/" }) => {
   console.log("ROUTER RUNS");
   const [cleanPath, setPath] = useState(
     extractPathFromString(
