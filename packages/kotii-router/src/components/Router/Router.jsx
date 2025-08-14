@@ -1,5 +1,9 @@
 import React, { createContext, useEffect, useState } from "react";
-import { extractPathFromString, navigate } from "../../utils/index.js";
+import {
+  extractPathFromString,
+  navigate,
+  navigateByReplace,
+} from "../../utils/index.js";
 
 export const KotiiRouterContenxt = createContext();
 
@@ -38,6 +42,7 @@ const Router = ({ children, ssrPath = "/" }) => {
       value={{
         path: cleanPath,
         navigate,
+        navigateByReplace,
         setParams,
         params,
         basePath: "",
