@@ -1,3 +1,3 @@
-import { Link, Route, Router, Routes, useParams } from "./src";
+import { Link, Route, Router, Routes, useParams } from "./src/index.js";
 
 export { Router, Route, Link, Routes, useParams };
