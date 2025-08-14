@@ -10,6 +10,10 @@ const Router = ({ children, ssrPath = "/" }) => {
       typeof window !== "undefined" ? window.location.pathname : ssrPath
     ) || "/"
   );
+  const urlHashSegment =
+    typeof window !== "undefined" ? window.location.hash : "";
+  const urlSearchSegment =
+    typeof window !== "undefined" ? window.location.search : "";
   const [params, setParams] = useState({});
 
   // const setParams = (params) => {
@@ -31,7 +35,15 @@ const Router = ({ children, ssrPath = "/" }) => {
 
   return (
     <KotiiRouterContenxt.Provider
-      value={{ path: cleanPath, navigate, setParams, params, basePath: "" }}
+      value={{
+        path: cleanPath,
+        navigate,
+        setParams,
+        params,
+        basePath: "",
+        hash: urlHashSegment,
+        search: urlSearchSegment,
+      }}
     >
       {children}
     </KotiiRouterContenxt.Provider>
