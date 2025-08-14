@@ -74,6 +74,10 @@
     "ts-jest": "^29.1.1",
     "typescript": "^4.9.4"
   },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
   "pnpm": {
     "overrides": {
       "babel-preset-current-node-syntax": "1.0.0"
