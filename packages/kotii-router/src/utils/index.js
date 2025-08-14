@@ -16,6 +16,12 @@ export const navigate = (to) => {
   const navEvent = new PopStateEvent("popstate");
   window.dispatchEvent(navEvent);
 };
+export const navigateByReplace = (to) => {
+  console.log("Replace URL", to);
+  window.history.replaceState({}, "", to);
+  const navEvent = new PopStateEvent("popstate");
+  window.dispatchEvent(navEvent);
+};
 
 export const matchRoutePattern = (routeComponentPath, currentPath) => {
   // if (routeComponentPath === currentPath) return true;
