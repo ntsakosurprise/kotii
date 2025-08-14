@@ -1,8 +1,8 @@
 const methods = {};
 import fs from "fs";
+import { Router } from "kotii-router";
 import { ServerStyleSheet } from "kotii-styled";
 import path from "path";
-import { Router } from "wouter";
 import { kotiiKotiiLandPath } from "../../kotii_paths.js";
 
 methods.init = function () {
