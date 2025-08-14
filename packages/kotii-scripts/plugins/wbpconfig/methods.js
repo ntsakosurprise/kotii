@@ -166,6 +166,7 @@ methods.configureWebPack = function (
     contextApp.appManifest.app
   );
   envs.stringified["KOTII_SHOW_DEBUG_LOGS"] = true;
+  envs.stringified["KOTII_APP_URL"] = JSON.stringify(certDomainConfig.APP_URL);
 
   self.debug("THE APP ENVS", envs);
   // self.addImportLineTCSSModulesJs()
