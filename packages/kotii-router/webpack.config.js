@@ -9,13 +9,13 @@ console.log("Webpack dir name", __dirname);
 console.log("webpack path", path.resolve(__dirname, "node_modules"));
 const isESM = process.env.NODE_MODE === "esm" ? true : false;
 
-const kotiiLogger = {
+const kotiiRouter = {
   entry: "./index.js",
   target: "node18",
   mode: "development",
 
   experiments: {
-    outputModule: false,
+    outputModule: isESM ? true : false,
   },
   //devtool: "inline-source-map",
   output: {
@@ -34,20 +34,25 @@ const kotiiLogger = {
     // }),
   ],
   resolve: {
-    extensions: [".js"],
+    extensions: [".js", ".jsx"],
   },
   module: {
     rules: [
       {
-        test: /\.(js)$/,
+        test: /\.(js|jsx)$/,
         exclude: [
           path.resolve(__dirname, "node_modules"),
           //   "/Users/surprisemashele/Documents/Development/frameworks/anzii/node_modules",
         ],
-        use: ["babel-loader"],
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env", "@babel/preset-react"], // Use presets for ES features and React JSX
+          },
+        },
       },
     ],
     exprContextCritical: false, // Temporary workaround
   },
 };
-export default kotiiLogger;
+export default kotiiRouter;
