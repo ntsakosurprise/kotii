@@ -21,6 +21,7 @@ const madeTarballs = createTarballs(packagesPath, [
   "kotii-languages",
   "kotii-theme",
   "kotii-utils",
+  "kotii-router",
 ]);
 console.log("MADE TARBALLS", madeTarballs);
 // const nodeScriptPath = path.join(packagesPath, "kotii-cli");
