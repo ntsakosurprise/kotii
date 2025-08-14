@@ -4,6 +4,7 @@ import { navigate } from "../../utils/index.js";
 const Link = ({ to, isAbsolute = false, children, ...props }) => {
   const handleOnclick = (e) => {
     e.preventDefault();
+    console.log("LINK NAVIGATION TO", to);
     navigate(to);
   };
   return (
