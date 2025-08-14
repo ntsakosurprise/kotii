@@ -1,4 +1,4 @@
-const extractPathFromString = (pathString) => {
+export const extractPathFromString = (pathString) => {
   if (pathString.indexOf("#") === 0) {
     return pathString.slice(1);
   }
@@ -36,4 +36,3 @@ export const matchRoutePattern = (routeComponentPath, currentPath) => {
 
   return { params };
 };
-export { extractPathFromString, navigate, matchRoutePattern };
