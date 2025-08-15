@@ -2,11 +2,11 @@ import { useContext, useEffect } from "react";
 import { KotiiRouterContenxt } from "../Router/Router.jsx";
 
 const Redirect = ({ to }) => {
-  const { navigate } = useContext(KotiiRouterContenxt);
+  const { navigateByReplace } = useContext(KotiiRouterContenxt);
 
   useEffect(() => {
-    navigate(to);
-  }, [to, navigate]);
+    navigateByReplace(to);
+  }, [to, navigateByReplace]);
   return null;
 };
 

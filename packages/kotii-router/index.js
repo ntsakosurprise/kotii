@@ -1,3 +1,23 @@
-import { Link, Route, Router, Routes, useParams } from "./src/index.js";
+import {
+  Link,
+  Route,
+  Router,
+  Routes,
+  useLocation,
+  useMatch,
+  useNavigate,
+  useParams,
+  useRedirect,
+} from "./src/index.js";
 
-export { Router, Route, Link, Routes, useParams };
+export {
+  Router,
+  Route,
+  Link,
+  Routes,
+  useParams,
+  useLocation,
+  useMatch,
+  useNavigate,
+  useRedirect,
+};

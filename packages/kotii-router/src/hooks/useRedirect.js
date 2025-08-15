@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { KotiiRouterContenxt } from "../components/Router/Router.tsx";
+import { KotiiRouterContenxt } from "../components/Router/Router.jsx";
 
-export default useRedirect = (redirectUrl) => {
+export default () => {
   const { navigateByReplace } = useContext(KotiiRouterContenxt);
   return navigateByReplace;
 };
