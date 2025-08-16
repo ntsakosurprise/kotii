@@ -6,8 +6,9 @@
  * or disable the default devtool with "devtool: false".
  * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
  */
-import * as __WEBPACK_EXTERNAL_MODULE_react__ from "react";
-/******/ var __webpack_modules__ = ({
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
 
 /***/ "./src/components/Link/Link.jsx":
 /*!**************************************!*\
@@ -15,7 +16,7 @@ import * as __WEBPACK_EXTERNAL_MODULE_react__ from "react";
   \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var _utils_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/index.js */ \"./src/utils/index.js\");\nfunction _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }\n\n\nconst Link = ({\n  to,\n  isAbsolute = false,\n  children,\n  ...props\n}) => {\n  const handleOnclick = e => {\n    e.preventDefault();\n    console.log(\"LINK NAVIGATION TO\", to);\n    (0,_utils_index_js__WEBPACK_IMPORTED_MODULE_1__.navigate)(to);\n  };\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__[\"default\"].createElement(\"a\", _extends({\n    href: to,\n    onClick: handleOnclick\n  }, props), children);\n  //   return (\n  //     <a href={!isAbsolute ? `#${to}` : to} onClick={handleOnclick} {...props}>\n  //       {children}\n  //     </a>\n  //   );\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Link);\n\n//# sourceURL=webpack://kotii-router/./src/components/Link/Link.jsx?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _utils_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/index.js */ \"./src/utils/index.js\");\nfunction _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }\n\n\nconst Link = ({\n  to,\n  isAbsolute = false,\n  children,\n  ...props\n}) => {\n  const handleOnclick = e => {\n    e.preventDefault();\n    console.log(\"LINK NAVIGATION TO\", to);\n    (0,_utils_index_js__WEBPACK_IMPORTED_MODULE_1__.navigate)(to);\n  };\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(\"a\", _extends({\n    href: to,\n    onClick: handleOnclick\n  }, props), children);\n  //   return (\n  //     <a href={!isAbsolute ? `#${to}` : to} onClick={handleOnclick} {...props}>\n  //       {children}\n  //     </a>\n  //   );\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Link);\n\n//# sourceURL=webpack://kotii-router/./src/components/Link/Link.jsx?");
 
 /***/ }),
 
@@ -25,7 +26,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n\nconst Route = ({\n  component: Component,\n  children\n}) => {\n  console.log(\"THE ROUTE CHILDREN\", children);\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__[\"default\"].createElement(react__WEBPACK_IMPORTED_MODULE_0__[\"default\"].Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__[\"default\"].createElement(Component, null), children);\n  //   const { path: navPath, seParams } = useContext(KotiiRouterContenxt);\n  //   const matchedRoute = matchRoutePattern(path, navPath);\n  //   if (matchedRoute) {\n  //     seParams(matchedRoute.params);\n  //     return <Component />;\n  //   }\n  //   return null;\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Route);\n\n//# sourceURL=webpack://kotii-router/./src/components/Route/Route.jsx?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n\nconst Route = ({\n  component: Component,\n  children\n}) => {\n  console.log(\"THE ROUTE CHILDREN\", children);\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(Component, null), children);\n  //   const { path: navPath, seParams } = useContext(KotiiRouterContenxt);\n  //   const matchedRoute = matchRoutePattern(path, navPath);\n  //   if (matchedRoute) {\n  //     seParams(matchedRoute.params);\n  //     return <Component />;\n  //   }\n  //   return null;\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Route);\n\n//# sourceURL=webpack://kotii-router/./src/components/Route/Route.jsx?");
 
 /***/ }),
 
@@ -35,7 +36,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   KotiiRouterContenxt: () => (/* binding */ KotiiRouterContenxt),\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var _utils_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/index.js */ \"./src/utils/index.js\");\n\n\nconst KotiiRouterContenxt = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)();\nconst Router = ({\n  children,\n  ssrPath = \"/\"\n}) => {\n  console.log(\"ROUTER RUNS\");\n  const [cleanPath, setPath] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((0,_utils_index_js__WEBPACK_IMPORTED_MODULE_1__.extractPathFromString)(typeof window !== \"undefined\" ? window.location.pathname : ssrPath) || \"/\");\n  const urlHashSegment = typeof window !== \"undefined\" ? window.location.hash : \"\";\n  const urlSearchSegment = typeof window !== \"undefined\" ? window.location.search : \"\";\n  const [params, setParams] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({});\n\n  // const setParams = (params) => {\n  //   setRouteParams(params);\n  // };\n\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {\n    const onPopState = () => {\n      setPath((0,_utils_index_js__WEBPACK_IMPORTED_MODULE_1__.extractPathFromString)(window.location.pathname || \"/\"));\n    };\n    window.addEventListener(\"popstate\", onPopState);\n    return () => window.removeEventListener(\"popstate\", onPopState);\n    // const onChangeOfHash = () => {\n    //   setPath(extractPathFromString(window.location.hash || \"/\"));\n    // };\n    // window.addEventListener(\"hashchange\", onChangeOfHash);\n    // return () => window.removeEventListener(\"hashchange\", onChangeOfHash);\n  }, []);\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__[\"default\"].createElement(KotiiRouterContenxt.Provider, {\n    value: {\n      path: cleanPath,\n      navigate: _utils_index_js__WEBPACK_IMPORTED_MODULE_1__.navigate,\n      navigateByReplace: _utils_index_js__WEBPACK_IMPORTED_MODULE_1__.navigateByReplace,\n      setParams,\n      params,\n      basePath: \"\",\n      hash: urlHashSegment,\n      search: urlSearchSegment\n    }\n  }, children);\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Router);\n\n//# sourceURL=webpack://kotii-router/./src/components/Router/Router.jsx?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   KotiiRouterContenxt: () => (/* binding */ KotiiRouterContenxt),\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _utils_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/index.js */ \"./src/utils/index.js\");\n\n\nconst KotiiRouterContenxt = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)();\nconst Router = ({\n  children,\n  ssrPath = \"/\"\n}) => {\n  console.log(\"ROUTER RUNS\");\n  const [cleanPath, setPath] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)((0,_utils_index_js__WEBPACK_IMPORTED_MODULE_1__.extractPathFromString)(typeof window !== \"undefined\" ? window.location.pathname : ssrPath) || \"/\");\n  const urlHashSegment = typeof window !== \"undefined\" ? window.location.hash : \"\";\n  const urlSearchSegment = typeof window !== \"undefined\" ? window.location.search : \"\";\n  const [params, setParams] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({});\n\n  // const setParams = (params) => {\n  //   setRouteParams(params);\n  // };\n\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {\n    const onPopState = () => {\n      setPath((0,_utils_index_js__WEBPACK_IMPORTED_MODULE_1__.extractPathFromString)(window.location.pathname || \"/\"));\n    };\n    window.addEventListener(\"popstate\", onPopState);\n    return () => window.removeEventListener(\"popstate\", onPopState);\n    // const onChangeOfHash = () => {\n    //   setPath(extractPathFromString(window.location.hash || \"/\"));\n    // };\n    // window.addEventListener(\"hashchange\", onChangeOfHash);\n    // return () => window.removeEventListener(\"hashchange\", onChangeOfHash);\n  }, []);\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(KotiiRouterContenxt.Provider, {\n    value: {\n      path: cleanPath,\n      navigate: _utils_index_js__WEBPACK_IMPORTED_MODULE_1__.navigate,\n      navigateByReplace: _utils_index_js__WEBPACK_IMPORTED_MODULE_1__.navigateByReplace,\n      setParams,\n      params,\n      basePath: \"\",\n      hash: urlHashSegment,\n      search: urlSearchSegment\n    }\n  }, children);\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Router);\n\n//# sourceURL=webpack://kotii-router/./src/components/Router/Router.jsx?");
 
 /***/ }),
 
@@ -45,7 +46,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var _utils_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/index.js */ \"./src/utils/index.js\");\n/* harmony import */ var _Router_Router_jsx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Router/Router.jsx */ \"./src/components/Router/Router.jsx\");\n\n\n\nconst Routes = ({\n  children\n}) => {\n  const {\n    path: currentPath,\n    setParams,\n    basePath\n  } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_Router_Router_jsx__WEBPACK_IMPORTED_MODULE_2__.KotiiRouterContenxt);\n  console.log(\"THE ROUTES COMPONENT\");\n  let elementToRender = null;\n  let theParams = null;\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {\n    console.log(\"About to set the params\", theParams);\n    if (theParams) setParams(theParams);\n  }, [currentPath]);\n  for (let childIndex = 0; childIndex < children.length; childIndex++) {\n    if (elementToRender) break;\n    let child = children[childIndex];\n    const {\n      path\n    } = child.props;\n    const fullUrl = (0,_utils_index_js__WEBPACK_IMPORTED_MODULE_1__.cleanRouteUrl)(`${basePath}/${path}`);\n    const match = (0,_utils_index_js__WEBPACK_IMPORTED_MODULE_1__.matchRoutePattern)(fullUrl, currentPath);\n    if (match) {\n      console.log(\"REACT CHILD ELEMENT\", match);\n      theParams = match?.params ? match.params : null;\n      elementToRender = child;\n      elementToRender = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__[\"default\"].createElement(_Router_Router_jsx__WEBPACK_IMPORTED_MODULE_2__.KotiiRouterContenxt.Provider, {\n        value: {\n          path: currentPath,\n          navigate: _utils_index_js__WEBPACK_IMPORTED_MODULE_1__.navigate,\n          setParams,\n          params: theParams,\n          basePath: fullUrl\n        }\n      }, child);\n      break;\n\n      // theParams = match.params\n    }\n  }\n\n  // React.Children.forEach(children, (child) => {\n  //   console.log(\"REACT CHILD ELEMENT\",child.props.path)\n  //   if (elementToRender) return;\n\n  //   const { path } = child.props;\n  //   const match = matchRoutePattern(path, currentPath);\n\n  //   if (match) {\n  //     console.log(\"REACT CHILD ELEMENT\",match)\n  //     elementToRender = child;\n  //    theParams = match?.params ? match.params: null;\n\n  //     // theParams = match.params\n\n  //   }\n  // });\n\n  return elementToRender;\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Routes);\n\n//# sourceURL=webpack://kotii-router/./src/components/Routes/Routes.jsx?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _utils_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utils/index.js */ \"./src/utils/index.js\");\n/* harmony import */ var _Router_Router_jsx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Router/Router.jsx */ \"./src/components/Router/Router.jsx\");\n\n\n\nconst Routes = ({\n  children\n}) => {\n  const {\n    path: currentPath,\n    setParams,\n    basePath\n  } = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(_Router_Router_jsx__WEBPACK_IMPORTED_MODULE_2__.KotiiRouterContenxt);\n  console.log(\"THE ROUTES COMPONENT\");\n  let elementToRender = null;\n  let theParams = null;\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {\n    console.log(\"About to set the params\", theParams);\n    if (theParams) setParams(theParams);\n  }, [currentPath]);\n  for (let childIndex = 0; childIndex < children.length; childIndex++) {\n    if (elementToRender) break;\n    let child = children[childIndex];\n    const {\n      path\n    } = child.props;\n    const fullUrl = (0,_utils_index_js__WEBPACK_IMPORTED_MODULE_1__.cleanRouteUrl)(`${basePath}/${path}`);\n    const match = (0,_utils_index_js__WEBPACK_IMPORTED_MODULE_1__.matchRoutePattern)(fullUrl, currentPath);\n    if (match) {\n      console.log(\"REACT CHILD ELEMENT\", match);\n      theParams = match?.params ? match.params : null;\n      elementToRender = child;\n      elementToRender = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_Router_Router_jsx__WEBPACK_IMPORTED_MODULE_2__.KotiiRouterContenxt.Provider, {\n        value: {\n          path: currentPath,\n          navigate: _utils_index_js__WEBPACK_IMPORTED_MODULE_1__.navigate,\n          setParams,\n          params: theParams,\n          basePath: fullUrl\n        }\n      }, child);\n      break;\n\n      // theParams = match.params\n    }\n  }\n\n  // React.Children.forEach(children, (child) => {\n  //   console.log(\"REACT CHILD ELEMENT\",child.props.path)\n  //   if (elementToRender) return;\n\n  //   const { path } = child.props;\n  //   const match = matchRoutePattern(path, currentPath);\n\n  //   if (match) {\n  //     console.log(\"REACT CHILD ELEMENT\",match)\n  //     elementToRender = child;\n  //    theParams = match?.params ? match.params: null;\n\n  //     // theParams = match.params\n\n  //   }\n  // });\n\n  return elementToRender;\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Routes);\n\n//# sourceURL=webpack://kotii-router/./src/components/Routes/Routes.jsx?");
 
 /***/ }),
 
@@ -55,7 +56,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
   \************************/
 /***/ ((module) => {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_react__;
+module.exports = require("react");
 
 /***/ }),
 
@@ -209,75 +210,80 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 /***/ })
 
-/******/ });
+/******/ 	});
 /************************************************************************/
-/******/ // The module cache
-/******/ var __webpack_module_cache__ = {};
-/******/ 
-/******/ // The require function
-/******/ function __webpack_require__(moduleId) {
-/******/ 	// Check if module is in cache
-/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 	if (cachedModule !== undefined) {
-/******/ 		return cachedModule.exports;
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
 /******/ 	}
-/******/ 	// Create a new module (and put it into the cache)
-/******/ 	var module = __webpack_module_cache__[moduleId] = {
-/******/ 		// no module.id needed
-/******/ 		// no module.loaded needed
-/******/ 		exports: {}
-/******/ 	};
-/******/ 
-/******/ 	// Execute the module function
-/******/ 	__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 
-/******/ 	// Return the exports of the module
-/******/ 	return module.exports;
-/******/ }
-/******/ 
+/******/ 	
 /************************************************************************/
-/******/ /* webpack/runtime/define property getters */
-/******/ (() => {
-/******/ 	// define getter functions for harmony exports
-/******/ 	__webpack_require__.d = (exports, definition) => {
-/******/ 		for(var key in definition) {
-/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
 /******/ 			}
-/******/ 		}
-/******/ 	};
-/******/ })();
-/******/ 
-/******/ /* webpack/runtime/hasOwnProperty shorthand */
-/******/ (() => {
-/******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ })();
-/******/ 
-/******/ /* webpack/runtime/make namespace object */
-/******/ (() => {
-/******/ 	// define __esModule on exports
-/******/ 	__webpack_require__.r = (exports) => {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/ })();
-/******/ 
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /************************************************************************/
-/******/ 
-/******/ // startup
-/******/ // Load entry module and return exports
-/******/ // This entry module can't be inlined because the eval devtool is used.
-/******/ var __webpack_exports__ = __webpack_require__("./index.js");
-/******/ var __webpack_exports__Link = __webpack_exports__.Link;
-/******/ var __webpack_exports__Route = __webpack_exports__.Route;
-/******/ var __webpack_exports__Router = __webpack_exports__.Router;
-/******/ var __webpack_exports__Routes = __webpack_exports__.Routes;
-/******/ var __webpack_exports__useLocation = __webpack_exports__.useLocation;
-/******/ var __webpack_exports__useMatch = __webpack_exports__.useMatch;
-/******/ var __webpack_exports__useNavigate = __webpack_exports__.useNavigate;
-/******/ var __webpack_exports__useParams = __webpack_exports__.useParams;
-/******/ var __webpack_exports__useRedirect = __webpack_exports__.useRedirect;
-/******/ export { __webpack_exports__Link as Link, __webpack_exports__Route as Route, __webpack_exports__Router as Router, __webpack_exports__Routes as Routes, __webpack_exports__useLocation as useLocation, __webpack_exports__useMatch as useMatch, __webpack_exports__useNavigate as useNavigate, __webpack_exports__useParams as useParams, __webpack_exports__useRedirect as useRedirect };
-/******/ 
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module can't be inlined because the eval devtool is used.
+/******/ 	var __webpack_exports__ = __webpack_require__("./index.js");
+/******/ 	module.exports = __webpack_exports__;
+/******/ 	
+/******/ })()
+;
