@@ -1,6 +1,5 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import nodeExternals from "webpack-node-externals";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -11,7 +10,6 @@ const isESM = process.env.NODE_MODE === "esm" ? true : false;
 
 const kotiiRouter = {
   entry: "./index.js",
-  target: "node18",
   mode: "development",
 
   experiments: {
@@ -23,11 +21,15 @@ const kotiiRouter = {
     filename: isESM ? "index.mjs" : "index.cjs",
     libraryTarget: isESM ? "module" : "commonjs2",
     chunkFormat: isESM ? "module" : "commonjs",
+
+    module: isESM ? true : false,
   },
   externals: [
-    nodeExternals({
-      modulesDir: path.resolve(__dirname, "node_modules"),
-    }),
+    {
+      react: "react",
+      "react-dom": "react-dom",
+    },
+
     // nodeExternals({
     //   modulesDir:
     //     "/Users/surprisemashele/Documents/Development/frameworks/anzii/node_modules",
@@ -47,7 +49,15 @@ const kotiiRouter = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env", "@babel/preset-react"], // Use presets for ES features and React JSX
+            presets: [
+              [
+                "@babel/preset-env",
+                {
+                  modules: isESM ? false : "auto",
+                },
+              ],
+              "@babel/preset-react",
+            ], // Use presets for ES features and React JSX
           },
         },
       },
@@ -55,4 +65,9 @@ const kotiiRouter = {
     exprContextCritical: false, // Temporary workaround
   },
 };
+console.log(
+  "KOTII ROUTER CONFIG",
+  kotiiRouter,
+  kotiiRouter.module.rules[0].use.options.presets
+);
 export default kotiiRouter;
