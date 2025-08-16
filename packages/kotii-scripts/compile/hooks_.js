@@ -122,6 +122,7 @@ export async function load(url, context, nextLoad) {
         plugins: [
           "@babel/plugin-syntax-import-assertions",
           "@babel/plugin-transform-typescript",
+          ["babel-plugin-styled-components", { ssr: true, displayName: true }],
         ],
       };
       loggas.load.debug("READING FILE", fileExtension, url);
@@ -892,7 +893,9 @@ export const processImageFiles = (fullUrl, filename, fileExtension) => {
   let loadedFileResult = loadFile(fileLoaderConfig, fileConfig);
   loggas.load.debug("The LoadedFileResult", loadedFileResult);
 
-  kotiiAssetsMeta[MODULES_FILE_SPECIFIER[fullUrl].shortName] = {
+  kotiiAssetsMeta[
+    escapePeriodsOnPaths(MODULES_FILE_SPECIFIER[fullUrl].shortName)
+  ] = {
     content: loadedFileResult.content,
     inlined: loadedFileResult.inlined,
     pathContext: MODULES_FILE_SPECIFIER[fullUrl].pathContext,
@@ -906,4 +909,22 @@ export const processImageFiles = (fullUrl, filename, fileExtension) => {
     }, 1000);
   }
   return `export default ${JSON.stringify(loadedFileResult.content)}`;
+};
+
+export const escapePeriodsOnPaths = (escapeString) => {
+  //  console.log("THE ESCAPED STRING",escapeString.replace())
+  let regexPattern = /^(\.{1,2})(?=\/)/;
+  const match = escapeString.match(regexPattern);
+  // console.log("THE REGEX MATCH FOR", escapeString, match);
+  if (!match) return escapeString;
+  // let dotsNum = match[1].length;
+  let matchCopy = match[1];
+  let matchCopyReplaced = matchCopy.replace(/\./g, ESCAPE_CHARACTER);
+  // console.log("DOTS SPLIT", match[1].split(""), matchCopyReplaced);
+  // console.log("Total number of dots for:", escapeString, dotsNum);
+  // console.log(
+  //   "STRING ESCAPED",
+  //   escapeString.replace(matchCopy, matchCopyReplaced)
+  // );
+  return escapeString.replace(matchCopy, matchCopyReplaced);
 };
