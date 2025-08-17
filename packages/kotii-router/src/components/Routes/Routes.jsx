@@ -38,6 +38,8 @@ const Routes = ({ children, routes = null }) => {
       console.log("REACT CHILD ELEMENT", match);
       theParams = match?.params ? match.params : null;
       childElementToRender = child?.props ? child : child.component;
+      console.log("childrenddd", childElementToRender);
+      console.log("IMPRESSIVE", child?.children, child);
       elementToRender = (
         <KotiiRouterContenxt.Provider
           value={{
@@ -51,7 +53,9 @@ const Routes = ({ children, routes = null }) => {
           }}
         >
           {childElementToRender}
-          {child?.children && <Routes routes={child.children} />}
+          {child?.children && child.children && (
+            <Routes routes={child.children} />
+          )}
         </KotiiRouterContenxt.Provider>
       );
 
