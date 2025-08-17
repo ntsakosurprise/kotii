@@ -48,6 +48,7 @@ const Router = ({ children, ssrPath = "/" }) => {
         basePath: "",
         hash: urlHashSegment,
         search: urlSearchSegment,
+        ssrPath,
       }}
     >
       {children}
