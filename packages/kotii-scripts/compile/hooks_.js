@@ -33,7 +33,7 @@ let FILE_LOADER_DEFAULT = {
   output: "public/imgs",
   // inlinePngs: true,
 };
-
+const ESCAPE_CHARACTER = "dot_";
 const KOTII_USER_LAND_ALIASES = {
   layout: {
     alias: "/kotii-user-land-aliase/src/components/startup/index",
