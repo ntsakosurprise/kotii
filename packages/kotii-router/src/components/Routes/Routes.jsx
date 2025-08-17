@@ -10,6 +10,7 @@ const Routes = ({ children }) => {
     path: currentPath,
     setParams,
     basePath,
+    navigateByReplace,
   } = useContext(KotiiRouterContenxt);
 
   console.log("THE ROUTES COMPONENT");
@@ -37,6 +38,7 @@ const Routes = ({ children }) => {
           value={{
             path: currentPath,
             navigate,
+            navigateByReplace,
             setParams,
             params: theParams,
             basePath: fullUrl,
