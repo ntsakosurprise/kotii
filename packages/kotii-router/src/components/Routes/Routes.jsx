@@ -5,7 +5,9 @@ import {
   navigate,
 } from "../../utils/index.js";
 import { KotiiRouterContenxt } from "../Router/Router.jsx";
-const Routes = ({ children }) => {
+
+const Routes = ({ children, routes = null }) => {
+  console.log("THE VALUE OF ROUTES OBJECT", routes);
   const {
     path: currentPath,
     setParams,
@@ -17,23 +19,25 @@ const Routes = ({ children }) => {
   console.log("THE ROUTES COMPONENT");
 
   let elementToRender = null;
+  let childElementToRender = null;
   let theParams = null;
   useEffect(() => {
     console.log("About to set the params", theParams);
     if (theParams) setParams(theParams);
   }, [currentPath]);
 
-  for (let childIndex = 0; childIndex < children.length; childIndex++) {
+  let appRoutes = children || routes;
+  for (let childIndex = 0; childIndex < appRoutes.length; childIndex++) {
     if (elementToRender) break;
-    let child = children[childIndex];
-    const { path } = child.props;
+    let child = appRoutes[childIndex];
+    const { path } = child?.props || child;
     const fullUrl = cleanRouteUrl(`${basePath}/${path}`);
     const match = matchRoutePattern(fullUrl, currentPath);
 
     if (match) {
       console.log("REACT CHILD ELEMENT", match);
       theParams = match?.params ? match.params : null;
-      elementToRender = child;
+      childElementToRender = child?.props ? child : child.component;
       elementToRender = (
         <KotiiRouterContenxt.Provider
           value={{
@@ -46,7 +50,8 @@ const Routes = ({ children }) => {
             ssrPath,
           }}
         >
-          {child}
+          {childElementToRender}
+          {child?.children && <Routes routes={child.children} />}
         </KotiiRouterContenxt.Provider>
       );
 
