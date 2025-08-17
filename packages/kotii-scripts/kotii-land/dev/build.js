@@ -1,4 +1,4 @@
-import { Route, Router, Routes } from "kotii-router";
+import { Router, Routes } from "kotii-router";
 import React from "react";
 import { useAppContext } from "../../react-components/index.jsx";
 const Wrapper = (props) => {
@@ -26,32 +26,26 @@ const ClientRoutes = (props) => {
     : () => {
         return <></>;
       };
+  let refinedRoutes = astRoutes.map((r, index) => {
+    let Component = astComps[r.component];
+    const ComponentWrapped = () => {
+      return (
+        <Wrapper key={index}>
+          <Component />
+        </Wrapper>
+      );
+    };
+    return {
+      component: <ComponentWrapped />,
+      path: r.path,
+      children: r?.children || undefined,
+    };
+  });
+
   return (
     <Router>
       <Layout>
-        <Routes>
-          {astRoutes.map((r, index) => {
-            let Component = astComps[r.component];
-            const ComponentWrapped = () => {
-              return (
-                <Wrapper>
-                  <Component />
-                </Wrapper>
-              );
-            };
-            return (
-              <Route
-                // {...rest}
-                key={index}
-                path={r.path}
-                component={ComponentWrapped}
-                // render={(props) => {
-                //   return <Component {...props} />;
-                // }}
-              />
-            );
-          })}
-        </Routes>
+        <Routes routes={refinedRoutes} />
       </Layout>
     </Router>
   );
@@ -67,23 +61,24 @@ const RoutesAsServerRoutes = (props) => {
     : () => {
         return <></>;
       };
+  let refinedRoutes = gRoutes.map((r, index) => {
+    let Component = gComps[r.component];
+    const ComponentWrapped = () => {
+      return (
+        <Wrapper key={index}>
+          <Component />
+        </Wrapper>
+      );
+    };
+    return {
+      component: <ComponentWrapped />,
+      path: r.path,
+      children: r?.children || undefined,
+    };
+  });
   return (
     <Layout>
-      <Routes>
-        {gRoutes.map((r, index) => {
-          let Component = gComps[r.component];
-          let ComponentWrapped = () => {
-            return (
-              <Wrapper>
-                <Component />
-              </Wrapper>
-            );
-          };
-          return (
-            <Route key={index} path={r.path} component={ComponentWrapped} />
-          );
-        })}
-      </Routes>
+      <Routes routes={refinedRoutes} />
     </Layout>
   );
 };
