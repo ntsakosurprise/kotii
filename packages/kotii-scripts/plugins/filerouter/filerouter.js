@@ -81,6 +81,9 @@ class FileRouter {
     this.handleRemovePagesImport = methods.handleRemovePagesImport;
     this.addImportLineToBuildJs = methods.addImportLineToBuildJs;
     this.addOrRemoveByAST = methods.addOrRemoveByAST;
+    this.createStaticComponentsImports = methods.createStaticComponentsImports;
+    this.createDynamicLazyComponentsImports =
+      methods.createDynamicLazyComponentsImports;
   }
 }
 export default FileRouter;

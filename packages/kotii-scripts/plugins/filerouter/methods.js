@@ -491,6 +491,16 @@ methods.addToAST = function ({
   self.debug("THE BUILD PATH CWD", cwd, filePath);
 
   self.debug("KOTTILAND FILE PATH", filePath);
+  self.debug(
+    "KOTII AST ITEMS",
+    objectToAdd,
+    "\npages paths:",
+    pagesPaths,
+    "\ntoRemove",
+    toRemove,
+    "\nsource",
+    source
+  );
   // const altPath = `${cwd}/build_test.js`;
   const jsFile = readFileSync(filePath);
   let ast = parser.parse(jsFile, { sourceType: "module", plugins: ["jsx"] });
@@ -969,26 +979,11 @@ methods.insertImportDeclarations = function (
   //     IMPORT_NAME: t.identifier(`${imports[0].componentName}`),
   //     SOURCE: t.stringLiteral(`${imports[0].component}`),
   //   });
-  let constString = shouldBuildComps ? `const comps = {` : "";
-  let importString = imports.map((im, i) => {
-    if (shouldBuildComps) constString += `${im.componentName},`;
-    return `import ${im.componentName} from "${im.component}";`;
+  return self.createDynamicLazyComponentsImports(imports, {
+    shouldBuildComps,
+    routesNode,
+    compsNode,
   });
-  // const myImport = template(`${importString.join(";")}`, {
-  //   sourceType: "module",
-  // });
-  constString += shouldBuildComps ? "}" : "";
-  let joinedString = shouldBuildComps
-    ? `${importString.join("")} ${constString};`
-    : `${importString.join("")}`;
-  self.debug("ASTY JOINED STRING", joinedString);
-  let ast = parser.parse(joinedString, { sourceType: "module" });
-  !shouldBuildComps ? self.astAddNode(routesNode, compsNode, imports) : "";
-  let modifiedCode = generate(ast).code;
-  self.debug("ASTY CODE THE IMPOT STRINGS", importString);
-  self.debug("ASTY CODE", modifiedCode);
-  self.debug();
-  return modifiedCode;
   // saveToFile(filePath, modifiedCode);
   // saveToFile(filePath, modifiedCode);
   // const ast = buildImport({
@@ -1341,6 +1336,80 @@ methods.getAstRoutes = function (routesObject, renamesToAdd) {
   });
   self.debug("THE AST ROUTES", astRoutes);
   return astRoutes;
+};
+
+methods.createStaticComponentsImports = function (imports) {
+  const self = this;
+  const pao = self.pao;
+  const template = self.template;
+  const generate = self.generate;
+  const t = self.t;
+  const parser = self.parser;
+  const saveToFile = pao.pa_saveToFile;
+
+  let constString = shouldBuildComps ? `const comps = {` : "";
+  let importString = imports.map((im, i) => {
+    if (shouldBuildComps) constString += `${im.componentName},`;
+    return `import ${im.componentName} from "${im.component}";`;
+  });
+  // const myImport = template(`${importString.join(";")}`, {
+  //   sourceType: "module",
+  // });
+  constString += shouldBuildComps ? "}" : "";
+  let joinedString = shouldBuildComps
+    ? `${importString.join("")} ${constString};`
+    : `${importString.join("")}`;
+  self.debug("ASTY JOINED STRING", joinedString);
+  let ast = parser.parse(joinedString, { sourceType: "module" });
+  !shouldBuildComps ? self.astAddNode(routesNode, compsNode, imports) : "";
+  let modifiedCode = generate(ast).code;
+  self.debug("ASTY CODE THE IMPOT STRINGS", importString);
+  self.debug("ASTY CODE", modifiedCode);
+  self.debug();
+  return modifiedCode;
+};
+
+methods.createDynamicLazyComponentsImports = function (imports, options) {
+  const self = this;
+  const pao = self.pao;
+  const template = self.template;
+  const generate = self.generate;
+  const t = self.t;
+  const parser = self.parser;
+  const saveToFile = pao.pa_saveToFile;
+  const { shouldBuildComps, routesNode, compsNode } = options;
+
+  let constString = shouldBuildComps ? `const comps = {` : "";
+  const importDeclarations = imports.map((im) => {
+    if (shouldBuildComps) constString += `${im.componentName},`;
+    return t.variableDeclaration("const", [
+      t.variableDeclarator(
+        t.identifier(im.componentName),
+        t.callExpression(
+          t.memberExpression(t.identifier("React"), t.identifier("lazy")),
+          [
+            t.arrowFunctionExpression(
+              [],
+              t.callExpression(t.import(), [t.stringLiteral(im.component)])
+            ),
+          ]
+        )
+      ),
+    ]);
+  });
+
+  constString += shouldBuildComps ? "}" : "";
+  let joinedString = shouldBuildComps
+    ? `${importDeclarations.join("")} ${constString};`
+    : `${importDeclarations.join("")}`;
+  self.debug("ASTY JOINED STRING", joinedString);
+  let ast = parser.parse(joinedString, { sourceType: "module" });
+  !shouldBuildComps ? self.astAddNode(routesNode, compsNode, imports) : "";
+  let modifiedCode = generate(ast).code;
+  self.debug("ASTY CODE THE IMPORT REACT LAZY", importString);
+  self.debug("ASTY CODE", modifiedCode);
+  self.debug();
+  return modifiedCode;
 };
 
 export default methods;
