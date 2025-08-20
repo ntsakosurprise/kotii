@@ -1,2 +1,2 @@
-import { LazySuspense } from "./src/index.js";
-export { LazySuspense };
+import { lazyLoad, LazySuspense } from "./src/index.js";
+export { LazySuspense, lazyLoad };

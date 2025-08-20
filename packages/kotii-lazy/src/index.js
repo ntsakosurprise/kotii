@@ -1,3 +1,4 @@
 import { LazySuspense } from "./components/index.js";
+import lazyLoad from "./lazy/index.js";
 
-export { LazySuspense };
+export { LazySuspense, lazyLoad };
