@@ -158,6 +158,24 @@ methods.runReactView = function (data) {
     let html = "";
 
     const sheet = new ServerStyleSheet();
+    let loadComponent = "";
+    let compsList = Object.keys(self.comps.comps);
+    for (let i = 0; i < self.comps.routes.length; i++) {
+      if (self.comps.routes[i].path === stateData[0].path) {
+        console.log("LOAD LAZY COMPONENT", self.comps.routes[i], view.match);
+        loadComponent = self.comps.routes[i];
+        break;
+      }
+    }
+    console.log("THE COMPS LIST", compsList);
+    if (compsList.includes(loadComponent.component)) {
+      // console.log("THE COMPONENT EXISTS",await self.comps.comps[loadComponent.component])
+      if (self.comps.comps[loadComponent.component]?.preload) {
+        self.comps.comps[loadComponent.component] = await self.comps.comps[
+          loadComponent.component
+        ].preload();
+      }
+    }
     let goodies = self.comps;
     try {
       html = renderToString(
