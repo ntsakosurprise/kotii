@@ -1,3 +1,4 @@
+import { LazySuspense } from "kotii-lazy";
 import { Router, Routes } from "kotii-router";
 import React from "react";
 import { useAppContext } from "../../react-components/index.jsx";
@@ -43,14 +44,16 @@ const ClientRoutes = (props) => {
   });
 
   return (
-    <Router>
-      <Layout>
-        <Routes routes={refinedRoutes} />
-      </Layout>
-    </Router>
+    <LazySuspense fallback={<div>Component is Loading</div>}>
+      <Router>
+        <Layout>
+          <Routes routes={refinedRoutes} />
+        </Layout>
+      </Router>
+    </LazySuspense>
   );
 };
-const RoutesAsServerRoutes = (props) => {
+const RoutesAsServerRoutes = async (props) => {
   const { goodies = {} } = props;
   // const {routes=[], comps={}} = goodies
   const gRoutes = goodies?.routes || [];
@@ -61,8 +64,10 @@ const RoutesAsServerRoutes = (props) => {
     : () => {
         return <></>;
       };
-  let refinedRoutes = gRoutes.map((r, index) => {
-    let Component = gComps[r.component];
+  let refinedRoutes = gRoutes.map(async (r, index) => {
+    let Component = await gComps[r.component].preload();
+    console.log("Server component", Component);
+
     const ComponentWrapped = () => {
       return (
         <Wrapper key={index}>
@@ -77,9 +82,11 @@ const RoutesAsServerRoutes = (props) => {
     };
   });
   return (
-    <Layout>
-      <Routes routes={refinedRoutes} />
-    </Layout>
+    <LazySuspense fallback={<div>Component is Loading</div>}>
+      <Layout>
+        <Routes routes={refinedRoutes} />
+      </Layout>
+    </LazySuspense>
   );
 };
 

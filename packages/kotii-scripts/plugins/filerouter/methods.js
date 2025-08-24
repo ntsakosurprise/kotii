@@ -1379,34 +1379,41 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
   const saveToFile = pao.pa_saveToFile;
   const { shouldBuildComps, routesNode, compsNode } = options;
 
+  const lazyLoadImport = t.importDeclaration(
+    [
+      t.importSpecifier(
+        t.identifier("lazyLoad"), // local name
+        t.identifier("lazyLoad") // imported name
+      ),
+    ],
+    t.stringLiteral("kotii-lazy") // source module
+  );
+
   let constString = shouldBuildComps ? `const comps = {` : "";
   const importDeclarations = imports.map((im) => {
     if (shouldBuildComps) constString += `${im.componentName},`;
     return t.variableDeclaration("const", [
       t.variableDeclarator(
         t.identifier(im.componentName),
-        t.callExpression(
-          t.memberExpression(t.identifier("React"), t.identifier("lazy")),
-          [
-            t.arrowFunctionExpression(
-              [],
-              t.callExpression(t.import(), [t.stringLiteral(im.component)])
-            ),
-          ]
-        )
+        t.callExpression(t.identifier("lazyLoad"), [
+          t.arrowFunctionExpression(
+            [],
+            t.callExpression(t.import(), [t.stringLiteral(im.component)])
+          ),
+        ])
       ),
     ]);
   });
 
+  let importsAst = t.file(t.program([lazyLoadImport, ...importDeclarations]));
+
   constString += shouldBuildComps ? "}" : "";
-  let joinedString = shouldBuildComps
-    ? `${importDeclarations.join("")} ${constString};`
-    : `${importDeclarations.join("")}`;
+  let joinedString = shouldBuildComps ? `${constString};` : ``;
   self.debug("ASTY JOINED STRING", joinedString);
   let ast = parser.parse(joinedString, { sourceType: "module" });
   !shouldBuildComps ? self.astAddNode(routesNode, compsNode, imports) : "";
-  let modifiedCode = generate(ast).code;
-  self.debug("ASTY CODE THE IMPORT REACT LAZY", importString);
+  let modifiedCode = generate(importsAst).code;
+  self.debug("ASTY CODE THE IMPORT REACT LAZY");
   self.debug("ASTY CODE", modifiedCode);
   self.debug();
   return modifiedCode;
