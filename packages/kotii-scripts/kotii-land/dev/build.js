@@ -53,7 +53,7 @@ const ClientRoutes = (props) => {
     </LazySuspense>
   );
 };
-const RoutesAsServerRoutes = async (props) => {
+const RoutesAsServerRoutes = (props) => {
   const { goodies = {} } = props;
   // const {routes=[], comps={}} = goodies
   const gRoutes = goodies?.routes || [];
@@ -64,8 +64,8 @@ const RoutesAsServerRoutes = async (props) => {
     : () => {
         return <></>;
       };
-  let refinedRoutes = gRoutes.map(async (r, index) => {
-    let Component = await gComps[r.component].preload();
+  let refinedRoutes = gRoutes.map((r, index) => {
+    let Component = gComps[r.component];
     console.log("Server component", Component);
 
     const ComponentWrapped = () => {
@@ -82,11 +82,9 @@ const RoutesAsServerRoutes = async (props) => {
     };
   });
   return (
-    <LazySuspense fallback={<div>Component is Loading</div>}>
-      <Layout>
-        <Routes routes={refinedRoutes} />
-      </Layout>
-    </LazySuspense>
+    <Layout>
+      <Routes routes={refinedRoutes} />
+    </Layout>
   );
 };
 
