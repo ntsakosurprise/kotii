@@ -1,3 +1,4 @@
+import React from "react";
 export default (componentLoader) => {
   console.log("THE COMPONENT LOADER", componentLoader);
   let LoadedComponent = null;
@@ -12,15 +13,15 @@ export default (componentLoader) => {
     return LoadedComponent;
   }
 
-  function Lazy() {
-    console.log("Lazy runs");
+  function Lazy(props) {
+    console.log("Lazy runs", props);
     if (!LoadedComponent) {
       loadModulePromise = componentLoader().then((componentModule) => {
         return componentModule.default || componentModule;
       });
       throw loadModulePromise;
     }
-    return <LoadedComponent />;
+    return <LoadedComponent {...props} />;
   }
   Lazy.preload = loadModule;
   return Lazy;
