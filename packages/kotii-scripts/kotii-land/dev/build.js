@@ -20,6 +20,7 @@ const ClientRoutes = (props) => {
   let astRoutes = typeof routes === "undefined" ? [] : routes;
   let astComps = typeof comps === "undefined" ? {} : comps;
   const { layout } = useAppContext();
+  console.log("THE PROCESS ENV", process.env);
   // const AppWrapper = props.wrapper;
   // console.log("THE CLIENT ROUTES", layout);
   const Layout = layout
@@ -37,20 +38,20 @@ const ClientRoutes = (props) => {
       );
     };
     return {
-      component: <ComponentWrapped />,
+      component: () => <ComponentWrapped />,
       path: r.path,
       children: r?.children || undefined,
     };
   });
-
   return (
-    <LazySuspense fallback={<div>Component is Loading</div>}>
-      <Router>
-        <Layout>
-          <Routes routes={refinedRoutes} />
-        </Layout>
-      </Router>
-    </LazySuspense>
+    <Router>
+      <Layout>
+        <Routes
+          routes={refinedRoutes}
+          suspense={process.env?.KOTII_USE_LAZY ? LazySuspense : null}
+        />
+      </Layout>
+    </Router>
   );
 };
 const RoutesAsServerRoutes = (props) => {
@@ -67,7 +68,6 @@ const RoutesAsServerRoutes = (props) => {
   let refinedRoutes = gRoutes.map((r, index) => {
     let Component = gComps[r.component];
     console.log("Server component", Component);
-
     const ComponentWrapped = () => {
       return (
         <Wrapper key={index}>
@@ -76,14 +76,17 @@ const RoutesAsServerRoutes = (props) => {
       );
     };
     return {
-      component: <ComponentWrapped />,
+      component: () => <ComponentWrapped />,
       path: r.path,
       children: r?.children || undefined,
     };
   });
   return (
     <Layout>
-      <Routes routes={refinedRoutes} />
+      <Routes
+        routes={refinedRoutes}
+        suspense={process.env?.useLazyLoad ? LazySuspense : null}
+      />
     </Layout>
   );
 };
