@@ -20,6 +20,7 @@ methods.handleFileRoutes = async function (data) {
 
   const { path: filePaths } = payload;
   self.debug("FILE PATHS", filePaths);
+  self.debug("THE PROCESS", process);
   const pagesSource = filePaths.appSrc;
   const isProductionRequest = filePaths?.isProductionRequest || false;
   // const appManifest = filePaths?.appManifest;
@@ -979,6 +980,13 @@ methods.insertImportDeclarations = function (
   //     IMPORT_NAME: t.identifier(`${imports[0].componentName}`),
   //     SOURCE: t.stringLiteral(`${imports[0].component}`),
   //   });
+
+  if (!process.env?.useLazyLoad)
+    return self.createStaticComponentsImports(imports, {
+      shouldBuildComps,
+      routesNode,
+      compsNode,
+    });
   return self.createDynamicLazyComponentsImports(imports, {
     shouldBuildComps,
     routesNode,
@@ -1338,7 +1346,7 @@ methods.getAstRoutes = function (routesObject, renamesToAdd) {
   return astRoutes;
 };
 
-methods.createStaticComponentsImports = function (imports) {
+methods.createStaticComponentsImports = function (imports, options) {
   const self = this;
   const pao = self.pao;
   const template = self.template;
@@ -1346,6 +1354,7 @@ methods.createStaticComponentsImports = function (imports) {
   const t = self.t;
   const parser = self.parser;
   const saveToFile = pao.pa_saveToFile;
+  const { shouldBuildComps, routesNode, compsNode } = options;
 
   let constString = shouldBuildComps ? `const comps = {` : "";
   let importString = imports.map((im, i) => {
