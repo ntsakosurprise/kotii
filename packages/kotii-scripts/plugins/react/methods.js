@@ -158,24 +158,8 @@ methods.runReactView = function (data) {
     let html = "";
 
     const sheet = new ServerStyleSheet();
-    let loadComponent = "";
-    let compsList = Object.keys(self.comps.comps);
-    for (let i = 0; i < self.comps.routes.length; i++) {
-      if (self.comps.routes[i].path === stateData[0].path) {
-        console.log("LOAD LAZY COMPONENT", self.comps.routes[i], view.match);
-        loadComponent = self.comps.routes[i];
-        break;
-      }
-    }
-    console.log("THE COMPS LIST", compsList);
-    if (compsList.includes(loadComponent.component)) {
-      // console.log("THE COMPONENT EXISTS",await self.comps.comps[loadComponent.component])
-      if (self.comps.comps[loadComponent.component]?.preload) {
-        self.comps.comps[loadComponent.component] = await self.comps.comps[
-          loadComponent.component
-        ].preload();
-      }
-    }
+    process.env?.useLazyLoad ? await self.preloadLazyComponents() : null;
+
     let goodies = self.comps;
     try {
       html = renderToString(
@@ -304,9 +288,9 @@ methods.includeScripts = function (preloadedState) {
   const { serialize } = self;
   let possibleExtraScripts = "";
   if (self?.htmlPageSettings && self.htmlPageSettings?.scripts) {
-    self.htmlPageSettings.scripts.forEach((script) => {
-      possibleExtraScripts = `${possibleExtraScripts}\n <script src=${script.src}></script>`;
-    });
+    // self.htmlPageSettings.scripts.forEach((script) => {
+    //   possibleExtraScripts = `${possibleExtraScripts}\n <script src=${script.src}></script>`;
+    // });
   }
 
   return `
@@ -509,6 +493,25 @@ methods.doPageSettings = function () {
   }
 
   self.pageSettings = `${possibleMeta} ${possibleLinks}`;
+};
+
+methods.preloadLazyComponents = async function () {
+  let loadComponent = "";
+  let compsList = Object.keys(self.comps.comps);
+  for (let i = 0; i < self.comps.routes.length; i++) {
+    if (self.comps.routes[i].path === view.match) {
+      console.log("LOAD LAZY COMPONENT", self.comps.routes[i], view.match);
+      loadComponent = self.comps.routes[i];
+      break;
+    }
+  }
+  console.log("THE COMPS LIST", compsList);
+  if (compsList.includes(loadComponent.component)) {
+    // console.log("THE COMPONENT EXISTS",await self.comps.comps[loadComponent.component])
+    if (self.comps.comps[loadComponent.component]?.preload) {
+      await self.comps.comps[loadComponent.component].preload();
+    }
+  }
 };
 
 // methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
