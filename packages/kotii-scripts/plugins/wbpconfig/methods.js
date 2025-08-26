@@ -7,7 +7,6 @@ import fs from "fs";
 import path from "path";
 import postcss from "postcss";
 import postcssNested from "postcss-nested";
-import { env } from "process";
 import tailwindcss from "tailwindcss";
 import WebSocket, { WebSocketServer } from "ws";
 import {
@@ -168,7 +167,7 @@ methods.configureWebPack = function (
   );
   envs.stringified["KOTII_SHOW_DEBUG_LOGS"] = true;
   envs.stringified["KOTII_APP_URL"] = JSON.stringify(certDomainConfig.APP_URL);
-  env.stringified["KOTII_USE_LAZY"] = JSON.stringify(
+  envs.stringified["KOTII_USE_LAZY"] = JSON.stringify(
     process?.useLazyLoad ? true : false
   );
 

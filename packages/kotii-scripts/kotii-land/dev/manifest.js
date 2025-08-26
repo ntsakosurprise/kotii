@@ -1,8 +1,8 @@
 const meta = {
   comps: [],
-  compsSource: "/Users/surprisemashele/Apps/new-with-npm/src",
+  compsSource: "",
   appMain: "",
-  lastCompsCount: 12,
+  lastCompsCount: 0,
   compsPaths: [],
   app: {
     type: "ssr",
