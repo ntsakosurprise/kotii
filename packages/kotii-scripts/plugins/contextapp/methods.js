@@ -135,6 +135,13 @@ methods.getAppInContextResources = function (environment = false) {
       appTsConfig: self.checkIfIsFile(tsConfigPath) ? tsConfigPath : null,
       appJsConfig: self.checkIfIsFile(jsConfigPath) ? jsConfigPath : null,
     };
+    if (Object.keys(resources?.appManifest).includes("useLazyLoad")) {
+      resources.appManifest.useLazyLoad
+        ? (process.env["useLazyLoad"] = true)
+        : null;
+    } else {
+      process.env["useLazyLoad"] = true;
+    }
     self.debug("THE RESOURCES", resources);
     // let appFileSavePath = `${resources.appSrc}/about_.js`;
     // let appFilePath = `${resources.appSrc}/about.jsx`;
