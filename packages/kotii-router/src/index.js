@@ -1,3 +1,20 @@
-const { getPages, createRouterComponents } = require("./config");
+import { Link, Route, Router, Routes } from "./components/index.js";
+import {
+  useLocation,
+  useMatch,
+  useNavigate,
+  useParams,
+  useRedirect,
+} from "./hooks/index.js";
 
-module.exports = { getPages, createRouterComponents };
+export {
+  Router,
+  Route,
+  Link,
+  Routes,
+  useParams,
+  useNavigate,
+  useLocation,
+  useMatch,
+  useRedirect,
+};

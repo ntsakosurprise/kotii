@@ -20,6 +20,7 @@ methods.handleFileRoutes = async function (data) {
 
   const { path: filePaths } = payload;
   self.debug("FILE PATHS", filePaths);
+  self.debug("THE PROCESS", process);
   const pagesSource = filePaths.appSrc;
   const isProductionRequest = filePaths?.isProductionRequest || false;
   // const appManifest = filePaths?.appManifest;
@@ -491,6 +492,16 @@ methods.addToAST = function ({
   self.debug("THE BUILD PATH CWD", cwd, filePath);
 
   self.debug("KOTTILAND FILE PATH", filePath);
+  self.debug(
+    "KOTII AST ITEMS",
+    objectToAdd,
+    "\npages paths:",
+    pagesPaths,
+    "\ntoRemove",
+    toRemove,
+    "\nsource",
+    source
+  );
   // const altPath = `${cwd}/build_test.js`;
   const jsFile = readFileSync(filePath);
   let ast = parser.parse(jsFile, { sourceType: "module", plugins: ["jsx"] });
@@ -969,26 +980,18 @@ methods.insertImportDeclarations = function (
   //     IMPORT_NAME: t.identifier(`${imports[0].componentName}`),
   //     SOURCE: t.stringLiteral(`${imports[0].component}`),
   //   });
-  let constString = shouldBuildComps ? `const comps = {` : "";
-  let importString = imports.map((im, i) => {
-    if (shouldBuildComps) constString += `${im.componentName},`;
-    return `import ${im.componentName} from "${im.component}";`;
+
+  if (!process.env?.useLazyLoad)
+    return self.createStaticComponentsImports(imports, {
+      shouldBuildComps,
+      routesNode,
+      compsNode,
+    });
+  return self.createDynamicLazyComponentsImports(imports, {
+    shouldBuildComps,
+    routesNode,
+    compsNode,
   });
-  // const myImport = template(`${importString.join(";")}`, {
-  //   sourceType: "module",
-  // });
-  constString += shouldBuildComps ? "}" : "";
-  let joinedString = shouldBuildComps
-    ? `${importString.join("")} ${constString};`
-    : `${importString.join("")}`;
-  self.debug("ASTY JOINED STRING", joinedString);
-  let ast = parser.parse(joinedString, { sourceType: "module" });
-  !shouldBuildComps ? self.astAddNode(routesNode, compsNode, imports) : "";
-  let modifiedCode = generate(ast).code;
-  self.debug("ASTY CODE THE IMPOT STRINGS", importString);
-  self.debug("ASTY CODE", modifiedCode);
-  self.debug();
-  return modifiedCode;
   // saveToFile(filePath, modifiedCode);
   // saveToFile(filePath, modifiedCode);
   // const ast = buildImport({
@@ -1341,6 +1344,88 @@ methods.getAstRoutes = function (routesObject, renamesToAdd) {
   });
   self.debug("THE AST ROUTES", astRoutes);
   return astRoutes;
+};
+
+methods.createStaticComponentsImports = function (imports, options) {
+  const self = this;
+  const pao = self.pao;
+  const template = self.template;
+  const generate = self.generate;
+  const t = self.t;
+  const parser = self.parser;
+  const saveToFile = pao.pa_saveToFile;
+  const { shouldBuildComps, routesNode, compsNode } = options;
+
+  let constString = shouldBuildComps ? `const comps = {` : "";
+  let importString = imports.map((im, i) => {
+    if (shouldBuildComps) constString += `${im.componentName},`;
+    return `import ${im.componentName} from "${im.component}";`;
+  });
+  // const myImport = template(`${importString.join(";")}`, {
+  //   sourceType: "module",
+  // });
+  constString += shouldBuildComps ? "}" : "";
+  let joinedString = shouldBuildComps
+    ? `${importString.join("")} ${constString};`
+    : `${importString.join("")}`;
+  self.debug("ASTY JOINED STRING", joinedString);
+  let ast = parser.parse(joinedString, { sourceType: "module" });
+  !shouldBuildComps ? self.astAddNode(routesNode, compsNode, imports) : "";
+  let modifiedCode = generate(ast).code;
+  self.debug("ASTY CODE THE IMPOT STRINGS", importString);
+  self.debug("ASTY CODE", modifiedCode);
+  self.debug();
+  return modifiedCode;
+};
+
+methods.createDynamicLazyComponentsImports = function (imports, options) {
+  const self = this;
+  const pao = self.pao;
+  const template = self.template;
+  const generate = self.generate;
+  const t = self.t;
+  const parser = self.parser;
+  const saveToFile = pao.pa_saveToFile;
+  const { shouldBuildComps, routesNode, compsNode } = options;
+
+  const lazyLoadImport = t.importDeclaration(
+    [
+      t.importSpecifier(
+        t.identifier("lazyLoad"), // local name
+        t.identifier("lazyLoad") // imported name
+      ),
+    ],
+    t.stringLiteral("kotii-lazy") // source module
+  );
+
+  let constString = shouldBuildComps ? `const comps = {` : "";
+  const importDeclarations = imports.map((im) => {
+    if (shouldBuildComps) constString += `${im.componentName},`;
+    return t.variableDeclaration("const", [
+      t.variableDeclarator(
+        t.identifier(im.componentName),
+        t.callExpression(t.identifier("lazyLoad"), [
+          t.arrowFunctionExpression(
+            [],
+            t.callExpression(t.import(), [t.stringLiteral(im.component)])
+          ),
+        ])
+      ),
+    ]);
+  });
+
+  let importsAst = t.file(t.program([lazyLoadImport, ...importDeclarations]));
+
+  constString += shouldBuildComps ? "}" : "";
+  let joinedString = shouldBuildComps ? `${constString};` : ``;
+  self.debug("ASTY JOINED STRING", joinedString);
+  let ast = parser.parse(joinedString, { sourceType: "module" });
+  !shouldBuildComps ? self.astAddNode(routesNode, compsNode, imports) : "";
+  let modifiedCode = generate(importsAst).code;
+  self.debug("ASTY CODE THE IMPORT REACT LAZY");
+  self.debug("ASTY CODE", modifiedCode);
+  self.debug();
+  return modifiedCode;
 };
 
 export default methods;

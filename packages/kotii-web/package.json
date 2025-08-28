@@ -3,12 +3,12 @@
   "version": "0.0.0",
   "description": "",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
-  "homepage": "https://github.com/MTN-Group/mymtn-nextgen-docs#readme",
+  "homepage": "https://github.com/kotiijs#readme",
   "license": "ISC",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MTN-Group/mymtn-nextgen-docs.git"
+    "url": "git+https://github.com/kotiijs.git"
   },
   "scripts": {
     "start": "webpack-dev-server --open --hot --mode development",
@@ -74,6 +74,6 @@
     "webpack-dev-server": "^4.7.4"
   },
   "bugs": {
-    "url": "https://github.com/MTN-Group/mymtn-nextgen-docs/issues"
+    "url": "https://github.com/kotiijs/issues"
   }
 }

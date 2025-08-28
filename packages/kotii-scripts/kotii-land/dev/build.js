@@ -1,75 +1,95 @@
+import { LazySuspense } from "kotii-lazy";
+import { Router, Routes } from "kotii-router";
 import React from "react";
-import { Route, Router, Switch as Routes } from "wouter";
 import { useAppContext } from "../../react-components/index.jsx";
-const Wrapper = props => {
+const Wrapper = (props) => {
   //const Component = props.component;
-  return <div style={{
-    paddingLeft: "2%",
-    paddingTop: "2vh",
-    fontFamily: '"Roboto", sans-serif'
-  }}>
+  return (
+    <div
+      style={{
+        paddingLeft: "2%",
+        paddingTop: "2vh",
+        fontFamily: '"Roboto", sans-serif',
+      }}
+    >
       {props.children}
-    </div>;
+    </div>
+  );
 };
-const ClientRoutes = props => {
+const ClientRoutes = (props) => {
   let astRoutes = typeof routes === "undefined" ? [] : routes;
   let astComps = typeof comps === "undefined" ? {} : comps;
-  const {
-    layout
-  } = useAppContext();
+  const { layout } = useAppContext();
+  console.log("THE PROCESS ENV", process.env);
   // const AppWrapper = props.wrapper;
   // console.log("THE CLIENT ROUTES", layout);
-  const Layout = layout ? layout : () => {
-    return <></>;
-  };
-  return <Router>
+  const Layout = layout
+    ? layout
+    : () => {
+        return <></>;
+      };
+  let refinedRoutes = astRoutes.map((r, index) => {
+    let Component = astComps[r.component];
+    const ComponentWrapped = () => {
+      return (
+        <Wrapper key={index}>
+          <Component />
+        </Wrapper>
+      );
+    };
+    return {
+      component: () => <ComponentWrapped />,
+      path: r.path,
+      children: r?.children || undefined,
+    };
+  });
+  return (
+    <Router>
       <Layout>
-        <Routes>
-          {astRoutes.map((r, index) => {
-          let Component = astComps[r.component];
-          const ComponentWrapped = () => {
-            return <Wrapper>
-                  <Component />
-                </Wrapper>;
-          };
-          return <Route
-          // {...rest}
-          key={index} path={r.path} component={ComponentWrapped}
-          // render={(props) => {
-          //   return <Component {...props} />;
-          // }}
-          />;
-        })}
-        </Routes>
+        <Routes
+          routes={refinedRoutes}
+          suspense={process.env?.KOTII_USE_LAZY ? LazySuspense : null}
+        />
       </Layout>
-    </Router>;
+    </Router>
+  );
 };
-const RoutesAsServerRoutes = props => {
-  const {
-    goodies = {}
-  } = props;
+const RoutesAsServerRoutes = (props) => {
+  const { goodies = {} } = props;
   // const {routes=[], comps={}} = goodies
   const gRoutes = goodies?.routes || [];
   const gComps = goodies?.comps || {};
-  const {
-    layout
-  } = useAppContext();
-  const Layout = layout ? layout : () => {
-    return <></>;
-  };
-  return <Layout>
-      <Routes>
-        {gRoutes.map((r, index) => {
-        let Component = gComps[r.component];
-        let ComponentWrapped = () => {
-          return <Wrapper>
-                <Component />
-              </Wrapper>;
-        };
-        return <Route key={index} path={r.path} component={ComponentWrapped} />;
-      })}
-      </Routes>
-    </Layout>;
+  const { layout } = useAppContext();
+  const Layout = layout
+    ? layout
+    : () => {
+        return <></>;
+      };
+  let refinedRoutes = gRoutes.map((r, index) => {
+    let Component = gComps[r.component];
+    console.log("Server component", Component);
+    const ComponentWrapped = () => {
+      return (
+        <Wrapper key={index}>
+          <Component />
+        </Wrapper>
+      );
+    };
+    return {
+      component: () => <ComponentWrapped />,
+      path: r.path,
+      children: r?.children || undefined,
+    };
+  });
+  return (
+    <Layout>
+      <Routes
+        routes={refinedRoutes}
+        suspense={LazySuspense}
+        // suspense={process.env?.useLazyLoad ? LazySuspense : null}
+      />
+    </Layout>
+  );
 };
 
 // export { RoutesAsServerRoutes, routes };

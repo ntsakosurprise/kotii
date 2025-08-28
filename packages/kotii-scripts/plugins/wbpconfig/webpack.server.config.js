@@ -207,6 +207,12 @@ export default (options) => {
                   ["@babel/preset-env"],
                   ["@babel/preset-react", { runtime: "automatic" }],
                 ],
+                plugins: [
+                  [
+                    "babel-plugin-styled-components",
+                    { ssr: true, displayName: true },
+                  ],
+                ],
               },
             },
             // {

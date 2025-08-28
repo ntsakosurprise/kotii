@@ -75,7 +75,9 @@
     "import-jsx": "^5.0.0",
     "inquirer": "^7.3.3",
     "is-online": "^8.5.1",
+    "kotii-lazy": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-lazy/kotii-lazy-0.0.0.tgz",
     "kotii-logger": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-logger/kotii-logger-1.0.0.tgz",
+    "kotii-router": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-router/kotii-router-0.0.0.tgz",
     "kotii-styled": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-styled/kotii-styled-1.0.0.tgz",
     "listr": "^0.14.3",
     "node-cache": "^5.1.2",
@@ -92,8 +94,7 @@
     "rxjs-compat": "^6.6.7",
     "serialize-javascript": "^6.0.1",
     "simple-git": "^2.21.0",
-    "styled-components": "^6.1.1",
-    "wouter": "^2.12.1"
+    "styled-components": "^6.1.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",

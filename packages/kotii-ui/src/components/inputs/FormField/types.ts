@@ -1,6 +1,6 @@
 import { ReactElement, ReactNode } from "react";
-
 import { BaseProps, HorizVert, SizeWithNone } from "../../../types";
+
 export interface PageHeaderProps
   extends Omit<
     BaseProps,
@@ -69,12 +69,23 @@ export interface PageHeaderProps
   require?: boolean | { indicator: false };
   validate?:
     | {
-        regexp: RegExp;
-        message: string | ReactNode;
-        status: "error" | "info";
+        regexp?: object;
+        message?: string | React.ReactNode;
+        status?: "error" | "info";
       }
-    | (() => {})
-    | (string | (() => {}))[];
+    | ((...args: any[]) => any)
+    | (
+        | {
+            regexp?: object;
+            message?: string | any;
+            status?: "error" | "info";
+          }
+        | ((...args: any[]) => any)
+      )[]
+    | {
+        max: number;
+        threshold?: number;
+      };
   validateOn?: "blur" | "submit" | "change";
   component?: Object | (() => {});
   pad?: boolean;

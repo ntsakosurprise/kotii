@@ -44,6 +44,6 @@
     "webpack-dev-server": "^4.7.4"
   },
   "bugs": {
-    "url": "https://github.com/MTN-Group/mymtn-nextgen-docs/issues"
+    "url": "https://github.com/kotiijs/issues"
   }
 }
