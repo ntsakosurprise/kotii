@@ -85,7 +85,8 @@ const RoutesAsServerRoutes = (props) => {
     <Layout>
       <Routes
         routes={refinedRoutes}
-        suspense={process.env?.useLazyLoad ? LazySuspense : null}
+        suspense={LazySuspense}
+        // suspense={process.env?.useLazyLoad ? LazySuspense : null}
       />
     </Layout>
   );
