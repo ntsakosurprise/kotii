@@ -1,3 +1,3 @@
-import Suspense from "./Suspense.jsx";
+import LazySuspense from "./Suspense.jsx";
 
-export default Suspense;
+export default LazySuspense;

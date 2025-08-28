@@ -1,3 +1,3 @@
-import Suspense from "./Suspense/index.js";
+import LazySuspense from "./Suspense/index.js";
 
-export { Suspense as LazySuspense };
+export { LazySuspense };
