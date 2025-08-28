@@ -158,7 +158,7 @@ methods.runReactView = function (data) {
     let html = "";
 
     const sheet = new ServerStyleSheet();
-    process.env?.useLazyLoad ? await self.preloadLazyComponents() : null;
+    process.env?.useLazyLoad ? await self.preloadLazyComponents(view) : null;
 
     let goodies = self.comps;
     try {
@@ -495,7 +495,8 @@ methods.doPageSettings = function () {
   self.pageSettings = `${possibleMeta} ${possibleLinks}`;
 };
 
-methods.preloadLazyComponents = async function () {
+methods.preloadLazyComponents = async function (view) {
+  const self = this;
   let loadComponent = "";
   let compsList = Object.keys(self.comps.comps);
   for (let i = 0; i < self.comps.routes.length; i++) {
