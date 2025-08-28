@@ -1,5 +1,9 @@
 import React, { useContext, useEffect } from "react";
-import { cleanRouteUrl, matchRoutePattern } from "../../utils/index.js";
+import {
+  cleanRouteUrl,
+  matchRoutePattern,
+  navigate,
+} from "../../utils/index.js";
 import { KotiiRouterContenxt } from "../Router/Router.jsx";
 
 const Routes = ({ children, routes = null, suspense = null }) => {
@@ -21,7 +25,7 @@ const Routes = ({ children, routes = null, suspense = null }) => {
   useEffect(() => {
     console.log("About to set the params", theParams);
     if (theParams) setParams(theParams);
-  }, []);
+  }, [currentPath]);
 
   let appRoutes = children || routes;
   for (let childIndex = 0; childIndex < appRoutes.length; childIndex++) {
@@ -36,38 +40,31 @@ const Routes = ({ children, routes = null, suspense = null }) => {
       theParams = match?.params ? match.params : null;
       ChildElementToRender = child?.props ? child : child.component;
 
-      console.log("childrenddd", ChildElementToRender);
       console.log("IMPRESSIVE", child?.children, child);
-      // elementToRender = (
-      //   <KotiiRouterContenxt.Provider
-      //     value={{
-      //       path: currentPath,
-      //       navigate,
-      //       navigateByReplace,
-      //       setParams,
-      //       params: theParams,
-      //       basePath: fullUrl,
-      //       ssrPath,
-      //     }}
-      //   >
-      //     {SuspenseComponent ? (
-      //       <SuspenseComponent>{childElementToRender}</SuspenseComponent>
-      //     ) : (
-      //       childElementToRender
-      //     )}
+      elementToRender = (
+        <KotiiRouterContenxt.Provider
+          value={{
+            path: currentPath,
+            navigate,
+            navigateByReplace,
+            setParams,
+            params: theParams,
+            basePath: fullUrl,
+            ssrPath,
+          }}
+        >
+          {SuspenseComponent ? (
+            <SuspenseComponent fallback={<div>Component is Loading</div>}>
+              <ChildElementToRender />
+            </SuspenseComponent>
+          ) : (
+            <ChildElementToRender />
+          )}
 
-      //     {/* {child?.children && child.children && (
-      //       <Routes routes={child.children} />
-      //     )} */}
-      //   </KotiiRouterContenxt.Provider>
-      // );
-
-      elementToRender = SuspenseComponent ? (
-        <SuspenseComponent>
-          <ChildElementToRender />
-        </SuspenseComponent>
-      ) : (
-        <ChildElementToRender />
+          {child?.children && child.children && (
+            <Routes routes={child.children} suspense={suspense} />
+          )}
+        </KotiiRouterContenxt.Provider>
       );
 
       break;
