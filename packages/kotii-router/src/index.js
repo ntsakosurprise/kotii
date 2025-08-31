@@ -5,6 +5,7 @@ import {
   useNavigate,
   useParams,
   useRedirect,
+  useRoute,
 } from "./hooks/index.js";
 
 export {
@@ -17,4 +18,5 @@ export {
   useLocation,
   useMatch,
   useRedirect,
+  useRoute,
 };
