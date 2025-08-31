@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import {
-  extractPathFromString,
+  getUrlSegements,
   navigate,
   navigateByReplace,
 } from "../../utils/index.js";
@@ -9,16 +9,15 @@ export const KotiiRouterContenxt = createContext();
 
 const Router = ({ children, ssrPath = "/" }) => {
   console.log("ROUTER RUNS");
-  const [cleanPath, setPath] = useState(
-    extractPathFromString(
-      typeof window !== "undefined" ? window.location.pathname : ssrPath
-    ) || "/"
-  );
-  const urlHashSegment =
-    typeof window !== "undefined" ? window.location.hash : "";
-  const urlSearchSegment =
-    typeof window !== "undefined" ? window.location.search : "";
+
+  const [urlSegments, setUrlSegments] = useState(getUrlSegements(ssrPath));
+
+  // const urlHashSegment =
+  //   typeof window !== "undefined" ? window.location.hash : "";
+  // const urlSearchSegment =
+  //   typeof window !== "undefined" ? window.location.search : "";
   const [params, setParams] = useState({});
+  const [queryParams, setQueryParams] = useState({});
 
   // const setParams = (params) => {
   //   setRouteParams(params);
@@ -26,7 +25,7 @@ const Router = ({ children, ssrPath = "/" }) => {
 
   useEffect(() => {
     const onPopState = () => {
-      setPath(extractPathFromString(window.location.pathname || "/"));
+      setUrlSegments(getUrlSegements());
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -40,14 +39,15 @@ const Router = ({ children, ssrPath = "/" }) => {
   return (
     <KotiiRouterContenxt.Provider
       value={{
-        path: cleanPath,
+        // path: urlSegments.path,
         navigate,
         navigateByReplace,
         setParams,
         params,
+        setQueryParams,
+        queryParams,
         basePath: "",
-        hash: urlHashSegment,
-        search: urlSearchSegment,
+        urlSegments,
         ssrPath,
       }}
     >
