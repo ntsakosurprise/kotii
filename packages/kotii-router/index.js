@@ -8,6 +8,7 @@ import {
   useNavigate,
   useParams,
   useRedirect,
+  useRoute,
 } from "./src/index.js";
 
 export {
@@ -20,4 +21,5 @@ export {
   useMatch,
   useNavigate,
   useRedirect,
+  useRoute,
 };

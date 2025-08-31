@@ -1,7 +1,9 @@
 import React, { useContext, useEffect } from "react";
 import {
   cleanRouteUrl,
-  matchRoutePattern,
+  matchParams,
+  matchRoute,
+  matchRouteQuery,
   navigate,
 } from "../../utils/index.js";
 import { KotiiRouterContenxt } from "../Router/Router.jsx";
@@ -9,23 +11,27 @@ import { KotiiRouterContenxt } from "../Router/Router.jsx";
 const Routes = ({ children, routes = null, suspense = null }) => {
   console.log("THE VALUE OF ROUTES OBJECT", routes);
   const {
-    path: currentPath,
     setParams,
     basePath,
     navigateByReplace,
     ssrPath,
+    setQueryParams,
+    urlSegments,
   } = useContext(KotiiRouterContenxt);
 
-  console.log("THE ROUTES COMPONENT");
+  console.log("THE ROUTES COMPONENT:url", urlSegments);
 
+  let currentPath = urlSegments.path;
   let elementToRender = null;
   let ChildElementToRender = null;
   let theParams = null;
   let SuspenseComponent = suspense;
   useEffect(() => {
-    console.log("About to set the params", theParams);
-    if (theParams) setParams(theParams);
-  }, [currentPath]);
+    console.log("URL SEGMENT HAS CHANGED");
+    if (theParams) {
+      theParams?.route ? setQueryParams(theParams) : setParams(theParams);
+    }
+  }, []);
 
   let appRoutes = children || routes;
   for (let childIndex = 0; childIndex < appRoutes.length; childIndex++) {
@@ -33,24 +39,41 @@ const Routes = ({ children, routes = null, suspense = null }) => {
     let child = appRoutes[childIndex];
     const { path } = child?.props || child;
     const fullUrl = cleanRouteUrl(`${basePath}/${path}`);
-    const match = matchRoutePattern(fullUrl, currentPath);
+    console.log(
+      "THE FULL URL INDEX",
+      fullUrl,
+      currentPath.indexOf("?"),
+      currentPath
+    );
+    // const match =
+    //   urlSegments?.queryString && urlSegments.queryString.trim()
+    //     ? matchRouteQuery(fullUrl, currentPath)
+    //     : matchRoutePattern(fullUrl, currentPath);
+    const matchedRoute = matchRoute(fullUrl, currentPath);
 
-    if (match) {
-      console.log("REACT CHILD ELEMENT", match);
-      theParams = match?.params ? match.params : null;
+    if (matchedRoute) {
+      console.log("REACT CHILD ELEMENT", matchedRoute);
+      const match =
+        urlSegments?.queryString && urlSegments.queryString.trim()
+          ? matchRouteQuery(fullUrl, urlSegments.queryString)
+          : matchParams(fullUrl, currentPath);
+      theParams = match?.params ? (match?.route ? match : match.params) : null;
       ChildElementToRender = child?.props ? child : child.component;
 
       console.log("IMPRESSIVE", child?.children, child);
       elementToRender = (
         <KotiiRouterContenxt.Provider
           value={{
-            path: currentPath,
+            // path: currentPath,
             navigate,
             navigateByReplace,
             setParams,
-            params: theParams,
+            params: theParams?.route ? null : theParams,
+            setQueryParams,
+            queryParams: theParams?.route ? theParams : null,
             basePath: fullUrl,
             ssrPath,
+            urlSegments,
           }}
         >
           {SuspenseComponent ? (

@@ -23,13 +23,11 @@ export const navigateByReplace = (to) => {
   window.dispatchEvent(navEvent);
 };
 
-export const matchRoutePattern = (routeComponentPath, currentPath) => {
+export const matchParams = (routeComponentPath, currentPath) => {
   // if (routeComponentPath === currentPath) return true;
 
   const routeSegments = routeComponentPath.split("/").filter(Boolean);
   const currentSegments = currentPath.split("/").filter(Boolean);
-
-  if (routeSegments.length !== currentSegments.length) return null;
 
   let params = null;
 
@@ -47,4 +45,80 @@ export const matchRoutePattern = (routeComponentPath, currentPath) => {
   }
 
   return { params };
+};
+
+export const matchRouteQuery = (route, queryStringSet) => {
+  // if (routeComponentPath === currentPath) return true;
+
+  console.log("RUNNING MATCH ROUTE QUERY", route, queryStringSet);
+
+  const queryString = queryStringSet.slice(1, queryStringSet.length);
+  console.log("THE QUERY STRING", queryString);
+
+  let queryParams = {};
+
+  if (queryString) {
+    let params = new URLSearchParams(queryString);
+    for (const [key, value] of params.entries()) {
+      queryParams[key] = value;
+    }
+  } else {
+    return null;
+  }
+  console.log("MATCH QUERY ROUTE URL", queryParams, route);
+
+  return { route, params: queryParams };
+};
+
+export const getUrlSegements = (url = "") => {
+  if (typeof window != "undefined") {
+    return {
+      path: window.location.pathname || "",
+      queryString: window.location.search || "",
+      hash: window.location.hash || "",
+    };
+  } else {
+    return {
+      path: url,
+      queryString: "",
+      hash: "",
+    };
+  }
+};
+
+export const matchRoute = (routeComponentPath, currentPath) => {
+  // if (routeComponentPath === currentPath) return true;
+
+  console.log("MATCHING ROUTE", routeComponentPath, currentPath);
+
+  const routeSegments = routeComponentPath.split("/").filter(Boolean);
+  const currentSegments = currentPath.split("/").filter(Boolean);
+  let colonIndex = -1;
+
+  console.log("ROUTES SEGMENTS", routeSegments, currentSegments);
+
+  if (routeSegments.length === currentSegments.length) {
+    console.log("routes segments equals", routeSegments === currentSegments);
+    if (routeComponentPath === currentPath) return true;
+    colonIndex = routeComponentPath.indexOf(":");
+    console.log("THE COLON INDEX", colonIndex);
+    if (!colonIndex) return false;
+    let sliceFromFirstParam = routeComponentPath.slice(0, colonIndex);
+    console.log(
+      "Sliced first Param",
+      sliceFromFirstParam,
+      currentPath.indexOf(sliceFromFirstParam) >= 0
+    );
+    if (currentPath.indexOf(sliceFromFirstParam) >= 0) return true;
+    return false;
+
+    // for (let i = 0; i < routeSegments.length; i++) {
+    //   const routeSegment = routeSegments[i];
+    //   const currentSegment = currentSegments[i];
+
+    //   if (!routeSegment.startsWith(":") && routeSegment !== currentSegment)
+    //     return false;
+    // }
+  }
+  return false;
 };
