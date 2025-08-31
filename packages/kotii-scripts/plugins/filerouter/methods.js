@@ -238,20 +238,33 @@ methods.getItemPathAndFile = function (item) {
   const capitalizeFirstLetter = pao.pa_capitalizeFirstLetter;
   const camelCase = pao.pa_camelCase;
   const extMatchPattern = /\.jsx|\.tsx|\.ts|\.js$/g;
+  const bracketedPattern = /\/\[\[?\.{0,3}[^\[\]\/]+\]?\](?=\/|$)/; // Check if path has bracket-ed folders
+  const replaceBracketed = /\[\[?\.{0,3}([^\[\]\/]+)\]?\]/g; // Replace brackets pattern
   let fileAsComp = null;
+  let isBracketParams = false;
 
   let gotEndpoint =
     item.indexOf("pages") > 0
       ? item.slice(item.indexOf("pages"), item.length)
-      : "";
+      : ""; // remove pages from path
   self.debug("Got endpoint", gotEndpoint);
   self.debug("GOT ENDPOINT PAGES REMOVED", gotEndpoint.replace("pages", ""));
   let patternMatch = gotEndpoint
-    .replace("pages", "")
-    .replace(extMatchPattern, "")
-    .replace(/index/g, "")
-    .replace(/\[(.+)\]/g, ":$1")
-    .replace(/\[\.{3}.+\]/, "*");
+    .replace("pages", "") // Replace pages with empty string
+    .replace(extMatchPattern, "") // Replace extensions from path file name
+    .replace(/index/g, ""); // Replace index file name with empty string
+
+  if (bracketedPattern.test(patternMatch)) {
+    console.log("THE BRACKETED PATH", patternMatch);
+    patternMatch = patternMatch.replace(replaceBracketed, ":$1");
+    isBracketParams = true;
+    console.log("THE REPLACED", patternMatch);
+  } else {
+    patternMatch = patternMatch
+      .replace(/\[(.*?)\]/g, ":$1") // Extract dynamic params and replace with colon and param name
+      .replace(/\[\.{3}.+\]/, "*");
+  }
+
   // .replace(/\/$/, "");
   if (!/^\/$/.test(patternMatch)) {
     self.debug("Removes leading forwarslash");
@@ -307,6 +320,7 @@ methods.getItemPathAndFile = function (item) {
         componentRaw: imported.default,
         getServerState,
         universalEffects,
+        isBracketParams,
       });
     });
   });
@@ -656,6 +670,10 @@ methods.astAddNode = function (routesNode, compsNode, toAdd) {
       init.elements.push(
         t.objectExpression([
           t.objectProperty(t.identifier("path"), t.stringLiteral(adding.path)),
+          t.objectProperty(
+            t.identifier("isBracketParams"),
+            t.booleanLiteral(adding?.isBracketParams || false)
+          ),
           t.objectProperty(
             t.identifier("component"),
             // t.functionExpression(t.identifier(funcName), [], funcBody)
