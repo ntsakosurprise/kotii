@@ -1,4 +1,4 @@
-class Blogr {
+class Markdownr {
   constructor(pao) {
     this.pao = pao;
     this.init = methods.init;
@@ -6,4 +6,4 @@ class Blogr {
     this.getDataLocal = methods.getDataLocal;
   }
 }
-export default Blogr;
+export default Markdownr;
