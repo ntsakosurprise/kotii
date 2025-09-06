@@ -77,6 +77,7 @@
     "is-online": "^8.5.1",
     "kotii-lazy": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-lazy/kotii-lazy-0.0.0.tgz",
     "kotii-logger": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-logger/kotii-logger-1.0.0.tgz",
+    "kotii-markdown": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-markdown/kotii-markdown-1.0.0.tgz",
     "kotii-router": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-router/kotii-router-0.0.0.tgz",
     "kotii-styled": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-styled/kotii-styled-1.0.0.tgz",
     "listr": "^0.14.3",
