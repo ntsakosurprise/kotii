@@ -1,9 +1,10 @@
-const path = require("path");
-// import path from "path";
-const fs = require("fs");
+import * as fs from "fs";
+import path from "path";
 // const { parseMarkdown } = require("./markdownParser");
-const { getLanguageLocal, capitalizeFirstLetter } = require("./utils");
-const { parseMarkdown } = require("./markdownParser");
+// const { getLanguageLocal, capitalizeFirstLetter } = require("./utils");
+import { capitalizeFirstLetter, getLanguageLocal } from "./utils";
+// const { parseMarkdown } = require("./markdownParser");
+import { parseMarkdown } from "./markdownParser";
 const supportedLanguages = ["ts", "ve", "en"];
 // const languagesFullNames = [
 //   { name: "Xitsonga", locale: "ts" },
@@ -12,11 +13,14 @@ const supportedLanguages = ["ts", "ve", "en"];
 const validLanguagePattern = /_(?<locale>.*?)\.md/;
 
 // eslint-disable-next-line no-unused-vars
-module.exports = function (markdown) {
-  this.getLogger();
+export default function (markdown) {
+  console.log("mardown in kotii-markdown", markdown);
+  markdown?.getLogger ? markdown.getLogger() : null;
   const resourceRootFolder = process.cwd(); // Get all resources root folder
-  const filePath = this.resourcePath; // Webpack, get filepath
+  const filePath = markdown.resource; // Webpack, get filepath
+  console.log("THE MARKDOWN passed options", markdown);
   const fileFolder = path.dirname(filePath); // Use file path to get file folder
+  console.log("THE FOLDER", fileFolder);
   const fileName = path.basename(filePath); // Get filename(including extension)
   const fileExtension = path.extname(filePath); // Get file extension
   const fileNamePlain = path.basename(filePath, fileExtension); // Get filename without extension
@@ -45,7 +49,7 @@ module.exports = function (markdown) {
     let rawMarkdown = fs.readFileSync(languageFilePath, {
       encoding: "utf-8",
     });
-    this.addDependency(languageFilePath);
+    markdown?.addDependency ? markdown.addDependency(languageFilePath) : null;
     let isDefaultFileName = fileName === validLanguage;
 
     return {
@@ -81,7 +85,7 @@ module.exports = function (markdown) {
         fileNamePortion.replace(/\.js$/, "")
       )} from "MarkdownComps/${specialSplit[2]}/${fileNamePortion}"`;
       // console.log("ITEM IMPORTED;;;", itemImported);
-      this.addDependency(fullFilePath);
+      markdown?.addDependency ? markdown.addDependency(fullFilePath) : null;
       // console.log("THE FILE CONTENTS;;;", fileContent);
       sp.file = {
         name: fileNamePortion,
@@ -133,7 +137,9 @@ module.exports = function (markdown) {
   // console.log("Languages;;;", languages);
   // console.log("The IMports;;;", importsArray);
   // console.log("THISLOADER;;;", this);
-  this.addDependency(filePath);
+
+  markdown?.addDependency ? markdown.addDependency(filePath) : null;
+
   // console.log("The source BASE PATH", path.dirname(reContext));
 
   //parseMarkdown(markdown);
@@ -152,4 +158,4 @@ module.exports = function (markdown) {
  `;
 
   return loaded;
-};
+}
