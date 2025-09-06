@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
+// eslint-disable unused-imports/no-unused-imports */
 import { useLanguage } from "kotii-languages";
 import { capitalizeFirstLetter } from "kotii-utils";
 import PropTypes from "prop-types";
 import React from "react";
+
 import styled from "styled-components";
 import MarkdownAd from "../MarkdownAd";
 import MarkdownElement from "../MarkdownElement";
@@ -94,7 +96,8 @@ const MarkdownRender = ({ markdownData, markdownComponents }) => {
   const englishContent = getSetLanguageContent(markdownData, language);
   const { fileName, parsedMarkdown } = englishContent;
   const { html, toc } = parsedMarkdown;
-  console.log("Kotii-markdown set Language:::", language);
+  console.log("THE PARSED MARKDOWN", parsedMarkdown);
+  console.log("Kotii-markdown set Language:::", language, React.lazy, toc);
 
   // console.log("Filename;;;", fileName);
   // console.log("html", html);

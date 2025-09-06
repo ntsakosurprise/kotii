@@ -69,7 +69,7 @@ module.exports = {
       },
       {
         test: /\.md$/,
-        use: ["kotii-markdown"],
+        use: ["kotii-markdown-loader"],
       },
       // {
       //   test: /\.html$/,
