@@ -1454,6 +1454,16 @@ methods.startAstProcess = function (options) {
 
 methods.processMarkdown = function (markdownPages, options, doAfter) {
   const self = this;
+  self.emit({
+    type: "process-markdown",
+    data: {
+      payload: { markdownPages },
+      callback: (data) => {
+        self.debug("THE MARK-DOWN", data.message);
+        doAfter({ ...options, markdown: data });
+      },
+    },
+  });
 };
 
 export default methods;
