@@ -3,17 +3,28 @@ methods.init = function () {
   // self.debug('Bitbucket has been initialised')
 
   this.listens({
-    "process-markdown-pages": this.handleMardownPages.bind(this),
+    "process-markdown": this.handleMarkdown.bind(this),
   });
 };
-methods.handleMardownPages = function (data) {
+methods.handleMarkdown = function (data) {
   const self = this;
   const { callback, payload } = data;
+  const { markdownPages } = payload;
 
-  self.doCache(payload, callback);
-  // self.debug("THE DATA OF Init SCRIPTS", data);
-  // data.callback({ message: "Init plugin successfully called" });
-  // return;
+  let createdPages = self.getPagesMarkdownContent(markdownPages);
+
+  callback(createdPages);
+};
+
+methods.getPagesMarkdownContent = function (pages) {
+  const self = this;
+  const { MarkdownLoader } = self;
+
+  const filteredPages = pages.map((pagePath) => {
+    return MarkdownLoader(pagePath);
+  });
+  self.debug("THE FILTERED PAGES", filteredPages);
+  return filteredPages;
 };
 
 export default methods;
