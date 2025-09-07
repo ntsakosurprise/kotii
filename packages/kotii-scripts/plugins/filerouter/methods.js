@@ -33,67 +33,8 @@ methods.handleFileRoutes = async function (data) {
   const pagesPaths = self.getPages(
     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
   );
+
   // appManifest ? manifestData = loadFileSync(appManifest)) : null;
-  if (isProductionRequest) {
-    return self
-      .getRoutesHelper(pagesPaths, pagesSource)
-      .then((routesObject) => {
-        let routes = self.buildServerRoutes(routesObject);
-        self.callback({ routes, message: "Routes configured" });
-      });
-  } else {
-    const filePath = `/kotii-land/dev/manifest.js`;
-    self
-      .doImport(filePath, false, false)
-      .then(async (imported) => {
-        // self.debug("Impored", imported.module);
-
-        let manifestJS = imported;
-        let meta = manifestJS.meta;
-        self.debug("META ", meta);
-
-        let routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
-
-        let sendToRequestor = {
-          message: "Routes Configured",
-          resources: payload.path,
-          routes: self.buildServerRoutes(routesObject),
-          isDomainCreated: meta?.isDomainCreated || false,
-        };
-
-        const { lastCompsCount = 0, compsSource, compsPaths } = meta;
-        const pagesPathsLen = pagesPaths.length;
-
-        self.debug("THE SEND TO:", sendToRequestor);
-
-        if (
-          lastCompsCount === 0 ||
-          !compsSource ||
-          compsPaths.length === 0 ||
-          compsSource !== pagesSource
-        ) {
-          self.addToAST({
-            objectToAdd: routesObject,
-            pagesPaths,
-            source: pagesSource,
-            isNewSource: compsSource !== pagesSource,
-          });
-          return self.callback(sendToRequestor);
-        } else {
-          self.addOrRemoveByAST({
-            pagesPaths,
-            compsPaths,
-            pagesSource,
-            routesObject,
-            compsPagesEqual: lastCompsCount === pagesPathsLen,
-          });
-          return self.callback(sendToRequestor);
-        }
-      })
-      .catch((err) => {
-        self.debug("MANIFEST.JS: ERROR IMPORTING MANIFEST-JS", err);
-      });
-  }
 };
 methods.handleRemovePagesImport = async function (data) {
   const self = this;
@@ -1444,6 +1385,75 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
   self.debug("ASTY CODE", modifiedCode);
   self.debug();
   return modifiedCode;
+};
+methods.startAstProcess = function (options) {
+  const self = this;
+  const { isProductionRequest, pagesPaths, pagesSource } = options;
+  console.log("START AST PROCESS OPTIONS", options);
+  if (isProductionRequest) {
+    return self
+      .getRoutesHelper(pagesPaths, pagesSource)
+      .then((routesObject) => {
+        let routes = self.buildServerRoutes(routesObject);
+        self.callback({ routes, message: "Routes configured" });
+      });
+  } else {
+    const filePath = `/kotii-land/dev/manifest.js`;
+    self
+      .doImport(filePath, false, false)
+      .then(async (imported) => {
+        // self.debug("Impored", imported.module);
+
+        let manifestJS = imported;
+        let meta = manifestJS.meta;
+        self.debug("META ", meta);
+
+        let routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
+
+        let sendToRequestor = {
+          message: "Routes Configured",
+          resources: payload.path,
+          routes: self.buildServerRoutes(routesObject),
+          isDomainCreated: meta?.isDomainCreated || false,
+        };
+
+        const { lastCompsCount = 0, compsSource, compsPaths } = meta;
+        const pagesPathsLen = pagesPaths.length;
+
+        self.debug("THE SEND TO:", sendToRequestor);
+
+        if (
+          lastCompsCount === 0 ||
+          !compsSource ||
+          compsPaths.length === 0 ||
+          compsSource !== pagesSource
+        ) {
+          self.addToAST({
+            objectToAdd: routesObject,
+            pagesPaths,
+            source: pagesSource,
+            isNewSource: compsSource !== pagesSource,
+          });
+          return self.callback(sendToRequestor);
+        } else {
+          self.addOrRemoveByAST({
+            pagesPaths,
+            compsPaths,
+            pagesSource,
+            routesObject,
+            compsPagesEqual: lastCompsCount === pagesPathsLen,
+          });
+          return self.callback(sendToRequestor);
+        }
+      })
+      .catch((err) => {
+        self.debug("MANIFEST.JS: ERROR IMPORTING MANIFEST-JS", err);
+      });
+  }
+};
+
+methods.processMarkdown = function (markdownPages, options, doAfter) {
+  const self = this;
 };
 
 export default methods;
