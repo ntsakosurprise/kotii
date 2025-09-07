@@ -30,7 +30,8 @@ methods.handleFileRoutes = async function (data) {
   //self.debug("EXECSYNC", execSync);
   //self.enableBabelRegister(cwd);
   const pagesPaths = self.getPages(
-    `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
+    `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`,
+    { ingore: `${filePaths.appSrc}/pages/**/_*/**` }
   );
 
   const markdownPages = self.getPages(
@@ -122,11 +123,13 @@ methods.addOrRemoveByAST = function ({
   }
 };
 
-methods.getPages = function (filesToGet) {
+methods.getPages = function (filesToGet, ignore = false) {
   const self = this;
   self.debug("FILETS TO GET", filesToGet);
   self.debug("GLOBSYNC", self.globSync);
-  const files = self.globSync(filesToGet);
+  const files = ignore
+    ? self.globSync(filesToGet, ignore)
+    : self.globSync(filesToGet);
   return files;
 };
 methods.getSourceCodes = function (codesSource) {
