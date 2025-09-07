@@ -29,10 +29,20 @@ methods.handleFileRoutes = async function (data) {
   // !self.kotiiUtils ? await self.emit({ type: "get-kotii-utils" }) : "";
   //self.debug("EXECSYNC", execSync);
   //self.enableBabelRegister(cwd);
-
   const pagesPaths = self.getPages(
     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
   );
+
+  const markdownPages = self.getPages(
+    `${filePaths.appSrc}/pages/**/*.{md,mdx}`
+  );
+  let astFlowOptions = { isProductionRequest, pagesPaths, pagesSource };
+
+  if (markdownPages?.length && markdownPages.length > 0) {
+    self.processMarkdown(markdownPages, astFlowOptions, self.startAstProcess);
+  } else {
+    self.startAstFlow(astFlowOptions);
+  }
 
   // appManifest ? manifestData = loadFileSync(appManifest)) : null;
 };
@@ -1386,7 +1396,7 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
   self.debug();
   return modifiedCode;
 };
-methods.startAstProcess = function (options) {
+methods.startAstFlow = function (options) {
   const self = this;
   const { isProductionRequest, pagesPaths, pagesSource } = options;
   console.log("START AST PROCESS OPTIONS", options);
