@@ -21,7 +21,7 @@ methods.getPagesMarkdownContent = function (pages) {
   const { MarkdownLoader } = self;
 
   const filteredPages = pages.map((pagePath) => {
-    return MarkdownLoader(pagePath);
+    return MarkdownLoader({ resource: pagePath });
   });
   self.debug("THE FILTERED PAGES", filteredPages);
   return filteredPages;

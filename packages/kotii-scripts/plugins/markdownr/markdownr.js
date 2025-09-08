@@ -1,5 +1,5 @@
 import { MarkdownLoader } from "kotii-markdown";
-import methods from "./methods";
+import methods from "./methods.js";
 
 class Markdownr {
   constructor(pao) {

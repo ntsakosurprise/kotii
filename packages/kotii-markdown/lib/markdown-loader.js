@@ -6,6 +6,8 @@ import { capitalizeFirstLetter, getLanguageLocal } from "./utils";
 // const { parseMarkdown } = require("./markdownParser");
 import { parseMarkdown } from "./markdownParser";
 const supportedLanguages = ["ts", "ve", "en"];
+let isServerMode = false;
+
 // const languagesFullNames = [
 //   { name: "Xitsonga", locale: "ts" },
 //   { name: "Tshivenda", locale: "ve" },
@@ -16,9 +18,11 @@ const validLanguagePattern = /_(?<locale>.*?)\.md/;
 export default function (markdown) {
   console.log("mardown in kotii-markdown", markdown);
   markdown?.getLogger ? markdown.getLogger() : null;
+  isServerMode = markdown?.isServerMode || false;
+
   const resourceRootFolder = process.cwd(); // Get all resources root folder
   const filePath = markdown.resource; // Webpack, get filepath
-  console.log("THE MARKDOWN passed options", markdown);
+  console.log("THE MARKDOWN passed options", markdown, resourceRootFolder);
   const fileFolder = path.dirname(filePath); // Use file path to get file folder
   console.log("THE FOLDER", fileFolder);
   const fileName = path.basename(filePath); // Get filename(including extension)
@@ -28,7 +32,7 @@ export default function (markdown) {
   const validFolderFiles = folderFiles.filter((f) => {
     // console.log("EXec test", validLanguagePattern.exec(f));
     console.log("THE fileName", f);
-    console.log("THE FILENAME;;;", fileName);
+    console.log("THE FILENAME;;;", fileName, resourceRootFolder);
     console.log("THE FILENAME CONDITION;;;", fileName === f);
     let isDefaultFileName = fileName === f;
     if (validLanguagePattern.test(f) || isDefaultFileName) {
@@ -61,46 +65,47 @@ export default function (markdown) {
       parsedMarkdown: parseMarkdown(rawMarkdown),
     };
   });
+  console.log("THE LANGUAGES", languages);
 
   languages.map((ln) => {
     // console.log("Language item;;;", ln);
 
-    ln.parsedMarkdown.specialContent.map((sp) => {
-      // console.log("Language special", sp);
-      let special = sp.special;
-      let specialPath = special.component
-        ? special.component
-        : special.video
-        ? special.video
-        : special.demo;
-      let specialSplit = specialPath.split("/");
-      let fileNamePortion = specialSplit[specialSplit.length - 1];
-      let fullFilePath = /src/.test(specialPath)
-        ? path.join(resourceRootFolder, specialPath)
-        : path.join(resourceRootFolder, `/src${specialPath}`);
-      // console.log("THE COMPONENT FILE PATH;;;", fullFilePath);
-      // console.log("THE FILENAME PORTION;;;", fileNamePortion);
-      let fileContent = fs.readFileSync(fullFilePath, { encoding: "utf-8" });
-      let itemImported = `import ${capitalizeFirstLetter(
-        fileNamePortion.replace(/\.js$/, "")
-      )} from "MarkdownComps/${specialSplit[2]}/${fileNamePortion}"`;
-      // console.log("ITEM IMPORTED;;;", itemImported);
-      markdown?.addDependency ? markdown.addDependency(fullFilePath) : null;
-      // console.log("THE FILE CONTENTS;;;", fileContent);
-      sp.file = {
-        name: fileNamePortion,
-        contents: fileContent,
-        imports: itemImported,
-        componentName: capitalizeFirstLetter(
-          fileNamePortion.replace(/\.js$/, "")
-        ),
-      };
+    if (ln.parsedMarkdown?.specialContent) {
+      ln.parsedMarkdown.specialContent.map((sp) => {
+        // console.log("Language special", sp);
+        let special = sp.special;
+        let specialPath = special.component
+          ? special.component
+          : special.video
+          ? special.video
+          : special.demo;
+        let specialSplit = specialPath.split("/");
+        let fileNamePortion = specialSplit[specialSplit.length - 1];
+        let fullFilePath = path.join(resourceRootFolder, specialPath);
+        console.log("THE FULL FILE PATH", fullFilePath, "Root", fullFilePath);
 
-      console.log("SPECIALSPLIT;;;", specialSplit);
-      return sp;
-      // let specialFileName = specialSplit[0];
-      // console.log("The special fileNAme;;;", specialFileName);
-    });
+        let fileContent = fs.readFileSync(fullFilePath, { encoding: "utf-8" });
+        let itemImported = `import ${capitalizeFirstLetter(
+          fileNamePortion.replace(/\.js$/, "")
+        )} from "MarkdownComps/${specialSplit[2]}/${fileNamePortion}"`;
+        // console.log("ITEM IMPORTED;;;", itemImported);
+        markdown?.addDependency ? markdown.addDependency(fullFilePath) : null;
+        // console.log("THE FILE CONTENTS;;;", fileContent);
+        sp.file = {
+          name: fileNamePortion,
+          contents: fileContent,
+          imports: itemImported,
+          componentName: capitalizeFirstLetter(
+            fileNamePortion.replace(/\.js$/, "")
+          ),
+        };
+
+        console.log("SPECIALSPLIT;;;", specialSplit);
+        return sp;
+        // let specialFileName = specialSplit[0];
+        // console.log("The special fileNAme;;;", specialFileName);
+      });
+    }
   });
 
   // console.log(
@@ -115,15 +120,17 @@ export default function (markdown) {
   let importsIDs = [];
 
   languages.map((ln) => {
-    let specialCont = ln.parsedMarkdown.specialContent;
-    specialCont.map((sp) => {
-      !importsIDs.includes(sp.file.componentName)
-        ? importsIDs.push(sp.file.componentName)
-        : "";
-      !importsArray.includes(sp.file.imports)
-        ? importsArray.push(sp.file.imports)
-        : "";
-    });
+    if (ln.parsedMarkdown?.specialContent) {
+      let specialCont = ln.parsedMarkdown.specialContent;
+      specialCont.map((sp) => {
+        !importsIDs.includes(sp.file.componentName)
+          ? importsIDs.push(sp.file.componentName)
+          : "";
+        !importsArray.includes(sp.file.imports)
+          ? importsArray.push(sp.file.imports)
+          : "";
+      });
+    }
   });
 
   // console.log("resource root", resourceRootFolder);
@@ -144,6 +151,16 @@ export default function (markdown) {
 
   //parseMarkdown(markdown);
 
+  if (isServerMode) {
+    let serverData = {
+      markdownData: languages,
+      markdownComponents: {},
+    };
+    importsIDs.map((importID) => {
+      serverData.markdownComponents[JSON.stringify(importID)] = importID;
+    });
+    return serverData;
+  }
   const loaded = `
 
    ${importsArray.join("\r\n")}
