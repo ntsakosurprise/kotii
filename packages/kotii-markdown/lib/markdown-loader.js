@@ -82,11 +82,12 @@ export default function (markdown) {
         let specialSplit = specialPath.split("/");
         let fileNamePortion = specialSplit[specialSplit.length - 1];
         let fullFilePath = path.join(resourceRootFolder, specialPath);
+        console.log("THE SPECIAL SPLIT", specialSplit);
         console.log("THE FULL FILE PATH", fullFilePath, "Root", fullFilePath);
 
         let fileContent = fs.readFileSync(fullFilePath, { encoding: "utf-8" });
         let itemImported = `import ${capitalizeFirstLetter(
-          fileNamePortion.replace(/\.js$/, "")
+          fileNamePortion.replace(/\.(jsx|js|tsx|ts)$/, "")
         )} from "MarkdownComps/${specialSplit[2]}/${fileNamePortion}"`;
         // console.log("ITEM IMPORTED;;;", itemImported);
         markdown?.addDependency ? markdown.addDependency(fullFilePath) : null;
@@ -96,7 +97,7 @@ export default function (markdown) {
           contents: fileContent,
           imports: itemImported,
           componentName: capitalizeFirstLetter(
-            fileNamePortion.replace(/\.js$/, "")
+            fileNamePortion.replace(/\.(jsx|js|tsx|ts)$/, "")
           ),
         };
 
@@ -152,13 +153,19 @@ export default function (markdown) {
   //parseMarkdown(markdown);
 
   if (isServerMode) {
+    console.log("THE IMPORTS ARRAY", importsArray);
     let serverData = {
       markdownData: languages,
-      markdownComponents: {},
+      // markdownComponents: {},
     };
-    importsIDs.map((importID) => {
-      serverData.markdownComponents[JSON.stringify(importID)] = importID;
-    });
+    console.log("THE MARKDOWN IMPORT IDS", importsIDs);
+    if (importsIDs) {
+      serverData["markdownComponents"] = {};
+      importsIDs.map((importID) => {
+        serverData.markdownComponents[importID] = importID;
+      });
+    }
+
     return serverData;
   }
   const loaded = `
