@@ -1,3 +1,5 @@
 const comps = {};
 const routes = [];
-export { comps, routes };
+const MarkdownRender = () => {};
+const markdownRoutes = null;
+export { comps, MarkdownRender, markdownRoutes, routes };
