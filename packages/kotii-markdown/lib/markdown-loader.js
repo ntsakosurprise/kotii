@@ -88,7 +88,7 @@ export default function (markdown) {
         let fileContent = fs.readFileSync(fullFilePath, { encoding: "utf-8" });
         let itemImported = `import ${capitalizeFirstLetter(
           fileNamePortion.replace(/\.(jsx|js|tsx|ts)$/, "")
-        )} from "MarkdownComps/${specialSplit[2]}/${fileNamePortion}"`;
+        )} from "${fullFilePath}"`;
         // console.log("ITEM IMPORTED;;;", itemImported);
         markdown?.addDependency ? markdown.addDependency(fullFilePath) : null;
         // console.log("THE FILE CONTENTS;;;", fileContent);
