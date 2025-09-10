@@ -1,6 +1,5 @@
 import { LazySuspense } from "kotii-lazy";
 import { Router, Routes } from "kotii-router";
-import React from "react";
 import { useAppContext } from "../../react-components/index.jsx";
 const Wrapper = (props) => {
   //const Component = props.component;
@@ -19,6 +18,9 @@ const Wrapper = (props) => {
 const ClientRoutes = (props) => {
   let astRoutes = typeof routes === "undefined" ? [] : routes;
   let astComps = typeof comps === "undefined" ? {} : comps;
+  let markRoutes = typeof markdownRoutes === "undefined" ? [] : markdownRoutes;
+  let MarkdownRendr =
+    typeof MarkdownRender === "undefined" ? null : MarkdownRender;
   const { layout } = useAppContext();
   console.log("THE PROCESS ENV", process.env);
   // const AppWrapper = props.wrapper;
@@ -43,6 +45,24 @@ const ClientRoutes = (props) => {
       children: r?.children || undefined,
     };
   });
+  if (markRoutes.length > 0) {
+    markRoutes.forEach((route) => {
+      const ComponentWrapped = () => {
+        return (
+          <Wrapper key={index}>
+            <MarkdownRendr
+              markdownData={route.markdownData}
+              markdownComponents={route?.markdownComponents || null}
+            />
+          </Wrapper>
+        );
+      };
+      refinedRoutes.push({
+        component: () => <ComponentWrapped />,
+        path: route.path,
+      });
+    });
+  }
   return (
     <Router>
       <Layout>
@@ -59,6 +79,8 @@ const RoutesAsServerRoutes = (props) => {
   // const {routes=[], comps={}} = goodies
   const gRoutes = goodies?.routes || [];
   const gComps = goodies?.comps || {};
+  const markRoutes = goodies?.markdownRoutes || [];
+  const MarkdownRendr = goodies?.MarkdownRender || null;
   const { layout } = useAppContext();
   const Layout = layout
     ? layout
@@ -81,6 +103,25 @@ const RoutesAsServerRoutes = (props) => {
       children: r?.children || undefined,
     };
   });
+  if (markRoutes.length > 0) {
+    markRoutes.forEach((route) => {
+      const ComponentWrapped = () => {
+        return (
+          <Wrapper key={index}>
+            <MarkdownRendr
+              markdownData={route.markdownData}
+              markdownComponents={route?.markdownComponents || null}
+            />
+          </Wrapper>
+        );
+      };
+      refinedRoutes.push({
+        component: () => <ComponentWrapped />,
+        path: route.path,
+      });
+    });
+  }
+
   return (
     <Layout>
       <Routes
@@ -94,4 +135,4 @@ const RoutesAsServerRoutes = (props) => {
 
 // export { RoutesAsServerRoutes, routes };
 // export default ClientRoutes;
-export { RoutesAsServerRoutes, ClientRoutes };
+export { ClientRoutes, RoutesAsServerRoutes };
