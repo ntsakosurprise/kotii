@@ -30,7 +30,7 @@ methods.getPagesMarkdownContent = function (pages, doDuring) {
 
     console.log("THE MARKDOWN RETURN", route);
 
-    return { ...markResults, ...route };
+    return { ...markResults, ...route, path: route.patternMatch };
   });
 
   self.debug("THE FILTERED PAGES", filteredPages);
