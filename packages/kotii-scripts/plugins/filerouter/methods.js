@@ -563,12 +563,19 @@ methods.addToAST = function ({
 
       if (isRoutesDefined) {
         if (objectToAdd && toRemove) {
-          self.removeImportDeclarations(ast, toRemove, routesNode, compsNode);
+          self.removeImportDeclarations(
+            ast,
+            toRemove,
+            routesNode,
+            compsNode,
+            isMarkdown
+          );
           importStrings = self.insertImportDeclarations(
             objectToAdd,
             false,
             routesNode,
-            compsNode
+            compsNode,
+            isMarkdown
           );
           path.stop();
         } else if (objectToAdd) {
@@ -576,7 +583,8 @@ methods.addToAST = function ({
             objectToAdd,
             false,
             routesNode,
-            compsNode
+            compsNode,
+            isMarkdown
           );
 
           path.stop();
@@ -1510,7 +1518,7 @@ methods.startAstFlow = function (options) {
       .getRoutesHelper(pagesPaths, pagesSource)
       .then((routesObject) => {
         let routes = self.buildServerRoutes(
-          !markdown ? routesObject : { ...routesObject, ...markdown }
+          !markdown ? routesObject : [...routesObject, ...markdown]
         );
         self.callback({ routes, message: "Routes configured" });
       });
@@ -1528,7 +1536,7 @@ methods.startAstFlow = function (options) {
         let routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
         let aggrigatedRoutes = !markdown
           ? routesObject
-          : { ...routesObject, ...markdown };
+          : [...routesObject, ...markdown];
 
         let sendToRequestor = {
           message: "Routes Configured",
