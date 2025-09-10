@@ -1,3 +1,6 @@
-import ThemeSwitcher from "./ThemeSwitcher/switcher";
+import MarkdownElement from "./MarkdownElement/index.js";
+import MarkdownHeader from "./MarkdownHeader/index.js";
+import MarkdownRender from "./MarkdownRender/index.js";
+import MarkdownSidebar from "./MarkdownSidebar/index.js";
 
-export default ThemeSwitcher;
+export { MarkdownElement, MarkdownHeader, MarkdownRender, MarkdownSidebar };
