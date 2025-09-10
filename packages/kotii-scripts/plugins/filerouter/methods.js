@@ -31,16 +31,26 @@ methods.handleFileRoutes = async function (data) {
   //self.enableBabelRegister(cwd);
   const pagesPaths = self.getPages(
     `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`,
-    { ingore: `${filePaths.appSrc}/pages/**/_*/**` }
+    { ignore: `${filePaths.appSrc}/pages/**/_*/**` }
   );
 
   const markdownPages = self.getPages(
     `${filePaths.appSrc}/pages/**/*.{md,mdx}`
   );
-  let astFlowOptions = { isProductionRequest, pagesPaths, pagesSource };
+  let astFlowOptions = {
+    isProductionRequest,
+    pagesPaths,
+    pagesSource,
+    payload,
+  };
+  console.log("THE MARKDOWN THINGS", markdownPages, astFlowOptions);
 
   if (markdownPages?.length && markdownPages.length > 0) {
-    self.processMarkdown(markdownPages, astFlowOptions, self.startAstProcess);
+    self.processMarkdown(
+      markdownPages,
+      astFlowOptions,
+      self.startAstFlow.bind(self)
+    );
   } else {
     self.startAstFlow(astFlowOptions);
   }
@@ -1401,7 +1411,7 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
 };
 methods.startAstFlow = function (options) {
   const self = this;
-  const { isProductionRequest, pagesPaths, pagesSource } = options;
+  const { isProductionRequest, pagesPaths, pagesSource, payload } = options;
   console.log("START AST PROCESS OPTIONS", options);
   if (isProductionRequest) {
     return self
