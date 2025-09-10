@@ -87,6 +87,7 @@ class FileRouter {
 
     this.startAstFlow = methods.startAstFlow;
     this.processMarkdown = methods.processMarkdown;
+    this.getItemPath = methods.getItemPath;
   }
 }
 export default FileRouter;
