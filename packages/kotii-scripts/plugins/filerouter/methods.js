@@ -49,7 +49,8 @@ methods.handleFileRoutes = async function (data) {
     self.processMarkdown(
       markdownPages,
       astFlowOptions,
-      self.startAstFlow.bind(self)
+      self.startAstFlow.bind(self),
+      self.getItemPath.bind(self)
     );
   } else {
     self.startAstFlow(astFlowOptions);
@@ -196,48 +197,16 @@ methods.createRouterComponents = function (maps, pathy) {
 methods.getItemPathAndFile = function (item) {
   const self = this;
   const pao = self.pao;
-  const loadFile = pao.pa_loadFile;
-  const loadFileSync = pao.pa_loadFileSync;
-  const readFileSync = pao.pa_readFileSync;
-  const capitalizeFirstLetter = pao.pa_capitalizeFirstLetter;
-  const camelCase = pao.pa_camelCase;
-  const extMatchPattern = /\.jsx|\.tsx|\.ts|\.js$/g;
-  const bracketedPattern = /\/\[\[?\.{0,3}[^\[\]\/]+\]?\](?=\/|$)/; // Check if path has bracket-ed folders
-  const replaceBracketed = /\[\[?\.{0,3}([^\[\]\/]+)\]?\]/g; // Replace brackets pattern
-  let fileAsComp = null;
-  let isBracketParams = false;
 
-  let gotEndpoint =
-    item.indexOf("pages") > 0
-      ? item.slice(item.indexOf("pages"), item.length)
-      : ""; // remove pages from path
-  self.debug("Got endpoint", gotEndpoint);
-  self.debug("GOT ENDPOINT PAGES REMOVED", gotEndpoint.replace("pages", ""));
-  let patternMatch = gotEndpoint
-    .replace("pages", "") // Replace pages with empty string
-    .replace(extMatchPattern, "") // Replace extensions from path file name
-    .replace(/index/g, ""); // Replace index file name with empty string
-
-  if (bracketedPattern.test(patternMatch)) {
-    console.log("THE BRACKETED PATH", patternMatch);
-    patternMatch = patternMatch.replace(replaceBracketed, ":$1");
-    isBracketParams = true;
-    console.log("THE REPLACED", patternMatch);
-  } else {
-    patternMatch = patternMatch
-      .replace(/\[(.*?)\]/g, ":$1") // Extract dynamic params and replace with colon and param name
-      .replace(/\[\.{3}.+\]/, "*");
-  }
-
-  // .replace(/\/$/, "");
-  if (!/^\/$/.test(patternMatch)) {
-    self.debug("Removes leading forwarslash");
-    patternMatch = patternMatch.replace(/\/$/, "");
-  }
+  const {
+    patternMatch,
+    isBracketParams,
+    componentName,
+    componentPath,
+    component,
+  } = self.getItemPath(item);
 
   return new Promise((res, rej) => {
-    let splitPatternMatch = patternMatch.split("/");
-    let splitLen = splitPatternMatch.length;
     let workDir = process.cwd();
     let pathSplit = workDir.split(path.sep);
     let userFolder = pathSplit[pathSplit.length - 1];
@@ -272,15 +241,17 @@ methods.getItemPathAndFile = function (item) {
       res({
         path: patternMatch,
         //component: fileAsComp?.default ? fileAsComp.default : fileAsComp,
-        componentName:
-          patternMatch === "/"
-            ? "Home"
-            : capitalizeFirstLetter(
-                camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
-              ),
-        component: item,
+        // componentName:
+        //   patternMatch === "/"
+        //     ? "Home"
+        //     : capitalizeFirstLetter(
+        //         camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
+        //       ),
+        // component: item,
+        componentName,
+        component,
         componentAbsolutePath: absSrc,
-        componentPath: item,
+        componentPath,
         componentRaw: imported.default,
         getServerState,
         universalEffects,
@@ -288,6 +259,63 @@ methods.getItemPathAndFile = function (item) {
       });
     });
   });
+
+  // fileAsComp = loadFileSync(item);
+  // self.debug("THE FILE CODE", fileAsComp.default.toString());
+  // await loadFile(item);
+};
+methods.getItemPath = function (item) {
+  const self = this;
+  const pao = self.pao;
+  const capitalizeFirstLetter = pao.pa_capitalizeFirstLetter;
+  const camelCase = pao.pa_camelCase;
+  const extMatchPattern = /\.jsx|\.tsx|\.ts|\.js|\.md|\.mdx$/g;
+  const bracketedPattern = /\/\[\[?\.{0,3}[^\[\]\/]+\]?\](?=\/|$)/; // Check if path has bracket-ed folders
+  const replaceBracketed = /\[\[?\.{0,3}([^\[\]\/]+)\]?\]/g; // Replace brackets pattern
+  let isBracketParams = false;
+
+  let gotEndpoint =
+    item.indexOf("pages") > 0
+      ? item.slice(item.indexOf("pages"), item.length)
+      : ""; // remove pages from path
+  self.debug("Got endpoint", gotEndpoint);
+  self.debug("GOT ENDPOINT PAGES REMOVED", gotEndpoint.replace("pages", ""));
+  let patternMatch = gotEndpoint
+    .replace("pages", "") // Replace pages with empty string
+    .replace(extMatchPattern, "") // Replace extensions from path file name
+    .replace(/index/g, ""); // Replace index file name with empty string
+
+  if (bracketedPattern.test(patternMatch)) {
+    console.log("THE BRACKETED PATH", patternMatch);
+    patternMatch = patternMatch.replace(replaceBracketed, ":$1");
+    isBracketParams = true;
+    console.log("THE REPLACED", patternMatch);
+  } else {
+    patternMatch = patternMatch
+      .replace(/\[(.*?)\]/g, ":$1") // Extract dynamic params and replace with colon and param name
+      .replace(/\[\.{3}.+\]/, "*");
+  }
+
+  // .replace(/\/$/, "");
+  if (!/^\/$/.test(patternMatch)) {
+    self.debug("Removes leading forwarslash");
+    patternMatch = patternMatch.replace(/\/$/, "");
+  }
+  let splitPatternMatch = patternMatch.split("/");
+  let splitLen = splitPatternMatch.length;
+
+  return {
+    patternMatch,
+    isBracketParams,
+    componentName:
+      patternMatch === "/"
+        ? "Home"
+        : capitalizeFirstLetter(
+            camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
+          ),
+    component: item,
+    componentPath: item,
+  };
 
   // fileAsComp = loadFileSync(item);
   // self.debug("THE FILE CODE", fileAsComp.default.toString());
@@ -450,6 +478,7 @@ methods.addToAST = function ({
   toRemove = null,
   source,
   isNewSource = false,
+  markdownRoutes,
 } = args) {
   const self = this;
   const pao = self.pao;
@@ -464,6 +493,7 @@ methods.addToAST = function ({
   const saveToFile = pao.pa_saveToFile;
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const cwd = getWorkingFolder();
+  const isMarkdown = markdownRoutes ? true : false;
 
   const filePath = `${kotiiKotiiLandPath}/dev/pages.js`;
 
@@ -485,6 +515,7 @@ methods.addToAST = function ({
   let ast = parser.parse(jsFile, { sourceType: "module", plugins: ["jsx"] });
   let isCompsDefined = false;
   let importStrings = "";
+  let isMarkdownDefined = false;
 
   traverse(ast, {
     VariableDeclaration(path) {
@@ -501,6 +532,7 @@ methods.addToAST = function ({
       let isRoutesDefined = false;
       let routesNode = null;
       let compsNode = null;
+      let markdownNode = null;
       path.container.forEach((nd, i) => {
         if (nd.type !== "VariableDeclaration") return false;
         let declarations = nd.declarations;
@@ -512,6 +544,12 @@ methods.addToAST = function ({
           if (dec.id.name === "comps") {
             isCompsDefined = true;
             compsNode = dec;
+          }
+          if (markdownRoutes) {
+            if (dec.id.name === "markdownRoutes") {
+              isMarkdownDefined = true;
+              markdownNode = dec;
+            }
           }
         });
         // let nodeIDName = nd.declarations[0].id.name;
@@ -549,7 +587,13 @@ methods.addToAST = function ({
           self.variableCreation(path, t, objectToAdd, parser, true);
         }
       } else {
-        self.variableCreation(path, t, objectToAdd, parser);
+        self.variableCreation(path, t, objectToAdd);
+      }
+
+      if (markdownRoutes) {
+        if (!isMarkdownDefined) {
+          self.createMarkdownVariable(path, t, markdownRoutes, false);
+        }
       }
 
       //}
@@ -1052,7 +1096,7 @@ methods.removeImportDeclarations = function (
   self.debug("AST NODE TO BE REMOVED IS", removedImportsIds);
 };
 
-methods.addImportLineToBuildJs = function () {
+methods.addImportLineToBuildJs = function (isMarkdown = false) {
   const self = this;
   const pao = self.pao;
   const generate = self.generate;
@@ -1075,7 +1119,9 @@ methods.addImportLineToBuildJs = function () {
   const buildImportString = self.insertIdentifierImportDeclarations([
     {
       source: "./pages.js",
-      ids: ["routes", "comps"],
+      ids: isMarkdown
+        ? ["routes", "comps", "markdownRoutes", "MarkdownRender"]
+        : ["routes", "comps"],
     },
   ]);
   let newFileContent = `${buildImportString} ${generateBuildAst}`;
@@ -1336,7 +1382,24 @@ methods.createStaticComponentsImports = function (imports, options) {
   const t = self.t;
   const parser = self.parser;
   const saveToFile = pao.pa_saveToFile;
-  const { shouldBuildComps, routesNode, compsNode } = options;
+  const {
+    shouldBuildComps,
+    routesNode,
+    compsNode,
+    isMarkdown = false,
+  } = options;
+
+  // const markdownRenderImport = isMarkdown
+  //   ? t.importDeclaration(
+  //       [
+  //         t.importSpecifier(
+  //           t.identifier("MarkdownRender"), // local name
+  //           t.identifier("MarkdownRender") // imported name
+  //         ),
+  //       ],
+  //       t.stringLiteral("kotii-react-modules") // source module
+  //     )
+  //   : null;
 
   let constString = shouldBuildComps ? `const comps = {` : "";
   let importString = imports.map((im, i) => {
@@ -1368,7 +1431,12 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
   const t = self.t;
   const parser = self.parser;
   const saveToFile = pao.pa_saveToFile;
-  const { shouldBuildComps, routesNode, compsNode } = options;
+  const {
+    shouldBuildComps,
+    routesNode,
+    compsNode,
+    isMarkdown = false,
+  } = options;
 
   const lazyLoadImport = t.importDeclaration(
     [
@@ -1379,6 +1447,18 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
     ],
     t.stringLiteral("kotii-lazy") // source module
   );
+
+  const markdownRenderImport = isMarkdown
+    ? t.importDeclaration(
+        [
+          t.importSpecifier(
+            t.identifier("MarkdownRender"), // local name
+            t.identifier("MarkdownRender") // imported name
+          ),
+        ],
+        t.stringLiteral("kotii-react-modules") // source module
+      )
+    : null;
 
   let constString = shouldBuildComps ? `const comps = {` : "";
   const importDeclarations = imports.map((im) => {
@@ -1396,7 +1476,13 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
     ]);
   });
 
-  let importsAst = t.file(t.program([lazyLoadImport, ...importDeclarations]));
+  let importsAst = t.file(
+    t.program(
+      !isMarkdown
+        ? [lazyLoadImport, ...importDeclarations]
+        : [markdownRenderImport, lazyLoadImport, ...importDeclarations]
+    )
+  );
 
   constString += shouldBuildComps ? "}" : "";
   let joinedString = shouldBuildComps ? `${constString};` : ``;
@@ -1411,13 +1497,21 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
 };
 methods.startAstFlow = function (options) {
   const self = this;
-  const { isProductionRequest, pagesPaths, pagesSource, payload } = options;
+  const {
+    isProductionRequest,
+    pagesPaths,
+    pagesSource,
+    payload,
+    markdown = null,
+  } = options;
   console.log("START AST PROCESS OPTIONS", options);
   if (isProductionRequest) {
     return self
       .getRoutesHelper(pagesPaths, pagesSource)
       .then((routesObject) => {
-        let routes = self.buildServerRoutes(routesObject);
+        let routes = self.buildServerRoutes(
+          !markdown ? routesObject : { ...routesObject, ...markdown }
+        );
         self.callback({ routes, message: "Routes configured" });
       });
   } else {
@@ -1432,11 +1526,14 @@ methods.startAstFlow = function (options) {
         self.debug("META ", meta);
 
         let routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
+        let aggrigatedRoutes = !markdown
+          ? routesObject
+          : { ...routesObject, ...markdown };
 
         let sendToRequestor = {
           message: "Routes Configured",
           resources: payload.path,
-          routes: self.buildServerRoutes(routesObject),
+          routes: self.buildServerRoutes(aggrigatedRoutes),
           isDomainCreated: meta?.isDomainCreated || false,
         };
 
@@ -1456,6 +1553,7 @@ methods.startAstFlow = function (options) {
             pagesPaths,
             source: pagesSource,
             isNewSource: compsSource !== pagesSource,
+            markdownRoutes: markdown || null,
           });
           return self.callback(sendToRequestor);
         } else {
@@ -1465,6 +1563,7 @@ methods.startAstFlow = function (options) {
             pagesSource,
             routesObject,
             compsPagesEqual: lastCompsCount === pagesPathsLen,
+            markdownRoutes: markdown || null,
           });
           return self.callback(sendToRequestor);
         }
@@ -1475,18 +1574,38 @@ methods.startAstFlow = function (options) {
   }
 };
 
-methods.processMarkdown = function (markdownPages, options, doAfter) {
+methods.processMarkdown = function (markdownPages, options, doAfter, doDuring) {
   const self = this;
   self.emit({
     type: "process-markdown",
     data: {
       payload: { markdownPages },
+      doDuring,
       callback: (data) => {
         self.debug("THE MARK-DOWN", data.message);
         doAfter({ ...options, markdown: data });
       },
     },
   });
+};
+
+methods.createMarkdownVariable = function (path, t, files, replace = false) {
+  const self = this;
+  let creationMethod = replace
+    ? path.replaceWith.bind(path)
+    : path.container.unshift.bind(path.container);
+  //const files = [{ path: "mypath", component: "myComponent" }];
+  // self.debug("THE CREATING METHOD", creationMethod);
+  // if(replace)
+  creationMethod(
+    t.variableDeclaration("const", [
+      t.variableDeclarator(
+        t.identifier("markdownRoutes"),
+        t.arrayExpression([...files])
+      ),
+    ])
+  );
+  path.stop();
 };
 
 export default methods;
