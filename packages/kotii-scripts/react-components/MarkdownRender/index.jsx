@@ -89,12 +89,12 @@ const markdownComponentType = (mkComponent, markdownComponents) => {
 const MarkdownRender = ({ markdownData, markdownComponents }) => {
   console.log("MARKDOWN RENDER PROPS: docs", markdownData);
   console.log("MARKDODWN RENDER PROPS: modules", markdownComponents);
-  const { language } = useLanguage();
-  const englishContent = getSetLanguageContent(markdownData, language);
-  const { fileName, parsedMarkdown } = englishContent;
-  const { html, toc } = parsedMarkdown;
-  console.log("THE PARSED MARKDOWN", parsedMarkdown);
-  console.log("Kotii-markdown set Language:::", language, React.lazy, toc);
+  // const { language } = useLanguage();
+  // const englishContent = getSetLanguageContent(markdownData, language);
+  // const { fileName, parsedMarkdown } = englishContent;
+  // const { html, toc } = parsedMarkdown;
+  // console.log("THE PARSED MARKDOWN", parsedMarkdown);
+  // console.log("Kotii-markdown set Language:::", language, React.lazy, toc);
 
   // console.log("Filename;;;", fileName);
   // console.log("html", html);
@@ -121,7 +121,7 @@ const MarkdownRender = ({ markdownData, markdownComponents }) => {
 
 MarkdownRender.propTypes = {
   markdownData: PropTypes.array.isRequired,
-  markdownComponents: PropTypes.object.isRequired,
+  // markdownComponents: PropTypes.object.isRequired,
 };
 
 export default MarkdownRender;

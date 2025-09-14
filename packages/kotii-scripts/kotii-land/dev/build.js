@@ -47,8 +47,11 @@ const ClientRoutes = (props) => {
       children: r?.children || undefined,
     };
   });
-
+  console.log("SERVER ROUTES:", markRoutes);
+  console.log("SERVER ROUTES RENDER:", MarkdownRendr);
   if (markRoutes.length > 0) {
+    console.log("SERVER ROUTES:.length", markRoutes);
+
     markRoutes.forEach((route, index) => {
       const ComponentWrapped = () => {
         return (
