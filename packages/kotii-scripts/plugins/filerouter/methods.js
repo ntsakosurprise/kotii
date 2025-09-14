@@ -93,6 +93,7 @@ methods.addOrRemoveByAST = function ({
   compsPaths,
   pagesSource,
   compsPagesEqual = false,
+  isMarkdown,
 } = props) {
   const self = this;
 
@@ -107,7 +108,7 @@ methods.addOrRemoveByAST = function ({
   });
   self.debug("RENAMES: PAGES LESS.TO REMOVE", toRemove);
   if (compsPagesEqual && toRemove.length === 0 && toAdd.length === 0) {
-    self.addImportLineToBuildJs();
+    self.addImportLineToBuildJs(isMarkdown);
   } else if (toRemove.length > 0 && toAdd.length > 0) {
     self.addToAST({
       objectToAdd: self.getAstRoutes(routesObject, toAdd),
@@ -615,7 +616,7 @@ methods.addToAST = function ({
   );
 
   // if (!isCompsDefined || Object.keys(isCompsDefined).length <= 0)
-  self.addImportLineToBuildJs();
+  self.addImportLineToBuildJs(isMarkdown);
   self.createMetaAst({
     comps: [],
     compsSource: source,
@@ -1516,7 +1517,7 @@ methods.startAstFlow = function (options) {
             pagesSource,
             routesObject,
             compsPagesEqual: lastCompsCount === pagesPathsLen,
-            markdownRoutes: markdown || null,
+            markdownRoutes: markdown ? true : false,
           });
           return self.callback(sendToRequestor);
         }
