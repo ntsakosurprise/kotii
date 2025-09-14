@@ -3,10 +3,10 @@
 // import i18next from "i18next";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import "../config/config";
+import "../config/index.js";
 /* eslint-disable no-unused-vars */
 // import { config } from "../config/index";
-import { addLanguages, initialize } from "../config";
+import { addLanguages, initialize } from "../config/config.js";
 const LanguageContext = React.createContext(null);
 //console.log(config);
 
