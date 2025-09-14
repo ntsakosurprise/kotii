@@ -494,6 +494,7 @@ methods.addToAST = function ({
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const cwd = getWorkingFolder();
   const isMarkdown = markdownRoutes ? true : false;
+  self.debug("THE MARKDOWN ROUTES", markdownRoutes, isMarkdown);
 
   const filePath = `${kotiiKotiiLandPath}/dev/pages.js`;
 
@@ -519,15 +520,6 @@ methods.addToAST = function ({
 
   traverse(ast, {
     VariableDeclaration(path) {
-      // self.debug("TRAVERSE ENTERS", path.container);
-      // if (!t.isIdentifier(path.node)) return;
-      //self.debug("PATH AFTER CHECK", path.node.type);
-      // if (t.isIdentifier(path.node, { name: "surname" })) {
-      // self.debug("THE NODE TYPE", path.node.type);
-      // self.debug(
-      //   "THE NODE TYPE IS IMPORT",
-      //   path.node.type === "ImportDeclaration"
-      // );
       if (path.node.type === "ImportDeclaration") return;
       let isRoutesDefined = false;
       let routesNode = null;
@@ -555,60 +547,53 @@ methods.addToAST = function ({
         // let nodeIDName = nd.declarations[0].id.name;
         // if (nodeIDName === "mapsOfFiles" || nodeIDName === "surname") return nd;
       });
-      // self.debug("AST NODE ROUTES", routesNode, isRoutesDefined);
-      // if (compsNode) {
-      //   self.debug("AST NODE COMPS", compsNode);
-      //   return;
-      // }
 
       if (isRoutesDefined) {
+        const astActionsOptions = {
+          ast,
+          isMarkdown,
+          routesNode,
+          compsNode,
+          markdownNode,
+          objectToAdd,
+          toRemove,
+          shouldBuildComps: false,
+        };
         if (objectToAdd && toRemove) {
-          self.removeImportDeclarations(
-            ast,
-            toRemove,
-            routesNode,
-            compsNode,
-            isMarkdown
-          );
-          importStrings = self.insertImportDeclarations(
-            objectToAdd,
-            false,
-            routesNode,
-            compsNode,
-            isMarkdown
-          );
+          self.removeImportDeclarations(astActionsOptions);
+          importStrings = self.insertImportDeclarations(astActionsOptions);
           path.stop();
         } else if (objectToAdd) {
-          importStrings = self.insertImportDeclarations(
-            objectToAdd,
-            false,
-            routesNode,
-            compsNode,
-            isMarkdown
-          );
+          importStrings = self.insertImportDeclarations(astActionsOptions);
 
           path.stop();
         } else if (toRemove) {
-          self.removeImportDeclarations(ast, toRemove, routesNode, compsNode);
+          self.removeImportDeclarations(astActionsOptions);
           path.stop();
         } else if (isNewSource) {
-          self.variableCreation(path, t, objectToAdd, parser, true);
+          self.variableCreation({
+            path,
+            files: objectToAdd,
+            replace: true,
+          });
         }
       } else {
-        self.variableCreation(path, t, objectToAdd);
+        self.variableCreation({
+          path,
+          files: objectToAdd,
+        });
       }
 
+      self.debug("THE MARKDOWN ROUTES.");
       if (markdownRoutes) {
+        self.debug("THE MARKDOWN ROUTES.not ye");
         if (!isMarkdownDefined) {
-          self.createMarkdownVariable(path, t, markdownRoutes, false);
+          self.debug("THE MARKDOWN ROUTES.creating");
+          self.createMarkdownVariable({ path, files: markdownRoutes });
+        } else {
+          self.astAddNodeMarkdown(markdownNode, markdownRoutes);
         }
       }
-
-      //}
-
-      // if (t.isImportDeclaration(path.node)) {
-      //   path.node.name = "x";
-      // }
     },
   });
 
@@ -618,6 +603,7 @@ methods.addToAST = function ({
     : importStrings
     ? importStrings
     : "";
+  self.addItemsToExportList(ast, ["markdownRoutes", "MarkdownRender"]);
   const { code: genCode } = generate(ast);
   const modifiedCode = genCode;
 
@@ -747,6 +733,16 @@ methods.astAddNode = function (routesNode, compsNode, toAdd) {
   //   },
   // });
 };
+methods.astAddNodeMarkdown = function (markdownNode, toAdd) {
+  const self = this;
+  const t = self.t;
+
+  self.debug("AST NODE BEFORE LEN", toAdd);
+
+  const initProps = markdownNode.init;
+
+  initProps.elements.push(...toAdd);
+};
 
 methods.astDeleteNode = function (routesNode, compsNode, toRemove) {
   const self = this;
@@ -793,51 +789,20 @@ methods.astDeleteNode = function (routesNode, compsNode, toRemove) {
   // self.debug("AST NODE AFTER CHANGE", node);
 };
 
-methods.variableCreation = function (
-  path,
-  t,
-  files,
-  parser,
-  replace = false,
-  node = null
-) {
+methods.variableCreation = function (creationOptions) {
   const self = this;
+  const t = self.t;
+  const { path, files, replace = false } = creationOptions;
   let creationMethod = replace
     ? path.replaceWith.bind(path)
     : path.container.unshift.bind(path.container);
-  //const files = [{ path: "mypath", component: "myComponent" }];
-  // self.debug("THE CREATING METHOD", creationMethod);
-  // if(replace)
+
   creationMethod(
     t.variableDeclaration("const", [
       t.variableDeclarator(
         t.identifier("routes"),
         t.arrayExpression([
           ...files.map((en, i) => {
-            // let functionAsString = en.component
-            //   .toString()
-            //   .replace(/\/\*#__PURE__\*\/_react.default/g, "React");
-            // .replace(/;/g, "");
-            // self.debug("FUNCTION AS A STRING", functionAsString);
-            // let funcAst = parser.parse(functionAsString, {
-            //   sourceType: "module",
-            // });
-            //self.debug("FUNCTION STRING", functionAsString);
-            // let funcAst = parser.parse(en.component, {
-            //   sourceType: "module",
-            //   plugins: ["jsx"],
-            // });
-            // self.debug("FUNC AST", funcAst);
-            // self.debug("FUNCK FIRST NODE");
-            // self.funcToJsx(funcAst, en.path);
-            // let functionInContext = funcAst.program.body[0];
-            // self.debug("FUNCK FIRST NODE", functionInContext);
-            // let funcName = functionInContext.id.name;
-            // let funcBody = functionInContext.body;
-            // self.debug("AST for func", funcAst.program.body);
-            // self.debug("AST FUNCTION PARTS", funcName, funcBody);
-            // self.debug("THE FUNCTION NAME", funcName);
-
             return t.objectExpression([
               t.objectProperty(t.identifier("path"), t.stringLiteral(en.path)),
               t.objectProperty(
@@ -989,19 +954,10 @@ methods.doImport = function (toImport, all = false, check = true) {
       });
   });
 };
-methods.insertImportDeclarations = function (
-  imports,
-  shouldBuildComps = false,
-  routesNode = null,
-  compsNode = null
-) {
+methods.insertImportDeclarations = function (options) {
   const self = this;
-  const pao = self.pao;
-  const template = self.template;
-  const generate = self.generate;
-  const t = self.t;
-  const parser = self.parser;
-  const saveToFile = pao.pa_saveToFile;
+
+  // const { toRemove, routesNode = null, compsNode = null } = options;
 
   //   self.debug("THE IMPORTS", imports);
   //   const buildImport = template(`
@@ -1016,16 +972,8 @@ methods.insertImportDeclarations = function (
   //   });
 
   if (!process.env?.useLazyLoad)
-    return self.createStaticComponentsImports(imports, {
-      shouldBuildComps,
-      routesNode,
-      compsNode,
-    });
-  return self.createDynamicLazyComponentsImports(imports, {
-    shouldBuildComps,
-    routesNode,
-    compsNode,
-  });
+    return self.createStaticComponentsImports(options);
+  return self.createDynamicLazyComponentsImports(options);
   // saveToFile(filePath, modifiedCode);
   // saveToFile(filePath, modifiedCode);
   // const ast = buildImport({
@@ -1070,12 +1018,7 @@ methods.insertIdentifierImportDeclarations = function (imports) {
   self.debug();
   return modifiedCode;
 };
-methods.removeImportDeclarations = function (
-  ast,
-  toRemove,
-  routesNode = null,
-  compsNode = null
-) {
+methods.removeImportDeclarations = function (options) {
   const self = this;
   const pao = self.pao;
   const template = self.template;
@@ -1084,6 +1027,7 @@ methods.removeImportDeclarations = function (
   const parser = self.parser;
   const traverse = self.traverse;
   let removedImportsIds = [];
+  const { ast, toRemove, routesNode = null, compsNode = null } = options;
 
   traverse(ast, {
     ImportDeclaration(path) {
@@ -1391,7 +1335,7 @@ methods.createStaticComponentsImports = function (imports, options) {
   const parser = self.parser;
   const saveToFile = pao.pa_saveToFile;
   const {
-    shouldBuildComps,
+    shouldBuildComps = false,
     routesNode,
     compsNode,
     isMarkdown = false,
@@ -1431,7 +1375,7 @@ methods.createStaticComponentsImports = function (imports, options) {
   return modifiedCode;
 };
 
-methods.createDynamicLazyComponentsImports = function (imports, options) {
+methods.createDynamicLazyComponentsImports = function (options) {
   const self = this;
   const pao = self.pao;
   const template = self.template;
@@ -1440,10 +1384,11 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
   const parser = self.parser;
   const saveToFile = pao.pa_saveToFile;
   const {
-    shouldBuildComps,
+    shouldBuildComps = false,
     routesNode,
     compsNode,
     isMarkdown = false,
+    objectToAdd: imports,
   } = options;
 
   const lazyLoadImport = t.importDeclaration(
@@ -1464,7 +1409,7 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
             t.identifier("MarkdownRender") // imported name
           ),
         ],
-        t.stringLiteral("kotii-react-modules") // source module
+        t.stringLiteral("../../react-components/index.jsx") // source module
       )
     : null;
 
@@ -1597,23 +1542,253 @@ methods.processMarkdown = function (markdownPages, options, doAfter, doDuring) {
   });
 };
 
-methods.createMarkdownVariable = function (path, t, files, replace = false) {
+methods.createMarkdownVariable = function (options) {
   const self = this;
+  const t = self.t;
+  const { path, files, replace = false } = options;
   let creationMethod = replace
     ? path.replaceWith.bind(path)
     : path.container.unshift.bind(path.container);
   //const files = [{ path: "mypath", component: "myComponent" }];
   // self.debug("THE CREATING METHOD", creationMethod);
   // if(replace)
+  console.log("CREATE MARKDOWN VARIALBLE", files);
+  const astedMarkdownRoutes = self.createMarkdownRoutesAst({ files });
   creationMethod(
     t.variableDeclaration("const", [
       t.variableDeclarator(
         t.identifier("markdownRoutes"),
-        t.arrayExpression([...files])
+        t.arrayExpression([...astedMarkdownRoutes])
       ),
     ])
   );
   path.stop();
+};
+
+methods.createMarkdownRoutesAst = function (options) {
+  const self = this;
+  const t = self.t;
+  const { files } = options;
+
+  const routeNodes = files.map((route) => {
+    console.log("THE ROUTE", route);
+    console.log("THE PARSED MARKDOWN", route.markdownData[0].parsedMarkdown);
+    return t.objectExpression([
+      t.objectProperty(t.identifier("path"), t.stringLiteral(route.path)),
+      t.objectProperty(
+        t.identifier("componentName"),
+        t.stringLiteral(route.componentName)
+      ),
+      t.objectProperty(
+        t.identifier("component"),
+        t.stringLiteral(route.component)
+      ),
+      t.objectProperty(
+        t.identifier("componentPath"),
+        t.stringLiteral(route.componentPath)
+      ),
+      t.objectProperty(
+        t.identifier("patternMatch"),
+        t.stringLiteral(route.patternMatch)
+      ),
+      t.objectProperty(
+        t.identifier("isBracketParams"),
+        t.booleanLiteral(route.isBracketParams)
+      ),
+      // route?.markdownComponents &&
+      // Object.keys(route.markdownComponents).length > 0
+      //   ? t.objectProperty(
+      //       t.identifier("markdownComponents"),
+      //       t.objectExpression(
+      //         Object.entries(route.markdownComponents).map(([key, value]) =>
+      //           t.objectProperty(t.identifier(key), t.stringLiteral(value))
+      //         )
+      //       )
+      //     )
+      //   : null,
+      // Create for mardown data
+      t.objectProperty(
+        t.identifier("markdownData"),
+        t.arrayExpression(
+          route.markdownData.map((md) => {
+            console.log("Mardwon is running", md);
+            return t.objectExpression([
+              t.objectProperty(
+                t.identifier("fileName"),
+                t.stringLiteral(md.fileName)
+              ),
+              t.objectProperty(
+                t.identifier("locale"),
+                t.stringLiteral(md.locale)
+              ),
+              t.objectProperty(
+                t.identifier("rawMdText"),
+                t.stringLiteral(md.rawMdText)
+              ),
+
+              // t.objectProperty(
+              //   t.identifier("parsedMarkdown"),
+              //   t.objectExpression([
+              //     // metaDataKeys
+              //     t.objectProperty(
+              //       t.identifier("metaDataKeys"),
+              //       t.objectExpression([
+              //         t.objectProperty(
+              //           t.identifier("title"),
+              //           t.stringLiteral(md.parsedMarkdown?.metaDataKeys.title)
+              //         ),
+              //         // t.objectProperty(
+              //         //   t.identifier("header"),
+              //         //   t.stringLiteral(md.parsedMarkdown?.metaDataKeys.header)
+              //         // ),
+              //         // t.objectProperty(
+              //         //   t.stringLiteral("---,title"),
+              //         //   t.stringLiteral("A Markdown test for Kotii-markdown")
+              //         // ),
+              //       ])
+              //     ),
+              //     //
+              //     md.parsedMarkdown?.description
+              //       ? t.objectProperty(
+              //           t.identifier("description"),
+              //           t.stringLiteral(md.parsedMarkdown?.description)
+              //         )
+              //       : null,
+              //     // specialContent (just the first element for example; replicate for all)
+              //     t.objectProperty(
+              //       t.identifier("specialContent"),
+              //       t.arrayExpression([
+              //         t.objectExpression([
+              //           t.objectProperty(
+              //             t.identifier("special"),
+              //             t.objectExpression([
+              //               t.objectProperty(
+              //                 t.identifier("component"),
+              //                 t.stringLiteral(
+              //                   md.parsedMarkdown.specialContent.special
+              //                     .component
+              //                 )
+              //               ),
+              //             ])
+              //           ),
+              //           t.objectProperty(
+              //             t.identifier("file"),
+              //             t.objectExpression([
+              //               t.objectProperty(
+              //                 t.identifier("name"),
+              //                 t.stringLiteral(
+              //                   md.parsedMarkdown.specialContent.file.name
+              //                 )
+              //               ),
+              //               t.objectProperty(
+              //                 t.identifier("contents"),
+              //                 t.stringLiteral(
+              //                   md.parsedMarkdown.specialContent.file.contents
+              //                 )
+              //               ),
+              //               t.objectProperty(
+              //                 t.identifier("imports"),
+              //                 t.stringLiteral(
+              //                   md.parsedMarkdown.specialContent.file.imports
+              //                 )
+              //               ),
+              //               t.objectProperty(
+              //                 t.identifier("componentName"),
+              //                 t.stringLiteral(
+              //                   md.parsedMarkdown.specialContent.file
+              //                     .componentName
+              //                 )
+              //               ),
+              //             ])
+              //           ),
+              //         ]),
+              //         // ... more items in specialContent
+              //       ])
+              //     ),
+              //     // markDownSplit
+              //     t.objectProperty(
+              //       t.identifier("markDownSplit"),
+              //       t.arrayExpression(
+              //         md.parsedMarkdown.markDownSplit.map((sti) =>
+              //           t.stringLiteral(sti)
+              //         )
+              //       )
+              //     ),
+              //     // html
+              //     // t.objectProperty(
+              //     //   t.identifier("html"),
+              //     //   t.arrayExpression(
+              //     //     md.parsedMarkdown.html.map((sti) => t.stringLiteral(sti))
+              //     //   )
+              //     // ),
+              //     // toc
+              //     md?.toc && md.toc.length > 0
+              //       ? t.objectProperty(
+              //           t.identifier("toc"),
+              //           t.arrayExpression(
+              //             md.parsedMarkdown.toc.map((tocItem) => {
+              //               return t.objectExpression([
+              //                 t.objectProperty(
+              //                   t.identifier("id"),
+              //                   t.stringLiteral(tocItem.id)
+              //                 ),
+              //                 t.objectProperty(
+              //                   t.identifier("children"),
+              //                   t.arrayExpression([
+              //                     ...toc.children.map((chi) => {
+              //                       t.objectExpression([
+              //                         t.objectProperty(
+              //                           t.identifier("id"),
+              //                           t.stringLiteral(chi.id)
+              //                         ),
+              //                       ]);
+              //                     }),
+              //                   ])
+              //                 ),
+              //               ]);
+              //             })
+              //           )
+              //         )
+              //       : null,
+              //   ])
+
+              //   // You can then insert `astObject` wherever a Babel `ObjectExpression` node is needed
+              //   // For example:
+              //   // path.replaceWith(astObject);
+              //   // or use it as an initializer to a variable:
+              //   // t.variableDeclaration("const", [
+              //   //   t.variableDeclarator(t.identifier("myData"), astObject)
+              //   // ]);
+              // ),
+            ]);
+          })
+        )
+      ),
+    ]);
+  });
+
+  return routeNodes;
+};
+
+methods.addItemsToExportList = function (ast, exportList) {
+  const self = this;
+  const t = self.t;
+  const traverse = self.traverse;
+
+  traverse(ast, {
+    ExportNamedDeclaration(path) {
+      if (!path.node.source) {
+        const names = path.node.specifiers.map((s) => s.exported.name);
+        exportList.forEach((item) => {
+          if (!names.includes(item)) {
+            path.node.specifiers.push(
+              t.exportSpecifier(t.identifier(item), t.identifier(item))
+            );
+          }
+        });
+      }
+    },
+  });
 };
 
 export default methods;
