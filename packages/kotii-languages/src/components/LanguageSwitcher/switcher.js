@@ -1,70 +1,14 @@
-// import { capitalizeFirstLetter } from "kotii-utils";
-// import React, { useEffect, useState } from "react";
-// import Select from "react-select";
-// import { useLanguage } from "../../context/language-provider";
-
-// const options = [
-//   { value: "en", label: "English" },
-//   { value: "ts", label: "Tsonga" },
-//   { value: "ve", label: "Venda" },
-//   { value: "pe", label: "Pedi" },
-//   { value: "zu", label: "zulu" },
-// ];
-
-// const LanguageSwitcher = () => {
-//   console.log("KOTII-UTILS VALUE;;;", capitalizeFirstLetter);
-//   const { changeCurrentLanguage, language, getLanguageNames } = useLanguage();
-//   const [selectedOption, setSelectedOption] = useState(language);
-// const defaultLocale = getDefaultLocale();
-// const [options, setOptions] = useState([
-//   // { label: defaultLocale.label, value: defaultLocale.locale },
-// ]);
-
-//   const switchLanguage = (value) => {
-//     console.log("the props;;", value);
-//     changeCurrentLanguage(value);
-//     setSelectedOption(value);
-//   };
-
-//   useEffect(() => {
-//     setOptions([
-//       ...getLanguageNames().map((lag) => {
-//         return {
-//           value: lag.locale,
-//           label: capitalizeFirstLetter(lag.name),
-//         };
-//       }),
-//     ]);
-//   }, []);
-
-//   if (options.length === 0) return null;
-
-//   return (
-//     <div>
-//       <Select
-//         defaultValue={selectedOption}
-//         onChange={(e) => {
-//           console.log("onchange event;;;", e);
-
-//           switchLanguage(e.value);
-//         }}
-//         options={options}
-//       />
-//     </div>
-//   );
-// };
-
-// export default LanguageSwitcher;
-
+// eslint-disable unused-imports/no-unused-imports */
 // import { Box, Button, Heading, Paragraph } from "grommet";
 import { capitalizeFirstLetter } from "kotii-utils";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // import { AiTwotoneCopyrightCircle as Circle } from "react-icons/ai";
 // import { BsFillMoonStarsFill as MoonIcon } from "react-icons/bs";
-import { RiArrowDropDownLine as DropdownIcon } from "react-icons/ri";
+// import { RiArrowDropDownLine as DropdownIcon } from "react-icons";
 import styled, { keyframes } from "styled-components";
-import { useLanguage } from "../../context/language-provider";
+import { useLanguage } from "../../context/language-provider.js";
 
+import React from "react";
 // import { themes } from "../../config/themes";
 
 // const options = [
@@ -214,6 +158,7 @@ const Circle = styled("div")((props) => {
 const LanguageSwitcher = () => {
   const { changeCurrentLanguage, getLanguageNames, languageName } =
     useLanguage();
+  console.log("REACT.C", React.Children);
   // const [selectedOption, setSelectedOption] = useState(language);
   // const [selectedLanguageName, setSelectedLanguageName] = useState(null);
   const [showLanguages, setShowLanguages] = useState(false);
@@ -282,9 +227,9 @@ const LanguageSwitcher = () => {
     <div style={{ position: "relative" }}>
       <ThemeSelector onClick={showUpdatedLanguages}>
         <LanguageText>{languageName}</LanguageText>
-        <DropdownIcon
+        {/* <DropdownIcon
           style={{ fontSize: "30px", color: "#1e9454", fontWeight: "bolder" }}
-        />
+        /> */}
       </ThemeSelector>
       {showLanguages ? (
         <ThemeDropDown ref={wrapperRef}>

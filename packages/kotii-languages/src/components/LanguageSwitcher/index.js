@@ -1,3 +1,3 @@
-import LanguageSwitcher from "./switcher";
+import LanguageSwitcher from "./switcher.js";
 
 export default LanguageSwitcher;
