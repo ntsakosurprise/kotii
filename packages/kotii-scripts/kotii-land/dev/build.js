@@ -47,8 +47,9 @@ const ClientRoutes = (props) => {
       children: r?.children || undefined,
     };
   });
+
   if (markRoutes.length > 0) {
-    markRoutes.forEach((route) => {
+    markRoutes.forEach((route, index) => {
       const ComponentWrapped = () => {
         return (
           <Wrapper key={index}>
@@ -109,7 +110,7 @@ const RoutesAsServerRoutes = (props) => {
   });
   if (markRoutes.length > 0) {
     console.log("SERVER ROUTES:");
-    markRoutes.forEach((route) => {
+    markRoutes.forEach((route, index) => {
       console.log("SERVER ROUTES: route", route);
       const ComponentWrapped = () => {
         return (
