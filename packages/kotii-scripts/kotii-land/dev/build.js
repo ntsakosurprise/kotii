@@ -1,6 +1,8 @@
+import React from "react";
 import { LazySuspense } from "kotii-lazy";
 import { Router, Routes } from "kotii-router";
 import { useAppContext } from "../../react-components/index.jsx";
+
 const Wrapper = (props) => {
   //const Component = props.component;
   return (
@@ -81,6 +83,8 @@ const RoutesAsServerRoutes = (props) => {
   const gComps = goodies?.comps || {};
   const markRoutes = goodies?.markdownRoutes || [];
   const MarkdownRendr = goodies?.MarkdownRender || null;
+  console.log("SERVER ROUTES:", markRoutes);
+  console.log("SERVER ROUTES RENDER:", MarkdownRendr);
   const { layout } = useAppContext();
   const Layout = layout
     ? layout
@@ -104,13 +108,15 @@ const RoutesAsServerRoutes = (props) => {
     };
   });
   if (markRoutes.length > 0) {
+    console.log("SERVER ROUTES:");
     markRoutes.forEach((route) => {
+      console.log("SERVER ROUTES: route", route);
       const ComponentWrapped = () => {
         return (
           <Wrapper key={index}>
             <MarkdownRendr
               markdownData={route.markdownData}
-              markdownComponents={route?.markdownComponents || null}
+              markdownComponents={route?.markdownComponents || {}}
             />
           </Wrapper>
         );
@@ -121,7 +127,7 @@ const RoutesAsServerRoutes = (props) => {
       });
     });
   }
-
+  console.log("SERVER ROUTES:::", refinedRoutes);
   return (
     <Layout>
       <Routes
