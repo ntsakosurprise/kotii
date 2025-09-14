@@ -8,10 +8,7 @@ import React from "react";
 
 import styled from "styled-components";
 import MarkdownAd from "../MarkdownAd/index.js";
-import MarkdownElement from "../MarkdownElement/index.js";
-import MarkdownHeader from "../MarkdownHeader/index.js";
-import MarkdownSidebar from "../MarkdownSidebar/index.js";
-import MarkdownTOC from "../MarkdownTOC/index.js";
+// import MarkdownHeader from "../MarkdownHeader/index.js";
 import MarkdownVideo from "../MarkdownVideo/index.js";
 import StandardComponent from "../StandardComponent/index.js";
 
@@ -104,18 +101,18 @@ const MarkdownRender = ({ markdownData, markdownComponents }) => {
 
   return (
     <MarkdownRenderCanvas>
-      <MarkdownHeader />
+      {/* <MarkdownHeader /> */}
 
       <MarkdownContentArea>
-        <MarkdownSidebar />
+        {/* <MarkdownSidebar /> */}
         <MainArea>
-          {html.map((markdownHtmlItem, i) => {
+          {/* {html.map((markdownHtmlItem, i) => {
             if (isHtmlString(markdownHtmlItem))
               return <MarkdownElement htmlString={markdownHtmlItem} key={i} />;
             return markdownComponentType(markdownHtmlItem, markdownComponents);
-          })}
+          })} */}
         </MainArea>
-        <MarkdownTOC toc={toc} />
+        {/* <MarkdownTOC toc={toc} /> */}
       </MarkdownContentArea>
     </MarkdownRenderCanvas>
   );
