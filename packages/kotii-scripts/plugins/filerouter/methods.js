@@ -1077,6 +1077,7 @@ methods.addImportLineToBuildJs = function (isMarkdown = false) {
         : ["routes", "comps"],
     },
   ]);
+  self.debug("BUILD IMPORT STRING", buildImportString, isMarkdown);
   let newFileContent = `${buildImportString} ${generateBuildAst}`;
   saveToFile(buildPath, newFileContent);
 };
@@ -1517,7 +1518,8 @@ methods.startAstFlow = function (options) {
             pagesSource,
             routesObject,
             compsPagesEqual: lastCompsCount === pagesPathsLen,
-            markdownRoutes: markdown ? true : false,
+            isMarkdown: markdown ? true : false,
+            markdownRoutes: markdown || null,
           });
           return self.callback(sendToRequestor);
         }
