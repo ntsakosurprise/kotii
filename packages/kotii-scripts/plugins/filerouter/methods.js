@@ -1572,205 +1572,415 @@ methods.createMarkdownRoutesAst = function (options) {
   const self = this;
   const t = self.t;
   const { files } = options;
+  const astUtils = self.astMarkdownUtils();
 
   const routeNodes = files.map((route) => {
     console.log("THE ROUTE", route);
     console.log("THE PARSED MARKDOWN", route.markdownData[0].parsedMarkdown);
-    return t.objectExpression([
-      t.objectProperty(t.identifier("path"), t.stringLiteral(route.path)),
-      t.objectProperty(
-        t.identifier("componentName"),
-        t.stringLiteral(route.componentName)
-      ),
-      t.objectProperty(
-        t.identifier("component"),
-        t.stringLiteral(route.component)
-      ),
-      t.objectProperty(
-        t.identifier("componentPath"),
-        t.stringLiteral(route.componentPath)
-      ),
-      t.objectProperty(
-        t.identifier("patternMatch"),
-        t.stringLiteral(route.patternMatch)
-      ),
-      t.objectProperty(
-        t.identifier("isBracketParams"),
-        t.booleanLiteral(route.isBracketParams)
-      ),
-      // route?.markdownComponents &&
-      // Object.keys(route.markdownComponents).length > 0
-      //   ? t.objectProperty(
-      //       t.identifier("markdownComponents"),
-      //       t.objectExpression(
-      //         Object.entries(route.markdownComponents).map(([key, value]) =>
-      //           t.objectProperty(t.identifier(key), t.stringLiteral(value))
-      //         )
-      //       )
-      //     )
-      //   : null,
-      // Create for mardown data
-      t.objectProperty(
-        t.identifier("markdownData"),
-        t.arrayExpression(
-          route.markdownData.map((md) => {
-            console.log("Mardwon is running", md);
-            return t.objectExpression([
-              t.objectProperty(
-                t.identifier("fileName"),
-                t.stringLiteral(md.fileName)
-              ),
-              t.objectProperty(
-                t.identifier("locale"),
-                t.stringLiteral(md.locale)
-              ),
-              t.objectProperty(
-                t.identifier("rawMdText"),
-                t.stringLiteral(md.rawMdText)
-              ),
-
-              // t.objectProperty(
-              //   t.identifier("parsedMarkdown"),
-              //   t.objectExpression([
-              //     // metaDataKeys
-              //     t.objectProperty(
-              //       t.identifier("metaDataKeys"),
-              //       t.objectExpression([
-              //         t.objectProperty(
-              //           t.identifier("title"),
-              //           t.stringLiteral(md.parsedMarkdown?.metaDataKeys.title)
-              //         ),
-              //         // t.objectProperty(
-              //         //   t.identifier("header"),
-              //         //   t.stringLiteral(md.parsedMarkdown?.metaDataKeys.header)
-              //         // ),
-              //         // t.objectProperty(
-              //         //   t.stringLiteral("---,title"),
-              //         //   t.stringLiteral("A Markdown test for Kotii-markdown")
-              //         // ),
-              //       ])
-              //     ),
-              //     //
-              //     md.parsedMarkdown?.description
-              //       ? t.objectProperty(
-              //           t.identifier("description"),
-              //           t.stringLiteral(md.parsedMarkdown?.description)
-              //         )
-              //       : null,
-              //     // specialContent (just the first element for example; replicate for all)
-              //     t.objectProperty(
-              //       t.identifier("specialContent"),
-              //       t.arrayExpression([
-              //         t.objectExpression([
-              //           t.objectProperty(
-              //             t.identifier("special"),
-              //             t.objectExpression([
-              //               t.objectProperty(
-              //                 t.identifier("component"),
-              //                 t.stringLiteral(
-              //                   md.parsedMarkdown.specialContent.special
-              //                     .component
-              //                 )
-              //               ),
-              //             ])
-              //           ),
-              //           t.objectProperty(
-              //             t.identifier("file"),
-              //             t.objectExpression([
-              //               t.objectProperty(
-              //                 t.identifier("name"),
-              //                 t.stringLiteral(
-              //                   md.parsedMarkdown.specialContent.file.name
-              //                 )
-              //               ),
-              //               t.objectProperty(
-              //                 t.identifier("contents"),
-              //                 t.stringLiteral(
-              //                   md.parsedMarkdown.specialContent.file.contents
-              //                 )
-              //               ),
-              //               t.objectProperty(
-              //                 t.identifier("imports"),
-              //                 t.stringLiteral(
-              //                   md.parsedMarkdown.specialContent.file.imports
-              //                 )
-              //               ),
-              //               t.objectProperty(
-              //                 t.identifier("componentName"),
-              //                 t.stringLiteral(
-              //                   md.parsedMarkdown.specialContent.file
-              //                     .componentName
-              //                 )
-              //               ),
-              //             ])
-              //           ),
-              //         ]),
-              //         // ... more items in specialContent
-              //       ])
-              //     ),
-              //     // markDownSplit
-              //     t.objectProperty(
-              //       t.identifier("markDownSplit"),
-              //       t.arrayExpression(
-              //         md.parsedMarkdown.markDownSplit.map((sti) =>
-              //           t.stringLiteral(sti)
-              //         )
-              //       )
-              //     ),
-              //     // html
-              //     // t.objectProperty(
-              //     //   t.identifier("html"),
-              //     //   t.arrayExpression(
-              //     //     md.parsedMarkdown.html.map((sti) => t.stringLiteral(sti))
-              //     //   )
-              //     // ),
-              //     // toc
-              //     md?.toc && md.toc.length > 0
-              //       ? t.objectProperty(
-              //           t.identifier("toc"),
-              //           t.arrayExpression(
-              //             md.parsedMarkdown.toc.map((tocItem) => {
-              //               return t.objectExpression([
-              //                 t.objectProperty(
-              //                   t.identifier("id"),
-              //                   t.stringLiteral(tocItem.id)
-              //                 ),
-              //                 t.objectProperty(
-              //                   t.identifier("children"),
-              //                   t.arrayExpression([
-              //                     ...toc.children.map((chi) => {
-              //                       t.objectExpression([
-              //                         t.objectProperty(
-              //                           t.identifier("id"),
-              //                           t.stringLiteral(chi.id)
-              //                         ),
-              //                       ]);
-              //                     }),
-              //                   ])
-              //                 ),
-              //               ]);
-              //             })
-              //           )
-              //         )
-              //       : null,
-              //   ])
-
-              //   // You can then insert `astObject` wherever a Babel `ObjectExpression` node is needed
-              //   // For example:
-              //   // path.replaceWith(astObject);
-              //   // or use it as an initializer to a variable:
-              //   // t.variableDeclaration("const", [
-              //   //   t.variableDeclarator(t.identifier("myData"), astObject)
-              //   // ]);
-              // ),
-            ]);
-          })
-        )
-      ),
-    ]);
+    console.log(
+      "THE PARSED MARKDOWN.special",
+      route.markdownData[0].parsedMarkdown?.specialContent?.special
+    );
+    console.log(
+      "THE PARSED MARKDOWN",
+      route.markdownData[0].parsedMarkdown?.specialContent?.file
+    );
+    try {
+      return t.objectExpression([
+        ...astUtils.parseForRoutes(t, route),
+        ...astUtils.parseMarkdownData(t, route.markdownData, astUtils),
+        // route?.markdownComponents &&
+        // Object.keys(route.markdownComponents).length > 0
+        //   ? t.objectProperty(
+        //       t.identifier("markdownComponents"),
+        //       t.objectExpression(
+        //         Object.entries(route.markdownComponents).map(([key, value]) =>
+        //           t.objectProperty(t.identifier(key), t.stringLiteral(value))
+        //         )
+        //       )
+        //     )
+        //   : null,
+        // Create for mardown data
+      ]);
+    } catch (error) {
+      console.log("THE BUILD CATCH ERROR", error);
+    }
   });
 
   return routeNodes;
+};
+methods.doMarkdownData = function (t, md) {
+  const self = this;
+
+  t.objectProperty(
+    t.identifier("parsedMarkdown"),
+    t.objectExpression([
+      // metaDataKeys
+      // t.objectProperty(
+      //   t.identifier("metaDataKeys"),
+      //   t.objectExpression([
+      //     t.objectProperty(
+      //       t.identifier("title"),
+      //       t.stringLiteral(md.parsedMarkdown?.metaDataKeys?.title || "")
+      //     ),
+      //     t.objectProperty(
+      //       t.identifier("header"),
+      //       t.stringLiteral(md.parsedMarkdown?.metaDataKeys.header)
+      //     ),
+      //     t.objectProperty(
+      //       t.stringLiteral("---,title"),
+      //       t.stringLiteral("A Markdown test for Kotii-markdown")
+      //     ),
+      //   ])
+      // ),
+      //
+      // md.parsedMarkdown?.description
+      //   ? t.objectProperty(
+      //       t.identifier("description"),
+      //       t.stringLiteral(md.parsedMarkdown?.description || "")
+      //     )
+      //   : null,
+      // specialContent (just the first element for example; replicate for all)
+      (md?.parsedMarkdown?.specialContent && md.specialContent?.length > 0) ??
+        t.objectProperty(
+          t.identifier("specialContent"),
+          t.arrayExpression(
+            md.parsedMarkdown.specialContent.map((spec) => {
+              console.log("The special", spec);
+              return t.objectExpression(
+                t.objectProperty(
+                  t.identifier("special"),
+                  t.objectExpression([
+                    t.objectProperty(
+                      t.identifier("component"),
+                      t.stringLiteral(spec.special?.component || "")
+                    ),
+                  ])
+                ),
+                t.objectProperty(
+                  t.identifier("file"),
+                  t.objectExpression([
+                    t.objectProperty(
+                      t.identifier("name"),
+                      t.stringLiteral(
+                        md.parsedMarkdown.specialContent?.file?.name || ""
+                      )
+                    ),
+                    t.objectProperty(
+                      t.identifier("contents"),
+                      t.stringLiteral(
+                        md.parsedMarkdown.specialContent?.file?.contents || ""
+                      )
+                    ),
+                    t.objectProperty(
+                      t.identifier("imports"),
+                      t.stringLiteral(
+                        md.parsedMarkdown.specialContent?.file?.imports || ""
+                      )
+                    ),
+                    t.objectProperty(
+                      t.identifier("componentName"),
+                      t.stringLiteral(
+                        md.parsedMarkdown.specialContent?.file?.componentName ||
+                          ""
+                      )
+                    ),
+                  ])
+                )
+              );
+            })
+          )
+        ),
+      // markDownSplit
+      t.objectProperty(
+        t.identifier("markDownSplit"),
+        t.arrayExpression(
+          md.parsedMarkdown.markDownSplit.map((sti) =>
+            t.stringLiteral(sti || "")
+          )
+        )
+      ),
+      //html
+      t.objectProperty(
+        t.identifier("html"),
+        t.arrayExpression(
+          md.parsedMarkdown.html.map((sti) => t.stringLiteral(sti || ""))
+        )
+      ),
+      //toc
+      md?.toc && md.toc.length > 0
+        ? t.objectProperty(
+            t.identifier("toc"),
+            t.arrayExpression(
+              md.parsedMarkdown.toc.map((tocItem) => {
+                return t.objectExpression([
+                  t.objectProperty(
+                    t.identifier("id"),
+                    t.stringLiteral(tocItem?.id || "")
+                  ),
+                  t.objectProperty(
+                    t.identifier("children"),
+                    t.arrayExpression([
+                      ...toc.children.map((chi) => {
+                        t.objectExpression([
+                          t.objectProperty(
+                            t.identifier("id"),
+                            t.stringLiteral(chi?.id || "")
+                          ),
+                        ]);
+                      }),
+                    ])
+                  ),
+                ]);
+              })
+            )
+          )
+        : null,
+    ])
+
+    // You can then insert `astObject` wherever a Babel `ObjectExpression` node is needed
+    // For example:
+    // path.replaceWith(astObject);
+    // or use it as an initializer to a variable:
+    // t.variableDeclaration("const", [
+    //   t.variableDeclarator(t.identifier("myData"), astObject)
+    // ]);
+  );
+};
+
+methods.astMarkdownUtils = function () {
+  const self = this;
+  const t = self.t;
+  return {
+    parseForRoutes: (t, route) => {
+      return [
+        t.objectProperty(t.identifier("path"), t.stringLiteral(route.path)),
+        t.objectProperty(
+          t.identifier("componentName"),
+          t.stringLiteral(route.componentName)
+        ),
+        t.objectProperty(
+          t.identifier("component"),
+          t.stringLiteral(route.component)
+        ),
+        t.objectProperty(
+          t.identifier("componentPath"),
+          t.stringLiteral(route.componentPath || "")
+        ),
+        t.objectProperty(
+          t.identifier("patternMatch"),
+          t.stringLiteral(route.patternMatch || "")
+        ),
+        t.objectProperty(
+          t.identifier("isBracketParams"),
+          t.booleanLiteral(route.isBracketParams)
+        ),
+      ];
+    },
+    parseMarkdownData: (t, markdownData, utils) => {
+      return [
+        t.objectProperty(
+          t.identifier("markdownData"),
+          t.arrayExpression(
+            markdownData.map((md) => {
+              console.log("Mardwon is running", md?.parsedMarkdown);
+              let parseMarkdownDataResults = utils.parseMarkdownDataMeta(t, md);
+              let parseMarkdownDataParseResults = utils.parseMarkdownDataParsed(
+                t,
+                md.parsedMarkdown,
+                utils
+              );
+              console.log("THE PARSE DATA RESULTS", parseMarkdownDataResults);
+              console.log(
+                "THE PARSE PARSE PARSE RESULTS",
+                parseMarkdownDataParseResults
+              );
+              return t.objectExpression([
+                ...parseMarkdownDataResults,
+                t.objectProperty(
+                  t.identifier("parsedMarkdown"),
+                  t.objectExpression([...parseMarkdownDataParseResults])
+                ),
+              ]);
+              // self.doMarkdownData(),
+            })
+          )
+        ),
+      ];
+    },
+    parseMarkdownDataMeta: (t, md) => {
+      return [
+        t.objectProperty(
+          t.identifier("fileName"),
+          t.stringLiteral(md.fileName || "")
+        ),
+        t.objectProperty(
+          t.identifier("locale"),
+          t.stringLiteral(md.locale || "")
+        ),
+        t.objectProperty(
+          t.identifier("rawMdText"),
+          t.stringLiteral(md.rawMdText || "")
+        ),
+      ];
+    },
+    parseMarkdownDataParsed: (t, md, utils) => {
+      console.log("PARSED MARKDOWN DATA", md);
+      const metaNode = utils.parsedMetakKeys(t, md.metaDataKeys, utils);
+      const htmlNode =
+        md?.html && md.html.length > 0 ? utils.parsedHtml(t, md.html) : null;
+      const specialNode =
+        md?.specialContent && md.specialContent !== "null"
+          ? utils.parsedSpecial(t, md.specialContent)
+          : null;
+      const markdownSplit = utils.parsedMarkdownSplit(t, md.markDownSplit);
+      const tocNode =
+        md?.toc && md.toc.length > 0 ? utils.parsedToc(t, md.toc) : null;
+
+      let nodes = [
+        metaNode,
+        htmlNode,
+        specialNode,
+        markdownSplit,
+        tocNode,
+      ].filter((n) => n !== undefined && n !== null);
+
+      return nodes;
+    },
+    parsedMetakKeys: (t, metaDataKeys) => {
+      //metaDataKeys
+      let metaKey = t.objectProperty(
+        t.identifier("metaDataKeys"),
+        t.objectExpression([
+          t.objectProperty(
+            t.identifier("title"),
+            t.stringLiteral(metaDataKeys?.title || "")
+          ),
+          t.objectProperty(
+            t.identifier("header"),
+            t.stringLiteral(metaDataKeys.header || "")
+          ),
+          // t.objectProperty(
+          //   t.stringLiteral("---,title"),
+          //   t.stringLiteral("A Markdown test for Kotii-markdown")
+          // ),
+        ])
+      );
+      console.log("THE META KEY", metaKey);
+      return metaKey;
+    },
+    parsedSpecial: (t, specialContent) => {
+      console.log("THE SPECIAL CONTENT", specialContent);
+      return t.objectProperty(
+        t.identifier("specialContent"),
+        t.arrayExpression(
+          specialContent.map((spec) => {
+            console.log("The special", spec);
+            let specialItem = t.objectExpression([
+              t.objectProperty(
+                t.identifier("special"),
+                t.objectExpression([
+                  t.objectProperty(
+                    t.identifier("component"),
+                    t.stringLiteral(spec.special?.component || "")
+                  ),
+                ])
+              ),
+              t.objectProperty(
+                t.identifier("file"),
+                t.objectExpression([
+                  t.objectProperty(
+                    t.identifier("name"),
+                    t.stringLiteral(spec.file?.name || "")
+                  ),
+                  t.objectProperty(
+                    t.identifier("contents"),
+                    t.stringLiteral(spec?.file?.contents || "")
+                  ),
+                  t.objectProperty(
+                    t.identifier("imports"),
+                    t.stringLiteral(spec?.file?.imports || "")
+                  ),
+                  t.objectProperty(
+                    t.identifier("componentName"),
+                    t.stringLiteral(spec?.file?.componentName || "")
+                  ),
+                ])
+              ),
+            ]);
+            console.log("THE SPECIAL ITEM", specialItem);
+            return specialItem;
+          })
+        )
+      );
+    },
+    parsedToc: (t, toc) => {
+      //metaDataKeys
+      return t.objectProperty(
+        t.identifier("toc"),
+        t.arrayExpression(
+          toc.map((tocItem) => {
+            return t.objectExpression([
+              t.objectProperty(
+                t.identifier("id"),
+                t.stringLiteral(tocItem?.id || "")
+              ),
+              t.objectProperty(
+                t.identifier("children"),
+                t.arrayExpression(
+                  ...tocItem.children.map((chi) => {
+                    t.objectExpression([
+                      t.objectProperty(
+                        t.identifier("id"),
+                        t.stringLiteral(chi?.id || "")
+                      ),
+                    ]);
+                  })
+                )
+              ),
+            ]);
+          })
+        )
+      );
+    },
+    parsedHtml: (t, html) => {
+      console.log("HTML RUNS", html);
+      return t.objectProperty(
+        t.identifier("html"),
+        t.arrayExpression(
+          html
+            .map((sti) => {
+              let astHmtlObject = null;
+              if (typeof sti === "string") {
+                if (sti.trim()) astHmtlObject = t.stringLiteral(sti || "");
+              } else {
+                let identifier = Object.keys(sti)[0];
+                astHmtlObject = t.objectExpression([
+                  t.objectProperty(
+                    t.identifier(identifier),
+                    t.stringLiteral(sti[identifier])
+                  ),
+                ]);
+              }
+              console.log("HTML AST OBJECT", astHmtlObject);
+              return astHmtlObject;
+            })
+            .filter(Boolean)
+        )
+      );
+    },
+    parsedMarkdownSplit: (t, markDownSplit) => {
+      //metaDataKeys
+      return t.objectProperty(
+        t.identifier("markDownSplit"),
+        t.arrayExpression(
+          markDownSplit.map((sti) => {
+            return t.stringLiteral(sti || "");
+          })
+        )
+      );
+    },
+  };
 };
 
 methods.addItemsToExportList = function (ast, exportList) {
