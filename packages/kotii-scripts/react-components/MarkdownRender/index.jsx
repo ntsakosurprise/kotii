@@ -89,12 +89,13 @@ const markdownComponentType = (mkComponent, markdownComponents) => {
 const MarkdownRender = ({ markdownData, markdownComponents }) => {
   console.log("MARKDOWN RENDER PROPS: docs", markdownData);
   console.log("MARKDODWN RENDER PROPS: modules", markdownComponents);
-  // const { language } = useLanguage();
-  // const englishContent = getSetLanguageContent(markdownData, language);
-  // const { fileName, parsedMarkdown } = englishContent;
-  // const { html, toc } = parsedMarkdown;
-  // console.log("THE PARSED MARKDOWN", parsedMarkdown);
-  // console.log("Kotii-markdown set Language:::", language, React.lazy, toc);
+  const { language } = useLanguage();
+  const englishContent = getSetLanguageContent(markdownData, language);
+  console.log("THE ENGLISH CONTENT", englishContent);
+  const { fileName, parsedMarkdown } = englishContent;
+  const { html, toc } = parsedMarkdown;
+  console.log("THE PARSED MARKDOWN", parsedMarkdown);
+  console.log("Kotii-markdown set Language:::", language, React.lazy, toc);
 
   // console.log("Filename;;;", fileName);
   // console.log("html", html);
@@ -106,12 +107,11 @@ const MarkdownRender = ({ markdownData, markdownComponents }) => {
       <MarkdownContentArea>
         {/* <MarkdownSidebar /> */}
         <MainArea>
-          {/* {html.map((markdownHtmlItem, i) => {
+          {html.map((markdownHtmlItem, i) => {
             if (isHtmlString(markdownHtmlItem))
               return <MarkdownElement htmlString={markdownHtmlItem} key={i} />;
             return markdownComponentType(markdownHtmlItem, markdownComponents);
-          })} */}
-          <p>THE BLOG</p>
+          })}
         </MainArea>
         {/* <MarkdownTOC toc={toc} /> */}
       </MarkdownContentArea>
