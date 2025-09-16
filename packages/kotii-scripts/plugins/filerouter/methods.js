@@ -1586,22 +1586,14 @@ methods.createMarkdownRoutesAst = function (options) {
       route.markdownData[0].parsedMarkdown?.specialContent?.file
     );
     try {
-      return t.objectExpression([
-        ...astUtils.parseForRoutes(t, route),
-        ...astUtils.parseMarkdownData(t, route.markdownData, astUtils),
-        // route?.markdownComponents &&
-        // Object.keys(route.markdownComponents).length > 0
-        //   ? t.objectProperty(
-        //       t.identifier("markdownComponents"),
-        //       t.objectExpression(
-        //         Object.entries(route.markdownComponents).map(([key, value]) =>
-        //           t.objectProperty(t.identifier(key), t.stringLiteral(value))
-        //         )
-        //       )
-        //     )
-        //   : null,
-        // Create for mardown data
-      ]);
+      return t.objectExpression(
+        [
+          ...astUtils.parseForRoutes(t, route),
+          ...astUtils.parseMarkdownData(t, route.markdownData, astUtils),
+          astUtils.parseMarkdownComponents(t, route?.markdownComponents),
+          // Create for mardown data
+        ].filter((n) => n !== undefined && n !== null)
+      );
     } catch (error) {
       console.log("THE BUILD CATCH ERROR", error);
     }
@@ -1823,6 +1815,18 @@ methods.astMarkdownUtils = function () {
           t.stringLiteral(md.rawMdText || "")
         ),
       ];
+    },
+    parseMarkdownComponents: (t, markdownComponents) => {
+      return markdownComponents && Object.keys(markdownComponents).length > 0
+        ? t.objectProperty(
+            t.identifier("markdownComponents"),
+            t.objectExpression(
+              Object.entries(markdownComponents).map(([key, value]) =>
+                t.objectProperty(t.identifier(key), t.stringLiteral(value))
+              )
+            )
+          )
+        : null;
     },
     parseMarkdownDataParsed: (t, md, utils) => {
       console.log("PARSED MARKDOWN DATA", md);
