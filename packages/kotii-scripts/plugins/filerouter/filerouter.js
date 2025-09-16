@@ -92,6 +92,7 @@ class FileRouter {
     this.addItemsToExportList = methods.addItemsToExportList;
     this.astAddNodeMarkdown = methods.astAddNodeMarkdown;
     this.createMarkdownRoutesAst = methods.createMarkdownRoutesAst;
+    this.astMarkdownUtils = methods.astMarkdownUtils;
   }
 }
 export default FileRouter;
