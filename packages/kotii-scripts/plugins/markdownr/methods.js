@@ -19,11 +19,13 @@ methods.handleMarkdown = function (data) {
 
 methods.getPagesMarkdownContent = function (pages, doDuring) {
   const self = this;
+
   const { MarkdownLoader } = self;
 
   const filteredPages = pages.map((pagePath) => {
     let markResults = MarkdownLoader({
       resource: pagePath,
+      customComponentLoader: self.customComponentLoader.bind(self),
       isServerMode: true,
     });
     let route = doDuring(pagePath);
@@ -35,6 +37,14 @@ methods.getPagesMarkdownContent = function (pages, doDuring) {
 
   self.debug("THE FILTERED PAGES", filteredPages);
   return filteredPages;
+};
+
+methods.customComponentLoader = async function (filePath) {
+  const self = this;
+  const pao = self.pao;
+  const loadFile = pao.pa_loadFile;
+  const file = await loadFile(filePath);
+  return file;
 };
 
 export default methods;
