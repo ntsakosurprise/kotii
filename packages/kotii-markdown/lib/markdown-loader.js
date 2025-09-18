@@ -20,28 +20,12 @@ export default function (markdown) {
   markdown?.getLogger ? markdown.getLogger() : null;
   isServerMode = markdown?.isServerMode || false;
 
-  const resourceRootFolder = process.cwd(); // Get all resources root folder
-  const filePath = markdown.resource; // Webpack, get filepath
-  console.log("THE MARKDOWN passed options", markdown, resourceRootFolder);
-  const fileFolder = path.dirname(filePath); // Use file path to get file folder
-  console.log("THE FOLDER", fileFolder);
-  const fileName = path.basename(filePath); // Get filename(including extension)
-  const fileExtension = path.extname(filePath); // Get file extension
-  const fileNamePlain = path.basename(filePath, fileExtension); // Get filename without extension
-  const folderFiles = fs.readdirSync(fileFolder);
-  const validFolderFiles = folderFiles.filter((f) => {
-    // console.log("EXec test", validLanguagePattern.exec(f));
-    console.log("THE fileName", f);
-    console.log("THE FILENAME;;;", fileName, resourceRootFolder);
-    console.log("THE FILENAME CONDITION;;;", fileName === f);
-    let isDefaultFileName = fileName === f;
-    if (validLanguagePattern.test(f) || isDefaultFileName) {
-      let locale = getLanguageLocal(validLanguagePattern, f);
-      // let locale = validLanguagePattern.exec(f)?.groups?.locale;
-      console.log("THE LOCAL;;", locale);
-      if (supportedLanguages.includes(locale) || isDefaultFileName) return true;
-    }
-  });
+  const fileInfo = getFileInContextFileInfo(markdown);
+
+  const { fileFolder, fileName, fileNamePlain, filePath, resourceRootFolder } =
+    fileInfo;
+
+  const validFolderFiles = getSupportedLanguageFilesInFolder(fileInfo);
 
   // const convertedMarkdown = convertMarkdown(markdown);
 
@@ -96,6 +80,7 @@ export default function (markdown) {
           name: fileNamePortion,
           contents: fileContent,
           imports: itemImported,
+          specialPath: fullFilePath,
           componentName: capitalizeFirstLetter(
             fileNamePortion.replace(/\.(jsx|js|tsx|ts)$/, "")
           ),
@@ -148,6 +133,8 @@ export default function (markdown) {
 
   markdown?.addDependency ? markdown.addDependency(filePath) : null;
 
+  //customComponentLoader
+
   // console.log("The source BASE PATH", path.dirname(reContext));
 
   //parseMarkdown(markdown);
@@ -183,3 +170,44 @@ export default function (markdown) {
 
   return loaded;
 }
+
+const getFileInContextFileInfo = function (markdownFile) {
+  const resourceRootFolder = process.cwd(); // Get all resources root folder
+  const filePath = markdownFile.resource; // Webpack, get filepath
+  console.log("THE MARKDOWN passed options", markdownFile, resourceRootFolder);
+  const fileFolder = path.dirname(filePath); // Use file path to get file folder
+  console.log("THE FOLDER", fileFolder);
+  const fileName = path.basename(filePath); // Get filename(including extension)
+  const fileExtension = path.extname(filePath); // Get file extension
+  const fileNamePlain = path.basename(filePath, fileExtension); // Get filename without extension
+  const folderFiles = fs.readdirSync(fileFolder);
+  console.log("THE FOLDER FILES");
+
+  return {
+    fileFolder,
+    fileName,
+    fileExtension,
+    fileNamePlain,
+    folderFiles,
+    filePath,
+    resourceRootFolder,
+  };
+};
+const getSupportedLanguageFilesInFolder = function (options) {
+  const { folderFiles, fileName, resourceRootFolder } = options;
+  const supportedLanguageFiles = folderFiles.filter((f) => {
+    // console.log("EXec test", validLanguagePattern.exec(f));
+    console.log("THE fileName", f);
+    console.log("THE FILENAME;;;", fileName, resourceRootFolder);
+    console.log("THE FILENAME CONDITION;;;", fileName === f);
+    let isDefaultFileName = fileName === f;
+    if (validLanguagePattern.test(f) || isDefaultFileName) {
+      let locale = getLanguageLocal(validLanguagePattern, f);
+      // let locale = validLanguagePattern.exec(f)?.groups?.locale;
+      console.log("THE LOCAL;;", locale);
+      if (supportedLanguages.includes(locale) || isDefaultFileName) return true;
+    }
+  });
+
+  return supportedLanguageFiles;
+};
