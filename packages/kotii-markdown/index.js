@@ -1,4 +1,4 @@
-import MarkdownLoader from "./lib/markdown-loader.js";
+import MarkdownLoader, { serverLoader } from "./lib/markdown-loader.js";
 import {
   convertMarkdown,
   extractContent,
@@ -31,4 +31,5 @@ export {
   idifyString,
   MarkdownLoader,
   splitMarkdown,
+  serverLoader,
 };
