@@ -6,7 +6,6 @@ import { capitalizeFirstLetter, getLanguageLocal } from "./utils";
 // const { parseMarkdown } = require("./markdownParser");
 import { parseMarkdown } from "./markdownParser";
 const supportedLanguages = ["ts", "ve", "en"];
-let isServerMode = false;
 
 // const languagesFullNames = [
 //   { name: "Xitsonga", locale: "ts" },
@@ -18,151 +17,23 @@ const validLanguagePattern = /_(?<locale>.*?)\.md/;
 export default function (markdown) {
   console.log("mardown in kotii-markdown", markdown);
   markdown?.getLogger ? markdown.getLogger() : null;
-  isServerMode = markdown?.isServerMode || false;
 
-  const fileInfo = getFileInContextFileInfo(markdown);
-
-  const { fileFolder, fileName, fileNamePlain, filePath, resourceRootFolder } =
-    fileInfo;
-
-  const validFolderFiles = getSupportedLanguageFilesInFolder(fileInfo);
-
-  // const convertedMarkdown = convertMarkdown(markdown);
-
-  const languages = validFolderFiles.map((validLanguage) => {
-    console.log("validLanguage", validLanguage);
-    console.log("The path Join", path.join(fileFolder, validLanguage));
-    let languageFilePath = path.join(fileFolder, validLanguage);
-    console.log("LigoPath;;;", languageFilePath);
-    let rawMarkdown = fs.readFileSync(languageFilePath, {
-      encoding: "utf-8",
-    });
-    markdown?.addDependency ? markdown.addDependency(languageFilePath) : null;
-    let isDefaultFileName = fileName === validLanguage;
-
-    return {
-      rawMdText: rawMarkdown,
-      fileName: validLanguage,
-      locale: isDefaultFileName
-        ? "en"
-        : getLanguageLocal(validLanguagePattern, validLanguage),
-      parsedMarkdown: parseMarkdown(rawMarkdown),
-    };
-  });
-  console.log("THE LANGUAGES", languages);
-
-  languages.map((ln) => {
-    // console.log("Language item;;;", ln);
-
-    if (ln.parsedMarkdown?.specialContent) {
-      ln.parsedMarkdown.specialContent.map((sp) => {
-        // console.log("Language special", sp);
-        let special = sp.special;
-        let specialPath = special.component
-          ? special.component
-          : special.video
-          ? special.video
-          : special.demo;
-        let specialSplit = specialPath.split("/");
-        let fileNamePortion = specialSplit[specialSplit.length - 1];
-        let fullFilePath = path.join(resourceRootFolder, specialPath);
-        console.log("THE SPECIAL SPLIT", specialSplit);
-        console.log("THE FULL FILE PATH", fullFilePath, "Root", fullFilePath);
-
-        let fileContent = fs.readFileSync(fullFilePath, { encoding: "utf-8" });
-        let itemImported = `import ${capitalizeFirstLetter(
-          fileNamePortion.replace(/\.(jsx|js|tsx|ts)$/, "")
-        )} from "${fullFilePath}"`;
-        // console.log("ITEM IMPORTED;;;", itemImported);
-        markdown?.addDependency ? markdown.addDependency(fullFilePath) : null;
-        // console.log("THE FILE CONTENTS;;;", fileContent);
-        sp.file = {
-          name: fileNamePortion,
-          contents: fileContent,
-          imports: itemImported,
-          specialPath: fullFilePath,
-          componentName: capitalizeFirstLetter(
-            fileNamePortion.replace(/\.(jsx|js|tsx|ts)$/, "")
-          ),
-        };
-
-        console.log("SPECIALSPLIT;;;", specialSplit);
-        return sp;
-        // let specialFileName = specialSplit[0];
-        // console.log("The special fileNAme;;;", specialFileName);
-      });
-    }
-  });
-
-  // console.log(
-  //   "firstLanguageSpecialShape;;;",
-  //   languages[0].parsedMarkdown.specialContent[0]
-  // );
-
-  // const rePath = this.resourcePath;
-  // console.log("MarkDownFolder", rePath);
-  // console.log("THE fs Module", fs);
-  let importsArray = [];
-  let importsIDs = [];
-
-  languages.map((ln) => {
-    if (ln.parsedMarkdown?.specialContent) {
-      let specialCont = ln.parsedMarkdown.specialContent;
-      specialCont.map((sp) => {
-        !importsIDs.includes(sp.file.componentName)
-          ? importsIDs.push(sp.file.componentName)
-          : "";
-        !importsArray.includes(sp.file.imports)
-          ? importsArray.push(sp.file.imports)
-          : "";
-      });
-    }
-  });
-
-  // console.log("resource root", resourceRootFolder);
-  // console.log("file path;", filePath);
-  // console.log("fileFolder", fileFolder);
-  // console.log("fileName", fileName);
-  // console.log("FileExtension", fileExtension);
-  console.log("FileNamePlain", fileNamePlain);
-  // console.log("Folder files", folderFiles);
-  // console.log("Valid folder files;;;", validFolderFiles);
-  // console.log("Languages;;;", languages);
-  // console.log("The IMports;;;", importsArray);
-  // console.log("THISLOADER;;;", this);
+  const { supportedLanguages, filePath, importsDictionary } =
+    doCommons(markdown);
+  const { importsArray, importsIDs } = importsDictionary;
 
   markdown?.addDependency ? markdown.addDependency(filePath) : null;
 
-  //customComponentLoader
-
-  // console.log("The source BASE PATH", path.dirname(reContext));
-
-  //parseMarkdown(markdown);
-
-  if (isServerMode) {
-    console.log("THE IMPORTS ARRAY", importsArray);
-    let serverData = {
-      markdownData: languages,
-      // markdownComponents: {},
-    };
-    console.log("THE MARKDOWN IMPORT IDS", importsIDs);
-    if (importsIDs) {
-      serverData["markdownComponents"] = {};
-      importsIDs.map((importID) => {
-        serverData.markdownComponents[importID] = importID;
-      });
-    }
-
-    return serverData;
-  }
   const loaded = `
 
    ${importsArray.join("\r\n")}
    
-   export const markdownData = ${JSON.stringify(languages, null, 2)}
+   export const markdownData = ${JSON.stringify(supportedLanguages, null, 2)}
    export const markdownComponents = {${importsIDs
      .map((importID) => {
-       return `${JSON.stringify(importID)}: ${importID},`;
+       return `${JSON.stringify(importID.componentName)}: ${
+         importID.componentName
+       },`;
      })
      .join("\n")}}
  
@@ -170,6 +41,32 @@ export default function (markdown) {
 
   return loaded;
 }
+
+export const serverLoader = async function (markdown) {
+  const { supportedLanguages, importsDictionary } = doCommons(markdown);
+  const { importsIDs } = importsDictionary;
+  const { customComponentLoader = null } = markdown;
+  let serverData = {
+    markdownData: supportedLanguages,
+  };
+  let loadPromises = null;
+  console.log("THE MARKDOWN IMPORT IDS", importsIDs);
+  if (importsIDs) {
+    serverData["markdownComponents"] = {};
+    loadPromises = importsIDs.map(async (importID) => {
+      serverData.markdownComponents[importID.componentName] = {
+        type: importID.componentType,
+        pathID: importID.specialPath,
+        value: customComponentLoader
+          ? await customComponentLoader(importID.specialFullPath)
+          : importID.specialFullPath,
+      };
+    });
+  }
+  await Promise.all(loadPromises);
+
+  return serverData;
+};
 
 const getFileInContextFileInfo = function (markdownFile) {
   const resourceRootFolder = process.cwd(); // Get all resources root folder
@@ -193,9 +90,9 @@ const getFileInContextFileInfo = function (markdownFile) {
     resourceRootFolder,
   };
 };
-const getSupportedLanguageFilesInFolder = function (options) {
+const getValidFolderFiles = function (options) {
   const { folderFiles, fileName, resourceRootFolder } = options;
-  const supportedLanguageFiles = folderFiles.filter((f) => {
+  const validFiles = folderFiles.filter((f) => {
     // console.log("EXec test", validLanguagePattern.exec(f));
     console.log("THE fileName", f);
     console.log("THE FILENAME;;;", fileName, resourceRootFolder);
@@ -209,5 +106,135 @@ const getSupportedLanguageFilesInFolder = function (options) {
     }
   });
 
-  return supportedLanguageFiles;
+  return validFiles;
+};
+
+const getSupportedLanguageFilesInFolder = function (
+  options,
+  markdown,
+  validFolderFiles
+) {
+  const { fileFolder, fileName } = options;
+  const supportedLanguages = validFolderFiles.map((validLanguage) => {
+    console.log("validLanguage", validLanguage);
+    console.log("The path Join", path.join(fileFolder, validLanguage));
+    let languageFilePath = path.join(fileFolder, validLanguage);
+    console.log("LigoPath;;;", languageFilePath);
+    let rawMarkdown = fs.readFileSync(languageFilePath, {
+      encoding: "utf-8",
+    });
+    markdown?.addDependency ? markdown.addDependency(languageFilePath) : null;
+    let isDefaultFileName = fileName === validLanguage;
+
+    return {
+      rawMdText: rawMarkdown,
+      fileName: validLanguage,
+      locale: isDefaultFileName
+        ? "en"
+        : getLanguageLocal(validLanguagePattern, validLanguage),
+      parsedMarkdown: parseMarkdown(rawMarkdown),
+    };
+  });
+  return supportedLanguages;
+};
+
+const createSpecialMetaData = function (options, supportedLanguages, markdown) {
+  const { resourceRootFolder } = options;
+
+  supportedLanguages.map((ln) => {
+    // console.log("Language item;;;", ln);
+
+    if (ln.parsedMarkdown?.specialContent) {
+      ln.parsedMarkdown.specialContent.map((sp) => {
+        // console.log("Language special", sp);
+
+        let special = sp.special;
+        let specialComponentType = special.component
+          ? "component"
+          : special.video
+          ? "video"
+          : "demo";
+        let specialPath = special.component
+          ? special.component
+          : special.video
+          ? special.video
+          : special.demo;
+
+        let specialSplit = specialPath.split("/");
+        let fileNamePortion = specialSplit[specialSplit.length - 1];
+        let fullFilePath = path.join(resourceRootFolder, specialPath);
+        console.log("THE SPECIAL SPLIT", specialSplit);
+        console.log("THE FULL FILE PATH", fullFilePath, "Root", fullFilePath);
+
+        let fileContent = fs.readFileSync(fullFilePath, { encoding: "utf-8" });
+        let itemImported = `import ${capitalizeFirstLetter(
+          fileNamePortion.replace(/\.(jsx|js|tsx|ts)$/, "")
+        )} from "${fullFilePath}"`;
+        // console.log("ITEM IMPORTED;;;", itemImported);
+        markdown?.addDependency ? markdown.addDependency(fullFilePath) : null;
+        // console.log("THE FILE CONTENTS;;;", fileContent);
+        sp.file = {
+          name: fileNamePortion,
+          contents: fileContent,
+          imports: itemImported,
+          specialPath,
+          specialFullPath: fullFilePath,
+          componentType: specialComponentType,
+          componentName: capitalizeFirstLetter(
+            fileNamePortion.replace(/\.(jsx|js|tsx|ts)$/, "")
+          ),
+        };
+
+        console.log("SPECIALSPLIT;;;", specialSplit);
+        return sp;
+      });
+    }
+  });
+};
+
+const getImportIDs = function (languages) {
+  let importsArray = [];
+  let importsIDs = [];
+
+  languages.map((ln) => {
+    if (ln.parsedMarkdown?.specialContent) {
+      let specialCont = ln.parsedMarkdown.specialContent;
+      specialCont.map((sp) => {
+        !importsIDs.includes(sp.file.componentName)
+          ? importsIDs.push({
+              componentName: sp.file.componentName,
+              specialPath: sp.file.specialPath,
+              specialFullPath: sp.file.specialFullPath,
+              componentType: sp.file.componentType,
+            })
+          : "";
+        !importsArray.includes(sp.file.imports)
+          ? importsArray.push(sp.file.imports)
+          : "";
+      });
+    }
+  });
+  return { importsArray, importsIDs };
+};
+
+const doCommons = function (markdown) {
+  const fileInfo = getFileInContextFileInfo(markdown);
+
+  const { fileNamePlain, filePath } = fileInfo;
+
+  const validFolderFiles = getValidFolderFiles(fileInfo);
+  const supportedLanguages = getSupportedLanguageFilesInFolder(
+    fileInfo,
+    markdown,
+    validFolderFiles
+  );
+  createSpecialMetaData(fileInfo, supportedLanguages, markdown);
+  const importsDictionary = getImportIDs(supportedLanguages);
+  return {
+    validFolderFiles,
+    supportedLanguages,
+    fileNamePlain,
+    filePath,
+    importsDictionary,
+  };
 };
