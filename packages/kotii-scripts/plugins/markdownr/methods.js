@@ -12,31 +12,30 @@ methods.handleMarkdown = function (data) {
   const { markdownPages } = payload;
   console.log("THE DATA OBJECT", data);
 
-  let createdPages = self.getPagesMarkdownContent(markdownPages, doDuring);
-
-  callback(createdPages);
+  self.getPagesMarkdownContent(markdownPages, doDuring).then((createdPages) => {
+    callback(createdPages);
+  });
 };
 
-methods.getPagesMarkdownContent = function (pages, doDuring) {
+methods.getPagesMarkdownContent = async function (pages, doDuring) {
   const self = this;
 
-  const { MarkdownLoader } = self;
+  const { markdownLoader } = self;
 
-  const filteredPages = pages.map((pagePath) => {
-    let markResults = MarkdownLoader({
+  const filteredPages = pages.map(async (pagePath) => {
+    let markResults = await markdownLoader({
       resource: pagePath,
-      customComponentLoader: self.customComponentLoader.bind(self),
-      isServerMode: true,
+      // customComponentLoader: self.customComponentLoader.bind(self),
     });
     let route = doDuring(pagePath);
 
-    console.log("THE MARKDOWN RETURN", route);
+    console.log("THE MARKDOWN RETURN", markResults);
 
     return { ...markResults, ...route, path: route.patternMatch };
   });
 
   self.debug("THE FILTERED PAGES", filteredPages);
-  return filteredPages;
+  return await Promise.all(filteredPages);
 };
 
 methods.customComponentLoader = async function (filePath) {
