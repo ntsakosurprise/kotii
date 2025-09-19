@@ -3,7 +3,8 @@
 import { marked } from "marked";
 
 const extractMetadataPattern = /---[\r\n]([\s\S]*)[\r\n]---/;
-const metaKeyPairsPattern = /(.*):(.*)?/g;
+// const metaKeyPairsPattern = /(.*):(.*)?/g;
+const metaKeyPairsPattern = /^(?!https?:\/\/)([^:]+):\s*(.+)$/gm;
 const extractDescriptionPattern = /<p className="description">(.+)?<\/p>/;
 const extractSpecialContentPattern = /{{("component"|"demo"|"video"):(.*)}}/g;
 const specialToJsonPattern = /("component"|"demo"|"video"):(.*)/;
