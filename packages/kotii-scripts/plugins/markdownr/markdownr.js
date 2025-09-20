@@ -1,4 +1,4 @@
-import { MarkdownLoader, serverLoader } from "kotii-markdown";
+import { serverLoader } from "kotii-markdown";
 import methods from "./methods.js";
 
 class Markdownr {
