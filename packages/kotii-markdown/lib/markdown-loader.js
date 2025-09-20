@@ -5,13 +5,15 @@ import path from "path";
 import { capitalizeFirstLetter, getLanguageLocal } from "./utils";
 // const { parseMarkdown } = require("./markdownParser");
 import { parseMarkdown } from "./markdownParser";
-const supportedLanguages = ["ts", "ve", "en"];
+// const supportedLanguages = ["ts", "ve", "en"];
 
 // const languagesFullNames = [
 //   { name: "Xitsonga", locale: "ts" },
 //   { name: "Tshivenda", locale: "ve" },
 // ];
-const validLanguagePattern = /_(?<locale>.*?)\.md/;
+// const validLanguagePattern = /_(?<locale>.*?)\.md/;
+const validLanguagePattern =
+  /(?<locale>[._-](?<lang>[a-z]{2})(?:[-_](?<region>[A-Z]{2}))?)\.mdx?$/i;
 
 // eslint-disable-next-line no-unused-vars
 export default function (markdown) {
@@ -102,10 +104,12 @@ const getValidFolderFiles = function (options) {
       let locale = getLanguageLocal(validLanguagePattern, f);
       // let locale = validLanguagePattern.exec(f)?.groups?.locale;
       console.log("THE LOCAL;;", locale);
-      if (supportedLanguages.includes(locale) || isDefaultFileName) return true;
+      // if (supportedLanguages.includes(locale) || isDefaultFileName)
+      return true;
     }
   });
 
+  console.log("THE VALID FILES", validFiles);
   return validFiles;
 };
 
@@ -192,7 +196,7 @@ const createSpecialMetaData = function (options, supportedLanguages, markdown) {
   });
 };
 
-const createPosts = function (supportedLanguages) {
+const createPost = function (supportedLanguages) {
   const posts = [];
 
   supportedLanguages.map((ln) => {
@@ -243,7 +247,7 @@ const doCommons = function (markdown) {
   );
 
   createSpecialMetaData(fileInfo, supportedLanguages, markdown);
-  const posts = createPosts(supportedLanguages);
+  const posts = createPost(supportedLanguages);
 
   const importsDictionary = getImportIDs(supportedLanguages);
   return {
