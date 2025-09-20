@@ -55,30 +55,43 @@ const isHtmlString = (itemChecked) => {
   return false;
 };
 
-const markdownComponentType = (mkComponent, markdownComponents) => {
-  const mkObjectKey = Object.keys(mkComponent)[0];
-  const ComponentInContext =
-    markdownComponents[capitalizeFirstLetter(mkObjectKey)];
+const markdownComponentType = (
+  mkComponent,
+  markdownComponents,
+  index,
+  parsedMarkdown,
+  posts
+) => {
+  console.log("THE MARKDOWN COMPONENT", mkComponent, markdownComponents, posts);
+  const componentType = Object.keys(mkComponent)[0];
+  const currentComponent = Object.entries(markdownComponents).find(
+    ([key, value]) => {
+      if (value.pathID === mkComponent[componentType]) return value;
+    }
+  )[1];
+  console.log("THE CURRENT COMPONENT", currentComponent);
+  const ComponentInContext = currentComponent.component;
+  console.log("THE COMPONENT IN CONTEXT", ComponentInContext);
 
-  switch (mkObjectKey.toLowerCase()) {
+  switch (componentType) {
     case "demo":
-      return <TestDemo />;
+      return <TestDemo key={index} parsedMarkdown={parsedMarkdown} />;
     case "component":
       return (
-        <StandardComponent>
-          <ComponentInContext />
+        <StandardComponent key={index}>
+          <ComponentInContext parsedMarkdown={parsedMarkdown} posts={posts} />
         </StandardComponent>
       );
     case "video":
       return (
-        <MarkdownVideo>
-          <ComponentInContext />
+        <MarkdownVideo key={index}>
+          <ComponentInContext parsedMarkdown={parsedMarkdown} posts={posts} />
         </MarkdownVideo>
       );
     case "ad":
       return (
-        <MarkdownAd>
-          <ComponentInContext />
+        <MarkdownAd key={index}>
+          <ComponentInContext parsedMarkdown={parsedMarkdown} posts={posts} />
         </MarkdownAd>
       );
     default:
@@ -93,7 +106,7 @@ const MarkdownRender = ({ markdownData, markdownComponents }) => {
   const englishContent = getSetLanguageContent(markdownData, language);
   console.log("THE ENGLISH CONTENT", englishContent);
   const { fileName, parsedMarkdown } = englishContent;
-  const { html, toc } = parsedMarkdown;
+  const { html, toc, metaDataKeys } = parsedMarkdown;
   console.log("THE PARSED MARKDOWN", parsedMarkdown);
   console.log("Kotii-markdown set Language:::", language, React.lazy, toc);
 
@@ -110,7 +123,12 @@ const MarkdownRender = ({ markdownData, markdownComponents }) => {
           {html.map((markdownHtmlItem, i) => {
             if (isHtmlString(markdownHtmlItem))
               return <MarkdownElement htmlString={markdownHtmlItem} key={i} />;
-            return markdownComponentType(markdownHtmlItem, markdownComponents);
+            return markdownComponentType(
+              markdownHtmlItem,
+              markdownComponents,
+              i,
+              parsedMarkdown
+            );
           })}
         </MainArea>
         {/* <MarkdownTOC toc={toc} /> */}
