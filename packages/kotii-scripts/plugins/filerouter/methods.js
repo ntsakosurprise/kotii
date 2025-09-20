@@ -1532,6 +1532,7 @@ methods.startAstFlow = function (options) {
 
 methods.processMarkdown = function (markdownPages, options, doAfter, doDuring) {
   const self = this;
+
   self.emit({
     type: "process-markdown",
     data: {
@@ -1590,7 +1591,11 @@ methods.createMarkdownRoutesAst = function (options) {
         [
           ...astUtils.parseForRoutes(t, route),
           ...astUtils.parseMarkdownData(t, route.markdownData, astUtils),
-          astUtils.parseMarkdownComponents(t, route?.markdownComponents),
+          astUtils.parseMarkdownComponents(
+            t,
+            route?.markdownComponents,
+            astUtils
+          ),
           // Create for mardown data
         ].filter((n) => n !== undefined && n !== null)
       );
@@ -1677,13 +1682,16 @@ methods.astMarkdownUtils = function () {
         ),
       ];
     },
-    parseMarkdownComponents: (t, markdownComponents) => {
+    parseMarkdownComponents: (t, markdownComponents, utils) => {
       return markdownComponents && Object.keys(markdownComponents).length > 0
         ? t.objectProperty(
             t.identifier("markdownComponents"),
             t.objectExpression(
               Object.entries(markdownComponents).map(([key, value]) =>
-                t.objectProperty(t.identifier(key), t.stringLiteral(value))
+                t.objectProperty(
+                  t.identifier(key),
+                  utils.parseComponentLazyLoad(t, value)
+                )
               )
             )
           )
@@ -1844,6 +1852,28 @@ methods.astMarkdownUtils = function () {
           })
         )
       );
+    },
+    parseComponentLazyLoad: (t, componentFilePath) => {
+      let arrowFunk = t.arrowFunctionExpression(
+        [],
+        t.blockStatement([
+          t.expressionStatement(
+            t.callExpression(
+              t.memberExpression(t.identifier("React"), t.identifier("lazy")),
+              [
+                t.arrowFunctionExpression(
+                  [],
+                  t.callExpression(t.import(), [
+                    t.stringLiteral(componentFilePath),
+                  ])
+                ),
+              ]
+            )
+          ),
+        ])
+      );
+      console.log("THE ARROW FUNK", arrowFunk);
+      return arrowFunk;
     },
   };
 };
