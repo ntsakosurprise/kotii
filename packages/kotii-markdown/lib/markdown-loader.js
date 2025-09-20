@@ -14,6 +14,7 @@ import { parseMarkdown } from "./markdownParser";
 // const validLanguagePattern = /_(?<locale>.*?)\.md/;
 const validLanguagePattern =
   /(?<locale>[._-](?<lang>[a-z]{2})(?:[-_](?<region>[A-Z]{2}))?)\.mdx?$/i;
+const removeLocalTrailingCharactersPattern = /^[._]/g;
 
 // eslint-disable-next-line no-unused-vars
 export default function (markdown) {
@@ -102,6 +103,7 @@ const getValidFolderFiles = function (options) {
     let isDefaultFileName = fileName === f;
     if (validLanguagePattern.test(f) || isDefaultFileName) {
       let locale = getLanguageLocal(validLanguagePattern, f);
+      // locale.replace(removeLocalTrailingCharactersPattern, "");
       // let locale = validLanguagePattern.exec(f)?.groups?.locale;
       console.log("THE LOCAL;;", locale);
       // if (supportedLanguages.includes(locale) || isDefaultFileName)
@@ -129,13 +131,15 @@ const getSupportedLanguageFilesInFolder = function (
     });
     markdown?.addDependency ? markdown.addDependency(languageFilePath) : null;
     let isDefaultFileName = fileName === validLanguage;
+    let languageLocale = isDefaultFileName
+      ? "en"
+      : getLanguageLocal(validLanguagePattern, validLanguage);
+    console.log("THE LANGUAGE LOCAL", languageLocale);
 
     return {
       rawMdText: rawMarkdown,
       fileName: validLanguage,
-      locale: isDefaultFileName
-        ? "en"
-        : getLanguageLocal(validLanguagePattern, validLanguage),
+      locale: languageLocale.replace(removeLocalTrailingCharactersPattern, ""),
       parsedMarkdown: parseMarkdown(rawMarkdown),
     };
   });
