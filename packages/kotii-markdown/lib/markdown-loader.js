@@ -192,6 +192,19 @@ const createSpecialMetaData = function (options, supportedLanguages, markdown) {
   });
 };
 
+const createPosts = function (supportedLanguages) {
+  const posts = [];
+
+  supportedLanguages.map((ln) => {
+    // console.log("Language item;;;", ln);
+    console.log("THE SUPPORTED LN", ln);
+
+    posts.push({ ...ln.parsedMarkdown.metaDataKeys });
+  });
+  console.log("THE MADE FOR POSTS", posts);
+  return posts;
+};
+
 const getImportIDs = function (languages) {
   let importsArray = [];
   let importsIDs = [];
@@ -228,7 +241,10 @@ const doCommons = function (markdown) {
     markdown,
     validFolderFiles
   );
+
   createSpecialMetaData(fileInfo, supportedLanguages, markdown);
+  const posts = createPosts(supportedLanguages);
+
   const importsDictionary = getImportIDs(supportedLanguages);
   return {
     validFolderFiles,
@@ -236,5 +252,6 @@ const doCommons = function (markdown) {
     fileNamePlain,
     filePath,
     importsDictionary,
+    posts,
   };
 };
