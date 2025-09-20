@@ -1687,12 +1687,26 @@ methods.astMarkdownUtils = function () {
         ? t.objectProperty(
             t.identifier("markdownComponents"),
             t.objectExpression(
-              Object.entries(markdownComponents).map(([key, value]) =>
-                t.objectProperty(
+              Object.entries(markdownComponents).map(([key, value]) => {
+                console.log("THE KEY VALUE", key, value);
+                return t.objectProperty(
                   t.identifier(key),
-                  utils.parseComponentLazyLoad(t, value)
-                )
-              )
+                  t.objectExpression([
+                    t.objectProperty(
+                      t.identifier("type"),
+                      t.stringLiteral(value.type)
+                    ),
+                    t.objectProperty(
+                      t.identifier("pathID"),
+                      t.stringLiteral(value.pathID)
+                    ),
+                    t.objectProperty(
+                      t.identifier("component"),
+                      utils.parseComponentLazyLoad(t, value.value)
+                    ),
+                  ])
+                );
+              })
             )
           )
         : null;
@@ -1724,20 +1738,17 @@ methods.astMarkdownUtils = function () {
       //metaDataKeys
       let metaKey = t.objectProperty(
         t.identifier("metaDataKeys"),
-        t.objectExpression([
-          t.objectProperty(
-            t.identifier("title"),
-            t.stringLiteral(metaDataKeys?.title || "")
-          ),
-          t.objectProperty(
-            t.identifier("header"),
-            t.stringLiteral(metaDataKeys.header || "")
-          ),
-          // t.objectProperty(
-          //   t.stringLiteral("---,title"),
-          //   t.stringLiteral("A Markdown test for Kotii-markdown")
-          // ),
-        ])
+        t.objectExpression(
+          Object.entries(metaDataKeys).map(([key, value]) =>
+            t.objectProperty(
+              // Use identifier if it's a valid JS identifier, otherwise use stringLiteral
+              /^[a-zA-Z_$][\w$]*$/.test(key)
+                ? t.identifier(key)
+                : t.stringLiteral(key),
+              t.stringLiteral(value || "")
+            )
+          )
+        )
       );
       console.log("THE META KEY", metaKey);
       return metaKey;
@@ -1854,24 +1865,16 @@ methods.astMarkdownUtils = function () {
       );
     },
     parseComponentLazyLoad: (t, componentFilePath) => {
-      let arrowFunk = t.arrowFunctionExpression(
-        [],
-        t.blockStatement([
-          t.expressionStatement(
-            t.callExpression(
-              t.memberExpression(t.identifier("React"), t.identifier("lazy")),
-              [
-                t.arrowFunctionExpression(
-                  [],
-                  t.callExpression(t.import(), [
-                    t.stringLiteral(componentFilePath),
-                  ])
-                ),
-              ]
-            )
-          ),
-        ])
-      );
+      console.log("THE COMPONENT FILE", componentFilePath);
+      let arrowFunk = t.callExpression(t.identifier("lazyLoad"), [
+        t.arrowFunctionExpression(
+          [],
+          t.callExpression(
+            t.import(), // dynamic import()
+            [t.stringLiteral(componentFilePath)]
+          )
+        ),
+      ]);
       console.log("THE ARROW FUNK", arrowFunk);
       return arrowFunk;
     },
