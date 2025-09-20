@@ -11,6 +11,7 @@ methods.handleFileRoutes = async function (data) {
   const self = this;
   const pao = self.pao;
   const getWorkingFolder = pao.pa_getWorkingFolder;
+  const markdownLocalizedRegex = /[_\.]([a-z]{2}|[a-z]{2}-[A-Z]{2})\.mdx?$/;
   const isExistingDir = pao.pa_isExistingDir;
   const saveToFile = pao.pa_saveToFile;
   const loadFileSync = pao.pa_loadFileSync;
@@ -34,16 +35,21 @@ methods.handleFileRoutes = async function (data) {
     { ignore: `${filePaths.appSrc}/pages/**/_*/**` }
   );
 
-  const markdownPages = self.getPages(
+  const allMarkdownFiles = self.getPages(
     `${filePaths.appSrc}/pages/**/*.{md,mdx}`
   );
+  self.debug("ALL MARKDOWN FILES", allMarkdownFiles);
+  const markdownPages =
+    allMarkdownFiles?.length && allMarkdownFiles.length > 0
+      ? allMarkdownFiles.filter((file) => !markdownLocalizedRegex.test(file))
+      : [];
   let astFlowOptions = {
     isProductionRequest,
     pagesPaths,
     pagesSource,
     payload,
   };
-  console.log("THE MARKDOWN THINGS", markdownPages, astFlowOptions);
+  self.debug("THE MARKDOWN THINGS", markdownPages, astFlowOptions);
 
   if (markdownPages?.length && markdownPages.length > 0) {
     self.processMarkdown(
