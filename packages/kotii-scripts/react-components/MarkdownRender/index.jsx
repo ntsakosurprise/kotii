@@ -11,20 +11,21 @@ import MarkdownAd from "../MarkdownAd/index.jsx";
 // import MarkdownHeader from "../MarkdownHeader/index.js";
 import MarkdownVideo from "../MarkdownVideo/index.jsx";
 import StandardComponent from "../StandardComponent/index.jsx";
+import MarkdownElement from "../MarkdownElement/index.jsx";
 
 const MarkdownRenderCanvas = styled("div")(() => ({
   width: "100%",
   display: "flex",
   flexDirection: "column",
-  overflow: "hidden",
+  // overflow: "hidden",
 }));
 
 const MarkdownContentArea = styled("div")(() => ({
   width: "100%",
   display: "flex",
   flexDirection: "row",
-  top: "100px",
-  position: "relative",
+  // top: "100px",
+  // position: "relative",
 }));
 const MainArea = styled("div")(() => ({
   width: "60%",
@@ -45,6 +46,23 @@ const getSetLanguageContent = (contents, setLanguage) => {
   return content;
 };
 
+const getLanguagePosts = (routes, setLanguage) => {
+  let posts = [];
+
+  routes.forEach((element) => {
+    element.markdownData.forEach((languageItem) => {
+      if (languageItem.locale.toLowerCase() === setLanguage.toLowerCase()) {
+        posts.push({
+          ...languageItem.parsedMarkdown.metaDataKeys,
+          path: element.path,
+        });
+      }
+    });
+  });
+
+  return posts;
+};
+
 // const capitalizeFirstLetter = (text) => {
 //   console.log("The text Uppercasing;;;", text);
 //   return `${text.slice(0, 1).toUpperCase()}${text.slice(1)}`;
@@ -54,14 +72,18 @@ const isHtmlString = (itemChecked) => {
   if (typeof itemChecked === "string" && itemChecked.length) return true;
   return false;
 };
+const getHtmlBody = (itemChecked) => {
+  if (typeof itemChecked === "string" && itemChecked.length) return itemChecked;
+  return null;
+};
 
-const markdownComponentType = (
-  mkComponent,
-  markdownComponents,
-  index,
-  parsedMarkdown,
-  posts
-) => {
+const markdownComponentType = (mkComponent, index, options) => {
+  const {
+    languagePosts: posts,
+    markdownComponents,
+    markdownHtmlBody: body,
+    post: currentPost,
+  } = options;
   console.log("THE MARKDOWN COMPONENT", mkComponent, markdownComponents, posts);
   const componentType = Object.keys(mkComponent)[0];
   const currentComponent = Object.entries(markdownComponents).find(
@@ -69,29 +91,26 @@ const markdownComponentType = (
       if (value.pathID === mkComponent[componentType]) return value;
     }
   )[1];
+  const isServer = typeof window != "undefined" ? false : true;
   console.log("THE CURRENT COMPONENT", currentComponent);
   const ComponentInContext = currentComponent.component;
   console.log("THE COMPONENT IN CONTEXT", ComponentInContext);
 
   switch (componentType) {
     case "demo":
-      return <TestDemo key={index} parsedMarkdown={parsedMarkdown} />;
+      return <TestDemo key={index} posts={posts} post={currentPost} />;
     case "component":
-      return (
-        <StandardComponent key={index}>
-          <ComponentInContext parsedMarkdown={parsedMarkdown} posts={posts} />
-        </StandardComponent>
-      );
+      return <ComponentInContext posts={posts} post={currentPost} />;
     case "video":
       return (
         <MarkdownVideo key={index}>
-          <ComponentInContext parsedMarkdown={parsedMarkdown} posts={posts} />
+          <ComponentInContext posts={posts} post={currentPost} />
         </MarkdownVideo>
       );
     case "ad":
       return (
         <MarkdownAd key={index}>
-          <ComponentInContext parsedMarkdown={parsedMarkdown} posts={posts} />
+          <ComponentInContext posts={posts} post={currentPost} />
         </MarkdownAd>
       );
     default:
@@ -99,19 +118,42 @@ const markdownComponentType = (
   }
 };
 
-const MarkdownRender = ({ markdownData, markdownComponents }) => {
+const MarkdownRender = ({
+  markdownData,
+  markdownComponents,
+  routes = null,
+}) => {
   console.log("MARKDOWN RENDER PROPS: docs", markdownData);
   console.log("MARKDODWN RENDER PROPS: modules", markdownComponents);
   const { language } = useLanguage();
   const englishContent = getSetLanguageContent(markdownData, language);
+  const languagePosts = getLanguagePosts(routes, language);
   console.log("THE ENGLISH CONTENT", englishContent);
   const { fileName, parsedMarkdown } = englishContent;
   const { html, toc, metaDataKeys } = parsedMarkdown;
+  const { useCustomRender = false } = metaDataKeys;
+  const markdownHtmlBody = getHtmlBody(html);
+  const componentsOptions = {
+    languagePosts,
+    markdownComponents,
+    markdownHtmlBody,
+    useCustomRender,
+    post: metaDataKeys,
+  };
   console.log("THE PARSED MARKDOWN", parsedMarkdown);
   console.log("Kotii-markdown set Language:::", language, React.lazy, toc);
 
   // console.log("Filename;;;", fileName);
   // console.log("html", html);
+  if (useCustomRender) {
+    return html.map((markdownHtmlItem, i) => {
+      if (!isHtmlString(markdownHtmlItem)) {
+        return markdownComponentType(markdownHtmlItem, i, componentsOptions);
+      }
+
+      return null;
+    });
+  }
 
   return (
     <MarkdownRenderCanvas>
@@ -127,7 +169,7 @@ const MarkdownRender = ({ markdownData, markdownComponents }) => {
               markdownHtmlItem,
               markdownComponents,
               i,
-              parsedMarkdown
+              languagePosts
             );
           })}
         </MainArea>
