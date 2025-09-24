@@ -151,6 +151,7 @@ methods.runReactView = function (data) {
     self.debug("THE LAYOUT ROOT", layoutRoot.Layout);
     self.debug("GOT STATE DATA", stateData);
     self.debug("THE SELF COMPS", self.comps);
+    self.debug("VIEW", process.env?.useLazyLoad, view);
     //   appWrapper = null,
     // layout = null,
     // goodies=null,
@@ -497,11 +498,12 @@ methods.doPageSettings = function () {
 
 methods.preloadLazyComponents = async function (view) {
   const self = this;
+  self.debug("THE PRELOAD VIEW", view);
   let loadComponent = "";
   let compsList = Object.keys(self.comps.comps);
   for (let i = 0; i < self.comps.routes.length; i++) {
     if (self.comps.routes[i].path === view.match) {
-      console.log("LOAD LAZY COMPONENT", self.comps.routes[i], view.match);
+      self.debug("LOAD LAZY COMPONENT", self.comps.routes[i], view.match);
       loadComponent = self.comps.routes[i];
       break;
     }
@@ -511,7 +513,43 @@ methods.preloadLazyComponents = async function (view) {
     // console.log("THE COMPONENT EXISTS",await self.comps.comps[loadComponent.component])
     if (self.comps.comps[loadComponent.component]?.preload) {
       await self.comps.comps[loadComponent.component].preload();
+      return;
     }
+  }
+  let markdownCompsRouteIndex = -1;
+
+  if (self?.comps?.markdownRoutes) {
+    for (let i = 0; i < self.comps.markdownRoutes.length; i++) {
+      if (self.comps.markdownRoutes[i].path === view.match) {
+        self.debug(
+          "LOAD LAZY MARKDOWN",
+          self.comps.markdownRoutes[i],
+          view.match
+        );
+        markdownCompsRouteIndex = i;
+        loadComponent = self.comps.markdownRoutes[i];
+        break;
+      }
+    }
+  }
+
+  if (loadComponent?.markdownComponents) {
+    let componentsKeys = Object.keys(loadComponent.markdownComponents);
+    let preloads = componentsKeys.map(async (component) => {
+      self.debug("THE COMPONENT PRE-LOAD", component);
+      let currentComponent = loadComponent.markdownComponents[component];
+      self.debug("THE CURRENT COMPONENT", currentComponent);
+
+      if (currentComponent?.component?.preload) {
+        self.debug("THE COMPONENT PRE-LOAD-ING", component);
+
+        self.comps.markdownRoutes[markdownCompsRouteIndex].markdownComponents[
+          component
+        ].component = await currentComponent.component?.preload();
+      }
+    });
+
+    await Promise.all(preloads);
   }
 };
 

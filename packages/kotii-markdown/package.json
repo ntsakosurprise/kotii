@@ -3,15 +3,33 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.cjs"
+    }
+  },
+  "directories": {
+    "lib": "dist",
+    "test": "__tests__"
+  },
+  "files": [
+    "dist/",
+    "index.js",
+    "lib/"
+  ],
   "scripts": {
     "test": "jest",
     "coverage": "jest --coverage",
     "start": "webpack-dev-server --watch",
     "build": "webpack --mode production",
-    "buildDev": "webpack --mode development"
+    "compile:esm": "cross-env NODE_ENV=development NODE_MODE=esm webpack",
+    "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
   },
   "dependencies": {
     "@node-loader/babel": "^2.0.1",
+    "cross-env": "^10.0.0",
     "marked": "^4.0.18",
     "prism": "^4.1.2",
     "styled-components": "^6.0.5"

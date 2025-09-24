@@ -17,6 +17,7 @@ import Init from "./init/index.js";
 import Interpreter from "./interpreter/index.js";
 import JsxToReact from "./jsxtoreact/index.js";
 // import ReactVeiwPruned from "./react-pruned/index.js";
+import Markdownr from "./markdownr/index.js";
 import ReactView from "./react/reactview.js";
 import ReactToJsx from "./reacttojsx/index.js";
 import Scaffold from "./scaffold/index.js";
@@ -31,27 +32,30 @@ import WebpackConfig from "./wbpconfig/index.js";
 
 // const require = createRequire(import.meta.url);
 // const ReactView = require("./react/index.cjs");
-export { Interpreter };
-export { Scaffold };
-export { Gitauth };
-export { Github };
-export { Bitbucket };
-export { Configstorer };
-export { Start };
-export { Config };
-export { Build };
-export { Init };
-export { WebpackConfig };
-export { DevServer };
-export { ContextApp };
-export { FileRouter };
-export { ServerBuild };
-export { Static };
-export { Env };
-export { Dev };
-export { ScriptsUtils };
-export { ServerSentEvents };
-export { KotiiCatchAll };
+export {
+  Bitbucket,
+  Build,
+  Config,
+  Configstorer,
+  ContextApp,
+  Dev,
+  DevServer,
+  Env,
+  FileRouter,
+  Gitauth,
+  Github,
+  Init,
+  Interpreter,
+  KotiiCatchAll,
+  Markdownr,
+  Scaffold,
+  ScriptsUtils,
+  ServerBuild,
+  ServerSentEvents,
+  Start,
+  Static,
+  WebpackConfig,
+};
 export default {
   Interpreter,
   Scaffold,
@@ -81,4 +85,5 @@ export default {
   Dev,
   ServerSentEvents,
   KotiiCatchAll,
+  Markdownr,
 };

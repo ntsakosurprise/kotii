@@ -1,8 +1,8 @@
 const createTarballs = require("./createTarballs");
-const parseContextArguments = require("./parseContextArguments");
-const runNodeScript = require("./runNodeScript");
+// const parseContextArguments = require("./parseContextArguments");
+// const runNodeScript = require("./runNodeScript");
 const path = require("path");
-const parseScriptArguments = require("./parseScriptArguments");
+// const parseScriptArguments = require("./parseScriptArguments");
 
 const scriptPath = __dirname;
 const contextScriptRoot = path.join(scriptPath, "..");
@@ -23,6 +23,8 @@ const madeTarballs = createTarballs(packagesPath, [
   "kotii-utils",
   "kotii-router",
   "kotii-lazy",
+  "kotii-markdown-loader",
+  "kotii-react-modules",
 ]);
 console.log("MADE TARBALLS", madeTarballs);
 // const nodeScriptPath = path.join(packagesPath, "kotii-cli");

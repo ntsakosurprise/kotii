@@ -1507,6 +1507,7 @@ methods.recursivelyRemoveChildren = function (childrenParent, imports) {
  */
 methods.createCssStyles = async function (appStyles, appBuildFolder) {
   const self = this;
+  self.debug("App Styles", appStyles, appBuildFolder);
   let useTagKeys = ["style", "link"];
   if (!appStyles?.useTag)
     throw new Error("app.manifest.appStyles expects useTag key");
@@ -1534,13 +1535,15 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
     self.stylesObject = {};
     styleAst.nodes.forEach((rule) => {
       if (rule.type.toLowerCase() !== "comment") {
-        self.stylesObject[rule.selector] = {};
-        rule.nodes.forEach((ruleProps) => {
-          self.stylesObject[rule.selector][ruleProps.prop] =
-            ruleProps?.important
-              ? `${ruleProps.value} !important`
-              : ruleProps.value;
-        });
+        if (rule.nodes) {
+          self.stylesObject[rule.selector] = {};
+          rule.nodes.forEach((ruleProps) => {
+            self.stylesObject[rule.selector][ruleProps.prop] =
+              ruleProps?.important
+                ? `${ruleProps.value} !important`
+                : ruleProps.value;
+          });
+        }
       }
     });
 

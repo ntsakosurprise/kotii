@@ -3,5 +3,5 @@ import {
   initialize,
   removeDefaultLanguage,
   setLanguages,
-} from "./config";
+} from "./config.js";
 export { initialize, addLanguages, setLanguages, removeDefaultLanguage };

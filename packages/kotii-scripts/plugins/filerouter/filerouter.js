@@ -84,6 +84,15 @@ class FileRouter {
     this.createStaticComponentsImports = methods.createStaticComponentsImports;
     this.createDynamicLazyComponentsImports =
       methods.createDynamicLazyComponentsImports;
+
+    this.startAstFlow = methods.startAstFlow;
+    this.processMarkdown = methods.processMarkdown;
+    this.getItemPath = methods.getItemPath;
+    this.createMarkdownVariable = methods.createMarkdownVariable;
+    this.addItemsToExportList = methods.addItemsToExportList;
+    this.astAddNodeMarkdown = methods.astAddNodeMarkdown;
+    this.createMarkdownRoutesAst = methods.createMarkdownRoutesAst;
+    this.astMarkdownUtils = methods.astMarkdownUtils;
   }
 }
 export default FileRouter;

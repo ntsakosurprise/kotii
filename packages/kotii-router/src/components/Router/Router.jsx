@@ -7,6 +7,7 @@ import {
 
 export const KotiiRouterContenxt = createContext();
 
+// eslint-disable-next-line react/prop-types
 const Router = ({ children, ssrPath = "/" }) => {
   console.log("ROUTER RUNS");
 

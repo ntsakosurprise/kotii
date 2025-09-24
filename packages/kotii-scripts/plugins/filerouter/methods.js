@@ -11,6 +11,7 @@ methods.handleFileRoutes = async function (data) {
   const self = this;
   const pao = self.pao;
   const getWorkingFolder = pao.pa_getWorkingFolder;
+  const markdownLocalizedRegex = /[_\.]([a-z]{2}|[a-z]{2}-[A-Z]{2})\.mdx?$/;
   const isExistingDir = pao.pa_isExistingDir;
   const saveToFile = pao.pa_saveToFile;
   const loadFileSync = pao.pa_loadFileSync;
@@ -29,71 +30,39 @@ methods.handleFileRoutes = async function (data) {
   // !self.kotiiUtils ? await self.emit({ type: "get-kotii-utils" }) : "";
   //self.debug("EXECSYNC", execSync);
   //self.enableBabelRegister(cwd);
-
   const pagesPaths = self.getPages(
-    `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`
+    `${filePaths.appSrc}/pages/**/*.{js,jsx,ts,tsx}`,
+    { ignore: `${filePaths.appSrc}/pages/**/_*/**` }
   );
-  // appManifest ? manifestData = loadFileSync(appManifest)) : null;
-  if (isProductionRequest) {
-    return self
-      .getRoutesHelper(pagesPaths, pagesSource)
-      .then((routesObject) => {
-        let routes = self.buildServerRoutes(routesObject);
-        self.callback({ routes, message: "Routes configured" });
-      });
+
+  const allMarkdownFiles = self.getPages(
+    `${filePaths.appSrc}/pages/**/*.{md,mdx}`
+  );
+  self.debug("ALL MARKDOWN FILES", allMarkdownFiles);
+  const markdownPages =
+    allMarkdownFiles?.length && allMarkdownFiles.length > 0
+      ? allMarkdownFiles.filter((file) => !markdownLocalizedRegex.test(file))
+      : [];
+  let astFlowOptions = {
+    isProductionRequest,
+    pagesPaths,
+    pagesSource,
+    payload,
+  };
+  self.debug("THE MARKDOWN THINGS", markdownPages, astFlowOptions);
+
+  if (markdownPages?.length && markdownPages.length > 0) {
+    self.processMarkdown(
+      markdownPages,
+      astFlowOptions,
+      self.startAstFlow.bind(self),
+      self.getItemPath.bind(self)
+    );
   } else {
-    const filePath = `/kotii-land/dev/manifest.js`;
-    self
-      .doImport(filePath, false, false)
-      .then(async (imported) => {
-        // self.debug("Impored", imported.module);
-
-        let manifestJS = imported;
-        let meta = manifestJS.meta;
-        self.debug("META ", meta);
-
-        let routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
-
-        let sendToRequestor = {
-          message: "Routes Configured",
-          resources: payload.path,
-          routes: self.buildServerRoutes(routesObject),
-          isDomainCreated: meta?.isDomainCreated || false,
-        };
-
-        const { lastCompsCount = 0, compsSource, compsPaths } = meta;
-        const pagesPathsLen = pagesPaths.length;
-
-        self.debug("THE SEND TO:", sendToRequestor);
-
-        if (
-          lastCompsCount === 0 ||
-          !compsSource ||
-          compsPaths.length === 0 ||
-          compsSource !== pagesSource
-        ) {
-          self.addToAST({
-            objectToAdd: routesObject,
-            pagesPaths,
-            source: pagesSource,
-            isNewSource: compsSource !== pagesSource,
-          });
-          return self.callback(sendToRequestor);
-        } else {
-          self.addOrRemoveByAST({
-            pagesPaths,
-            compsPaths,
-            pagesSource,
-            routesObject,
-            compsPagesEqual: lastCompsCount === pagesPathsLen,
-          });
-          return self.callback(sendToRequestor);
-        }
-      })
-      .catch((err) => {
-        self.debug("MANIFEST.JS: ERROR IMPORTING MANIFEST-JS", err);
-      });
+    self.startAstFlow(astFlowOptions);
   }
+
+  // appManifest ? manifestData = loadFileSync(appManifest)) : null;
 };
 methods.handleRemovePagesImport = async function (data) {
   const self = this;
@@ -130,6 +99,7 @@ methods.addOrRemoveByAST = function ({
   compsPaths,
   pagesSource,
   compsPagesEqual = false,
+  isMarkdown,
 } = props) {
   const self = this;
 
@@ -144,7 +114,7 @@ methods.addOrRemoveByAST = function ({
   });
   self.debug("RENAMES: PAGES LESS.TO REMOVE", toRemove);
   if (compsPagesEqual && toRemove.length === 0 && toAdd.length === 0) {
-    self.addImportLineToBuildJs();
+    self.addImportLineToBuildJs(isMarkdown);
   } else if (toRemove.length > 0 && toAdd.length > 0) {
     self.addToAST({
       objectToAdd: self.getAstRoutes(routesObject, toAdd),
@@ -171,11 +141,13 @@ methods.addOrRemoveByAST = function ({
   }
 };
 
-methods.getPages = function (filesToGet) {
+methods.getPages = function (filesToGet, ignore = false) {
   const self = this;
   self.debug("FILETS TO GET", filesToGet);
   self.debug("GLOBSYNC", self.globSync);
-  const files = self.globSync(filesToGet);
+  const files = ignore
+    ? self.globSync(filesToGet, ignore)
+    : self.globSync(filesToGet);
   return files;
 };
 methods.getSourceCodes = function (codesSource) {
@@ -232,48 +204,16 @@ methods.createRouterComponents = function (maps, pathy) {
 methods.getItemPathAndFile = function (item) {
   const self = this;
   const pao = self.pao;
-  const loadFile = pao.pa_loadFile;
-  const loadFileSync = pao.pa_loadFileSync;
-  const readFileSync = pao.pa_readFileSync;
-  const capitalizeFirstLetter = pao.pa_capitalizeFirstLetter;
-  const camelCase = pao.pa_camelCase;
-  const extMatchPattern = /\.jsx|\.tsx|\.ts|\.js$/g;
-  const bracketedPattern = /\/\[\[?\.{0,3}[^\[\]\/]+\]?\](?=\/|$)/; // Check if path has bracket-ed folders
-  const replaceBracketed = /\[\[?\.{0,3}([^\[\]\/]+)\]?\]/g; // Replace brackets pattern
-  let fileAsComp = null;
-  let isBracketParams = false;
 
-  let gotEndpoint =
-    item.indexOf("pages") > 0
-      ? item.slice(item.indexOf("pages"), item.length)
-      : ""; // remove pages from path
-  self.debug("Got endpoint", gotEndpoint);
-  self.debug("GOT ENDPOINT PAGES REMOVED", gotEndpoint.replace("pages", ""));
-  let patternMatch = gotEndpoint
-    .replace("pages", "") // Replace pages with empty string
-    .replace(extMatchPattern, "") // Replace extensions from path file name
-    .replace(/index/g, ""); // Replace index file name with empty string
-
-  if (bracketedPattern.test(patternMatch)) {
-    console.log("THE BRACKETED PATH", patternMatch);
-    patternMatch = patternMatch.replace(replaceBracketed, ":$1");
-    isBracketParams = true;
-    console.log("THE REPLACED", patternMatch);
-  } else {
-    patternMatch = patternMatch
-      .replace(/\[(.*?)\]/g, ":$1") // Extract dynamic params and replace with colon and param name
-      .replace(/\[\.{3}.+\]/, "*");
-  }
-
-  // .replace(/\/$/, "");
-  if (!/^\/$/.test(patternMatch)) {
-    self.debug("Removes leading forwarslash");
-    patternMatch = patternMatch.replace(/\/$/, "");
-  }
+  const {
+    patternMatch,
+    isBracketParams,
+    componentName,
+    componentPath,
+    component,
+  } = self.getItemPath(item);
 
   return new Promise((res, rej) => {
-    let splitPatternMatch = patternMatch.split("/");
-    let splitLen = splitPatternMatch.length;
     let workDir = process.cwd();
     let pathSplit = workDir.split(path.sep);
     let userFolder = pathSplit[pathSplit.length - 1];
@@ -308,15 +248,17 @@ methods.getItemPathAndFile = function (item) {
       res({
         path: patternMatch,
         //component: fileAsComp?.default ? fileAsComp.default : fileAsComp,
-        componentName:
-          patternMatch === "/"
-            ? "Home"
-            : capitalizeFirstLetter(
-                camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
-              ),
-        component: item,
+        // componentName:
+        //   patternMatch === "/"
+        //     ? "Home"
+        //     : capitalizeFirstLetter(
+        //         camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
+        //       ),
+        // component: item,
+        componentName,
+        component,
         componentAbsolutePath: absSrc,
-        componentPath: item,
+        componentPath,
         componentRaw: imported.default,
         getServerState,
         universalEffects,
@@ -324,6 +266,63 @@ methods.getItemPathAndFile = function (item) {
       });
     });
   });
+
+  // fileAsComp = loadFileSync(item);
+  // self.debug("THE FILE CODE", fileAsComp.default.toString());
+  // await loadFile(item);
+};
+methods.getItemPath = function (item) {
+  const self = this;
+  const pao = self.pao;
+  const capitalizeFirstLetter = pao.pa_capitalizeFirstLetter;
+  const camelCase = pao.pa_camelCase;
+  const extMatchPattern = /\.jsx|\.tsx|\.ts|\.js|\.md|\.mdx$/g;
+  const bracketedPattern = /\/\[\[?\.{0,3}[^\[\]\/]+\]?\](?=\/|$)/; // Check if path has bracket-ed folders
+  const replaceBracketed = /\[\[?\.{0,3}([^\[\]\/]+)\]?\]/g; // Replace brackets pattern
+  let isBracketParams = false;
+
+  let gotEndpoint =
+    item.indexOf("pages") > 0
+      ? item.slice(item.indexOf("pages"), item.length)
+      : ""; // remove pages from path
+  self.debug("Got endpoint", gotEndpoint);
+  self.debug("GOT ENDPOINT PAGES REMOVED", gotEndpoint.replace("pages", ""));
+  let patternMatch = gotEndpoint
+    .replace("pages", "") // Replace pages with empty string
+    .replace(extMatchPattern, "") // Replace extensions from path file name
+    .replace(/index/g, ""); // Replace index file name with empty string
+
+  if (bracketedPattern.test(patternMatch)) {
+    console.log("THE BRACKETED PATH", patternMatch);
+    patternMatch = patternMatch.replace(replaceBracketed, ":$1");
+    isBracketParams = true;
+    console.log("THE REPLACED", patternMatch);
+  } else {
+    patternMatch = patternMatch
+      .replace(/\[(.*?)\]/g, ":$1") // Extract dynamic params and replace with colon and param name
+      .replace(/\[\.{3}.+\]/, "*");
+  }
+
+  // .replace(/\/$/, "");
+  if (!/^\/$/.test(patternMatch)) {
+    self.debug("Removes leading forwarslash");
+    patternMatch = patternMatch.replace(/\/$/, "");
+  }
+  let splitPatternMatch = patternMatch.split("/");
+  let splitLen = splitPatternMatch.length;
+
+  return {
+    patternMatch,
+    isBracketParams,
+    componentName:
+      patternMatch === "/"
+        ? "Home"
+        : capitalizeFirstLetter(
+            camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
+          ),
+    component: item,
+    componentPath: item,
+  };
 
   // fileAsComp = loadFileSync(item);
   // self.debug("THE FILE CODE", fileAsComp.default.toString());
@@ -486,6 +485,7 @@ methods.addToAST = function ({
   toRemove = null,
   source,
   isNewSource = false,
+  markdownRoutes,
 } = args) {
   const self = this;
   const pao = self.pao;
@@ -500,6 +500,8 @@ methods.addToAST = function ({
   const saveToFile = pao.pa_saveToFile;
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const cwd = getWorkingFolder();
+  const isMarkdown = markdownRoutes ? true : false;
+  self.debug("THE MARKDOWN ROUTES", markdownRoutes, isMarkdown);
 
   const filePath = `${kotiiKotiiLandPath}/dev/pages.js`;
 
@@ -521,22 +523,15 @@ methods.addToAST = function ({
   let ast = parser.parse(jsFile, { sourceType: "module", plugins: ["jsx"] });
   let isCompsDefined = false;
   let importStrings = "";
+  let isMarkdownDefined = false;
 
   traverse(ast, {
     VariableDeclaration(path) {
-      // self.debug("TRAVERSE ENTERS", path.container);
-      // if (!t.isIdentifier(path.node)) return;
-      //self.debug("PATH AFTER CHECK", path.node.type);
-      // if (t.isIdentifier(path.node, { name: "surname" })) {
-      // self.debug("THE NODE TYPE", path.node.type);
-      // self.debug(
-      //   "THE NODE TYPE IS IMPORT",
-      //   path.node.type === "ImportDeclaration"
-      // );
       if (path.node.type === "ImportDeclaration") return;
       let isRoutesDefined = false;
       let routesNode = null;
       let compsNode = null;
+      let markdownNode = null;
       path.container.forEach((nd, i) => {
         if (nd.type !== "VariableDeclaration") return false;
         let declarations = nd.declarations;
@@ -549,50 +544,63 @@ methods.addToAST = function ({
             isCompsDefined = true;
             compsNode = dec;
           }
+          if (markdownRoutes) {
+            if (dec.id.name === "markdownRoutes") {
+              isMarkdownDefined = true;
+              markdownNode = dec;
+            }
+          }
         });
         // let nodeIDName = nd.declarations[0].id.name;
         // if (nodeIDName === "mapsOfFiles" || nodeIDName === "surname") return nd;
       });
-      // self.debug("AST NODE ROUTES", routesNode, isRoutesDefined);
-      // if (compsNode) {
-      //   self.debug("AST NODE COMPS", compsNode);
-      //   return;
-      // }
 
       if (isRoutesDefined) {
+        const astActionsOptions = {
+          ast,
+          isMarkdown,
+          routesNode,
+          compsNode,
+          markdownNode,
+          objectToAdd,
+          toRemove,
+          shouldBuildComps: false,
+        };
         if (objectToAdd && toRemove) {
-          self.removeImportDeclarations(ast, toRemove, routesNode, compsNode);
-          importStrings = self.insertImportDeclarations(
-            objectToAdd,
-            false,
-            routesNode,
-            compsNode
-          );
+          self.removeImportDeclarations(astActionsOptions);
+          importStrings = self.insertImportDeclarations(astActionsOptions);
           path.stop();
         } else if (objectToAdd) {
-          importStrings = self.insertImportDeclarations(
-            objectToAdd,
-            false,
-            routesNode,
-            compsNode
-          );
+          importStrings = self.insertImportDeclarations(astActionsOptions);
 
           path.stop();
         } else if (toRemove) {
-          self.removeImportDeclarations(ast, toRemove, routesNode, compsNode);
+          self.removeImportDeclarations(astActionsOptions);
           path.stop();
         } else if (isNewSource) {
-          self.variableCreation(path, t, objectToAdd, parser, true);
+          self.variableCreation({
+            path,
+            files: objectToAdd,
+            replace: true,
+          });
         }
       } else {
-        self.variableCreation(path, t, objectToAdd, parser);
+        self.variableCreation({
+          path,
+          files: objectToAdd,
+        });
       }
 
-      //}
-
-      // if (t.isImportDeclaration(path.node)) {
-      //   path.node.name = "x";
-      // }
+      self.debug("THE MARKDOWN ROUTES.");
+      if (markdownRoutes) {
+        self.debug("THE MARKDOWN ROUTES.not ye");
+        if (!isMarkdownDefined) {
+          self.debug("THE MARKDOWN ROUTES.creating");
+          self.createMarkdownVariable({ path, files: markdownRoutes });
+        } else {
+          self.astAddNodeMarkdown(markdownNode, markdownRoutes);
+        }
+      }
     },
   });
 
@@ -602,6 +610,7 @@ methods.addToAST = function ({
     : importStrings
     ? importStrings
     : "";
+  self.addItemsToExportList(ast, ["markdownRoutes", "MarkdownRender"]);
   const { code: genCode } = generate(ast);
   const modifiedCode = genCode;
 
@@ -613,7 +622,7 @@ methods.addToAST = function ({
   );
 
   // if (!isCompsDefined || Object.keys(isCompsDefined).length <= 0)
-  self.addImportLineToBuildJs();
+  self.addImportLineToBuildJs(isMarkdown);
   self.createMetaAst({
     comps: [],
     compsSource: source,
@@ -731,6 +740,16 @@ methods.astAddNode = function (routesNode, compsNode, toAdd) {
   //   },
   // });
 };
+methods.astAddNodeMarkdown = function (markdownNode, toAdd) {
+  const self = this;
+  const t = self.t;
+
+  self.debug("AST NODE BEFORE LEN", toAdd);
+
+  const initProps = markdownNode.init;
+
+  initProps.elements.push(...toAdd);
+};
 
 methods.astDeleteNode = function (routesNode, compsNode, toRemove) {
   const self = this;
@@ -777,51 +796,20 @@ methods.astDeleteNode = function (routesNode, compsNode, toRemove) {
   // self.debug("AST NODE AFTER CHANGE", node);
 };
 
-methods.variableCreation = function (
-  path,
-  t,
-  files,
-  parser,
-  replace = false,
-  node = null
-) {
+methods.variableCreation = function (creationOptions) {
   const self = this;
+  const t = self.t;
+  const { path, files, replace = false } = creationOptions;
   let creationMethod = replace
     ? path.replaceWith.bind(path)
     : path.container.unshift.bind(path.container);
-  //const files = [{ path: "mypath", component: "myComponent" }];
-  // self.debug("THE CREATING METHOD", creationMethod);
-  // if(replace)
+
   creationMethod(
     t.variableDeclaration("const", [
       t.variableDeclarator(
         t.identifier("routes"),
         t.arrayExpression([
           ...files.map((en, i) => {
-            // let functionAsString = en.component
-            //   .toString()
-            //   .replace(/\/\*#__PURE__\*\/_react.default/g, "React");
-            // .replace(/;/g, "");
-            // self.debug("FUNCTION AS A STRING", functionAsString);
-            // let funcAst = parser.parse(functionAsString, {
-            //   sourceType: "module",
-            // });
-            //self.debug("FUNCTION STRING", functionAsString);
-            // let funcAst = parser.parse(en.component, {
-            //   sourceType: "module",
-            //   plugins: ["jsx"],
-            // });
-            // self.debug("FUNC AST", funcAst);
-            // self.debug("FUNCK FIRST NODE");
-            // self.funcToJsx(funcAst, en.path);
-            // let functionInContext = funcAst.program.body[0];
-            // self.debug("FUNCK FIRST NODE", functionInContext);
-            // let funcName = functionInContext.id.name;
-            // let funcBody = functionInContext.body;
-            // self.debug("AST for func", funcAst.program.body);
-            // self.debug("AST FUNCTION PARTS", funcName, funcBody);
-            // self.debug("THE FUNCTION NAME", funcName);
-
             return t.objectExpression([
               t.objectProperty(t.identifier("path"), t.stringLiteral(en.path)),
               t.objectProperty(
@@ -973,19 +961,10 @@ methods.doImport = function (toImport, all = false, check = true) {
       });
   });
 };
-methods.insertImportDeclarations = function (
-  imports,
-  shouldBuildComps = false,
-  routesNode = null,
-  compsNode = null
-) {
+methods.insertImportDeclarations = function (options) {
   const self = this;
-  const pao = self.pao;
-  const template = self.template;
-  const generate = self.generate;
-  const t = self.t;
-  const parser = self.parser;
-  const saveToFile = pao.pa_saveToFile;
+
+  // const { toRemove, routesNode = null, compsNode = null } = options;
 
   //   self.debug("THE IMPORTS", imports);
   //   const buildImport = template(`
@@ -1000,16 +979,8 @@ methods.insertImportDeclarations = function (
   //   });
 
   if (!process.env?.useLazyLoad)
-    return self.createStaticComponentsImports(imports, {
-      shouldBuildComps,
-      routesNode,
-      compsNode,
-    });
-  return self.createDynamicLazyComponentsImports(imports, {
-    shouldBuildComps,
-    routesNode,
-    compsNode,
-  });
+    return self.createStaticComponentsImports(options);
+  return self.createDynamicLazyComponentsImports(options);
   // saveToFile(filePath, modifiedCode);
   // saveToFile(filePath, modifiedCode);
   // const ast = buildImport({
@@ -1054,12 +1025,7 @@ methods.insertIdentifierImportDeclarations = function (imports) {
   self.debug();
   return modifiedCode;
 };
-methods.removeImportDeclarations = function (
-  ast,
-  toRemove,
-  routesNode = null,
-  compsNode = null
-) {
+methods.removeImportDeclarations = function (options) {
   const self = this;
   const pao = self.pao;
   const template = self.template;
@@ -1068,6 +1034,7 @@ methods.removeImportDeclarations = function (
   const parser = self.parser;
   const traverse = self.traverse;
   let removedImportsIds = [];
+  const { ast, toRemove, routesNode = null, compsNode = null } = options;
 
   traverse(ast, {
     ImportDeclaration(path) {
@@ -1088,7 +1055,7 @@ methods.removeImportDeclarations = function (
   self.debug("AST NODE TO BE REMOVED IS", removedImportsIds);
 };
 
-methods.addImportLineToBuildJs = function () {
+methods.addImportLineToBuildJs = function (isMarkdown = false) {
   const self = this;
   const pao = self.pao;
   const generate = self.generate;
@@ -1111,9 +1078,12 @@ methods.addImportLineToBuildJs = function () {
   const buildImportString = self.insertIdentifierImportDeclarations([
     {
       source: "./pages.js",
-      ids: ["routes", "comps"],
+      ids: isMarkdown
+        ? ["routes", "comps", "markdownRoutes", "MarkdownRender"]
+        : ["routes", "comps"],
     },
   ]);
+  self.debug("BUILD IMPORT STRING", buildImportString, isMarkdown);
   let newFileContent = `${buildImportString} ${generateBuildAst}`;
   saveToFile(buildPath, newFileContent);
 };
@@ -1372,7 +1342,24 @@ methods.createStaticComponentsImports = function (imports, options) {
   const t = self.t;
   const parser = self.parser;
   const saveToFile = pao.pa_saveToFile;
-  const { shouldBuildComps, routesNode, compsNode } = options;
+  const {
+    shouldBuildComps = false,
+    routesNode,
+    compsNode,
+    isMarkdown = false,
+  } = options;
+
+  // const markdownRenderImport = isMarkdown
+  //   ? t.importDeclaration(
+  //       [
+  //         t.importSpecifier(
+  //           t.identifier("MarkdownRender"), // local name
+  //           t.identifier("MarkdownRender") // imported name
+  //         ),
+  //       ],
+  //       t.stringLiteral("kotii-react-modules") // source module
+  //     )
+  //   : null;
 
   let constString = shouldBuildComps ? `const comps = {` : "";
   let importString = imports.map((im, i) => {
@@ -1396,7 +1383,7 @@ methods.createStaticComponentsImports = function (imports, options) {
   return modifiedCode;
 };
 
-methods.createDynamicLazyComponentsImports = function (imports, options) {
+methods.createDynamicLazyComponentsImports = function (options) {
   const self = this;
   const pao = self.pao;
   const template = self.template;
@@ -1404,7 +1391,13 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
   const t = self.t;
   const parser = self.parser;
   const saveToFile = pao.pa_saveToFile;
-  const { shouldBuildComps, routesNode, compsNode } = options;
+  const {
+    shouldBuildComps = false,
+    routesNode,
+    compsNode,
+    isMarkdown = false,
+    objectToAdd: imports,
+  } = options;
 
   const lazyLoadImport = t.importDeclaration(
     [
@@ -1415,6 +1408,18 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
     ],
     t.stringLiteral("kotii-lazy") // source module
   );
+
+  const markdownRenderImport = isMarkdown
+    ? t.importDeclaration(
+        [
+          t.importSpecifier(
+            t.identifier("MarkdownRender"), // local name
+            t.identifier("MarkdownRender") // imported name
+          ),
+        ],
+        t.stringLiteral("../../react-components/index.jsx") // source module
+      )
+    : null;
 
   let constString = shouldBuildComps ? `const comps = {` : "";
   const importDeclarations = imports.map((im) => {
@@ -1432,7 +1437,13 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
     ]);
   });
 
-  let importsAst = t.file(t.program([lazyLoadImport, ...importDeclarations]));
+  let importsAst = t.file(
+    t.program(
+      !isMarkdown
+        ? [lazyLoadImport, ...importDeclarations]
+        : [markdownRenderImport, lazyLoadImport, ...importDeclarations]
+    )
+  );
 
   constString += shouldBuildComps ? "}" : "";
   let joinedString = shouldBuildComps ? `${constString};` : ``;
@@ -1444,6 +1455,457 @@ methods.createDynamicLazyComponentsImports = function (imports, options) {
   self.debug("ASTY CODE", modifiedCode);
   self.debug();
   return modifiedCode;
+};
+methods.startAstFlow = function (options) {
+  const self = this;
+  const {
+    isProductionRequest,
+    pagesPaths,
+    pagesSource,
+    payload,
+    markdown = null,
+  } = options;
+  console.log("START AST PROCESS OPTIONS", options);
+  if (isProductionRequest) {
+    return self
+      .getRoutesHelper(pagesPaths, pagesSource)
+      .then((routesObject) => {
+        let routes = self.buildServerRoutes(
+          !markdown ? routesObject : [...routesObject, ...markdown]
+        );
+        self.callback({ routes, message: "Routes configured" });
+      });
+  } else {
+    const filePath = `/kotii-land/dev/manifest.js`;
+    self
+      .doImport(filePath, false, false)
+      .then(async (imported) => {
+        // self.debug("Impored", imported.module);
+
+        let manifestJS = imported;
+        let meta = manifestJS.meta;
+        self.debug("META ", meta);
+
+        let routesObject = await self.getRoutesHelper(pagesPaths, pagesSource);
+        let aggrigatedRoutes = !markdown
+          ? routesObject
+          : [...routesObject, ...markdown];
+
+        let sendToRequestor = {
+          message: "Routes Configured",
+          resources: payload.path,
+          routes: self.buildServerRoutes(aggrigatedRoutes),
+          isDomainCreated: meta?.isDomainCreated || false,
+        };
+
+        const { lastCompsCount = 0, compsSource, compsPaths } = meta;
+        const pagesPathsLen = pagesPaths.length;
+
+        self.debug("THE SEND TO:", sendToRequestor);
+
+        if (
+          lastCompsCount === 0 ||
+          !compsSource ||
+          compsPaths.length === 0 ||
+          compsSource !== pagesSource
+        ) {
+          self.addToAST({
+            objectToAdd: routesObject,
+            pagesPaths,
+            source: pagesSource,
+            isNewSource: compsSource !== pagesSource,
+            markdownRoutes: markdown || null,
+          });
+          return self.callback(sendToRequestor);
+        } else {
+          self.addOrRemoveByAST({
+            pagesPaths,
+            compsPaths,
+            pagesSource,
+            routesObject,
+            compsPagesEqual: lastCompsCount === pagesPathsLen,
+            isMarkdown: markdown ? true : false,
+            markdownRoutes: markdown || null,
+          });
+          return self.callback(sendToRequestor);
+        }
+      })
+      .catch((err) => {
+        self.debug("MANIFEST.JS: ERROR IMPORTING MANIFEST-JS", err);
+      });
+  }
+};
+
+methods.processMarkdown = function (markdownPages, options, doAfter, doDuring) {
+  const self = this;
+
+  self.emit({
+    type: "process-markdown",
+    data: {
+      payload: { markdownPages },
+      doDuring,
+      callback: (data) => {
+        self.debug("THE MARK-DOWN", data.message);
+        doAfter({ ...options, markdown: data });
+      },
+    },
+  });
+};
+
+methods.createMarkdownVariable = function (options) {
+  const self = this;
+  const t = self.t;
+  const { path, files, replace = false } = options;
+  let creationMethod = replace
+    ? path.replaceWith.bind(path)
+    : path.container.unshift.bind(path.container);
+  //const files = [{ path: "mypath", component: "myComponent" }];
+  // self.debug("THE CREATING METHOD", creationMethod);
+  // if(replace)
+  console.log("CREATE MARKDOWN VARIALBLE", files);
+  const astedMarkdownRoutes = self.createMarkdownRoutesAst({ files });
+  creationMethod(
+    t.variableDeclaration("const", [
+      t.variableDeclarator(
+        t.identifier("markdownRoutes"),
+        t.arrayExpression([...astedMarkdownRoutes])
+      ),
+    ])
+  );
+  path.stop();
+};
+
+methods.createMarkdownRoutesAst = function (options) {
+  const self = this;
+  const t = self.t;
+  const { files } = options;
+  const astUtils = self.astMarkdownUtils();
+
+  const routeNodes = files.map((route) => {
+    console.log("THE ROUTE", route);
+    console.log("THE PARSED MARKDOWN", route.markdownData[0].parsedMarkdown);
+    console.log(
+      "THE PARSED MARKDOWN.special",
+      route.markdownData[0].parsedMarkdown?.specialContent?.special
+    );
+    console.log(
+      "THE PARSED MARKDOWN",
+      route.markdownData[0].parsedMarkdown?.specialContent?.file
+    );
+    try {
+      return t.objectExpression(
+        [
+          ...astUtils.parseForRoutes(t, route),
+          ...astUtils.parseMarkdownData(t, route.markdownData, astUtils),
+          astUtils.parseMarkdownComponents(
+            t,
+            route?.markdownComponents,
+            astUtils
+          ),
+          // Create for mardown data
+        ].filter((n) => n !== undefined && n !== null)
+      );
+    } catch (error) {
+      console.log("THE BUILD CATCH ERROR", error);
+    }
+  });
+
+  return routeNodes;
+};
+
+methods.astMarkdownUtils = function () {
+  const self = this;
+  const t = self.t;
+  return {
+    parseForRoutes: (t, route) => {
+      return [
+        t.objectProperty(t.identifier("path"), t.stringLiteral(route.path)),
+        t.objectProperty(
+          t.identifier("componentName"),
+          t.stringLiteral(route.componentName)
+        ),
+        t.objectProperty(
+          t.identifier("component"),
+          t.stringLiteral(route.component)
+        ),
+        t.objectProperty(
+          t.identifier("componentPath"),
+          t.stringLiteral(route.componentPath || "")
+        ),
+        t.objectProperty(
+          t.identifier("patternMatch"),
+          t.stringLiteral(route.patternMatch || "")
+        ),
+        t.objectProperty(
+          t.identifier("isBracketParams"),
+          t.booleanLiteral(route.isBracketParams)
+        ),
+      ];
+    },
+    parseMarkdownData: (t, markdownData, utils) => {
+      return [
+        t.objectProperty(
+          t.identifier("markdownData"),
+          t.arrayExpression(
+            markdownData.map((md) => {
+              console.log("Mardwon is running", md?.parsedMarkdown);
+              let parseMarkdownDataResults = utils.parseMarkdownDataMeta(t, md);
+              let parseMarkdownDataParseResults = utils.parseMarkdownDataParsed(
+                t,
+                md.parsedMarkdown,
+                utils
+              );
+              console.log("THE PARSE DATA RESULTS", parseMarkdownDataResults);
+              console.log(
+                "THE PARSE PARSE PARSE RESULTS",
+                parseMarkdownDataParseResults
+              );
+              return t.objectExpression([
+                ...parseMarkdownDataResults,
+                t.objectProperty(
+                  t.identifier("parsedMarkdown"),
+                  t.objectExpression([...parseMarkdownDataParseResults])
+                ),
+              ]);
+            })
+          )
+        ),
+      ];
+    },
+    parseMarkdownDataMeta: (t, md) => {
+      return [
+        t.objectProperty(
+          t.identifier("fileName"),
+          t.stringLiteral(md.fileName || "")
+        ),
+        t.objectProperty(
+          t.identifier("locale"),
+          t.stringLiteral(md.locale || "")
+        ),
+        t.objectProperty(
+          t.identifier("rawMdText"),
+          t.stringLiteral(md.rawMdText || "")
+        ),
+      ];
+    },
+    parseMarkdownComponents: (t, markdownComponents, utils) => {
+      return markdownComponents && Object.keys(markdownComponents).length > 0
+        ? t.objectProperty(
+            t.identifier("markdownComponents"),
+            t.objectExpression(
+              Object.entries(markdownComponents).map(([key, value]) => {
+                console.log("THE KEY VALUE", key, value);
+                return t.objectProperty(
+                  t.identifier(key),
+                  t.objectExpression([
+                    t.objectProperty(
+                      t.identifier("type"),
+                      t.stringLiteral(value.type)
+                    ),
+                    t.objectProperty(
+                      t.identifier("pathID"),
+                      t.stringLiteral(value.pathID)
+                    ),
+                    t.objectProperty(
+                      t.identifier("component"),
+                      utils.parseComponentLazyLoad(t, value.value)
+                    ),
+                  ])
+                );
+              })
+            )
+          )
+        : null;
+    },
+    parseMarkdownDataParsed: (t, md, utils) => {
+      console.log("PARSED MARKDOWN DATA", md);
+      const metaNode = utils.parsedMetakKeys(t, md.metaDataKeys, utils);
+      const htmlNode =
+        md?.html && md.html.length > 0 ? utils.parsedHtml(t, md.html) : null;
+      const specialNode =
+        md?.specialContent && md.specialContent !== "null"
+          ? utils.parsedSpecial(t, md.specialContent)
+          : null;
+      const markdownSplit = utils.parsedMarkdownSplit(t, md.markDownSplit);
+      const tocNode =
+        md?.toc && md.toc.length > 0 ? utils.parsedToc(t, md.toc) : null;
+
+      let nodes = [
+        metaNode,
+        htmlNode,
+        specialNode,
+        markdownSplit,
+        tocNode,
+      ].filter((n) => n !== undefined && n !== null);
+
+      return nodes;
+    },
+    parsedMetakKeys: (t, metaDataKeys) => {
+      //metaDataKeys
+      let metaKey = t.objectProperty(
+        t.identifier("metaDataKeys"),
+        t.objectExpression(
+          Object.entries(metaDataKeys).map(([key, value]) =>
+            t.objectProperty(
+              // Use identifier if it's a valid JS identifier, otherwise use stringLiteral
+              /^[a-zA-Z_$][\w$]*$/.test(key)
+                ? t.identifier(key)
+                : t.stringLiteral(key),
+              t.stringLiteral(value || "")
+            )
+          )
+        )
+      );
+      console.log("THE META KEY", metaKey);
+      return metaKey;
+    },
+    parsedSpecial: (t, specialContent) => {
+      console.log("THE SPECIAL CONTENT", specialContent);
+      return t.objectProperty(
+        t.identifier("specialContent"),
+        t.arrayExpression(
+          specialContent.map((spec) => {
+            console.log("The special", spec);
+            let specialItem = t.objectExpression([
+              t.objectProperty(
+                t.identifier("special"),
+                t.objectExpression([
+                  t.objectProperty(
+                    t.identifier("component"),
+                    t.stringLiteral(spec.special?.component || "")
+                  ),
+                ])
+              ),
+              t.objectProperty(
+                t.identifier("file"),
+                t.objectExpression([
+                  t.objectProperty(
+                    t.identifier("name"),
+                    t.stringLiteral(spec.file?.name || "")
+                  ),
+                  t.objectProperty(
+                    t.identifier("contents"),
+                    t.stringLiteral(spec?.file?.contents || "")
+                  ),
+                  t.objectProperty(
+                    t.identifier("imports"),
+                    t.stringLiteral(spec?.file?.imports || "")
+                  ),
+                  t.objectProperty(
+                    t.identifier("componentName"),
+                    t.stringLiteral(spec?.file?.componentName || "")
+                  ),
+                ])
+              ),
+            ]);
+            console.log("THE SPECIAL ITEM", specialItem);
+            return specialItem;
+          })
+        )
+      );
+    },
+    parsedToc: (t, toc) => {
+      //metaDataKeys
+      return t.objectProperty(
+        t.identifier("toc"),
+        t.arrayExpression(
+          toc.map((tocItem) => {
+            return t.objectExpression([
+              t.objectProperty(
+                t.identifier("id"),
+                t.stringLiteral(tocItem?.id || "")
+              ),
+              t.objectProperty(
+                t.identifier("children"),
+                t.arrayExpression(
+                  ...tocItem.children.map((chi) => {
+                    t.objectExpression([
+                      t.objectProperty(
+                        t.identifier("id"),
+                        t.stringLiteral(chi?.id || "")
+                      ),
+                    ]);
+                  })
+                )
+              ),
+            ]);
+          })
+        )
+      );
+    },
+    parsedHtml: (t, html) => {
+      console.log("HTML RUNS", html);
+      return t.objectProperty(
+        t.identifier("html"),
+        t.arrayExpression(
+          html
+            .map((sti) => {
+              let astHmtlObject = null;
+              if (typeof sti === "string") {
+                if (sti.trim()) astHmtlObject = t.stringLiteral(sti || "");
+              } else {
+                let identifier = Object.keys(sti)[0];
+                astHmtlObject = t.objectExpression([
+                  t.objectProperty(
+                    t.identifier(identifier),
+                    t.stringLiteral(sti[identifier])
+                  ),
+                ]);
+              }
+              console.log("HTML AST OBJECT", astHmtlObject);
+              return astHmtlObject;
+            })
+            .filter(Boolean)
+        )
+      );
+    },
+    parsedMarkdownSplit: (t, markDownSplit) => {
+      //metaDataKeys
+      return t.objectProperty(
+        t.identifier("markDownSplit"),
+        t.arrayExpression(
+          markDownSplit.map((sti) => {
+            return t.stringLiteral(sti || "");
+          })
+        )
+      );
+    },
+    parseComponentLazyLoad: (t, componentFilePath) => {
+      console.log("THE COMPONENT FILE", componentFilePath);
+      let arrowFunk = t.callExpression(t.identifier("lazyLoad"), [
+        t.arrowFunctionExpression(
+          [],
+          t.callExpression(
+            t.import(), // dynamic import()
+            [t.stringLiteral(componentFilePath)]
+          )
+        ),
+      ]);
+      console.log("THE ARROW FUNK", arrowFunk);
+      return arrowFunk;
+    },
+  };
+};
+
+methods.addItemsToExportList = function (ast, exportList) {
+  const self = this;
+  const t = self.t;
+  const traverse = self.traverse;
+
+  traverse(ast, {
+    ExportNamedDeclaration(path) {
+      if (!path.node.source) {
+        const names = path.node.specifiers.map((s) => s.exported.name);
+        exportList.forEach((item) => {
+          if (!names.includes(item)) {
+            path.node.specifiers.push(
+              t.exportSpecifier(t.identifier(item), t.identifier(item))
+            );
+          }
+        });
+      }
+    },
+  });
 };
 
 export default methods;
