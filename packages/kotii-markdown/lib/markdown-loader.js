@@ -67,7 +67,7 @@ export const serverLoader = async function (markdown) {
     });
   }
   await Promise.all(loadPromises);
-
+  // serverData["pagePosts"] = posts;
   return serverData;
 };
 
@@ -147,10 +147,27 @@ const getSupportedLanguageFilesInFolder = function (
 };
 
 const createSpecialMetaData = function (options, supportedLanguages, markdown) {
-  const { resourceRootFolder } = options;
+  const { resourceRootFolder, fileNamePlain } = options;
 
   supportedLanguages.map((ln) => {
     // console.log("Language item;;;", ln);
+    console.log("CREATING");
+
+    if (
+      ln.parsedMarkdown?.metaDataKeys &&
+      !ln.parsedMarkdown.metaDataKeys?.slug
+    ) {
+      ln.parsedMarkdown.metaDataKeys["slug"] = fileNamePlain;
+    }
+
+    if (ln.parsedMarkdown?.metaDataKeys) {
+      if (ln.parsedMarkdown?.html && ln.parsedMarkdown.html.length > 0) {
+        console.log("HTML IS SET", ln.parsedMarkdown.html.length);
+        let htmlBody = getHtmlBody(ln.parsedMarkdown.html);
+        console.log("THE HTML BODY", htmlBody);
+        ln.parsedMarkdown.metaDataKeys["body"] = htmlBody;
+      }
+    }
 
     if (ln.parsedMarkdown?.specialContent) {
       ln.parsedMarkdown.specialContent.map((sp) => {
@@ -200,18 +217,18 @@ const createSpecialMetaData = function (options, supportedLanguages, markdown) {
   });
 };
 
-const createPost = function (supportedLanguages) {
-  const posts = [];
+// const createPost = function (supportedLanguages) {
+//   const posts = [];
 
-  supportedLanguages.map((ln) => {
-    // console.log("Language item;;;", ln);
-    console.log("THE SUPPORTED LN", ln);
+//   supportedLanguages.map((ln) => {
+//     // console.log("Language item;;;", ln);
+//     console.log("THE SUPPORTED LN", ln);
 
-    posts.push({ ...ln.parsedMarkdown.metaDataKeys });
-  });
-  console.log("THE MADE FOR POSTS", posts);
-  return posts;
-};
+//     posts.push({ ...ln.parsedMarkdown.metaDataKeys });
+//   });
+//   console.log("THE MADE FOR POSTS", posts);
+//   return posts;
+// };
 
 const getImportIDs = function (languages) {
   let importsArray = [];
@@ -238,8 +255,26 @@ const getImportIDs = function (languages) {
   return { importsArray, importsIDs };
 };
 
+const getHtmlBody = function (html) {
+  return html
+    .map((content) => {
+      console.log("THE HTML CONTENT", content);
+      if (isHtmlString(content)) {
+        console.log("THE HTML IS A STRING");
+        return content;
+      }
+    })
+    .join("");
+};
+
+const isHtmlString = (itemChecked) => {
+  if (typeof itemChecked === "string" && itemChecked.length) return true;
+  return false;
+};
+
 const doCommons = function (markdown) {
   const fileInfo = getFileInContextFileInfo(markdown);
+  console.log("THE DO COMMONS", fileInfo);
 
   const { fileNamePlain, filePath } = fileInfo;
 
@@ -251,7 +286,7 @@ const doCommons = function (markdown) {
   );
 
   createSpecialMetaData(fileInfo, supportedLanguages, markdown);
-  const posts = createPost(supportedLanguages);
+  // const posts = createPost(supportedLanguages);
 
   const importsDictionary = getImportIDs(supportedLanguages);
   return {
@@ -260,6 +295,5 @@ const doCommons = function (markdown) {
     fileNamePlain,
     filePath,
     importsDictionary,
-    posts,
   };
 };
