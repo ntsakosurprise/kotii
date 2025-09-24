@@ -2,7 +2,8 @@
 
 import { marked } from "marked";
 
-const extractMetadataPattern = /---[\r\n]([\s\S]*)[\r\n]---/;
+const extractMetadataPattern = /^---\s*([\s\S]*?)\s*---/;
+// const extractMetadataPattern = /---[\r\n]([\s\S]*)[\r\n]---/;
 // const metaKeyPairsPattern = /(.*):(.*)?/g;
 const metaKeyPairsPattern = /^\s*(?!https?:\/\/|---)([^:\n\r]+?)\s*:\s*(.+)$/gm;
 const extractDescriptionPattern = /<p className="description">(.+)?<\/p>/;
