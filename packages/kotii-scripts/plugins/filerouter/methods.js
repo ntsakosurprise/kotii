@@ -238,7 +238,11 @@ methods.getItemPathAndFile = function (item) {
 
     self.doImport(item, true).then((imported) => {
       self.debug("THE PAGE FILE IN CONTEXT EXPORTS", imported);
-      const { getServerState = null, universalEffects = null } = imported;
+      const {
+        getServerState = null,
+        universalEffects = null,
+        isPrivate = false,
+      } = imported;
       // if (imported.getServerState) {
       //   self.debug(
       //     "THE GETSERVERSTATE METHOD",
@@ -263,6 +267,7 @@ methods.getItemPathAndFile = function (item) {
         getServerState,
         universalEffects,
         isBracketParams,
+        isPrivate,
       });
     });
   });
@@ -610,7 +615,9 @@ methods.addToAST = function ({
     : importStrings
     ? importStrings
     : "";
-  self.addItemsToExportList(ast, ["markdownRoutes", "MarkdownRender"]);
+  isMarkdown
+    ? self.addItemsToExportList(ast, ["markdownRoutes", "MarkdownRender"])
+    : null;
   const { code: genCode } = generate(ast);
   const modifiedCode = genCode;
 
