@@ -1,18 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 
 const AuthContext = React.createContext(null);
 
-const AuthProvider = ({}) => {
+const AuthProvider = ({ defaultUser }) => {
+  const [user, setUser] = useState(defaultUser);
+  const authLogin = (authUser) => setUser(authUser);
   return (
-    <AuthContext.Provider
-      value={{ appName: "", layout, appWrapper, effectsStore }}
-    >
+    <AuthContext.Provider value={{ login: authLogin, user }}>
       {props.children}
     </AuthContext.Provider>
   );
 };
 
 export default AuthProvider;
-export const useAppContext = () => {
-  return React.useContext(AppContext);
+export const useAuthContext = () => {
+  return React.useContext(AuthContext);
 };
