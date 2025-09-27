@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useContext, useEffect } from "react";
-import Redirect from "../Redirect/Redirect.jsx";
+import Redirect from "../Redirect/index.jsx";
 import {
   cleanRouteUrl,
   matchParams,
@@ -22,6 +22,7 @@ const Routes = ({ children, routes = null, suspense = null }) => {
   } = useContext(KotiiRouterContenxt);
   const { user } = useAuth();
 
+  console.log("THE USER", user);
   console.log("THE ROUTES COMPONENT:url", urlSegments);
 
   let currentPath = urlSegments.path;
@@ -55,7 +56,7 @@ const Routes = ({ children, routes = null, suspense = null }) => {
     const matchedRoute = matchRoute(fullUrl, currentPath);
 
     if (matchedRoute) {
-      console.log("REACT CHILD ELEMENT", matchedRoute);
+      console.log("REACT CHILD ELEMENT", matchedRoute, child);
       if (!user && child?.isPrivate) return <Redirect to={"/login"} />;
 
       const match =

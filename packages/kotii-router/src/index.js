@@ -5,6 +5,7 @@ import {
   Routes,
   AuthProvider,
   useAuth,
+  Redirect,
 } from "./components/index.js";
 import {
   useLocation,
@@ -22,6 +23,7 @@ export {
   Routes,
   AuthProvider,
   useAuth,
+  Redirect,
   useParams,
   useNavigate,
   useLocation,

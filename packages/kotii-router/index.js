@@ -11,6 +11,7 @@ import {
   useRoute,
   AuthProvider,
   useAuth,
+  Redirect,
 } from "./src/index.js";
 
 export {
@@ -26,4 +27,5 @@ export {
   useRoute,
   AuthProvider,
   useAuth,
+  Redirect,
 };
