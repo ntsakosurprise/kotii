@@ -1,4 +1,6 @@
+/* eslint-disable react/prop-types */
 import React, { useContext, useEffect } from "react";
+import Redirect from "../Redirect/Redirect.jsx";
 import {
   cleanRouteUrl,
   matchParams,
@@ -7,7 +9,7 @@ import {
   navigate,
 } from "../../utils/index.js";
 import { KotiiRouterContenxt } from "../Router/Router.jsx";
-
+import { useAuth } from "../AuthContext/index.jsx";
 const Routes = ({ children, routes = null, suspense = null }) => {
   console.log("THE VALUE OF ROUTES OBJECT", routes);
   const {
@@ -18,6 +20,7 @@ const Routes = ({ children, routes = null, suspense = null }) => {
     setQueryParams,
     urlSegments,
   } = useContext(KotiiRouterContenxt);
+  const { user } = useAuth();
 
   console.log("THE ROUTES COMPONENT:url", urlSegments);
 
@@ -53,6 +56,8 @@ const Routes = ({ children, routes = null, suspense = null }) => {
 
     if (matchedRoute) {
       console.log("REACT CHILD ELEMENT", matchedRoute);
+      if (!user && child?.isPrivate) return <Redirect to={"/login"} />;
+
       const match =
         urlSegments?.queryString && urlSegments.queryString.trim()
           ? matchRouteQuery(fullUrl, urlSegments.queryString)
