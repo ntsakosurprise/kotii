@@ -1,6 +1,7 @@
 import React from "react";
 import { LazySuspense } from "kotii-lazy";
-import { Router, Routes, AuthProvider } from "kotii-router";
+import { Router, Routes } from "kotii-router";
+import { AuthProvider } from "kotii-auth";
 import { useAppContext } from "../../react-components/index.jsx";
 const Wrapper = (props) => {
   //const Component = props.component;
