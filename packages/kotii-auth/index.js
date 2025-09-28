@@ -1,31 +1,3 @@
-import {
-  Link,
-  Route,
-  Router,
-  Routes,
-  useLocation,
-  useMatch,
-  useNavigate,
-  useParams,
-  useRedirect,
-  useRoute,
-  AuthProvider,
-  useAuth,
-  Redirect,
-} from "./src/index.js";
+import { AuthProvider, useAuth } from "./src/index.js";
 
-export {
-  Router,
-  Route,
-  Link,
-  Routes,
-  useParams,
-  useLocation,
-  useMatch,
-  useNavigate,
-  useRedirect,
-  useRoute,
-  AuthProvider,
-  useAuth,
-  Redirect,
-};
+export { AuthProvider, useAuth };
