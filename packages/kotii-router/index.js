@@ -9,8 +9,6 @@ import {
   useParams,
   useRedirect,
   useRoute,
-  AuthProvider,
-  useAuth,
   Redirect,
 } from "./src/index.js";
 
@@ -25,7 +23,5 @@ export {
   useNavigate,
   useRedirect,
   useRoute,
-  AuthProvider,
-  useAuth,
   Redirect,
 };

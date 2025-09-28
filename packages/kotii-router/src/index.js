@@ -1,12 +1,4 @@
-import {
-  Link,
-  Route,
-  Router,
-  Routes,
-  AuthProvider,
-  useAuth,
-  Redirect,
-} from "./components/index.js";
+import { Link, Route, Router, Routes, Redirect } from "./components/index.js";
 import {
   useLocation,
   useMatch,
@@ -21,8 +13,6 @@ export {
   Route,
   Link,
   Routes,
-  AuthProvider,
-  useAuth,
   Redirect,
   useParams,
   useNavigate,

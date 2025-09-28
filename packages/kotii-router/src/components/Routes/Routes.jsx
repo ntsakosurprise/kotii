@@ -9,7 +9,7 @@ import {
   navigate,
 } from "../../utils/index.js";
 import { KotiiRouterContenxt } from "../Router/Router.jsx";
-import { useAuth } from "../AuthContext/index.jsx";
+import { useAuth } from "kotii-auth";
 const Routes = ({ children, routes = null, suspense = null }) => {
   console.log("THE VALUE OF ROUTES OBJECT", routes);
   const {
