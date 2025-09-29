@@ -11,6 +11,7 @@ import {
 import { KotiiRouterContenxt } from "../Router/Router.jsx";
 import { useAuth } from "kotii-auth";
 const Routes = ({ children, routes = null, suspense = null }) => {
+  console.log("THE VALUE OF AUTH", useAuth);
   console.log("THE VALUE OF ROUTES OBJECT", routes);
   const {
     setParams,
@@ -20,7 +21,8 @@ const Routes = ({ children, routes = null, suspense = null }) => {
     setQueryParams,
     urlSegments,
   } = useContext(KotiiRouterContenxt);
-  const { user } = useAuth();
+  const authInfo = useAuth();
+  const user = authInfo?.user ? authInfo.user : null;
 
   console.log("THE USER", user);
   console.log("THE ROUTES COMPONENT:url", urlSegments);

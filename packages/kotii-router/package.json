@@ -61,6 +61,7 @@
     "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "debug": "^4.4.0"
+    "debug": "^4.4.0",
+    "kotii-auth": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-auth/kotii-auth-0.0.0.tgz"
   }
 }
