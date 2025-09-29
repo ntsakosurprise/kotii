@@ -45,6 +45,7 @@ const ClientRoutes = (props) => {
       component: () => <ComponentWrapped />,
       path: r.path,
       children: r?.children || undefined,
+      isPrivate: r?.isPrivate || false,
     };
   });
   console.log("SERVER ROUTES:", markRoutes);
@@ -66,6 +67,7 @@ const ClientRoutes = (props) => {
       refinedRoutes.push({
         component: () => <ComponentWrapped />,
         path: route.path,
+        isPrivate: r?.isPrivate || false,
       });
     });
   }
@@ -113,6 +115,7 @@ const RoutesAsServerRoutes = (props) => {
       component: () => <ComponentWrapped />,
       path: r.path,
       children: r?.children || undefined,
+      isPrivate: r?.isPrivate || false,
     };
   });
   if (markRoutes.length > 0) {
@@ -133,6 +136,7 @@ const RoutesAsServerRoutes = (props) => {
       refinedRoutes.push({
         component: () => <ComponentWrapped />,
         path: route.path,
+        isPrivate: r?.isPrivate || false,
       });
     });
   }
