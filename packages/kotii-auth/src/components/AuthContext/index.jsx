@@ -1,29 +1,28 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
-import { useEffect } from "react";
 
 const AuthContext = React.createContext(null);
 
-const AuthProvider = ({
-  defaultUser = null,
-  children,
-  onLogin = () => {},
-  onLoginOut = () => {},
-}) => {
+const AuthProvider = ({ defaultUser = null, children }) => {
   const [user, setUser] = useState(defaultUser);
-  const authLogin = (authUser) => setUser(authUser);
-  const authLogout = () => setUser(null);
-  const runOnLogin = () => {
-    onLogin();
+  const authLogin = (authUser, onLogin = null) => {
+    setUser(authUser);
+    if (onLogin) onLogin();
   };
-  const runOnLogout = () => {
-    onLoginOut();
+  const authLogout = (onLogout = null) => {
+    setUser(null);
+    if (onLogout) onLogout();
   };
+  // const runOnLogin = () => {
+  //   onLogin();
+  // };
+  // const runOnLogout = () => {
+  //   onLoginOut();
+  // };
 
-  useEffect(() => {
-    if (!user) runOnLogout();
-    runOnLogin();
-  }, [user]);
+  // useEffect(() => {
+  //   if (!user) runOnLogout();
+  // }, [user]);
   return (
     <AuthContext.Provider
       value={{ login: authLogin, user, logout: authLogout }}
