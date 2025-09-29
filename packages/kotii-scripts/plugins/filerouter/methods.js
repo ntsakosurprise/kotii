@@ -691,6 +691,10 @@ methods.astAddNode = function (routesNode, compsNode, toAdd) {
             t.booleanLiteral(adding?.isBracketParams || false)
           ),
           t.objectProperty(
+            t.identifier("isPrivate"),
+            t.booleanLiteral(adding?.isPrivate || false)
+          ),
+          t.objectProperty(
             t.identifier("component"),
             // t.functionExpression(t.identifier(funcName), [], funcBody)
             t.stringLiteral(adding.componentName)
