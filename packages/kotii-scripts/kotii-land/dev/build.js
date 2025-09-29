@@ -75,7 +75,8 @@ const ClientRoutes = (props) => {
         <Layout>
           <Routes
             routes={refinedRoutes}
-            suspense={process.env?.KOTII_USE_LAZY ? LazySuspense : null}
+            // suspense={process.env?.KOTII_USE_LAZY ? LazySuspense : null}
+            suspense={LazySuspense}
           />
         </Layout>
       </Router>
