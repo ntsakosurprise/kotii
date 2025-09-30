@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { AppProvider, useAppContext } from "../../react-components/index.jsx";
 import createReduxStore from "./app_redux.js";
 import { ClientRoutes, RoutesAsServerRoutes } from "./build.js";
+import { AuthProvider } from "kotii-auth";
 
 logger.setNameSpaces([
   { namespace: "app:start-client", id: "appClient" },
@@ -126,17 +127,23 @@ const AppGeneric = (props) => {
   const AppWrapper = appWrapper;
 
   return appWrapper ? (
-    <AppWrapper>
-      {!isServer ? (
-        <ClientRoutes goodies={goodies} />
-      ) : (
-        <RoutesAsServerRoutes goodies={goodies} />
-      )}
-    </AppWrapper>
+    <AuthProvider>
+      <AppWrapper>
+        {!isServer ? (
+          <ClientRoutes goodies={goodies} />
+        ) : (
+          <RoutesAsServerRoutes goodies={goodies} />
+        )}
+      </AppWrapper>
+    </AuthProvider>
   ) : !isServer ? (
-    <ClientRoutes />
+    <AuthProvider>
+      <ClientRoutes />
+    </AuthProvider>
   ) : (
-    <RoutesAsServerRoutes />
+    <AuthProvider>
+      <RoutesAsServerRoutes />
+    </AuthProvider>
   );
 };
 

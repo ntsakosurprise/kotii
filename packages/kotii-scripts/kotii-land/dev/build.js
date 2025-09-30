@@ -1,7 +1,6 @@
 import React from "react";
 import { LazySuspense } from "kotii-lazy";
 import { Router, Routes } from "kotii-router";
-import { AuthProvider } from "kotii-auth";
 import { useAppContext } from "../../react-components/index.jsx";
 const Wrapper = (props) => {
   //const Component = props.component;
@@ -72,17 +71,15 @@ const ClientRoutes = (props) => {
     });
   }
   return (
-    <AuthProvider>
-      <Router>
-        <Layout>
-          <Routes
-            routes={refinedRoutes}
-            // suspense={process.env?.KOTII_USE_LAZY ? LazySuspense : null}
-            suspense={LazySuspense}
-          />
-        </Layout>
-      </Router>
-    </AuthProvider>
+    <Router>
+      <Layout>
+        <Routes
+          routes={refinedRoutes}
+          // suspense={process.env?.KOTII_USE_LAZY ? LazySuspense : null}
+          suspense={LazySuspense}
+        />
+      </Layout>
+    </Router>
   );
 };
 const RoutesAsServerRoutes = (props) => {
@@ -142,15 +139,13 @@ const RoutesAsServerRoutes = (props) => {
   }
   console.log("SERVER ROUTES:::", refinedRoutes);
   return (
-    <AuthProvider>
-      <Layout>
-        <Routes
-          routes={refinedRoutes}
-          suspense={LazySuspense}
-          // suspense={process.env?.useLazyLoad ? LazySuspense : null}
-        />
-      </Layout>
-    </AuthProvider>
+    <Layout>
+      <Routes
+        routes={refinedRoutes}
+        suspense={LazySuspense}
+        // suspense={process.env?.useLazyLoad ? LazySuspense : null}
+      />
+    </Layout>
   );
 };
 

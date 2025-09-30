@@ -1,3 +1,15 @@
-import { AuthProvider, useAuth } from "./src/index.js";
+import {
+  AuthProvider,
+  useAuth,
+  registerOnLoginActions,
+  registerOnLogoutActions,
+  useAuthRegisterActions,
+} from "./src/index.js";
 
-export { AuthProvider, useAuth };
+export {
+  AuthProvider,
+  useAuth,
+  registerOnLoginActions,
+  registerOnLogoutActions,
+  useAuthRegisterActions,
+};
