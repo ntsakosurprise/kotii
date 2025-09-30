@@ -7,7 +7,7 @@ const onLogoutActions = new Set();
 const AuthContext = React.createContext(null);
 
 const AuthProvider = ({
-  defaultUser = null,
+  authUser: defaultUser = null,
   children,
   onLogin = null,
   onLogout = null,
