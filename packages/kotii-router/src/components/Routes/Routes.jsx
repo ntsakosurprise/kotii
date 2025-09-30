@@ -21,8 +21,7 @@ const Routes = ({ children, routes = null, suspense = null }) => {
     setQueryParams,
     urlSegments,
   } = useContext(KotiiRouterContenxt);
-  const authInfo = useAuth();
-  const user = authInfo?.user ? authInfo.user : null;
+  const { user } = useAuth();
 
   console.log("THE USER", user);
   console.log("THE ROUTES COMPONENT:url", urlSegments);
