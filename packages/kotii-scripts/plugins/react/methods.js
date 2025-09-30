@@ -162,12 +162,22 @@ methods.runReactView = function (data) {
     process.env?.useLazyLoad ? await self.preloadLazyComponents(view) : null;
 
     let goodies = self.comps;
+    let authUser = {
+      name: "Ntsako Surprise",
+      age: "Grown man",
+      timeNow: new Date(),
+    };
     try {
       html = renderToString(
         sheet.collectStyles(
           !layoutRoot ? (
             <Router ssrPath={view.match}>
-              {REACTAPP({ storeFromSource: store, goodies, effectsStore })}
+              {REACTAPP({
+                storeFromSource: store,
+                goodies,
+                effectsStore,
+                authUser,
+              })}
             </Router>
           ) : layoutRoot.Layout && layoutRoot.Root ? (
             <Router ssrPath={view.match}>
@@ -177,6 +187,7 @@ methods.runReactView = function (data) {
                 storeFromSource: store,
                 goodies,
                 effectsStore,
+                authUser,
               })}
             </Router>
           ) : layoutRoot.Layout ? (
@@ -186,6 +197,7 @@ methods.runReactView = function (data) {
                 storeFromSource: store,
                 goodies,
                 effectsStore,
+                authUser,
               })}
             </Router>
           ) : (
@@ -194,6 +206,7 @@ methods.runReactView = function (data) {
                 appWrapper: layoutRoot.Root,
                 storeFromSource: store,
                 effectsStore,
+                authUser,
               })}
             </Router>
           )
