@@ -1,4 +1,13 @@
 import AuthProvider from "./AuthContext/index.jsx";
-import { useAuth } from "./AuthContext/index.jsx";
+import {
+  useAuth,
+  registerOnLoginActions,
+  registerOnLogoutActions,
+} from "./AuthContext/index.jsx";
 
-export { AuthProvider, useAuth };
+export {
+  AuthProvider,
+  useAuth,
+  registerOnLoginActions,
+  registerOnLogoutActions,
+};
