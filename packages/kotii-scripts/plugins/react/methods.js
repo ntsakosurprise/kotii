@@ -239,6 +239,7 @@ methods.runReactView = function (data) {
       staticRender,
       view,
       head: helmetGenerated,
+      authUser,
     });
     self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
     resolve(fullPage);
@@ -269,6 +270,7 @@ methods.renderFullPage = function ({
   view,
   head,
   scripts = [],
+  authUser,
 } = props) {
   const self = this;
   if (!self.styleTags) self.doKotiiStyles();
@@ -290,14 +292,14 @@ methods.renderFullPage = function ({
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
-			${!staticRender ? self.includeScripts(preloadedState) : null}
+			${!staticRender ? self.includeScripts(preloadedState, authUser) : null}
 			
 		</body>
 		</html>
     `;
 };
 
-methods.includeScripts = function (preloadedState) {
+methods.includeScripts = function (preloadedState, authUser) {
   const self = this;
   const { serialize } = self;
   let possibleExtraScripts = "";
@@ -313,6 +315,7 @@ methods.includeScripts = function (preloadedState) {
      window.__KOTII_EFFECTS_STATE__ = ${serialize(
        JSON.stringify(self.effectsData)
      )}
+    window.__KOTII_AUTH_USER__ = ${serialize(JSON.stringify(authUser))}
      window.__KOTII_APP_URL__ = ${JSON.stringify(process?.env?.KOTII_APP_URL)}
    
    </script>

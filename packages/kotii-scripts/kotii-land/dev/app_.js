@@ -35,6 +35,7 @@ const App = (appWrapper = null, layout = null) => {
     ? JSON.parse(window.__KOTII_AUTH_USER__)
     : null;
 
+  console.log("THE AUTH USER", authUser);
   loggas.appClient.debug("THE PROCESS.BROWSER.ENVS", process.env);
 
   let { type, stateVendor = null } = app;
