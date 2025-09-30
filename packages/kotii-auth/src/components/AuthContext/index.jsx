@@ -1,28 +1,34 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
 
+const onLoginActions = new Set();
+const onLogoutActions = new Set();
+
 const AuthContext = React.createContext(null);
 
-const AuthProvider = ({ defaultUser = null, children }) => {
+const AuthProvider = ({
+  defaultUser = null,
+  children,
+  onLogin = null,
+  onLogout = null,
+}) => {
   const [user, setUser] = useState(defaultUser);
-  const authLogin = (authUser, onLogin = null) => {
+  const authLogin = (authUser, onLoginAction = null) => {
     setUser(authUser);
-    if (onLogin) onLogin();
+    onLoginActions.forEach((afterLogin) => {
+      afterLogin(authUser);
+    });
+    if (onLoginAction) onLoginAction();
+    if (onLogin && typeof onLogin === "function") onLogin();
   };
-  const authLogout = (onLogout = null) => {
+  const authLogout = (onLogoutAction = null) => {
     setUser(null);
-    if (onLogout) onLogout();
+    onLogoutActions.forEach((afterLoginout) => {
+      afterLoginout();
+    });
+    if (onLogoutAction) onLogoutAction();
+    if (onLogout && typeof onLogout === "function") onLogout();
   };
-  // const runOnLogin = () => {
-  //   onLogin();
-  // };
-  // const runOnLogout = () => {
-  //   onLoginOut();
-  // };
-
-  // useEffect(() => {
-  //   if (!user) runOnLogout();
-  // }, [user]);
   return (
     <AuthContext.Provider
       value={{ login: authLogin, user, logout: authLogout }}
@@ -35,4 +41,13 @@ const AuthProvider = ({ defaultUser = null, children }) => {
 export default AuthProvider;
 export const useAuth = () => {
   return React.useContext(AuthContext);
+};
+export const registerOnLoginActions = (afterLoginAction) => {
+  onLoginActions.add(afterLoginAction);
+  return () => onLoginActions.delete(afterLoginAction);
+};
+
+export const registerOnLogoutActions = (afterLogoutAction) => {
+  onLogoutActions.add(afterLogoutAction);
+  return () => onLogoutActions.delete(afterLogoutAction);
 };
