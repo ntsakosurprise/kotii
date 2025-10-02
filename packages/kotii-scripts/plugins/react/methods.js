@@ -33,7 +33,20 @@ methods.handleReactView = function (data) {
 
   if (!isRoutePrivate) {
     self.debug("THE VIEW DATA", data);
-    self.processViewAfterCheck(data);
+  } else {
+    self.emit({
+      type: "run-view-authentication",
+      data: {
+        payload: data,
+        callback: (authResults) => {
+          if (authResults?.isAuthenticated) {
+            self.processViewAfterCheck(data, authResults.user);
+          } else {
+            self.processViewAfterCheck(data);
+          }
+        },
+      },
+    });
   }
 };
 
