@@ -28,9 +28,19 @@ methods.handleReactView = function (data) {
 
   self.callback = data.callback;
   self.effectsData = {};
+  const { view } = data;
+  const { isRoutePrivate = false } = view;
 
-  self.debug("THE VIEW DATA", data);
+  if (!isRoutePrivate) {
+    self.debug("THE VIEW DATA", data);
+    self.processViewAfterCheck(data);
+  }
+};
+
+methods.processViewAfterCheck = function (data, authData = null) {
+  const self = this;
   self.debug("ServerStyleSheet", ServerStyleSheet);
+  if (authData) data["authUser"] = authData;
   self.runReactView(data).then((html) => {
     self.callback(null, html);
   });
@@ -87,7 +97,7 @@ methods.runReactView = function (data) {
     HeadHelmet,
     meta,
   } = self;
-  const { view, staticRender = false, route = null } = data;
+  const { view, staticRender = false, route = null, authUser = null } = data;
   const { app } = meta;
   const { stateVendor = "" } = app;
 
@@ -162,11 +172,11 @@ methods.runReactView = function (data) {
     process.env?.useLazyLoad ? await self.preloadLazyComponents(view) : null;
 
     let goodies = self.comps;
-    let authUser = {
-      name: "Ntsako Surprise",
-      age: "Grown man",
-      timeNow: new Date(),
-    };
+    // let authUser = {
+    //   name: "Ntsako Surprise",
+    //   age: "Grown man",
+    //   timeNow: new Date(),
+    // };
     try {
       html = renderToString(
         sheet.collectStyles(
