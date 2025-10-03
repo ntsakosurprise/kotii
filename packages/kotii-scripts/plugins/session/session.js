@@ -3,24 +3,14 @@ import * as methods from "./methods.js";
 class Session {
   constructor(pao) {
     this.pao = pao;
-    this.strategies = { anzii: true, social: true };
-
-    // // methods
 
     this.init = methods.init;
-    this.handleLoginTask = methods.handleLoginTask;
-    // this.loginStrategy = methods.loginStrategy
-    this.loginUser = methods.loginUser;
-    this.anzii = methods.anzii;
-    this.social = methods.social;
-    this.isUserExist = methods.isUserExist;
-    this.compareUser = methods.compareUser;
-    this.getUserProfile = methods.getUserProfile;
-    // this.findHandler = methods.findHandler
-    // this.setTokenHeader = methods.setTokenHeader
-    this.preSetImage = methods.preSetImage;
-    this.hookFunkToThingy = methods.hookFunkToThingy;
-    this.dataRequestHandler = methods.dataRequestHandler;
+    this.verifyJwtToken = methods.verifyJwtToken;
+    this.handleCreateUserSession = methods.handleCreateUserSession;
+    this.handleGetUserFromSession = methods.handleGetUserFromSession;
+    this.customSession = methods.customSession;
+    this.expressSession = methods.expressSession;
+    this.getCustomSessionCookie = methods.getCustomSessionCookie;
   }
 }
 
