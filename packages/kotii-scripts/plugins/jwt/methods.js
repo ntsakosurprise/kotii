@@ -9,14 +9,14 @@ export const init = function () {
 
 export const handleSaveJwtKey = function (data) {
   const self = this;
-  self.adLog("Saving Jwt Key");
+
   self.key = data.key;
 };
 
 export const handleCreateToken = function (data) {
   const self = this;
-  self.adLog("Jwt Token create request");
-  self.pao.pa_wiLog(data);
+
+  self.debug(data);
   if (data.hasOwnProperty("payload")) {
     self.jwtSign(data);
   }
@@ -24,7 +24,6 @@ export const handleCreateToken = function (data) {
 
 export const handleVerifyToken = function (data) {
   const self = this;
-  self.adLog("Jwt Token verify request");
 
   if (data.hasOwnProperty("token")) {
     self.jwtVerify(data);
@@ -40,8 +39,8 @@ export const jwtSign = async function (jw) {
       token: token,
       user: { name: jw.payload.username, accessToken: token },
     };
-    self.pao.pa_wiLog("TOKEN SUCCESSFULLY CREATED");
-    self.pao.pa_wiLog(token);
+    self.debug("TOKEN SUCCESSFULLY CREATED");
+    self.debug(token);
     return jw.callback(null, tk);
   } catch (e) {
     return jw.callback(e, null);
@@ -50,7 +49,7 @@ export const jwtSign = async function (jw) {
 
 export const jwtVerify = async function (token) {
   const self = this;
-  self.adLog("Verifying Tokens");
+  self.debug("Verifying Tokens");
 
   try {
     let verified = await self.jwt.verify(token.token, self.key);
