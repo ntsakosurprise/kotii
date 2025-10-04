@@ -29,6 +29,7 @@ import Start from "./start/index.js";
 import Static from "./static/index.js";
 import Watchr from "./watchr/index.js";
 import WebpackConfig from "./wbpconfig/index.js";
+import ViewGuard from "./view-guard/index.js";
 
 // const require = createRequire(import.meta.url);
 // const ReactView = require("./react/index.cjs");
@@ -55,6 +56,7 @@ export {
   Start,
   Static,
   WebpackConfig,
+  ViewGuard,
 };
 export default {
   Interpreter,
@@ -86,4 +88,5 @@ export default {
   ServerSentEvents,
   KotiiCatchAll,
   Markdownr,
+  ViewGuard,
 };
