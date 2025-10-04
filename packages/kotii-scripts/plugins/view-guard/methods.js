@@ -6,4 +6,8 @@ export const init = function () {
 
 export const handleViewAuthentication = function (data) {
   const self = this;
+  data.callback({
+    name: "Test",
+    user: "Just",
+  });
 };
