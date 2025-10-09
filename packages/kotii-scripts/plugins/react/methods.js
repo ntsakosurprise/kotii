@@ -28,21 +28,26 @@ methods.handleReactView = function (data) {
 
   self.callback = data.callback;
   self.effectsData = {};
-  const { view } = data;
+  const { view, payload } = data;
   const { isRoutePrivate = false } = view;
 
   if (!isRoutePrivate) {
     self.debug("THE VIEW DATA", data);
+    self.processViewAfterCheck(data);
   } else {
     self.emit({
       type: "run-view-authentication",
       data: {
-        payload: data,
+        payload: payload,
         callback: (authResults) => {
-          if (authResults?.isAuthenticated) {
-            self.processViewAfterCheck(data, authResults.user);
+          if (authResults?.auth) {
+            self.processViewAfterCheck(data, authResults);
           } else {
-            self.processViewAfterCheck(data);
+            return self.callback(null, {
+              redirect: true,
+              code: 302,
+              to: "/login",
+            });
           }
         },
       },
