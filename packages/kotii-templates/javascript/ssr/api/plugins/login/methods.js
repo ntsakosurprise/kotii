@@ -16,6 +16,7 @@ export const handleLoginTask = function (data) {
   const { payload } = data;
   const { user } = payload;
   // let user = data.payload.user
+  self.debug("LOGIN TASK USER", data);
   self.callback = data.callback;
   self.tmpd = data;
 
@@ -30,10 +31,10 @@ export const handleLoginTask = function (data) {
       {
         self
           .loginUser(data)
-          .then((userStatus) => {
+          .then((user) => {
             return self.callback(null, {
               actionStatus: true,
-              actor: { auth: compareStatus.user, profile: gotBulk },
+              actor: { user },
             });
           })
           .catch((e) =>
