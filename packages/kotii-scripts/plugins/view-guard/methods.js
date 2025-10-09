@@ -6,8 +6,24 @@ export const init = function () {
 
 export const handleViewAuthentication = function (data) {
   const self = this;
-  data.callback({
-    name: "Test",
-    user: "Just",
+  const { payload } = data;
+  const { request } = payload;
+  const { req } = request;
+
+  if (req?.authUser) return data.callback(req.authUser);
+
+  self.emit({
+    type: "view-guard",
+    data: {
+      payload: { request: request.req },
+      callback: (authResults) => {
+        self.debug("THE AUTH RESULTS", authResults);
+        if (authResults) {
+          data.callback(authResults);
+        } else {
+          data.callback(authResults);
+        }
+      },
+    },
   });
 };
