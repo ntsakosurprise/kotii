@@ -8,13 +8,13 @@ class Session {
     this.verifyJwtToken = methods.verifyJwtToken;
     this.handleCreateUserSession = methods.handleCreateUserSession;
     this.handleGetUserFromSession = methods.handleGetUserFromSession;
-    this.handleShareMiddleware = methods.handleShareMiddleware
+    this.handleViewGuard = methods.handleViewGuard;
+    this.handleShareMiddleware = methods.handleShareMiddleware;
     this.customSession = methods.customSession;
     this.expressSession = methods.expressSession;
     this.getCustomSessionCookie = methods.getCustomSessionCookie;
-    this.token = methods.token
-    this.auth = methods.auth
-
+    this.token = methods.token;
+    this.auth = methods.auth;
   }
 }
 

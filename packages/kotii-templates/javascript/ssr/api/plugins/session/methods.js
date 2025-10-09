@@ -178,7 +178,13 @@ export const auth = function (req, res, next) {
       next();
     })
     .catch(() => {
-      self.callback(null);
+      self.emit({
+        type: "write-server-request-response",
+        data: {
+          data: { error: true, message: "Required token header required" },
+          res: res,
+        },
+      });
     });
 };
 
