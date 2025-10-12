@@ -28,9 +28,37 @@ methods.handleReactView = function (data) {
 
   self.callback = data.callback;
   self.effectsData = {};
+  const { view, payload } = data;
+  const { isRoutePrivate = false } = view;
 
-  self.debug("THE VIEW DATA", data);
+  if (!isRoutePrivate) {
+    self.debug("THE VIEW DATA", data);
+    self.processViewAfterCheck(data);
+  } else {
+    self.emit({
+      type: "run-view-authentication",
+      data: {
+        payload: payload,
+        callback: (authResults) => {
+          if (authResults) {
+            self.processViewAfterCheck(data, authResults);
+          } else {
+            return self.callback(null, {
+              redirect: true,
+              code: 302,
+              to: "/login",
+            });
+          }
+        },
+      },
+    });
+  }
+};
+
+methods.processViewAfterCheck = function (data, authData = null) {
+  const self = this;
   self.debug("ServerStyleSheet", ServerStyleSheet);
+  if (authData) data["authUser"] = authData;
   self.runReactView(data).then((html) => {
     self.callback(null, html);
   });
@@ -87,7 +115,7 @@ methods.runReactView = function (data) {
     HeadHelmet,
     meta,
   } = self;
-  const { view, staticRender = false, route = null } = data;
+  const { view, staticRender = false, route = null, authUser = null } = data;
   const { app } = meta;
   const { stateVendor = "" } = app;
 
@@ -162,12 +190,22 @@ methods.runReactView = function (data) {
     process.env?.useLazyLoad ? await self.preloadLazyComponents(view) : null;
 
     let goodies = self.comps;
+    // let authUser = {
+    //   name: "Ntsako Surprise",
+    //   age: "Grown man",
+    //   timeNow: new Date(),
+    // };
     try {
       html = renderToString(
         sheet.collectStyles(
           !layoutRoot ? (
             <Router ssrPath={view.match}>
-              {REACTAPP({ storeFromSource: store, goodies, effectsStore })}
+              {REACTAPP({
+                storeFromSource: store,
+                goodies,
+                effectsStore,
+                authUser,
+              })}
             </Router>
           ) : layoutRoot.Layout && layoutRoot.Root ? (
             <Router ssrPath={view.match}>
@@ -177,6 +215,7 @@ methods.runReactView = function (data) {
                 storeFromSource: store,
                 goodies,
                 effectsStore,
+                authUser,
               })}
             </Router>
           ) : layoutRoot.Layout ? (
@@ -186,6 +225,7 @@ methods.runReactView = function (data) {
                 storeFromSource: store,
                 goodies,
                 effectsStore,
+                authUser,
               })}
             </Router>
           ) : (
@@ -194,6 +234,7 @@ methods.runReactView = function (data) {
                 appWrapper: layoutRoot.Root,
                 storeFromSource: store,
                 effectsStore,
+                authUser,
               })}
             </Router>
           )
@@ -226,6 +267,7 @@ methods.runReactView = function (data) {
       staticRender,
       view,
       head: helmetGenerated,
+      authUser,
     });
     self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
     resolve(fullPage);
@@ -256,6 +298,7 @@ methods.renderFullPage = function ({
   view,
   head,
   scripts = [],
+  authUser,
 } = props) {
   const self = this;
   if (!self.styleTags) self.doKotiiStyles();
@@ -277,14 +320,14 @@ methods.renderFullPage = function ({
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
-			${!staticRender ? self.includeScripts(preloadedState) : null}
+			${!staticRender ? self.includeScripts(preloadedState, authUser) : null}
 			
 		</body>
 		</html>
     `;
 };
 
-methods.includeScripts = function (preloadedState) {
+methods.includeScripts = function (preloadedState, authUser) {
   const self = this;
   const { serialize } = self;
   let possibleExtraScripts = "";
@@ -300,6 +343,7 @@ methods.includeScripts = function (preloadedState) {
      window.__KOTII_EFFECTS_STATE__ = ${serialize(
        JSON.stringify(self.effectsData)
      )}
+    window.__KOTII_AUTH_USER__ = ${serialize(JSON.stringify(authUser))}
      window.__KOTII_APP_URL__ = ${JSON.stringify(process?.env?.KOTII_APP_URL)}
    
    </script>

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useContext, useEffect } from "react";
 import { KotiiRouterContenxt } from "../Router/Router.jsx";
 

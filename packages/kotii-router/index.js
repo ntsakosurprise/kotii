@@ -9,6 +9,7 @@ import {
   useParams,
   useRedirect,
   useRoute,
+  Redirect,
 } from "./src/index.js";
 
 export {
@@ -22,4 +23,5 @@ export {
   useNavigate,
   useRedirect,
   useRoute,
+  Redirect,
 };

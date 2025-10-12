@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { AppProvider, useAppContext } from "../../react-components/index.jsx";
 import createReduxStore from "./app_redux.js";
 import { ClientRoutes, RoutesAsServerRoutes } from "./build.js";
+import { AuthProvider } from "kotii-auth";
 
 logger.setNameSpaces([
   { namespace: "app:start-client", id: "appClient" },
@@ -30,7 +31,11 @@ const App = (appWrapper = null, layout = null) => {
   const effectsStore = window?.__KOTII_EFFECTS_STATE__
     ? JSON.parse(window.__KOTII_EFFECTS_STATE__)
     : null;
+  const authUser = window?.__KOTII_AUTH_USER__
+    ? JSON.parse(window.__KOTII_AUTH_USER__)
+    : null;
 
+  console.log("THE AUTH USER", authUser);
   loggas.appClient.debug("THE PROCESS.BROWSER.ENVS", process.env);
 
   let { type, stateVendor = null } = app;
@@ -38,16 +43,28 @@ const App = (appWrapper = null, layout = null) => {
     loggas.appClient.debug("NOT SSR", stateVendor);
     if (stateVendor && stateVendor === "redux") {
       const store = createReduxStore();
-      return appSpaWithRedux({ appWrapper, layout, store, effectsStore });
+      return appSpaWithRedux({
+        appWrapper,
+        layout,
+        store,
+        effectsStore,
+        authUser,
+      });
     }
-    return appSpa({ appWrapper, layout, effectsStore });
+    return appSpa({ appWrapper, layout, effectsStore, authUser });
   } else {
     if (stateVendor && stateVendor === "redux") {
       loggas.appClient.debug("TYPE IS SSR");
       const store = createReduxStore(window.__PRELOADED_STATE__);
-      return appWithRedux({ appWrapper, layout, store, effectsStore });
+      return appWithRedux({
+        appWrapper,
+        layout,
+        store,
+        effectsStore,
+        authUser,
+      });
     }
-    return appNormal({ appWrapper, layout, effectsStore });
+    return appNormal({ appWrapper, layout, effectsStore, authUser });
   }
 };
 const appWithRedux = ({
@@ -57,6 +74,7 @@ const appWithRedux = ({
   isServer = false,
   goodies = null,
   effectsStore,
+  authUser,
 } = props) => {
   loggas.appClient.debug("APP WITH REDUX", appWrapper, layout, store, isServer);
   if (isServer) {
@@ -67,7 +85,7 @@ const appWithRedux = ({
           layout={layout}
           effectsStore={effectsStore}
         >
-          <AppGeneric isServer={true} goodies={goodies} />
+          <AppGeneric isServer={true} goodies={goodies} authUser={authUser} />
         </AppProvider>
       </Provider>
     );
@@ -95,7 +113,7 @@ const appWithRedux = ({
           layout={layout}
           effectsStore={effectsStore}
         >
-          <AppGeneric />
+          <AppGeneric authUser={authUser} />
         </AppProvider>
       </Provider>
     );
@@ -108,7 +126,7 @@ const appWithRedux = ({
           layout={layout}
           effectsStore={effectsStore}
         >
-          <AppGeneric />
+          <AppGeneric authUser={authUser} />
         </AppProvider>
       </Provider>
     );
@@ -122,21 +140,27 @@ const appWithRedux = ({
 
 const AppGeneric = (props) => {
   const { appWrapper } = useAppContext();
-  const { isServer = false, goodies = {} } = props;
+  const { isServer = false, goodies = {}, authUser = null } = props;
   const AppWrapper = appWrapper;
 
   return appWrapper ? (
-    <AppWrapper>
-      {!isServer ? (
-        <ClientRoutes goodies={goodies} />
-      ) : (
-        <RoutesAsServerRoutes goodies={goodies} />
-      )}
-    </AppWrapper>
+    <AuthProvider authUser={authUser}>
+      <AppWrapper>
+        {!isServer ? (
+          <ClientRoutes goodies={goodies} />
+        ) : (
+          <RoutesAsServerRoutes goodies={goodies} />
+        )}
+      </AppWrapper>
+    </AuthProvider>
   ) : !isServer ? (
-    <ClientRoutes />
+    <AuthProvider authUser={authUser}>
+      <ClientRoutes />
+    </AuthProvider>
   ) : (
-    <RoutesAsServerRoutes />
+    <AuthProvider authUser={authUser}>
+      <RoutesAsServerRoutes />
+    </AuthProvider>
   );
 };
 
@@ -145,6 +169,7 @@ const appNormal = ({
   layout,
   isServer = false,
   effectsStore,
+  authUser,
 } = props) => {
   loggas.appClient.debug("APP NORMARL IS RUNNING");
   if (isServer) {
@@ -154,7 +179,7 @@ const appNormal = ({
         layout={layout}
         effectsStore={effectsStore}
       >
-        <AppGeneric />
+        <AppGeneric authUser={authUser} />
       </AppProvider>
     );
   }
@@ -166,12 +191,12 @@ const appNormal = ({
       layout={layout}
       effectsStore={effectsStore}
     >
-      <AppGeneric />
+      <AppGeneric authUser={authUser} />
     </AppProvider>
   );
 };
 
-const appSpa = ({ appWrapper, layout, effectsStore } = props) => {
+const appSpa = ({ appWrapper, layout, effectsStore, authUser } = props) => {
   loggas.appClient.debug("APP SPA IS RUNNING");
 
   const root = createRoot(document.getElementById("root"));
@@ -182,7 +207,7 @@ const appSpa = ({ appWrapper, layout, effectsStore } = props) => {
         layout={layout}
         effectsStore={effectsStore}
       >
-        <AppGeneric />
+        <AppGeneric authUser={authUser} />
       </AppProvider>
     </StrictMode>
   );
@@ -193,6 +218,7 @@ const appSpaWithRedux = ({
   layout,
   store,
   effectsStore,
+  authUser,
 } = props) => {
   loggas.appClient.debug("APP SPA WITH REDUX RUNNING");
 
@@ -205,7 +231,7 @@ const appSpaWithRedux = ({
           layout={layout}
           effectsStore={effectsStore}
         >
-          <AppGeneric />
+          <AppGeneric authUser={authUser} />
         </AppProvider>
       </Provider>
     </StrictMode>
@@ -218,6 +244,7 @@ const ServerApp = ({
   goodies = null,
   storeFromSource = null,
   effectsStore,
+  authUser = null,
 } = props) => {
   loggas.appServer.debug("THE GOODIES FROM SERVER", goodies);
   const store = !storeFromSource ? createReduxStore() : storeFromSource;
@@ -242,6 +269,7 @@ const ServerApp = ({
       isServer: true,
       goodies,
       effectsStore,
+      authUser,
     });
   }
   return appNormal({
@@ -250,6 +278,7 @@ const ServerApp = ({
     isServer: true,
     goodies,
     effectsStore,
+    authUser,
   });
 };
 
