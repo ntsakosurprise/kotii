@@ -40,7 +40,7 @@ methods.handleReactView = function (data) {
       data: {
         payload: payload,
         callback: (authResults) => {
-          if (authResults?.auth) {
+          if (authResults) {
             self.processViewAfterCheck(data, authResults);
           } else {
             return self.callback(null, {
