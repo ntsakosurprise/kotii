@@ -6,6 +6,12 @@ export default [
     type: "public",
   },
   {
+    path: "/loginUser",
+    method: "POST",
+    alias: "login",
+    type: "public",
+  },
+  {
     path: "/get-portfolio",
     method: "GET",
     alias: "portfolio",
@@ -23,11 +29,13 @@ export default [
   //     method: "POST",
   //     type: "public",
   //   },
-  //   {
-  //     path: "/login",
-  //     method: "POST",
-  //     type: "public",
-  //   },
+    {
+      path: "/logoutUser",
+      method: "POST",
+      alias: "logout",
+      type: "private",
+
+    },
   //   {
   //     path: "/verifygc",
   //     alias: "gcaptcha",

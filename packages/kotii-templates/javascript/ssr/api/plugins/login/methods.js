@@ -13,36 +13,39 @@ export const handleLoginTask = function (data) {
   const contains = pao.pa_contains;
   const isOBject = pao.pa_isObject;
   const forOf = pao.pa_forOf;
+  self.debug("THE LOGIN TASK DATA",data)
   const { payload } = data;
   const { user } = payload;
   // let user = data.payload.user
   self.debug("LOGIN TASK USER", data);
   self.callback = data.callback;
   self.tmpd = data;
+  self.debug("THE REQUEST HEADERS",data.payload.request.req?.headers)
 
   if (!isOBject(user))
     return self.callback({ message: "User has not been specified" }, null);
   if (!user.action) return self.callback({ message: "Invalid request" }, null);
   if (!contains(user, ["payload"]))
-    return self.callback({ message: "missing required payload" }, null);
+    return self.callback({actionStatus: false, message: "missing required payload" }, null);
 
   switch (user.action) {
     case "loginUser":
       {
         self
-          .loginUser(data)
+          .loginUser(user.payload,data.payload.request)
           .then((user) => {
             return self.callback(null, {
               actionStatus: true,
-              actor: { user },
+              actor: user,
             });
           })
-          .catch((e) =>
+          .catch((e) =>{
+            self.debug("login catch",e)
             self.callback({
               actionStatus: false,
               error: true,
               message: "An error occured trying to login user",
-            })
+            })}
           );
       }
       break;
@@ -51,23 +54,24 @@ export const handleLoginTask = function (data) {
   }
 };
 
-export const loginUser = function (pay) {
+export const loginUser = function (user,request) {
   const self = this;
   const pao = self.pao;
-  let user = pay;
+ 
 
   return new Promise((resolve, reject) => {
-    if (!pao.pa_contains(user, "login"))
-      return reject(new Error("Missing login"));
+  
     self.emit({
       type: "create-user-session",
       data: {
         payload: {
-          sessionType: "custom",
+          sessionType: user.sessionType,
+          user, request
         },
-        request: user.request,
         callback: (results) => {
-          resolve(results);
+          self.debug("THE USER RESULTS",results)
+          if(!results?.user) return reject("Erro occured creating session")
+          resolve(results.user);
         },
       },
     });

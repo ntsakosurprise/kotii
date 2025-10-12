@@ -9,12 +9,17 @@ class Session {
     this.handleCreateUserSession = methods.handleCreateUserSession;
     this.handleGetUserFromSession = methods.handleGetUserFromSession;
     this.handleViewGuard = methods.handleViewGuard;
-    this.handleShareMiddleware = methods.handleShareMiddleware;
+    this.handleShareMiddleware = methods.handleShareMiddleware
     this.customSession = methods.customSession;
     this.expressSession = methods.expressSession;
     this.getCustomSessionCookie = methods.getCustomSessionCookie;
-    this.token = methods.token;
-    this.auth = methods.auth;
+    this.getUserFromSession = methods.getUserFromSession
+    this.token = methods.token
+    this.endRequestSession = methods.endRequestSession
+    this.auth = methods.auth
+    this.handleDestroyUserSession = methods.handleDestroyUserSession
+    this.expressSession = methods.expressSession
+
   }
 }
 
