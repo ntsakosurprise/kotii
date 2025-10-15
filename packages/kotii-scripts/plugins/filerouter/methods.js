@@ -84,7 +84,7 @@ methods.handleRemovePagesImport = async function (data) {
     plugins: ["jsx"],
   });
 
-  self.removeImportDeclarations(buildAst, ["./pages.js"]);
+  self.removeImportDeclarations({ ast: buildAst, toRemove: ["./pages.js"] });
 
   const generateBuildAst = generate(buildAst).code;
 
@@ -114,8 +114,10 @@ methods.addOrRemoveByAST = function ({
   });
   self.debug("RENAMES: PAGES LESS.TO REMOVE", toRemove);
   if (compsPagesEqual && toRemove.length === 0 && toAdd.length === 0) {
+    self.debug("BOTH PAGES EQUAL");
     self.addImportLineToBuildJs(isMarkdown);
   } else if (toRemove.length > 0 && toAdd.length > 0) {
+    self.debug("TO REMOVE TO ADD", toRemove, toAdd);
     self.addToAST({
       objectToAdd: self.getAstRoutes(routesObject, toAdd),
       pagesPaths,
@@ -238,11 +240,7 @@ methods.getItemPathAndFile = function (item) {
 
     self.doImport(item, true).then((imported) => {
       self.debug("THE PAGE FILE IN CONTEXT EXPORTS", imported);
-      const {
-        getServerState = null,
-        universalEffects = null,
-        isPrivate = false,
-      } = imported;
+      const { getServerState = null, universalEffects = null } = imported;
       // if (imported.getServerState) {
       //   self.debug(
       //     "THE GETSERVERSTATE METHOD",
@@ -267,7 +265,6 @@ methods.getItemPathAndFile = function (item) {
         getServerState,
         universalEffects,
         isBracketParams,
-        isPrivate,
       });
     });
   });
@@ -615,9 +612,7 @@ methods.addToAST = function ({
     : importStrings
     ? importStrings
     : "";
-  isMarkdown
-    ? self.addItemsToExportList(ast, ["markdownRoutes", "MarkdownRender"])
-    : null;
+  self.addItemsToExportList(ast, ["markdownRoutes", "MarkdownRender"]);
   const { code: genCode } = generate(ast);
   const modifiedCode = genCode;
 
@@ -689,10 +684,6 @@ methods.astAddNode = function (routesNode, compsNode, toAdd) {
           t.objectProperty(
             t.identifier("isBracketParams"),
             t.booleanLiteral(adding?.isBracketParams || false)
-          ),
-          t.objectProperty(
-            t.identifier("isPrivate"),
-            t.booleanLiteral(adding?.isPrivate || false)
           ),
           t.objectProperty(
             t.identifier("component"),
@@ -1047,6 +1038,8 @@ methods.removeImportDeclarations = function (options) {
   let removedImportsIds = [];
   const { ast, toRemove, routesNode = null, compsNode = null } = options;
 
+  self.debug("AST REMOVE DECLARATION", options);
+
   traverse(ast, {
     ImportDeclaration(path) {
       self.debug("AST NODE AFTER Import Node", path.node.source.value);
@@ -1084,7 +1077,7 @@ methods.addImportLineToBuildJs = function (isMarkdown = false) {
   });
 
   self.debug("AST FOR BUILD.JS");
-  self.removeImportDeclarations(buildAst, ["./pages.js"]);
+  self.removeImportDeclarations({ ast: buildAst, toRemove: ["./pages.js"] });
   const generateBuildAst = generate(buildAst).code;
   const buildImportString = self.insertIdentifierImportDeclarations([
     {
@@ -1300,7 +1293,7 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
       viewso: "react",
       title: "REACT SERVE-SIDE RENDERING COMPONENT",
       method: "GET",
-      type: route?.isPrivate && route.isPrivate ? "private" : "public",
+      type: "public",
       name: route.componentName,
       requiresData: route.getServerState,
       hasEffectsToRun: route.universalEffects ? true : false,
