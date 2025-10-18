@@ -1338,7 +1338,7 @@ methods.getAstRoutes = function (routesObject, renamesToAdd) {
   return astRoutes;
 };
 
-methods.createStaticComponentsImports = function (imports, options) {
+methods.createStaticComponentsImports = function (options) {
   const self = this;
   const pao = self.pao;
   const template = self.template;
@@ -1351,28 +1351,39 @@ methods.createStaticComponentsImports = function (imports, options) {
     routesNode,
     compsNode,
     isMarkdown = false,
+    objectToAdd: imports,
   } = options;
 
-  // const markdownRenderImport = isMarkdown
-  //   ? t.importDeclaration(
-  //       [
-  //         t.importSpecifier(
-  //           t.identifier("MarkdownRender"), // local name
-  //           t.identifier("MarkdownRender") // imported name
-  //         ),
-  //       ],
-  //       t.stringLiteral("kotii-react-modules") // source module
-  //     )
-  //   : null;
+  const markdownRenderImport = isMarkdown
+    ? t.importDeclaration(
+        [
+          t.importSpecifier(
+            t.identifier("MarkdownRender"), // local name
+            t.identifier("MarkdownRender") // imported name
+          ),
+        ],
+        t.stringLiteral("../../react-components/index.jsx") // source module
+      )
+    : null;
+
+  const lazyLoadImport = t.importDeclaration(
+    [
+      t.importSpecifier(
+        t.identifier("lazyLoad"), // local name
+        t.identifier("lazyLoad") // imported name
+      ),
+    ],
+    t.stringLiteral("kotii-lazy") // source module
+  );
 
   let constString = shouldBuildComps ? `const comps = {` : "";
   let importString = imports.map((im, i) => {
     if (shouldBuildComps) constString += `${im.componentName},`;
     return `import ${im.componentName} from "${im.component}";`;
   });
-  // const myImport = template(`${importString.join(";")}`, {
-  //   sourceType: "module",
-  // });
+  let importsAst = isMarkdown
+    ? t.file(t.program([markdownRenderImport, lazyLoadImport]))
+    : null;
   constString += shouldBuildComps ? "}" : "";
   let joinedString = shouldBuildComps
     ? `${importString.join("")} ${constString};`
@@ -1380,7 +1391,13 @@ methods.createStaticComponentsImports = function (imports, options) {
   self.debug("ASTY JOINED STRING", joinedString);
   let ast = parser.parse(joinedString, { sourceType: "module" });
   !shouldBuildComps ? self.astAddNode(routesNode, compsNode, imports) : "";
-  let modifiedCode = generate(ast).code;
+  // Extract top-level body nodes
+  const mainBody = ast.program.body;
+  const importBody = importsAst?.program?.body ?? [];
+
+  // Combine into one unified Program node
+  const combinedAst = t.program([...importBody, ...mainBody]);
+  let modifiedCode = generate(combinedAst).code;
   self.debug("ASTY CODE THE IMPOT STRINGS", importString);
   self.debug("ASTY CODE", modifiedCode);
   self.debug();
