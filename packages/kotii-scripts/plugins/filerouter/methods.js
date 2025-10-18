@@ -1374,11 +1374,10 @@ methods.createStaticComponentsImports = function (options) {
   self.debug("ASTY JOINED STRING", joinedString);
   let ast = parser.parse(joinedString, { sourceType: "module" });
   !shouldBuildComps ? self.astAddNode(routesNode, compsNode, imports) : "";
-  // Extract top-level body nodes
+
   const mainBody = ast.program.body;
   const importBody = importsAst?.program?.body ?? [];
 
-  // Combine into one unified Program node
   const combinedAst = t.program([...importBody, ...mainBody]);
   let modifiedCode = generate(combinedAst).code;
   self.debug("ASTY CODE THE IMPOT STRINGS", importString);
@@ -1403,26 +1402,10 @@ methods.createDynamicLazyComponentsImports = function (options) {
     objectToAdd: imports,
   } = options;
 
-  const lazyLoadImport = t.importDeclaration(
-    [
-      t.importSpecifier(
-        t.identifier("lazyLoad"), // local name
-        t.identifier("lazyLoad") // imported name
-      ),
-    ],
-    t.stringLiteral("kotii-lazy") // source module
-  );
+  const lazyLoadImport = self.addLazyImporter();
 
   const markdownRenderImport = isMarkdown
-    ? t.importDeclaration(
-        [
-          t.importSpecifier(
-            t.identifier("MarkdownRender"), // local name
-            t.identifier("MarkdownRender") // imported name
-          ),
-        ],
-        t.stringLiteral("../../react-components/index.jsx") // source module
-      )
+    ? self.addMarkdownRenderComponent()
     : null;
 
   let constString = shouldBuildComps ? `const comps = {` : "";

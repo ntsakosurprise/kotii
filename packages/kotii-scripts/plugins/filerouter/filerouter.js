@@ -93,6 +93,8 @@ class FileRouter {
     this.astAddNodeMarkdown = methods.astAddNodeMarkdown;
     this.createMarkdownRoutesAst = methods.createMarkdownRoutesAst;
     this.astMarkdownUtils = methods.astMarkdownUtils;
+    this.addMarkdownRenderComponent = methods.addMarkdownRenderComponent;
+    this.addLazyImporter = methods.addLazyImporter;
   }
 }
 export default FileRouter;
