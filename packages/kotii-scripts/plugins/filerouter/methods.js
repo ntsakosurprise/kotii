@@ -1355,27 +1355,10 @@ methods.createStaticComponentsImports = function (options) {
   } = options;
 
   const markdownRenderImport = isMarkdown
-    ? t.importDeclaration(
-        [
-          t.importSpecifier(
-            t.identifier("MarkdownRender"), // local name
-            t.identifier("MarkdownRender") // imported name
-          ),
-        ],
-        t.stringLiteral("../../react-components/index.jsx") // source module
-      )
+    ? self.addMarkdownRenderComponent()
     : null;
 
-  const lazyLoadImport = t.importDeclaration(
-    [
-      t.importSpecifier(
-        t.identifier("lazyLoad"), // local name
-        t.identifier("lazyLoad") // imported name
-      ),
-    ],
-    t.stringLiteral("kotii-lazy") // source module
-  );
-
+  const lazyLoadImport = self.addLazyImporter();
   let constString = shouldBuildComps ? `const comps = {` : "";
   let importString = imports.map((im, i) => {
     if (shouldBuildComps) constString += `${im.componentName},`;
@@ -1927,6 +1910,38 @@ methods.addItemsToExportList = function (ast, exportList) {
       }
     },
   });
+};
+methods.addMarkdownRenderComponent = function () {
+  const self = this;
+  const t = self.t;
+
+  const markdowRender = t.importDeclaration(
+    [
+      t.importSpecifier(
+        t.identifier("MarkdownRender"), // local name
+        t.identifier("MarkdownRender") // imported name
+      ),
+    ],
+    t.stringLiteral("../../react-components/index.jsx") // source module
+  );
+
+  return markdowRender;
+};
+methods.addLazyImporter = function () {
+  const self = this;
+  const t = self.t;
+
+  const lazyLoadImport = t.importDeclaration(
+    [
+      t.importSpecifier(
+        t.identifier("lazyLoad"), // local name
+        t.identifier("lazyLoad") // imported name
+      ),
+    ],
+    t.stringLiteral("kotii-lazy") // source module
+  );
+
+  return lazyLoadImport;
 };
 
 export default methods;
