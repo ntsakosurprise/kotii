@@ -1775,4 +1775,27 @@ methods.closeWatchersOnShutdown = function () {
   }
 };
 
+methods.runWebpackCompiler = function () {
+  const self = this;
+  self.debug("WEBPACK: COMPILER TRIGGER");
+  self.compiler.run((err, stats) => {
+    self.debug("COMPILER ERR", err);
+    const info = stats.toJson();
+
+    if (stats.hasErrors()) {
+      console.error(info.errors);
+    }
+
+    if (stats.hasWarnings()) {
+      console.warn(info.warnings);
+    }
+    self.debug("COMPILER INFO", info.assets);
+    self.callback({
+      webpackCompileStats: {
+        assets: info.assets,
+      },
+    });
+  });
+};
+
 export default methods;
