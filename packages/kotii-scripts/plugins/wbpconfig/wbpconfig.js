@@ -78,6 +78,7 @@ class WebpackConfig {
     this.extractTailwindClasses = methods.extractTailwindClasses;
     this.findAddedTailwindClassContent = methods.findAddedTailwindClassContent;
     this.registerForShutdown = methods.registerForShutdown;
+    this.closeWatchersOnShutdown = methods.closeWatchersOnShutdown;
   }
 }
 export default WebpackConfig;
