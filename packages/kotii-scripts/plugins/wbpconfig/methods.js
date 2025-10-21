@@ -1745,4 +1745,23 @@ methods.findAddedTailwindClassContent = function (css, classNames) {
   // return content;
 };
 
+methods.registerForShutdown = function () {
+  const self = this;
+  self.emit({
+    type: "register-shutdown-candidate",
+    data: {
+      payload: {
+        candidate: self.closeWatchersOnShutdown.bind(self),
+        name: "kotii-js",
+      },
+      callback: (data) => {
+        self.debug(
+          "ANZII JS: Successfully registered for shutdowns",
+          data.message
+        );
+      },
+    },
+  });
+};
+
 export default methods;

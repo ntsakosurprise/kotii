@@ -77,6 +77,7 @@ class WebpackConfig {
     this.diffTailwindCss = methods.diffTailwindCss;
     this.extractTailwindClasses = methods.extractTailwindClasses;
     this.findAddedTailwindClassContent = methods.findAddedTailwindClassContent;
+    this.registerForShutdown = methods.registerForShutdown;
   }
 }
 export default WebpackConfig;
