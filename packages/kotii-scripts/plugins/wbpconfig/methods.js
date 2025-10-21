@@ -217,6 +217,8 @@ methods.configureWebPack = function (
   let wbpCompiler = null;
   try {
     wbpCompiler = webpack(webpackConfigObject);
+    self.compiler = wbpCompiler;
+    wbpCompiler.watch = () => {};
   } catch (err) {
     self.debug("Webpack config error", err);
     process.exit(1);
@@ -246,28 +248,12 @@ methods.configureWebPack = function (
 
         // domain: [{ name: 'static', set: 'public' }]
       );
+      self.runWebpackCompiler();
     });
 
   self.hookIntoWebpackCompilation(wbpCompiler).then((hooked) => {
     self.debug("ABOUT TO TRIGGER MANUAL webpack compilation");
-    wbpCompiler.run((err, stats) => {
-      self.debug("COMPILER ERR", err);
-      const info = stats.toJson();
-
-      if (stats.hasErrors()) {
-        console.error(info.errors);
-      }
-
-      if (stats.hasWarnings()) {
-        console.warn(info.warnings);
-      }
-      self.debug("COMPILER INFO", info.assets);
-      self.callback({
-        webpackCompileStats: {
-          assets: info.assets,
-        },
-      });
-    });
+    self.runWebpackCompiler();
   });
 
   // self.debug("THE WEBPACK COMPILER", wbpCompiler);
