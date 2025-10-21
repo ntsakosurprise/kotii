@@ -868,11 +868,15 @@ methods.addImportLineTAppJs = function () {
 };
 methods.runOnceDone = function () {
   const self = this;
-  // const { watched, persistent = true, ignored = null, events = null } = payload;
-  self.emit({
-    type: "open-browser-signal",
-    data: {},
-  });
+  if (
+    process.env?.ANZII_OPEN_BROWSER &&
+    process.env.ANZII_OPEN_BROWSER == "true"
+  ) {
+    self.emit({
+      type: "open-browser-signal",
+      data: {},
+    });
+  }
 };
 
 methods.hookSocketToServer = function (server) {
