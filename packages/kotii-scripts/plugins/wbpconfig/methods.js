@@ -1754,11 +1754,12 @@ methods.closeWatchersOnShutdown = function () {
   const self = this;
 
   self.debug("ANZII JS: Closing Watchers", process.env.IS_WATCHING_FILE);
+  // self.closeWatcher();
+  // if (process.env.IS_WATCHING_FILE) {
+  //   process.env["IS_WATCHING_FILE"] = false;
+  //   self.closeWatcher();
+  // }
   self.closeWatcher();
-  if (process.env.IS_WATCHING_FILE) {
-    process.env["IS_WATCHING_FILE"] = false;
-    self.closeWatcher();
-  }
 };
 
 methods.runWebpackCompiler = function () {
