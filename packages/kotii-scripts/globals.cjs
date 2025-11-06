@@ -120,9 +120,50 @@ const createImportPathContext = (
   return pathContext;
 };
 
+const replaceKotiiJsFilesContent = () => {
+  const pagesFilePath = `${__dirname}/kotii-land/dev/pages.js`;
+  const manifestFilePath = `${__dirname}/kotii-land/dev/manifest.js`;
+  const filesContent = getCentralFilesContent();
+
+  return new Promise((resolve) => {
+    fs.writeFileSync(pagesFilePath, filesContent.pages, "utf8");
+    fs.writeFileSync(manifestFilePath, filesContent.manifest, "utf8");
+    resolve(true);
+  });
+};
+
+const getCentralFilesContent = () => {
+  const pages = `
+const comps = {};
+const routes = [];
+
+export { comps, routes };
+`;
+  const manifest = `const meta = {
+  comps: [],
+  compsSource: "",
+  appMain: "",
+  lastCompsCount: 0,
+  compsPaths: [],
+  app: {
+    type: "ssr",
+    stateVendor: "redux",
+  },
+  isDomainCreated: false,
+  staticOrLazy: "static",
+};
+export { meta };
+`;
+  return {
+    pages,
+    manifest,
+  };
+};
+
 module.exports = {
   getNodejsForeignData,
   removeStylesJson,
   getNodejsForeignDataSync,
   createImportPathContext,
+  replaceKotiiJsFilesContent,
 };
