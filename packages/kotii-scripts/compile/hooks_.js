@@ -251,7 +251,30 @@ export async function load(url, context, nextLoad) {
     }
 
     return nextLoad(url);
-  } catch (error) {}
+  } catch (error) {
+    const parsed = parseLoaderError(error);
+    const { file } = parsed;
+    const matchPartialPagesPathPattern = `/kotii-land/dev/pages.js`;
+    const matchPartialBuildPathPattern = `/kotii-land/dev/build.js`;
+    let source = ``;
+    let code = 0;
+
+    prettyPrintError(parsed);
+
+    if (
+      file &&
+      (file.indexOf(matchPartialPagesPathPattern) >= 0 ||
+        file.indexOf(matchPartialBuildPathPattern) >= 0)
+    ) {
+      source = `export default null`;
+      code = 50;
+    } else {
+      source = `export default null;`;
+    }
+
+    await new Promise((r) => setTimeout(r, 10));
+    process.exit(code);
+  }
 }
 
 export async function resolve(specifier, context, nextResolve) {
