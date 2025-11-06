@@ -957,3 +957,35 @@ export function parseLoaderError(err) {
     stackFrames: extractStackFrames(err.stack || ""),
   };
 }
+
+export function prettyPrintError(parsed) {
+  // console.log("PRETTY PRINTING",parsed)
+  const header = chalk.bgRed.white.bold(` ${parsed.type} `);
+  const filePath = parsed.file
+    ? chalk.cyan(parsed.file)
+    : chalk.gray("(unknown file)");
+  const loc = parsed.line
+    ? chalk.yellow(`:${parsed.line}:${parsed.column || 0}`)
+    : "";
+
+  const message = chalk.redBright(parsed.message);
+  const reason = parsed.reasonCode
+    ? chalk.gray(`Reason: ${parsed.reasonCode}`)
+    : "";
+
+  const body = [
+    `${chalk.bold("File:")} ${filePath}${loc}`,
+    `${chalk.bold("Message:")} ${message}`,
+    reason && `${chalk.bold(reason)}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const box = boxen(body, {
+    padding: 1,
+    borderColor: "red",
+    borderStyle: "round",
+  });
+
+  console.error(`${header}\n${box}`);
+}
