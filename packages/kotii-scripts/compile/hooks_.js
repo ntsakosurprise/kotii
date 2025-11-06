@@ -98,148 +98,160 @@ export async function load(url, context, nextLoad) {
     fileExtension
   );
 
-  if (
-    (fileExtension === extJsx ||
-      fileExtension === extJS ||
-      fileExtension === extTs ||
-      fileExtension === extTsx ||
-      fileLoaderExts.includes(fileExtension)) &&
-    !isBuiltin(fileName)
-  ) {
-    loggas.load.debug("EXTENSIONS EXECUTION", fileExtension);
-    let source = null;
-    let options = null;
-
+  try {
     if (
-      fileExtension === extJsx ||
-      fileExtension === extJS ||
-      fileExtension === extTs ||
-      fileExtension === extTsx
+      (fileExtension === extJsx ||
+        fileExtension === extJS ||
+        fileExtension === extTs ||
+        fileExtension === extTsx ||
+        fileLoaderExts.includes(fileExtension)) &&
+      !isBuiltin(fileName)
     ) {
-      loggas.load.debug("JSX SECTION");
-      options = {
-        presets: ["@babel/preset-react", "@babel/preset-typescript"],
-        plugins: [
-          "@babel/plugin-syntax-import-assertions",
-          "@babel/plugin-transform-typescript",
-          ["babel-plugin-styled-components", { ssr: true, displayName: true }],
-        ],
-      };
-      loggas.load.debug("READING FILE", fileExtension, url);
-      let urlInstance = new URL(url).pathname;
-      if (url.indexOf("/api/") >= 0) {
-        if (!fs.existsSync(urlInstance)) {
-          source = `export default ${JSON.stringify({ noApi: true })}`;
-          return {
-            format: "module",
-            shortCircuit: true,
-            source: source,
-          };
-        } else {
+      loggas.load.debug("EXTENSIONS EXECUTION", fileExtension);
+      let source = null;
+      let options = null;
+
+      if (
+        fileExtension === extJsx ||
+        fileExtension === extJS ||
+        fileExtension === extTs ||
+        fileExtension === extTsx
+      ) {
+        loggas.load.debug("JSX SECTION");
+        options = {
+          presets: ["@babel/preset-react", "@babel/preset-typescript"],
+          plugins: [
+            "@babel/plugin-syntax-import-assertions",
+            "@babel/plugin-transform-typescript",
+            [
+              "babel-plugin-styled-components",
+              { ssr: true, displayName: true },
+            ],
+          ],
+        };
+        loggas.load.debug("READING FILE", fileExtension, url);
+        let urlInstance = new URL(url).pathname;
+        if (url.indexOf("/api/") >= 0) {
+          if (!fs.existsSync(urlInstance)) {
+            source = `export default ${JSON.stringify({ noApi: true })}`;
+            return {
+              format: "module",
+              shortCircuit: true,
+              source: source,
+            };
+          } else {
+            source = fs.readFileSync(urlInstance, {
+              encoding: "utf-8",
+            });
+          }
+        } else if (fileExtension === extJsx) {
+          loggas.load.debug("JSX READ FILE", fileExtension);
+          source = fs.readFileSync(urlInstance, {
+            encoding: "utf-8",
+          });
+        } else if (fileExtension === extJS) {
+          if (
+            nodeModulesRegex.test(url) &&
+            url.split("/").includes("kotii-scripts") &&
+            url.indexOf("/kotii-scripts/node_modules") < 0
+          ) {
+            loggas.load.debug(
+              "IS NODE MODULES AND KOTII",
+              fileName,
+              fileExtension,
+              url,
+              urlInstance
+            );
+
+            source = fs.readFileSync(urlInstance, {
+              encoding: "utf-8",
+            });
+          } else {
+            return nextLoad(url);
+          }
+        } else if (fileExtension === extTs) {
+          source = fs.readFileSync(urlInstance, {
+            encoding: "utf-8",
+          });
+        } else if (fileExtension === extTsx) {
           source = fs.readFileSync(urlInstance, {
             encoding: "utf-8",
           });
         }
-      } else if (fileExtension === extJsx) {
-        loggas.load.debug("JSX READ FILE", fileExtension);
-        source = fs.readFileSync(urlInstance, {
-          encoding: "utf-8",
-        });
-      } else if (fileExtension === extJS) {
-        if (
-          nodeModulesRegex.test(url) &&
-          url.split("/").includes("kotii-scripts") &&
-          url.indexOf("/kotii-scripts/node_modules") < 0
-        ) {
-          loggas.load.debug(
-            "IS NODE MODULES AND KOTII",
-            fileName,
-            fileExtension,
-            url,
-            urlInstance
-          );
-
-          source = fs.readFileSync(urlInstance, {
-            encoding: "utf-8",
-          });
-        } else {
-          return nextLoad(url);
+      } else if (fileLoaderExts.includes(fileExtension)) {
+        loggas.load.debug(
+          "The PNG",
+          fileExtension,
+          meta && meta.useInlinedPngs
+        );
+        let pathName = new URL(url).pathname;
+        let fileName = `/${path.basename(pathName)}`;
+        switch (fileExtension) {
+          case ".json":
+            source = await getNodejsForeignData("json", pathName);
+            break;
+          case ".csv":
+            source = await getNodejsForeignData("csv", pathName);
+            break;
+          case ".xml":
+            source = await getNodejsForeignData("xml", pathName);
+            break;
+          case ".jpg":
+          case ".svg":
+          case ".png":
+          case ".gif":
+          case ".mp3":
+          case ".mp4":
+            source = processImageFiles(pathName, fileName, fileExtension);
+            break;
+          case ".scss":
+          case ".sass":
+            source = await getCssFromSass(pathName, fileName);
+            break;
+          case ".less":
+            source = await getCssFromLess(pathName, fileName);
+            break;
+          case ".styl":
+            source = await getCssFromStylus(pathName, fileName);
+            break;
+          case ".css":
+            source = await getCss(pathName, fileName);
+            break;
+          default:
+            source = `export default ${JSON.stringify(fileName)}`;
         }
-      } else if (fileExtension === extTs) {
-        source = fs.readFileSync(urlInstance, {
-          encoding: "utf-8",
-        });
-      } else if (fileExtension === extTsx) {
-        source = fs.readFileSync(urlInstance, {
-          encoding: "utf-8",
-        });
-      }
-    } else if (fileLoaderExts.includes(fileExtension)) {
-      loggas.load.debug("The PNG", fileExtension, meta && meta.useInlinedPngs);
-      let pathName = new URL(url).pathname;
-      let fileName = `/${path.basename(pathName)}`;
-      switch (fileExtension) {
-        case ".json":
-          source = await getNodejsForeignData("json", pathName);
-          break;
-        case ".csv":
-          source = await getNodejsForeignData("csv", pathName);
-          break;
-        case ".xml":
-          source = await getNodejsForeignData("xml", pathName);
-          break;
-        case ".jpg":
-        case ".svg":
-        case ".png":
-        case ".gif":
-        case ".mp3":
-        case ".mp4":
-          source = processImageFiles(pathName, fileName, fileExtension);
-          break;
-        case ".scss":
-        case ".sass":
-          source = await getCssFromSass(pathName, fileName);
-          break;
-        case ".less":
-          source = await getCssFromLess(pathName, fileName);
-          break;
-        case ".styl":
-          source = await getCssFromStylus(pathName, fileName);
-          break;
-        case ".css":
-          source = await getCss(pathName, fileName);
-          break;
-        default:
-          source = `export default ${JSON.stringify(fileName)}`;
-      }
 
-      loggas.load.debug("filename.pathname", fileName, pathName);
+        loggas.load.debug("filename.pathname", fileName, pathName);
+
+        return {
+          format: "module",
+          shortCircuit: true,
+          source: source,
+        };
+      } else {
+        source = await nextLoad(url, { ...context, format });
+      }
+      let rawSource = typeof source === "string" ? source : source.source;
+
+      let result = fileLoaderExts.includes(fileExtension)
+        ? babel.transformFileSync(source, options)
+        : babel.transform(rawSource, {
+            filename: url,
+            presets: options.presets,
+          });
+      if (fileLoaderExts.includes(fileExtension)) {
+        loggas.load.debug("TRANSFORM RESULT", result);
+      }
 
       return {
-        format: "module",
+        format: format ? (format === "commonjs" ? "module" : format) : "module",
         shortCircuit: true,
-        source: source,
+        source: result.code,
       };
-    } else {
-      source = await nextLoad(url, { ...context, format });
-    }
-    let rawSource = typeof source === "string" ? source : source.source;
-
-    let result = fileLoaderExts.includes(fileExtension)
-      ? babel.transformFileSync(source, options)
-      : babel.transform(rawSource, { filename: url, presets: options.presets });
-    if (fileLoaderExts.includes(fileExtension)) {
-      loggas.load.debug("TRANSFORM RESULT", result);
     }
 
-    return {
-      format: format ? (format === "commonjs" ? "module" : format) : "module",
-      shortCircuit: true,
-      source: result.code,
-    };
-  }
-
-  return nextLoad(url);
+    return nextLoad(url);
+  } catch (error) {}
 }
 
 export async function resolve(specifier, context, nextResolve) {
