@@ -1,32 +1,134 @@
 #!/usr/bin/env node
 
-const { register } = require("node:module");
-const { pathToFileURL } = require("node:url");
-const { getAndSetEnvironmentVariables } = require("./preloads.cjs");
-const { removeStylesJson } = require("./globals.cjs");
-
-const parentURL = pathToFileURL(__filename);
+const { fork } = require("child_process");
+const path = require("path");
 const cli = require("./cli.cjs");
 const { parseScriptArguments } = cli;
+const { replaceKotiiJsFilesContent } = require("./globals.cjs");
+let RESTART_RETRIES = 3;
+let RESTART_TIMES = 0;
+let SHOULD_RESTART = false;
 
-const commandToRun = parseScriptArguments()[0];
+const commands = parseScriptArguments();
+const commandToRun = commands[0];
+console.log("THE COMMAND TO RUN", commandToRun, commands);
 
-if (commandToRun === "start") {
-  process.env.ANZII_KICK_OFF_MANUALLY = "true";
-  process.env.NODE_ENV = "production";
-  register("./compile/hooks_prod.js", parentURL);
-  getAndSetEnvironmentVariables(process.env.NODE_ENV);
+const childPath = path.resolve("./node_modules/kotii-scripts/kotii_start.cjs");
 
-  import("./kotii-land/prod/app_prod.js");
-} else {
-  // removeStylesJson();
-  register("./compile/hooks_.js", parentURL);
-  getAndSetEnvironmentVariables(
-    process.env.NODE_ENV
-      ? process.env.NODE_ENV != "development"
-        ? "development"
-        : process.env.NODE_ENV
-      : "development"
-  );
-  import("./kotii-land/dev/app.js");
-}
+const createChildProcess = (isaRestart = false) => {
+  if (!isaRestart) {
+    return fork(childPath);
+  } else {
+    return fork(childPath, {
+      env: {
+        ...process.env,
+        ANZII_OPEN_BROWSER: "false",
+        CUSTOM_RESTART: "true",
+      },
+    });
+  }
+};
+const attachListenerToChildProcess = () => {
+  // Listen for messages from the child
+
+  childProcess.on("message", (msg) => {
+    console.log("RECEIVED MESSAGE!", msg);
+    if (msg.event === "send-commands") {
+      childProcess.send({
+        event: "take-commands",
+        data: { commandToRun, commands },
+      });
+    } else if (msg.event === "destroy-child") {
+      console.log("RESTARTING THE APP");
+      SHOULD_RESTART = true;
+      if (childProcess && childProcess.kill) {
+        console.log("Killing old child process:", childProcess.pid);
+        childProcess.kill(); // sends SIGTERM by default
+      }
+    }
+  });
+
+  childProcess.once("exit", () => {
+    console.log("Restarting after exit", SHOULD_RESTART);
+    if (SHOULD_RESTART) {
+      SHOULD_RESTART = false;
+      startApp(true); // safe restart after exit
+    }
+  });
+
+  childProcess.on("exit", (code) => {
+    console.log("I'M DYING OF THIRST");
+
+    if (code === 50) {
+      if (RESTART_RETRIES > RESTART_TIMES) {
+        RESTART_TIMES = RESTART_TIMES + 1;
+        replaceKotiiJsFilesContent().then((result) => {
+          startApp();
+        });
+      }
+    }
+  });
+};
+const sendCommandsEvent = () => {
+  childProcess.send({
+    event: "take-commands",
+    data: { commandToRun, commands },
+  });
+};
+const startApp = (isaRestart = false) => {
+  childProcess = createChildProcess(isaRestart);
+
+  // Gracefully kill the old child first
+  attachListenerToChildProcess();
+
+  sendCommandsEvent();
+
+  console.log("App has been started...");
+};
+
+process.on("SIGINT", () => {
+  console.log("Parent received SIGINT");
+  childProcess.kill("SIGINT"); // forward to child
+});
+
+// process.on("exit",()=>{
+//   console.log("PARENT IS GOING THROUGH IT")
+// })
+
+// process.on('SIGINT', () => {
+//   console.log('Parent received SIGINT');
+//   childProcess.kill('SIGINT'); // forward to child
+// });
+
+// process.on('SIGTERM', async () => {
+//   console.log('Parent received SIGTERM from child — shutting down gracefully...');
+
+//   if (childProcess) {
+//     try {
+//       console.log(`Sending SIGTERM to child (PID ${childProcess.pid})`);
+//       childProcess.kill('SIGTERM');
+
+//       await new Promise((resolve) => {
+//         const timeout = setTimeout(() => {
+//           if (!childProcess.killed) {
+//             console.warn('Child did not exit in time, forcing SIGKILL...');
+//             childProcess.kill('SIGKILL');
+//           }
+//           resolve();
+//         }, 5000);
+
+//         childProcess.once('exit', () => {
+//           clearTimeout(timeout);
+//           resolve();
+//         });
+//       });
+//     } catch (err) {
+//       console.error('Error while shutting down child:', err);
+//     }
+//   }
+
+//   console.log('Parent exiting after SIGTERM.');
+//   process.exit(0);
+// });
+
+startApp();
