@@ -557,8 +557,21 @@ methods.preloadLazyComponents = async function (view) {
   if (compsList.includes(loadComponent.component)) {
     // console.log("THE COMPONENT EXISTS",await self.comps.comps[loadComponent.component])
     if (self.comps.comps[loadComponent.component]?.preload) {
-      await self.comps.comps[loadComponent.component].preload();
-      return;
+      const mod = await self.comps.comps[loadComponent.component].preload();
+      self.info("THE PRELOADED MOD", mod);
+      if (typeof mod === "function") {
+        // 🔥 This triggers evaluation
+        const evaluated = mod;
+
+        // Optionally log styled-component ID
+        if (evaluated?.styledComponentId) {
+          self.debug("✅ styledComponentId:", evaluated.styledComponentId);
+        } else {
+          self.warn("⛔ No styledComponentId on component");
+        }
+
+        return evaluated;
+      }
     }
   }
   let markdownCompsRouteIndex = -1;
