@@ -989,3 +989,18 @@ export function prettyPrintError(parsed) {
 
   console.error(`${header}\n${box}`);
 }
+
+export function showCodeSnippet(file, line, context = 2) {
+  if (!file || !fs.existsSync(file)) return "";
+  const lines = fs.readFileSync(file, "utf8").split("\n");
+  const start = Math.max(0, line - context - 1);
+  const end = Math.min(lines.length, line + context);
+  return lines
+    .slice(start, end)
+    .map((l, i) => {
+      const num = start + i + 1;
+      const marker = num === line ? chalk.red(">") : " ";
+      return `${marker} ${chalk.gray(String(num).padStart(3))} | ${l}`;
+    })
+    .join("\n");
+}
