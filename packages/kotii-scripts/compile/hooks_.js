@@ -928,3 +928,8 @@ export const escapePeriodsOnPaths = (escapeString) => {
   // );
   return escapeString.replace(matchCopy, matchCopyReplaced);
 };
+
+const extractFile = (str) => {
+  const match = str.match(/\/[^\s:]+?\.(?:[jt]sx?)/);
+  return match ? match[0] : null;
+};
