@@ -2,9 +2,14 @@ const methods = {};
 const MATCH_REMOTE_RESOURCE_REGEX = /(https|http):+\/\//i;
 let tailwindConfig = null;
 let tailwindRootFile = "";
+
+let firstBuild = true;
+let rebuilding = false;
+let queued = false;
+
 import autoprefixer from "autoprefixer";
 import fs from "fs";
-import path from "path";
+import path, { resolve } from "path";
 import postcss from "postcss";
 import postcssNested from "postcss-nested";
 import tailwindcss from "tailwindcss";
@@ -19,6 +24,7 @@ import {
 } from "../../css/index.js";
 import { kotiiKotiiLandPath } from "../../kotii_paths.js";
 import createRandomeName from "./createRandomName.js";
+import mime from "mime-types";
 
 methods.init = function () {
   this.listens({
@@ -30,7 +36,7 @@ methods.handleWebpackConfig = function (data) {
   // self.debug("SELF BEFORE", self);
   self["callback"] = data.callback;
   const loadFile = self.pao.pa_loadFile;
-  const { contextApp, build = false } = data.payload;
+  const { contextApp, build = false, activeRoute = null } = data.payload;
   const { appEnv = "" } = contextApp;
   const {
     useCustomDomain = false,
@@ -38,7 +44,13 @@ methods.handleWebpackConfig = function (data) {
     useAsDefaultPage = "/",
     appStyles = null,
   } = contextApp.appManifest;
-  self.debug("WEBPACK DATA PAYLOAD", data.payload.build);
+  if (process.env.NODE_ENV === "development") {
+    if (contextApp?.appManifest?.pages)
+      self.defaultSettings.pages = contextApp.appManifest.pages;
+    self.debug("WEBPACK DATA PAYLOAD", data.payload.build, activeRoute);
+    if (activeRoute) self["newPageRoute"] = activeRoute;
+  }
+
   // self.debug("SELF. AFTER SETTING CALLBACK", self);
   // self.debug("THE NODE ENV", process.env.NODE_ENV);
 
@@ -153,12 +165,7 @@ methods.configureWebPack = function (
   const { webpack, setContextEnv } = self;
   const { routes = null, contextApp, build = false } = payload;
 
-  const webPackConfig =
-    (process.env?.ANZII_CLI_WITH_SERVER &&
-      process.env.ANZII_CLI_WITH_SERVER === "true") ||
-    build
-      ? self.webPackServerConfig
-      : self.webPackConfig;
+  const webPackConfig = self.webPackServerConfig;
 
   // self.debug("THE APP CONTEXT CONFIG", payload);
   process.env["KOTII_APP_URL"] = JSON.stringify(certDomainConfig.APP_URL);
@@ -167,8 +174,8 @@ methods.configureWebPack = function (
   );
   envs.stringified["KOTII_SHOW_DEBUG_LOGS"] = true;
   envs.stringified["KOTII_APP_URL"] = JSON.stringify(certDomainConfig.APP_URL);
-  envs.stringified["KOTII_USE_LAZY"] = JSON.stringify(
-    process?.useLazyLoad ? true : false
+  envs.stringified["KOTII_STATIC_OR_LAZY"] = JSON.stringify(
+    process.env.useLazyLoad
   );
 
   self.debug("THE APP ENVS", envs);
@@ -189,7 +196,7 @@ methods.configureWebPack = function (
     )}`,
     pagesFolder: contextApp.appPagesFolder,
     appSrc: contextApp.appSrc,
-    runOnComplete: self.testRunFromWebpack.bind(self),
+    runOnComplete: self.startWatchingAppFiles.bind(self),
     closeWatcher: self.closeWatcher.bind(self),
     notifyClient: self.notifyClient.bind(self),
     isProjectPNPM: contextApp.appPnpmPkgr,
@@ -205,6 +212,10 @@ methods.configureWebPack = function (
     tailwindConfig: contextApp?.appTailwindConfig || null,
     runForTailwindCss: self.runForTailwindCss.bind(self),
     saveTailwindResources: self.saveTailwindResources.bind(self),
+    appConfigPath: contextApp.appConfigPath,
+    cleanUpCentralFiles: self.replaceKotiiJsFilesContent.bind(self),
+    sendReloadSignaOnRestart: self.sendReloadSignaOnRestart.bind(self),
+
     // tsConfigReaders: {
     //   commonJs: loadFile,
     //   esmJs: self.dynamicImport.bind(self),
@@ -216,9 +227,24 @@ methods.configureWebPack = function (
   self.debug("THE WEBPACK CONFIG", webpackConfigObject);
   let wbpCompiler = null;
   try {
+    let filesToWatch = [
+      `${contextApp.appSrc}`,
+      `${contextApp.appSrc}/**/*.{css,scss,sass,less,styl}`,
+      `${contextApp.appPagesFolder}`,
+      `${contextApp.appConfigPath}`,
+    ];
+    let appPathsIDS = {
+      pages: contextApp.appPagesFolder,
+      src: contextApp.appSrc,
+      styles: `${contextApp.appSrc}/**/*.{css,scss,sass,less,styl}`,
+    };
+    // this.runOnComplete(filesToWatch,appPathsIDS);
+    process.env?.NODE_ENV === "development"
+      ? self.startWatchingAppFiles(filesToWatch, appPathsIDS)
+      : null;
     wbpCompiler = webpack(webpackConfigObject);
     self.compiler = wbpCompiler;
-    wbpCompiler.watch = () => {};
+    // wbpCompiler.watch = ()=>{}
   } catch (err) {
     self.debug("Webpack config error", err);
     process.exit(1);
@@ -248,7 +274,10 @@ methods.configureWebPack = function (
 
         // domain: [{ name: 'static', set: 'public' }]
       );
-      self.runWebpackCompiler();
+      self.compilerWatcher = self.runWebpackCompiler(
+        "initiate-run",
+        contextApp.appConfigPath
+      );
     });
 
   self.hookIntoWebpackCompilation(wbpCompiler).then((hooked) => {
@@ -298,11 +327,33 @@ methods.configureDevServer = function (
   };
 
   let wepackMiddlewares = null;
+  self.readyDevMiddleware = self.kotiiMiddleware(webpacks.compiler);
+  // self.readyDevMiddleware = (req,res,next)=>{
+  //   self.debug("CURRENTLY SERVING STATIC FILES")
+  //   next()
+  // }
+  self.readyHotMiddleware = self.webpackHotMiddleware(webpacks.compiler, {
+    log: console.log,
+    path: "/__kotii",
+    heartbeat: 2000,
+  });
+  webpacks.compiler.hooks.compile.tap("Debug", () =>
+    console.log("🧩 compile start")
+  );
+  webpacks.compiler.hooks.emit.tap("Debug", () =>
+    console.log("🧩 emitting assets")
+  );
+  webpacks.compiler.hooks.done.tap("Debug", () => console.log("🧩 build done"));
+  //   webpacks.compiler.hooks.watchRun.tapAsync("MyPlugin", (compiler) => {
+  //   console.log("Modified files:", compiler.modifiedFiles);
+  //   console.log("Removed files:", compiler.removedFiles);
+  //   // callback();
+  // });
   const serverType = "config-manual";
   serverType === "config-manual"
     ? (wepackMiddlewares = {
-        webpackDevMiddleware: self.webpackDevMiddleware,
-        webpackHotMiddleware: self.webpackHotMiddleware,
+        webpackDevMiddleware: self.readyDevMiddleware,
+        webpackHotMiddleware: self.readyHotMiddleware,
       })
     : "";
   // self.debug("SELF IN CONFIGURE", self);
@@ -335,7 +386,22 @@ methods.configureDevServer = function (
               },
             },
             callback: (data) => {
-              callback(data.message);
+              // self.debug("SENDING A RESTART SIGNAL",process.env?.CUSTOM_RESTART)
+              self.debug(
+                "Running CONFIG CALLBACK",
+                self.SOCKET_CLIENT_CONNECTION_ESTABLISHED
+              );
+              //  if(self.SOCKET_CLIENT_CONNECTION_ESTABLISHED){
+              //   self.debug("SENDING RECONNECT SIGNAL",self.SOCKET_CLIENT_CONNECTION_ESTABLISHED)
+              //    self.SOCKET_CLIENT_CONNECTION_ESTABLISHED = false
+              //    self.notifyClient({
+              //     name: "kotii-client-reload",
+              //     vendor: "kotii",
+
+              //   });
+              //  }
+
+              // callback(data.message);
             },
           },
         });
@@ -358,7 +424,16 @@ methods.configureDevServer = function (
           },
         },
         callback: (data) => {
-          callback(data.message);
+          // self.debug("SENDING A RESTART SIGNAL",process.env?.CUSTOM_RESTART)
+          //     if(process.env?.CUSTOM_RESTART){
+          //       self.debug("SENDING A RESTART SIGNAL")
+          //       process.env.CUSTOM_RESTART = "false"
+          //       self.notifyClient({
+          //         name: "kotii-client-reload",
+          //         vendor: "kotii",
+          //       });
+          //     }
+          // callback(data.message);
         },
       },
     });
@@ -406,51 +481,82 @@ methods.removePagesImport = function () {
   });
 };
 
-methods.testRunFromWebpack = function (watchPath, runStatus) {
+methods.startWatchingAppFiles = function (watchPath, pathsIDS, runStatus) {
   const self = this;
   const stylExtensions = [".css", ".scss", ".styl", ".less", ".sass"];
-  self.debug("TEST RUN FROM WEBPACK", self.removePagesImport, watchPath);
+  self.debug("Kotii-JS Is Watching Files", self.removePagesImport, watchPath);
   self.watchFile(watchPath, {
     add: (addPath, stats) => {
       // let stats = null
       // stats = fs.statSync(addPath);
-      self.debug("WATCHR:: ADD FILE STATS", addPath, stats);
-      // if(stats.size > 0){
-      //   self.restartSever(addPath,"add", runStatus )
-      // }else{
+      self.debug(
+        "WATCHR:: ADD FILE STATS",
+        addPath,
+        addPath.indexOf(pathsIDS.pages) >= 0
+      );
 
-      // }
-
-      // if(!self.fileIsAddOrDelProcessed){
-      //   self.fileIsAddOrDelProcessed = true
-      //   self.restartSever(addPath, runStatus)
-      // }else{
-      //   self.fileIsAddOrDelProcessed = false
-      // }
-
-      if (stats.size > 0) {
-        self.debug("FILE SIZE IS BIGGER THAN ZERO, NO RESTART");
-        self.restartSever(addPath, runStatus);
-      } else {
-        self.debug("FILE SIZE IS ZERO, NO RESTART");
-        if (!self.addedEmptyFiles) {
-          self.addedEmptyFiles = [addPath];
+      if (addPath.indexOf(pathsIDS.pages) >= 0) {
+        if (self?.recentlyDeleted && self.recentlyDeleted[addPath]) {
+          self.debug("HANDLING A POSSIBLE RENAME");
+          self.notifyClient({
+            name: "kotii-client-prepare-reload",
+            vendor: "kotii",
+          });
+          self.restartSever(addPath, runStatus);
+        } else if (stats.size > 0) {
+          self.debug("FILE SIZE IS BIGGER THAN ZERO,RESTART");
+          self.notifyClient({
+            name: "kotii-client-prepare-reload",
+            vendor: "kotii",
+          });
+          self.restartSever(addPath, runStatus);
         } else {
-          self.addedEmptyFiles.push(addPath);
+          self.debug("FILE SIZE IS ZERO, NO RESTART");
+          if (!self.addedEmptyFiles) {
+            self.addedEmptyFiles = [addPath];
+          } else {
+            self.addedEmptyFiles.push(addPath);
+          }
         }
       }
 
       // self.notifyClient()
     },
     delete: (addPath, stats) => {
-      self.debug("WATCHR:: DELETE FILE STATS", addPath, stats);
-      self.restartSever(addPath, "delete", runStatus);
-      // if(!self.fileIsAddOrDelProcessed){
-      //   self.fileIsAddOrDelProcessed = true
-      //   self.restartSever(addPath, runStatus)
-      // }else{
-      //   self.fileIsAddOrDelProcessed = false
-      // }
+      self.debug(
+        "WATCHR:: DELETE FILE STATS",
+        addPath,
+        addPath.indexOf(pathsIDS.pages) >= 0
+      );
+
+      if (addPath.indexOf(pathsIDS.pages) >= 0) {
+        const fileInfo = {
+          path: addPath,
+          time: Date.now(),
+          size: stats ? stats.size : null,
+        };
+        if (!self?.recentlyDeleted) {
+          self.recentlyDeleted = {
+            [addPath]: fileInfo,
+          };
+        } else {
+          self.recentlyDeleted[addPath] = fileInfo;
+        }
+
+        setTimeout(() => {
+          // If it’s still in the map after 2 seconds, it was a real delete
+          self.debug("THIS IS A TRUE DELETE, FILE IS STILL SET");
+          if (self.recentlyDeleted[addPath]) {
+            console.log(`File truly deleted: ${addPath}`);
+            delete self.recentlyDeleted[addPath];
+            self.notifyClient({
+              name: "kotii-client-prepare-reload",
+              vendor: "kotii",
+            });
+            self.restartSever(addPath, "delete", runStatus);
+          }
+        }, 2000);
+      }
     },
     change: async (addPath, stats) => {
       self.debug("CHANGE EVENT OCCURED ON", addPath, stats);
@@ -639,8 +745,11 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
           );
         }
       } else {
+        self.debug("CHANGE FOR OTHER FILES", self.addedEmptyFiles);
         if (self.addedEmptyFiles && self.addedEmptyFiles.includes(addPath)) {
+          self.debug("ADDED EMPTY FILE");
           if (self.addedEmptyFiles.length === 1) {
+            self.debug("RESTART FOR EMPTY FILE WITH DATA");
             self.addedEmptyFiles = null;
             self.restartSever(addPath, "changeEmpyFile");
           } else {
@@ -651,6 +760,16 @@ methods.testRunFromWebpack = function (watchPath, runStatus) {
             );
             self.splice(self.addedEmptyFiles.indexOf(addPath), 1);
           }
+        } else if (addPath.indexOf(pathsIDS.appConfigPath) >= 0) {
+          self.debug("RESTART FOR CONFIG CHANGE", self.addedEmptyFiles);
+          self.notifyClient({
+            name: "kotii-client-prepare-reload",
+            vendor: "kotii",
+          });
+          self.closeWatcherAndRestart();
+        } else {
+          self.debug("RE-BUILD WEBPACK", addPath);
+          //  self.runWebpackCompiler("invalidate")
         }
       }
     },
@@ -664,9 +783,13 @@ methods.notifyClient = function (updateInfo) {
   // 	self.pao.pa_wiLog(response.data)
 
   //   }).catch(err => {reject(err);});
+  self.debug("THE APP IS IN ACTION", updateInfo);
+  self.debug("THE CLIENT", self.wss.clients);
 
   self.wss.clients.forEach((client) => {
+    self.debug("CLIENT IS READY");
     if (client.readyState === WebSocket.OPEN) {
+      self.debug("CLIENT IS IN READY STATE", updateInfo);
       client.send(JSON.stringify(updateInfo));
     }
   });
@@ -682,43 +805,40 @@ methods.watchFile = function (data, events, options = null) {
       callback: (data) => {
         self.debug("File watch set", data);
         self.closeWatcher = data.closeWatcher;
+        self.registerForShutdown();
       },
     },
   });
+
+  // self.registerForShutdown()
 };
 
 methods.restartSever = function (addPath, eventType = "", runStatus = null) {
   const self = this;
 
   self.debug(`PLUGIN:: WATCHR:: FILE ${eventType} event`, addPath, runStatus);
-  process.env.CUSTOM_RESTART = true;
+  // process.env.CUSTOM_RESTART = "true";
 
   process.env.ANZII_OPEN_BROWSER = "false";
   self.debug("PLUGIN:: THE PROCESS.ENV.PORT", JSON.stringify(process.env.PORT));
-  self.debug("PLUGIN:: THE WATCHER ADD", process.env.PORT);
+  self.debug("PLUGIN:: THE WATCHER", eventType, process.env.PORT);
 
-  self.closeWatcher(() => {
-    self.debug(
-      "ADD EVENT CLOSING WATCHER BEFORE RESTART",
-      JSON.stringify(process.env.PORT)
-    );
-    // await killPortProcess(process.env.PORT)
-    process.exit(1);
-  });
+  self.debug("PLUGIN:: WATCHER", self.closeWatcher);
+  self.closeWatcherAndRestart();
 };
 methods.configureDomainOnceOff = function (data, events, options = null) {
   const self = this;
   // const { watched, persistent = true, ignored = null, events = null } = payload;
-  self.emit({
-    type: "watch-target",
-    data: {
-      payload: { watched: data, events },
-      callback: (data) => {
-        self.debug("File watch set", data);
-        self.closeWatcher = data.closeWatcher;
-      },
-    },
-  });
+  // self.emit({
+  //   type: "watch-target",
+  //   data: {
+  //     payload: { watched: data, events },
+  //     callback: (data) => {
+  //       self.debug("File watch set", data);
+  //       self.closeWatcher = data.closeWatcher;
+  //     },
+  //   },
+  // });
 };
 methods.checkIfIsFile = function (filePath) {
   const self = this;
@@ -854,6 +974,7 @@ methods.addImportLineTAppJs = function () {
 };
 methods.runOnceDone = function () {
   const self = this;
+  // const { watched, persistent = true, ignored = null, events = null } = payload;
   if (
     process.env?.ANZII_OPEN_BROWSER &&
     process.env.ANZII_OPEN_BROWSER == "true"
@@ -872,6 +993,14 @@ methods.hookSocketToServer = function (server) {
 
   self.wss.on("connection", (ws) => {
     self.webSocketConnection = ws;
+    // if(process.env?.CUSTOM_RESTART && process.env.CUSTOM_RESTART === "true"){
+    //             self.debug("SENDING A RESTART SIGNAL")
+    //             process.env.CUSTOM_RESTART = "false"
+    //             self.SOCKET_CLIENT_CONNECTION_ESTABLISHED = true
+
+    // }else{
+    //   console.log("THE PROCESS IS NOT RESTART")
+    // }
 
     ws.on("close", () => {
       console.log("Client disconnected");
@@ -1731,6 +1860,39 @@ methods.findAddedTailwindClassContent = function (css, classNames) {
   // return content;
 };
 
+methods.closeWatchersOnShutdown = function () {
+  const self = this;
+
+  self.debug("ANZII JS: Closing Watchers", process.env.IS_WATCHING_FILE);
+  self.debug("SELF.COMPILER WATCHER ", self.compilerWatcher?.close);
+  // self.closeWatcher()
+  // if(process.env.IS_WATCHING_FILE){
+  //   process.env["IS_WATCHING_FILE"] = false
+  //   self.closeWatcher()
+  // }
+
+  return new Promise((resolve, reject) => {
+    self.closeWatcher(() => {
+      if (self.compilerWatcher && self.compilerWatcher?.close) {
+        self.debug("WATHCER IS CLOSING", self.compilerWatcher?.watcher);
+
+        self.compilerWatcher.close((err) => {
+          self.debug("COMPILER CLOSE ERRO", err);
+          self.debug("CLOSED COMPILER WATCHER");
+          self.compilerWatcher = null;
+          self.debug("THE SELF.COMPILER AFTER", self.compilerWatcher);
+          resolve(true);
+        });
+      } else {
+        self.debug(
+          "SELF.COMPILER WATCHER DOES NOT EXIST",
+          self.compilerWatcher?.close
+        );
+        resolve(true);
+      }
+    });
+  });
+};
 methods.registerForShutdown = function () {
   const self = this;
   self.emit({
@@ -1750,39 +1912,243 @@ methods.registerForShutdown = function () {
   });
 };
 
-methods.closeWatchersOnShutdown = function () {
+methods.runWebpackCompiler = function (action = null, extraPath = "") {
   const self = this;
+  self.debug("WEBPACK: COMPILER TRIGGER", action, extraPath);
+  if (action && action === "invalidate") {
+    self.safeInvalidate();
+  } else if (action && action === "initiate-run") {
+    self.debug("WEPPACK START BY WATCH", self.compiler.watch);
+    return self.compiler.watch(
+      { ignored: ["**/*.{css,scss,sass,less,styl}", "/node_modules/"] },
+      (err, stats) => {
+        self.debug("COMPILER ERR", err);
+        const info = stats.toJson();
 
-  self.debug("ANZII JS: Closing Watchers", process.env.IS_WATCHING_FILE);
-  // self.closeWatcher();
-  // if (process.env.IS_WATCHING_FILE) {
-  //   process.env["IS_WATCHING_FILE"] = false;
-  //   self.closeWatcher();
-  // }
-  self.closeWatcher();
+        if (stats.hasErrors()) {
+          return console.error(info.errors);
+        }
+
+        if (stats.hasWarnings()) {
+          console.warn(info.warnings);
+        }
+
+        //   const infoy = stats.toJson({ all: false, assets: true, errors: true, warnings: true });
+        // if (firstBuild) {
+        //     console.log('✅ Initial build complete');
+        //     firstBuild = false;
+        //     return;
+        //   }
+
+        //   self.readyHotMiddleware.publish({
+        //       action: 'built',
+        //       stats: infoy,
+        //     });
+
+        //  rebuilding = false;
+        // if (queued) {
+        //   queued = false;
+        //   self.safeInvalidate();
+        // }
+      }
+    );
+  } else {
+    self.debug("About to run webpack compiler");
+    self.compiler.run((err, stats) => {
+      self.debug("COMPILER ERR", err);
+      const info = stats.toJson();
+
+      if (stats.hasErrors()) {
+        console.error(info.errors);
+      }
+
+      if (stats.hasWarnings()) {
+        console.warn(info.warnings);
+      }
+      self.callback({
+        webpackCompileStats: {
+          assets: info.assets,
+        },
+      });
+    });
+  }
 };
 
-methods.runWebpackCompiler = function () {
+methods.kotiiMiddleware = function (compiler) {
+  const self = this; // assuming this is inside a class/method
+  const memoryFs = compiler.outputFileSystem;
+  const outputPath = compiler.options.output.path;
+
+  return async function middleware(req, res, next) {
+    self.debug("KOTII-MIDDLEWARE: Incoming request", req.path);
+
+    if (!req.path.includes(".hot-update.")) return next();
+
+    const filePath = req.path.replace(/^\//, ""); // make relative
+    const fullPath = path.join(outputPath, filePath);
+
+    let content = null;
+    let source = "memory";
+
+    try {
+      // Try memory FS
+      content = memoryFs.readFileSync(fullPath);
+    } catch (err) {
+      self.debug("KOTII-MIDDLEWARE: Not found in memory:", fullPath);
+
+      try {
+        // Try disk fallback
+        content = fs.readFileSync(fullPath);
+        source = "disk";
+      } catch (diskErr) {
+        self.debug("KOTII-MIDDLEWARE: Not found on disk either:", fullPath);
+        return next(); // not found at all, let next middleware handle it
+      }
+    }
+
+    // Serve the content
+    self.debug(`KOTII-MIDDLEWARE: Serving [${source}] →`, filePath);
+    res.setHeader(
+      "Content-Type",
+      mime.contentType(path.extname(filePath)) || "application/octet-stream"
+    );
+    res.send(content);
+  };
+};
+
+methods.safeInvalidate = function safeInvalidate() {
   const self = this;
-  self.debug("WEBPACK: COMPILER TRIGGER");
-  self.compiler.run((err, stats) => {
-    self.debug("COMPILER ERR", err);
-    const info = stats.toJson();
 
-    if (stats.hasErrors()) {
-      console.error(info.errors);
-    }
+  if (firstBuild) return; // wait for initial build
+  if (rebuilding) {
+    queued = true;
+    return;
+  }
+  rebuilding = true;
+  self.compilerWatcher.invalidate();
 
-    if (stats.hasWarnings()) {
-      console.warn(info.warnings);
-    }
-    self.debug("COMPILER INFO", info.assets);
-    self.callback({
-      webpackCompileStats: {
-        assets: info.assets,
-      },
-    });
+  // if (rebuildInProgress) {
+  //   queuedRebuild = true;
+  //   return;
+  // }
+  // rebuildInProgress = true;
+
+  // self.compilerWatcher.invalidate(() => {
+  //   rebuildInProgress = false;
+  //   if (queuedRebuild) {
+  //     queuedRebuild = false;
+  //     self.safeInvalidate();
+  //   }
+  // });
+};
+
+methods.replaceKotiiJsFilesContent = function () {
+  const self = this;
+  const pao = self.pao;
+  const pagesFilePath = `${kotiiKotiiLandPath}/dev/pages.js`;
+  const manifestFilePath = `${kotiiKotiiLandPath}/dev/manifest.js`;
+  const filesContent = self.getCentralFilesContent();
+  const saveToFile = pao.pa_saveToFile;
+
+  self.debug("REPLACE.NEVER RESOLVES");
+
+  return new Promise((resolve) => {
+    saveToFile(pagesFilePath, filesContent.pages);
+    saveToFile(manifestFilePath, filesContent.manifest);
+    resolve(true);
   });
+};
+
+methods.getCentralFilesContent = function (file) {
+  const pages = `
+const comps = {};
+const routes = [];
+
+export { comps, routes };
+`;
+  const manifest = `const meta = {
+  comps: [],
+  compsSource: "",
+  appMain: "",
+  lastCompsCount: 0,
+  compsPaths: [],
+  app: {
+    type: "ssr",
+    stateVendor: "redux",
+  },
+  isDomainCreated: false,
+  staticOrLazy: "${process.env.useLazyLoad}",
+};
+export { meta };
+`;
+  return {
+    pages,
+    manifest,
+  };
+};
+
+methods.closeWatcherAndRestart = function () {
+  const self = this;
+
+  // return new Promise((resolve, reject)=>{
+  //     self.closeWatcher(() => {
+  //       self.debug(
+  //         "ADD EVENT CLOSING WATCHER BEFORE RESTART",
+  //         JSON.stringify(process.env.PORT)
+  //       );
+  //       if(self.compilerWatcher){
+
+  //         self.compilerWatcher.close(()=>{
+  //           self.debug("WEBPACK WATCHER HAS BEEN CLOSED")
+  //           self.compilerWatcher = null
+  //           process.send({event:"destroy-child", data:{title: "child destroying"}})
+  //           resolve()
+
+  //         })
+
+  //       }else{
+  //         process.send({event:"destroy-child", data:{title: "child destroying"}})
+  //         resolve(true)
+  //       }
+
+  //     });
+  // })
+  if (self.compilerWatcher) {
+    self.compilerWatcher.close(() => {
+      self.debug("WEBPACK WATCHER HAS BEEN CLOSED");
+      self.compilerWatcher = null;
+      process.send({
+        event: "destroy-child",
+        data: { title: "child destroying" },
+      });
+    });
+  } else {
+    process.send({
+      event: "destroy-child",
+      data: { title: "child destroying" },
+    });
+  }
+};
+methods.sendReloadSignaOnRestart = function () {
+  const self = this;
+
+  self.debug("RELOAD RESTART", process?.env?.CUSTOM_RESTART);
+  self.debug("RELOAD RESTART APP", self.newPageRoute);
+
+  if (process.env?.CUSTOM_RESTART && process.env.CUSTOM_RESTART === "true") {
+    self.debug("SENDING RECONNECT SIGNAL", self.notifyClient);
+    process.env.CUSTOM_RESTART === "false";
+    let clientData = {
+      name: "kotii-client-reload",
+      vendor: "kotii",
+    };
+    if (
+      self?.defaultSettings?.pages?.onNewPage?.openPage &&
+      self?.newPageRoute?.path
+    )
+      clientData["page"] = { pageUrl: self.newPageRoute?.path };
+    self.notifyClient(clientData);
+  }
 };
 
 export default methods;
