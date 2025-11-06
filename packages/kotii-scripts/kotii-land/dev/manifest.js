@@ -9,5 +9,6 @@ const meta = {
     stateVendor: "redux",
   },
   isDomainCreated: false,
+  staticOrLazy: "static",
 };
 export { meta };
