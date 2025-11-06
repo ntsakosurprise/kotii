@@ -933,3 +933,13 @@ const extractFile = (str) => {
   const match = str.match(/\/[^\s:]+?\.(?:[jt]sx?)/);
   return match ? match[0] : null;
 };
+
+const extractStackFrames = (stack) =>
+  Array.from(stack.matchAll(/at\s+([^(]+)\s+\(([^:]+):(\d+):(\d+)\)/g)).map(
+    ([_, fn, file, line, col]) => ({
+      fn: fn.trim(),
+      file,
+      line: +line,
+      col: +col,
+    })
+  );
