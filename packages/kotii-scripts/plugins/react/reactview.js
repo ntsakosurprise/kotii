@@ -60,6 +60,7 @@ class ReactView {
     this.doPageSettings = methods.doPageSettings;
     this.preloadLazyComponents = methods.preloadLazyComponents;
     this.processViewAfterCheck = methods.processViewAfterCheck;
+    this.loaderStyles = methods.loaderStyles;
   }
 }
 

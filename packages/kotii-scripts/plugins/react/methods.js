@@ -314,6 +314,7 @@ methods.renderFullPage = function ({
     ${head?.link.toString()}
     ${self?.styledTags || ""}
     ${self?.styleTags || ""}
+    ${process?.env?.NODE_ENV === "development" ? self.loaderStyles() : ""}
     ${self?.pageSettings || ""}
 
 
@@ -597,57 +598,73 @@ methods.preloadLazyComponents = async function (view) {
   }
 };
 
-// methods.renderFullPage = function (html, preloadedState, view, scripts = []) {
-//   //   self.debug("THE HTML", html);
-//   return `
-// 		  <!doctype html>
-// 		  <html>
-// 		  <head>
+methods.loaderStyles = function () {
+  return `<style>
+  #loader-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(17, 17, 17, 0.95);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 1.5rem;
+    text-align: center;
+    transition: opacity 0.3s ease;
+  }
 
-// 		  <meta charset="utf-8" />
-// 		  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-// 		  <meta name="viewport" content="width=device-width, initial-scale=1" />
-// 		  <meta name="theme-color" content="#000000" />
-// 		  <meta
-// 			name="description"
-// 			content="
-// 			South Septic PTY Limited is a sewage removal company that focuses
-// 			on emptying septic tanks using a truck fitted with a vacuum system to effectively pump out sewage waste."
-// 		  />
-// 		  <link rel="apple-touch-icon" href="logo192.png" />
-// 		  <link rel="apple-touch-icon" href="logo192.png" />
-// 		  <link rel="stylesheet" type="text/css" href="/css/style.css">
-// 		  <!--
-// 			manifest.json provides metadata used when your web app is installed on a
-// 			user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-// 		  -->
-// 		  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-// 		  <!--
-// 			Notice the use of %PUBLIC_URL% in the tags above.
-// 			It will be replaced with the URL of the "public" folder during the build.
-// 			Only files inside the "public" folder can be referenced from the HTML.
+  /* Gradient spinner */
+  .spinner {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: conic-gradient(#4fa3ff, #ff7a5c, #4fa3ff);
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
 
-// 			Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-// 			work correctly both with client-side routing and a non-root public URL.
-// 			Learn how to configure a non-root public URL by running "npm run build".
-// 		  -->
-// 			  <title>Test Title REactSSR</title>
-// 			  <script src="/static/js/2.176c43eb.chunk.js" defer></script>
-// 			  <script src="/static/js/main.8a703e28.chunk.js" defer></script>
-// 		  </head>
-// 		  <body>
-// 			  <div id="root">${html}</div>
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 
-// 	window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(
-//   /</g,
-//   "\\u003c"
-// )}
+  /* Animated dots */
+  .dots {
+    display: inline-block;
+    margin-top: 10px;
+  }
 
-//         <script src="/[main].bundle.js" ></script>
+  .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 0 3px;
+    background: #fff;
+    border-radius: 50%;
+    animation: bounce 1.2s infinite ease-in-out;
+  }
 
-// 		  </body>
-// 		  </html>
-// 	  `;
-// };
+  .dot:nth-child(1) { animation-delay: 0s; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+  }
+
+  /* Fade-out */
+  .hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>`;
+};
 
 export default methods;
