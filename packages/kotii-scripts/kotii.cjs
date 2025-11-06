@@ -91,44 +91,4 @@ process.on("SIGINT", () => {
   childProcess.kill("SIGINT"); // forward to child
 });
 
-// process.on("exit",()=>{
-//   console.log("PARENT IS GOING THROUGH IT")
-// })
-
-// process.on('SIGINT', () => {
-//   console.log('Parent received SIGINT');
-//   childProcess.kill('SIGINT'); // forward to child
-// });
-
-// process.on('SIGTERM', async () => {
-//   console.log('Parent received SIGTERM from child — shutting down gracefully...');
-
-//   if (childProcess) {
-//     try {
-//       console.log(`Sending SIGTERM to child (PID ${childProcess.pid})`);
-//       childProcess.kill('SIGTERM');
-
-//       await new Promise((resolve) => {
-//         const timeout = setTimeout(() => {
-//           if (!childProcess.killed) {
-//             console.warn('Child did not exit in time, forcing SIGKILL...');
-//             childProcess.kill('SIGKILL');
-//           }
-//           resolve();
-//         }, 5000);
-
-//         childProcess.once('exit', () => {
-//           clearTimeout(timeout);
-//           resolve();
-//         });
-//       });
-//     } catch (err) {
-//       console.error('Error while shutting down child:', err);
-//     }
-//   }
-
-//   console.log('Parent exiting after SIGTERM.');
-//   process.exit(0);
-// });
-
 startApp();
