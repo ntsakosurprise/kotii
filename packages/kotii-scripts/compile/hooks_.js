@@ -943,3 +943,17 @@ const extractStackFrames = (stack) =>
       col: +col,
     })
   );
+
+export function parseLoaderError(err) {
+  // console.log("PARSE ERROR",err)
+  return {
+    type: err.name || "Error",
+    file: extractFile(err.message || ""),
+    message: (err.message || "").replace(/^.*?:\s*/, ""),
+    line: err.loc?.line ?? null,
+    column: err.loc?.column ?? null,
+    reasonCode: err.reasonCode ?? null,
+    code: err.code ?? null,
+    stackFrames: extractStackFrames(err.stack || ""),
+  };
+}
