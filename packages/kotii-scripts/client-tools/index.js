@@ -1539,6 +1539,9 @@ let TARGET_UPDATE_STYLESHEET_TAILWIND = null;
 let TARGET_UPDATE_STYLESHEET_KOTII = null;
 let CURRENT_STYLESHEET_VENDOR = null;
 let KOTII_JS_STYLESHEET_MAP = null;
+let SHOULD_CLIENT_RECONNECT_ON_CLOSE = false;
+let RECONNECT_INTERVAL = null;
+let HAS_RELOADED = false;
 // let IMPORT_FILE_TEXT_REGEX = new RegExp(`\/\*\s*(INCLUDED_CSS)_HEAD:\s*(${escapedFileName})\s*\*\/([\S\s]*?)\/\*\s*\1_FOOTER:\s*\2\s(\*\/)$`,"gim")
 const startUpApp = function () {
   // listenToServerEvents()
@@ -1596,12 +1599,18 @@ const listenToServerEvents = function (evData) {
   console.log("Connection Ready State", eventSource.readyState);
 };
 const listenToWebSocketEvents = function () {
+  // if(SHOULD_CLIENT_RECONNECT_ON_CLOSE){
+  //   console.log("THE CLIENT IS ABOUT TO RECONNECT ON DEMAND")
+  //   SHOULD_CLIENT_RECONNECT_ON_CLOSE = false
+  // }
+
   const currentUrl = new URL(window.location.href);
   console.log("THE CURRENT URL", currentUrl);
   const ws = new WebSocket(`wss://${currentUrl.host}`);
 
   ws.onopen = () => {
     console.log("Connected to server");
+
     // ws.send('hello')
   };
 
@@ -1627,11 +1636,45 @@ const listenToWebSocketEvents = function () {
         console.log("THE CURRENT STYLESHEET VENDOR", CURRENT_STYLESHEET_VENDOR);
         beginDomUpdate(data.content);
       }
+    } else if (data.name === "kotii-client-prepare-reload") {
+      console.log("WE ARE GOING TO RELOAD AS A SERVER REQUEST");
+      showBanner("Server Restarting");
+      SHOULD_CLIENT_RECONNECT_ON_CLOSE = true;
+      HAS_RELOADED = false;
+    } else if (data.name === "kotii-client-reload") {
+      console.log("WE ARE RELOADING");
+      //  if(SHOULD_CLIENT_RECONNECT_ON_CLOSE)  SHOULD_CLIENT_RECONNECT_ON_CLOSE = false
+      // console.log("WE SHOULD RELOAD",HAS_RELOADED)
+      //  if(!HAS_RELOADED){
+      //    HAS_RELOADED=true
+      if (RECONNECT_INTERVAL) clearInterval(RECONNECT_INTERVAL);
+      try {
+        ws.onclose = null; // disable reconnect handler
+        ws.close(); // close socket gracefully
+      } catch (err) {
+        console.warn("Error closing WebSocket before reload", err);
+      }
+
+      if (data?.page) {
+        if (data?.page?.pageUrl) {
+          window.location.href = data.page.pageUrl;
+        } else {
+          window.location.reload();
+        }
+      } else {
+        window.location.reload();
+      }
+
+      //  }else{
+      //   console.log("HAS RELOADED")
+      //  }
     }
   };
 
   ws.onclose = () => {
     console.log("Disconnected from server");
+
+    reconnectOnSocketClose();
   };
 };
 const checkForKotiiLinkStylesheetMap = function () {
@@ -1952,4 +1995,34 @@ const getRandom = function (items) {
   return random;
 };
 
+const reconnectOnSocketClose = function () {
+  if (RECONNECT_INTERVAL) return;
+
+  RECONNECT_INTERVAL = setInterval(() => {
+    if (SHOULD_CLIENT_RECONNECT_ON_CLOSE && !HAS_RELOADED) {
+      console.log("RECONNECTING BY CALLING LISTEN");
+      listenToWebSocketEvents();
+    }
+  }, 1000);
+};
+
+const showBanner = function (message) {
+  const loader = document.getElementById("loader-overlay");
+  loader.style.display = "flex"; // show overlay as flex
+  loader.classList.remove("hidden"); // optional: for fade-in
+};
+
+const hideBanner = function () {
+  const banner = document.getElementById("server-restart-banner");
+  if (banner) banner.remove();
+};
+
 SUKU.domLoaded(startUpApp);
+// SUKU.addEventListener("beforeunload",()=>{
+//   console.log("BEFORE UNLOAD")
+//    SHOULD_CLIENT_RECONNECT_ON_CLOSE = false;
+//   if (RECONNECT_INTERVAL) {
+//     clearInterval(RECONNECT_INTERVAL);
+//     RECONNECT_INTERVAL = null;
+//   }
+// })
