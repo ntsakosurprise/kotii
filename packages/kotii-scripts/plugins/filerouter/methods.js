@@ -1424,10 +1424,11 @@ methods.createStaticComponentsImports = function (options) {
     compsNode,
     isMarkdown = false,
     objectToAdd: imports,
+    ast: inComingAst,
   } = options;
 
   const markdownRenderImport =
-    isMarkdown && !self.isImportSetInAst(ast, null, ["MarkdownRender"])
+    isMarkdown && !self.isImportSetInAst(inComingAst, null, ["MarkdownRender"])
       ? t.importDeclaration(
           [
             t.importSpecifier(
@@ -1439,7 +1440,7 @@ methods.createStaticComponentsImports = function (options) {
         )
       : null;
 
-  let lazyExist = self.isImportSetInAst(ast, "kotii-lazy");
+  let lazyExist = self.isImportSetInAst(inComingAst, "kotii-lazy");
 
   const lazyLoadImport = !lazyExist
     ? t.importDeclaration(
