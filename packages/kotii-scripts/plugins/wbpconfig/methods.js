@@ -237,6 +237,7 @@ methods.configureWebPack = function (
       pages: contextApp.appPagesFolder,
       src: contextApp.appSrc,
       styles: `${contextApp.appSrc}/**/*.{css,scss,sass,less,styl}`,
+      appConfigPath: `${contextApp.appConfigPath}`,
     };
     // this.runOnComplete(filesToWatch,appPathsIDS);
     process.env?.NODE_ENV === "development"
