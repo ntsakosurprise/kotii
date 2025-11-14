@@ -61,6 +61,8 @@ class ReactView {
     this.preloadLazyComponents = methods.preloadLazyComponents;
     this.processViewAfterCheck = methods.processViewAfterCheck;
     this.loaderStyles = methods.loaderStyles;
+    this.handleReceiveEnvVariables = methods.handleReceiveEnvVariables;
+    this.getProductionProcess = methods.getProductionProcess;
   }
 }
 

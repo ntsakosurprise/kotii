@@ -12,6 +12,7 @@ methods.init = function () {
     "set-html-page-settings": this.handleSetHtmlPageSettings.bind(this),
     "handle-react-static": this.handleReactStaticViews.bind(this),
     "handle-react-spa": this.handleReactSpa.bind(this),
+    "receive-kotii-env-variables": this.handleReceiveEnvVariables.bind(this),
   });
 };
 
@@ -100,6 +101,13 @@ methods.handleSetHtmlPageSettings = function (data) {
   self.debug("THE SSR ROUTES", data, data.payload);
 
   self.htmlPageSettings = data.payload.htmlPageSettings;
+};
+
+methods.handleReceiveEnvVariables = function (data) {
+  const self = this;
+  self.debug("THE RECEIVE ENVS", data, data.payload);
+
+  self.kotiiEnvs = data.payload.kotiiEnvs;
 };
 methods.runReactView = function (data) {
   const self = this;
@@ -332,6 +340,7 @@ methods.includeScripts = function (preloadedState, authUser) {
   const self = this;
   const { serialize } = self;
   let possibleExtraScripts = "";
+  self.debug("THE SELF.KOTIIENV", self.kotiiEnvs);
   if (self?.htmlPageSettings && self.htmlPageSettings?.scripts) {
     // self.htmlPageSettings.scripts.forEach((script) => {
     //   possibleExtraScripts = `${possibleExtraScripts}\n <script src=${script.src}></script>`;
@@ -345,7 +354,11 @@ methods.includeScripts = function (preloadedState, authUser) {
        JSON.stringify(self.effectsData)
      )}
     window.__KOTII_AUTH_USER__ = ${serialize(JSON.stringify(authUser))}
-     window.__KOTII_APP_URL__ = ${JSON.stringify(process?.env?.KOTII_APP_URL)}
+    window.__KOTII_APP_URL__ = ${JSON.stringify(process?.env?.KOTII_APP_URL)}
+    ${self.getProductionProcess()}
+   
+    
+     
    
    </script>
    <script src="/server.js" ></script>
@@ -678,6 +691,12 @@ methods.loaderStyles = function () {
     pointer-events: none;
   }
 </style>`;
+};
+
+methods.getProductionProcess = function () {
+  const self = this;
+  if (process.env.NODE_ENV != "production") return "";
+  return `window.process = {envs:${JSON.stringify(self.kotiiEnvs)}}`;
 };
 
 export default methods;
