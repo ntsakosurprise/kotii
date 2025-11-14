@@ -69,51 +69,58 @@ methods.doStartUp = function (data) {
     self.debug("THE FILES", files);
     self.debug("THE ROOT FILES", rootFiles);
 
-    self
-      .doProdRoutes({
-        path: {
-          appSrc: `${rootFiles[0].buildRoot}/src`,
-          isProductionRequest: true,
-        },
-      })
-      .then((routes) => {
-        self.debug("The Retrieved Routes", routes);
+    self.getEnvVariables().then((envs) => {
+      self.debug("THE ENVS", envs);
 
-        if (rootFiles.length > 0) {
-          loadFile(`${rootStats.buildRoot}${path.sep}.config.js`).then(
-            (config) => {
-              let domain = config.domain;
+      self
+        .doProdRoutes({
+          path: {
+            appSrc: `${rootFiles[0].buildRoot}/src`,
+            isProductionRequest: true,
+          },
+        })
+        .then((routes) => {
+          self.debug("The Retrieved Routes", routes);
 
-              domain.forEach((doma) => {
-                if (doma.name === "static") {
-                  doma.set = `${rootFiles[0].buildRoot}/${doma.set}`;
-                  doma.absolute = true;
-                }
-              });
-              let pathApiRoot = path.resolve(rootStats.buildRoot, "api");
-              let pathApiConfig = path.resolve(
-                rootStats.buildRoot,
-                "api/.config.js"
-              );
-              if (fs.existsSync(pathApiRoot) && fs.existsSync(pathApiConfig)) {
-                loadFile(
-                  `${rootStats.buildRoot}${path.sep}api/.config.js`
-                ).then((apiConfig) => {
-                  self.debug("API CONFIG", apiConfig);
-                  let appConfig = {
-                    ...config,
-                    ...apiConfig,
-                    router: [...apiConfig.router, ...routes],
-                  };
-                  resolve(appConfig);
+          if (rootFiles.length > 0) {
+            loadFile(`${rootStats.buildRoot}${path.sep}.config.js`).then(
+              (config) => {
+                let domain = config.domain;
+
+                domain.forEach((doma) => {
+                  if (doma.name === "static") {
+                    doma.set = `${rootFiles[0].buildRoot}/${doma.set}`;
+                    doma.absolute = true;
+                  }
                 });
-              } else {
-                resolve(config);
+                let pathApiRoot = path.resolve(rootStats.buildRoot, "api");
+                let pathApiConfig = path.resolve(
+                  rootStats.buildRoot,
+                  "api/.config.js"
+                );
+                if (
+                  fs.existsSync(pathApiRoot) &&
+                  fs.existsSync(pathApiConfig)
+                ) {
+                  loadFile(
+                    `${rootStats.buildRoot}${path.sep}api/.config.js`
+                  ).then((apiConfig) => {
+                    self.debug("API CONFIG", apiConfig);
+                    let appConfig = {
+                      ...config,
+                      ...apiConfig,
+                      router: [...apiConfig.router, ...routes],
+                    };
+                    resolve(appConfig);
+                  });
+                } else {
+                  resolve(config);
+                }
               }
-            }
-          );
-        }
-      });
+            );
+          }
+        });
+    });
   });
 };
 
@@ -155,6 +162,51 @@ methods.doProdRoutes = function (resources) {
           self.debug("FILE ROUTES PROCESSED", data);
           // pResolve({ routes: data.routes, ...resources, ...data });
           resolve(data.routes);
+        },
+      },
+    });
+  });
+};
+
+methods.getEnvVariables = function (envPath) {
+  const self = this;
+  self.debug("GET ENV");
+  return new Promise((resolve, reject) => {
+    self.emit({
+      type: "get-env-variables",
+      data: {
+        envPath: "",
+        meta: "",
+        callback: (envVariables) => {
+          let app_url = `http://localhost/${process.env.PORT}`;
+          process.env["APP_URL"] = app_url;
+          process.env["KOTII_APP_URL"] = app_url;
+          envVariables.stringified["KOTII_APP_URL"] = app_url;
+          // envs.stringified["KOTII_APP_META"] = JSON.stringify(
+          //   contextApp.appManifest.app
+          // );
+          envVariables.stringified["KOTII_SHOW_DEBUG_LOGS"] = true;
+          envVariables.stringified["KOTII_STATIC_OR_LAZY"] = JSON.stringify(
+            process.env?.useLazyLoad
+          );
+
+          let kotiiEnvs = envVariables?.stringified
+            ? {
+                ...envVariables.stringified,
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+              }
+            : {
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+              };
+
+          self.emit({
+            type: "receive-kotii-env-variables",
+            data: {
+              payload: { kotiiEnvs },
+            },
+          });
+
+          resolve(envVariables);
         },
       },
     });
