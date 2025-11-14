@@ -626,7 +626,9 @@ methods.addToAST = function ({
     : importStrings
     ? importStrings
     : "";
-  self.addItemsToExportList(ast, ["markdownRoutes", "MarkdownRender"]);
+  isMarkdown
+    ? self.addItemsToExportList(ast, ["markdownRoutes", "MarkdownRender"])
+    : null;
   const { code: genCode } = generate(ast);
   const modifiedCode = genCode;
 
