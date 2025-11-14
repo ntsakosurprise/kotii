@@ -23,7 +23,7 @@ const SvgObjectTag = props => {
   return /*#__PURE__*/React.createElement("object", _extends({
     type: "image/svg+xml",
     data: props.src,
-    className: props?.styles ? props.styles : ""
+    className: props !== null && props !== void 0 && props.styles ? props.styles : ""
   }, props));
 };
 const SvgIframeTag = props => {
