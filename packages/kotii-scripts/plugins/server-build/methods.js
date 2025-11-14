@@ -26,7 +26,8 @@ methods.handleServerBuild = function (data) {
   self.debug("handling server build", data);
   const { payload } = data;
   const { targetMain, destination, targetSource, routes, contextApp } = payload;
-  data.callback({ gotValue: "Ran" });
+  self.callback = data.callback;
+
   // const cwd = getWorkingFolder();
   // const cwd = self.kotiiScriptsPath;
   self.debug("KOTII SCRIPTS PATH", kotiiRootPath);
@@ -160,6 +161,7 @@ methods.handleServerBuild = function (data) {
             appBuildFolder: destination,
             pagesSourceCode,
           });
+          self.callback({ message: "Build done successfully" });
         });
     })
     .catch((error) => {
@@ -282,20 +284,23 @@ methods.removeJsxReferences = function (sourceRoot, state) {
   self.debug(rootFiles);
   self.debug("CANDIATES", pruneCandidates);
   pruneCandidates.forEach((candidate) => {
+    self.debug("THE CANDIDATE", candidate);
     let candidatePath = `${sourceRoot}${path.sep}${candidate}`;
     self.debug("Candidate main path", candidatePath);
     if (fs.statSync(candidatePath).isDirectory()) {
       fs.readdirSync(candidatePath, { recursive: true }).forEach((cndFile) => {
-        // self.debug("THE CND FILE", cndFile);
-        let cndFilePath = `${candidatePath}${path.sep}${cndFile}`;
+        self.debug("THE CND FILE", cndFile);
+
         self.debug("CANDIDATE FILE PATH", cndFile);
         if (/.js$/.test(cndFile)) {
+          let cndFilePath = `${candidatePath}${path.sep}${cndFile}`;
           self.debug("THE FILE IS JAVASCRIPT", cndFile);
           // self.debug("FULL PATH");
           let jsFile = readFileSync(cndFilePath);
           let ast = parser.parse(jsFile, {
             sourceType: "module",
           });
+          state["currentFilePath"] = cndFilePath;
           let updateResults = self.updateJSXImportDeclarations(ast, state);
           self.debug("update results", updateResults);
           if (updateResults) {
@@ -310,10 +315,13 @@ methods.removeJsxReferences = function (sourceRoot, state) {
         }
       });
     } else {
+      self.debug("ROOT FILE IN PRUNE", candidatePath);
+
       const jsFile = readFileSync(candidatePath);
       let ast = parser.parse(jsFile, {
         sourceType: "module",
       });
+      state["currentFilePath"] = candidatePath;
       self.updateJSXImportDeclarations(ast, state);
       self.debug("THE FILE'S AST", ast);
     }
@@ -376,6 +384,7 @@ methods.updateJSXImportDeclarations = function (ast, state) {
       if (
         !/^(\.+)/.test(path.node.source.value) &&
         !isBuiltin(path.node.source.value) &&
+        appManifest &&
         appManifest.aliases[path.node.source.value]
       ) {
         self.debug("SOURCE NOT RELATIVE", path.node.source.value);
@@ -701,13 +710,19 @@ methods.getKotiiConfigTemplate = function (dynamic) {
 };
 methods.processDataNodes = function (nodePath, state) {
   const self = this;
-  let path = nodePath;
-  let importSpecifier = path.node.source.value;
-
-  let absoluteFilePath = resolve(
-    `${state.destination}`,
-    importSpecifier.substr(importSpecifier.indexOf("/") + 1).trim()
+  let thingPath = nodePath;
+  let importSpecifier = thingPath.node.source.value;
+  self.debug("PROCESS DATA NODES:", importSpecifier, state.destination);
+  self.debug(
+    "PROCESS DATA NODES:",
+    importSpecifier,
+    resolve("src", importSpecifier)
   );
+
+  let absoluteFilePath = `${resolve(
+    path.dirname(state.currentFilePath),
+    importSpecifier
+  )}`;
   self.debug("THE ABSOLUTE PATH", absoluteFilePath);
   // let contents = fs.readFileSync(absoluteFilePath, {
   //   encoding: "utf-8",
@@ -719,16 +734,16 @@ methods.processDataNodes = function (nodePath, state) {
     self.info("THE FOREING JSON", data);
     fs.writeFileSync(absoluteFilePath.replace(".json", ".js"), data);
     // if(fs.existsSync(absoluteFilePath)) fs.rmSync(absoluteFilePath);
-    path.node.source.value = importSpecifier.replace(".json", ".js");
-    self.debug("CURRENT SPECIFIER", path.node.source.value);
+    thingPath.node.source.value = importSpecifier.replace(".json", ".js");
+    self.debug("CURRENT SPECIFIER", thingPath.node.source.value);
 
-    self.debug("The new path node", path.node.source.value);
+    self.debug("The new path node", thingPath.node.source.value);
 
     return;
   }
 
   if (/.xml$/.test(importSpecifier)) {
-    path.node.source.value = importSpecifier.replace(".xml", ".js");
+    thingPath.node.source.value = importSpecifier.replace(".xml", ".js");
     getNodejsForeignData("xml", absoluteFilePath).then((data) => {
       fs.writeFileSync(absoluteFilePath.replace(".xml", ".js"), data);
       // if(fs.existsSync(absoluteFilePath)) fs.rmSync(absoluteFilePath);
@@ -741,7 +756,7 @@ methods.processDataNodes = function (nodePath, state) {
     let data = getNodejsForeignDataSync("csv", absoluteFilePath);
     fs.writeFileSync(absoluteFilePath.replace(".csv", ".js"), data);
     // if(fs.existsSync(absoluteFilePath)) fs.rmSync(absoluteFilePath);
-    path.node.source.value = importSpecifier.replace(".csv", ".js");
+    thingPath.node.source.value = importSpecifier.replace(".csv", ".js");
 
     return;
   }
@@ -876,15 +891,16 @@ methods.getPageImportAbsolutePath = function (userFolder, item) {
   let absolutePath = item.substring(cwdPos, item.length);
   let sourcePos = absolutePath.indexOf("src");
   let requiredPath = absolutePath.substring(sourcePos, absolutePath.length);
-  // console.log(
-  //   "THE PAGE WORK DIR",
-  //   workDir,
-  //   cwdPos,
-  //   absolutePath,
-  //   requiredPath
-  // );
+  self.debug(
+    "THE PAGE WORK DIR",
+    cwdPos,
+    absolutePath,
+    sourcePos,
+    requiredPath
+  );
   let absolutePathPre = "kotii-prod";
   let absSrc = `${path.sep}${absolutePathPre}${path.sep}${requiredPath}`;
+  self.debug("THE ABS SRC", absSrc);
   return absSrc;
 };
 export default methods;
