@@ -337,8 +337,8 @@ methods.updateJSXImportDeclarations = function (ast, state) {
   const self = this;
   const traverse = self.traverse;
   self.debug("THE APP STATE", state);
-  const appManifest = state?.appManifest;
-  const isPages = state?.isPages ? true : false;
+  const { isLazy = false } = state;
+
   const nativePath = path;
   // let removedImportsIds = [];
 
@@ -347,52 +347,8 @@ methods.updateJSXImportDeclarations = function (ast, state) {
     ImportDeclaration(path) {
       self.debug("AST NODE AFTER Import Node", path.node.source.value);
       self.debug("AST NODE SPECIFIER", path.node.specifiers[0]?.local.name);
-      let importSpecifier = path.node.source.value;
-      let fileExtension = nativePath.extname(importSpecifier);
-      if (/.jsx$/.test(path.node.source.value)) {
-        self.debug(
-          "IT IS JSX",
-          path.node.source.value,
-          /^(\.+)/.test(path.node.source.value)
-        );
-        path.node.source.value = path.node.source.value.replace(/.jsx$/, ".js");
-        isPages
-          ? (path.node.source.value = self.getPageImportAbsolutePath(
-              state.userFolder,
-              path.node.source.value
-            ))
-          : null;
-        isUpdated = true;
-        return;
-      }
-      if (dataExtensions.includes(fileExtension)) {
-        self.processDataNodes(path, state);
-        isUpdated = true;
-        return;
-      }
-      if (cssExtensions.includes(fileExtension)) {
-        self.processStylesNodes(path, {
-          appFolder: state.targetMain,
-          appSrc: state.targetSource,
-          cwd: kotiiRootPath,
-          appBuildFolder: state.destination,
-        });
-        isUpdated = true;
-        return;
-      }
-      self.debug("NOT JSX", /^(\.+)/.test(path.node.source.value));
-      if (
-        !/^(\.+)/.test(path.node.source.value) &&
-        !isBuiltin(path.node.source.value) &&
-        appManifest &&
-        appManifest.aliases[path.node.source.value]
-      ) {
-        self.debug("SOURCE NOT RELATIVE", path.node.source.value);
-        path.node.source.value = `${
-          appManifest.aliases[path.node.source.value]
-        }.js`;
-        isUpdated = true;
-      }
+      isUpdated = self.replaceNoneNativeImportsExtensions(path, state);
+      return;
 
       // if (toRemove.indexOf(path.node.source.value) >= 0) {
       //   let local = path.node.specifiers[0]?.local.name;
@@ -400,6 +356,32 @@ methods.updateJSXImportDeclarations = function (ast, state) {
       //   self.astDeleteNode(routesNode, compsNode, local);
       //   path.remove();
       // }
+    },
+    CallExpression(path) {
+      const { node } = path;
+
+      // lazyLoad(() => import())
+      if (
+        node.callee.type === "Identifier" &&
+        node.callee.name === "lazyLoad"
+      ) {
+        const fn = node.arguments[0];
+        if (fn?.type === "ArrowFunctionExpression") {
+          const body = fn.body;
+
+          if (body.type === "CallExpression" && body.callee.type === "Import") {
+            const importPath = body.arguments[0]?.value;
+            console.log("DYNAMIC:", importPath);
+            isUpdated = self.replaceNoneNativeImportsExtensionsDynamic(
+              body.arguments[0],
+              state
+            );
+            return;
+
+            // your dynamic import logic...
+          }
+        }
+      }
     },
   });
   return isUpdated;
@@ -432,6 +414,11 @@ methods.doKotiiLandPagesFile = function (destination, options) {
 
     let updateResults = self.updateJSXImportDeclarations(ast, {
       isPages: true,
+      isLazy:
+        options?.contextApp?.staticOrLazy &&
+        options?.contextApp?.staticOrLazy == "lazy"
+          ? true
+          : false,
       pagesPathsDestination: destination,
       replacePath: options.targetMain,
       userFolder,
@@ -902,5 +889,82 @@ methods.getPageImportAbsolutePath = function (userFolder, item) {
   let absSrc = `${path.sep}${absolutePathPre}${path.sep}${requiredPath}`;
   self.debug("THE ABS SRC", absSrc);
   return absSrc;
+};
+
+methods.replaceNoneNativeImportsExtensions = function (astPath, state) {
+  const self = this;
+  const { appManifest = null, isPages = false } = state;
+
+  let importSpecifier = astPath.node.source.value;
+  let fileExtension = path.extname(importSpecifier);
+  let isUpdated = false;
+
+  if (/.jsx$/.test(astPath.node.source.value)) {
+    self.debug(
+      "IT IS JSX",
+      astPath.node.source.value,
+      /^(\.+)/.test(astPath.node.source.value)
+    );
+    astPath.node.source.value = astPath.node.source.value.replace(
+      /.jsx$/,
+      ".js"
+    );
+    isPages
+      ? (astPath.node.source.value = self.getPageImportAbsolutePath(
+          state.userFolder,
+          astPath.node.source.value
+        ))
+      : null;
+    isUpdated = true;
+    return isUpdated;
+  }
+  if (dataExtensions.includes(fileExtension)) {
+    self.processDataNodes(astPath, state);
+    isUpdated = true;
+    return isUpdated;
+  }
+  if (cssExtensions.includes(fileExtension)) {
+    self.processStylesNodes(astPath, {
+      appFolder: state.targetMain,
+      appSrc: state.targetSource,
+      cwd: kotiiRootPath,
+      appBuildFolder: state.destination,
+    });
+    isUpdated = true;
+    return isUpdated;
+  }
+  self.debug("NOT JSX", /^(\.+)/.test(astPath.node.source.value));
+  if (
+    !/^(\.+)/.test(astPath.node.source.value) &&
+    !isBuiltin(astPath.node.source.value) &&
+    appManifest &&
+    appManifest.aliases[astPath.node.source.value]
+  ) {
+    self.debug("SOURCE NOT RELATIVE", astPath.node.source.value);
+    astPath.node.source.value = `${
+      appManifest.aliases[astPath.node.source.value]
+    }.js`;
+    isUpdated = true;
+    return isUpdated;
+  }
+  return isUpdated;
+};
+methods.replaceNoneNativeImportsExtensionsDynamic = function (astPath, state) {
+  const self = this;
+  const { isPages = false } = state;
+
+  if (/.jsx$/.test(astPath.value)) {
+    self.debug("REPLACE DYNAMIC", astPath.value, /^(\.+)/.test(astPath.value));
+    astPath.value = astPath.value.replace(/.jsx$/, ".js");
+    isPages
+      ? (astPath.value = self.getPageImportAbsolutePath(
+          state.userFolder,
+          astPath.value
+        ))
+      : null;
+
+    return true;
+  }
+  return false;
 };
 export default methods;
