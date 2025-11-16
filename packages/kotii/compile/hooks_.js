@@ -482,9 +482,9 @@ export const resolveKotiiScriptsImports = (specifier) => {
   loggas.resolve.debug(
     "KOTII SCRIPTS IMPORTS",
     specifier,
-    /^kotii/.test(specifier)
+    /^kotii$/.test(specifier)
   );
-  if (!isBuiltin(specifier) && /^kotii/.test(specifier)) {
+  if (!isBuiltin(specifier) && /^kotii$/.test(specifier)) {
     let kotiiExportsPath = `${kotiiKotiiLandPath}/dev/app_.js`;
     let urlLized = pathToFileURL(kotiiExportsPath).href;
     loggas.resolve.debug(
