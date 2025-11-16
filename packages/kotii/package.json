@@ -56,7 +56,7 @@
     "@reduxjs/toolkit": "^2.0.1",
     "@swc/cli": "^0.1.62",
     "@swc/core": "^1.3.95",
-    "anzii": "file:/Users/surprisemashele/Documents/Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz",
+    "anzii": "7.1.0-beta.0",
     "arg": "^4.1.3",
     "bitbucket": "^2.4.2",
     "chokidar": "^3.5.3",
@@ -75,14 +75,14 @@
     "import-jsx": "^5.0.0",
     "inquirer": "^7.3.3",
     "is-online": "^8.5.1",
-    "kotii-auth": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-auth/kotii-auth-0.0.0.tgz",
-    "kotii-languages": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-languages/kotii-languages-1.0.0.tgz",
-    "kotii-lazy": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-lazy/kotii-lazy-0.0.0.tgz",
-    "kotii-logger": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-logger/kotii-logger-1.0.0.tgz",
-    "kotii-markdown": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-markdown/kotii-markdown-1.0.0.tgz",
-    "kotii-react-modules": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-react-modules/kotii-react-modules-0.0.0.tgz",
-    "kotii-router": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-router/kotii-router-0.0.0.tgz",
-    "kotii-styled": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-styled/kotii-styled-1.0.0.tgz",
+    "kotii-auth": "1.0.0-beta.0",
+    "kotii-languages": "1.0.0-beta.0",
+    "kotii-lazy": "1.0.0-beta.0",
+    "kotii-logger": "1.0.0-beta.0",
+    "kotii-markdown": "1.0.0-beta.0",
+    "kotii-react-modules": "1.0.0-beta.0",
+    "kotii-router": "1.0.0-beta.0",
+    "kotii-styled": "1.0.0-beta.0",
     "listr": "^0.14.3",
     "node-cache": "^5.1.2",
     "octonode": "^0.9.5",
@@ -211,5 +211,8 @@
   },
   "bugs": {
     "url": "https://github.com/ntsakosurprise/kotii/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
