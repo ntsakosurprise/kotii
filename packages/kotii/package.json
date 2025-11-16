@@ -4,7 +4,6 @@
   "description": "",
   "main": "app.js",
   "type": "module",
-  "private": "false",
   "exports": {
     ".": {
       "import": "./kotii-land/prod/app_b.js",
