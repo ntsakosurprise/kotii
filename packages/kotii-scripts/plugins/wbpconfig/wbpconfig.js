@@ -25,6 +25,17 @@ class WebpackConfig {
     this.fileIsAddOrDelProcessed = false;
     this.lastAddOrDelFile = "";
 
+    this.defaultSettings = {
+      pages: {
+        onNewPage: {
+          openPage: true,
+        },
+        onDeleteOfPage: {
+          openPagee: true,
+        },
+      },
+    };
+
     this.parser = parser;
     this.traverse = traverse.default;
     this.t = t;
@@ -40,12 +51,15 @@ class WebpackConfig {
     this.hookIntoWebpackCompilation = methods.hookIntoWebpackCompilation;
     this.getEnvVariables = methods.getEnvVariables;
     this.removePagesImport = methods.removePagesImport;
-    this.testRunFromWebpack = methods.testRunFromWebpack;
+    this.startWatchingAppFiles = methods.startWatchingAppFiles;
     this.watchFile = methods.watchFile;
     this.notifyClient = methods.notifyClient;
     this.closeFileWatch = methods.closeFileWatch;
     this.closeWatcher = () => {
       console.log("PLUGIN:: DEFAULT FUN RUN");
+      return new Promise((resolve) => {
+        resolve(true);
+      });
     };
     this.restartSever = methods.restartSever;
     this.checkIfIsFile = methods.checkIfIsFile;
@@ -77,6 +91,15 @@ class WebpackConfig {
     this.diffTailwindCss = methods.diffTailwindCss;
     this.extractTailwindClasses = methods.extractTailwindClasses;
     this.findAddedTailwindClassContent = methods.findAddedTailwindClassContent;
+    this.closeWatchersOnShutdown = methods.closeWatchersOnShutdown;
+    this.registerForShutdown = methods.registerForShutdown;
+    this.runWebpackCompiler = methods.runWebpackCompiler;
+    this.kotiiMiddleware = methods.kotiiMiddleware;
+    this.safeInvalidate = methods.safeInvalidate;
+    this.replaceKotiiJsFilesContent = methods.replaceKotiiJsFilesContent;
+    this.getCentralFilesContent = methods.getCentralFilesContent;
+    this.closeWatcherAndRestart = methods.closeWatcherAndRestart;
+    this.sendReloadSignaOnRestart = methods.sendReloadSignaOnRestart;
   }
 }
 export default WebpackConfig;

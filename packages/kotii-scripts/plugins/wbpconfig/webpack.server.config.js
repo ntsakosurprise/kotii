@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs, { symlink } from "fs";
 import { loggas, logger } from "kotii-logger";
 // import syncStylesLoader from "kotii-sync-styles-loader"
 // import stylesHmr from "kotii-styles-hmr"
@@ -65,14 +65,15 @@ export default (options) => {
       options?.build && options.build
         ? env.appIndexFile
         : ["webpack-hot-middleware/client?path=/__kotii", env.appIndexFile],
-    watchOptions: {
-      ignored: ["**/*.{css,scss,sass,less,styl}", "**/node_modules"],
-    },
+    // watchOptions: {
+    //   ignored: ["**/*.{css,scss,sass,less,styl}", "**/node_modules/**", "**/src/pages/**"]
+    // },
+    // watch: false,
 
     context: env.appFolder,
     mode: process.env.NODE_ENV,
     // infrastructureLogging: { level: "none" },
-    // stats: "errors-only",
+    stats: "errors-only",
     devtool: "eval",
     output: {
       filename: "server.js",
@@ -105,6 +106,7 @@ export default (options) => {
     //   }),
     // ],
     resolve: {
+      symlinks: false,
       extensions: [".js", ".jsx", ".ts", ".tsx", ".png", ".jpg"], // tell webpack to use these extenstions to resolve imported files[for importing without specifying the extension name]
       alias: {
         ...options.appManifest.aliases,
@@ -376,22 +378,31 @@ export default (options) => {
       new FinishCompilationOnErrorWebpackPlugin(
         {
           closeWatcher: options.closeWatcher,
+          cleanUpCentralFiles: options.cleanUpCentralFiles,
         },
         loggas
       ),
-      new WatchOwnFilesWebpackPlugin(
-        {
-          // filesToWatch: `${options.pagesFolder}`,
-          filesToWatch: [
-            `${options.appSrc}/**/*.{css,scss,sass,less,styl}`,
-            `${options.pagesFolder}`,
-          ],
-          kotiiKotiiLandPath: kotiiKotiiLandPath,
-          runOnComplete: options.runOnComplete,
-          notifyClient: options.notifyClient,
-        },
-        loggas
-      ),
+      // new WatchOwnFilesWebpackPlugin(
+      //   {
+      //     // filesToWatch: `${options.pagesFolder}`,
+      //     filesToWatch: [
+      //       `${options.appSrc}`,
+      //       `${options.appSrc}/**/*.{css,scss,sass,less,styl}`,
+      //       `${options.pagesFolder}`,
+      //       `${options.appConfigPath}`
+      //     ],
+      //     appPathsIDS: {
+      //      pages: options.pagesFolder,
+      //      src: options.appSrc,
+      //      styles: `${options.appSrc}/**/*.{css,scss,sass,less,styl}`
+      //     },
+      //     kotiiKotiiLandPath: kotiiKotiiLandPath,
+      //     runOnComplete: options.runOnComplete,
+      //     notifyClient: options.notifyClient,
+      //     appManifest: options.appConfigPath
+      //   },
+      //   loggas
+      // ),
       // new GetStatsWebpackPlugin({ writeFilePath: env.appBuildFolder }),
       new webpack.DefinePlugin({
         "process.env": {
@@ -431,7 +442,11 @@ export default (options) => {
       new StatsPrintWebpackPlugin(loggas, {
         runForTailwindCss: options.runForTailwindCss,
       }),
-      new BroadcastCompilationWebpackPlugin(options.runOnceDone, loggas),
+      new BroadcastCompilationWebpackPlugin(
+        options.runOnceDone,
+        options.sendReloadSignaOnRestart,
+        loggas
+      ),
     ],
   };
 };

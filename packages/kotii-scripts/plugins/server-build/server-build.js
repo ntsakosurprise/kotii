@@ -39,6 +39,10 @@ class ServerBuild {
     this.aggregateAppKotiiMeta = methods.aggregateAppKotiiMeta;
     this.aggregateAppImages = methods.aggregateAppImages;
     this.getPageImportAbsolutePath = methods.getPageImportAbsolutePath;
+    this.replaceNoneNativeImportsExtensions =
+      methods.replaceNoneNativeImportsExtensions;
+    this.replaceNoneNativeImportsExtensionsDynamic =
+      methods.replaceNoneNativeImportsExtensionsDynamic;
   }
 }
 export default ServerBuild;

@@ -26,11 +26,25 @@
       }
     ]
   },
+  "staticBuildSettings": {
+    "markdown": {
+      "runType": "dynamic"
+    }
+  },
+  "pages": {
+    "onNewPage": {
+      "openPage": true
+    },
+    "onDeleteOfPage": {
+      "openPage": "/"
+    }
+  },
   "useHttps": true,
   "useCustomDomain": true,
   "useSetPort": true,
   "useInlinedPngs": true,
-  "useAsDefaultPage": "faqs",
+  "useAsDefaultPage": "/",
+  "useLazyLoad": true,
   "build": "build",
   "static": "static",
   "aliases": {

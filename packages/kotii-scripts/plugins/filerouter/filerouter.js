@@ -93,6 +93,12 @@ class FileRouter {
     this.astAddNodeMarkdown = methods.astAddNodeMarkdown;
     this.createMarkdownRoutesAst = methods.createMarkdownRoutesAst;
     this.astMarkdownUtils = methods.astMarkdownUtils;
+    this.replaceKotiiJsFilesContent = methods.replaceKotiiJsFilesContent;
+    this.getCentralFilesContent = methods.getCentralFilesContent;
+    this.isImportSetInAst = methods.isImportSetInAst;
+    this.removeDyanimcImportDeclaration =
+      methods.removeDyanimcImportDeclaration;
+    this.isLazyLoadedImportVariable = methods.isLazyLoadedImportVariable;
   }
 }
 export default FileRouter;

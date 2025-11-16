@@ -21,7 +21,6 @@ methods.handleFileRoutes = async function (data) {
 
   const { path: filePaths } = payload;
   self.debug("FILE PATHS", filePaths);
-  self.debug("THE PROCESS", process);
   const pagesSource = filePaths.appSrc;
   const isProductionRequest = filePaths?.isProductionRequest || false;
   // const appManifest = filePaths?.appManifest;
@@ -52,12 +51,14 @@ methods.handleFileRoutes = async function (data) {
   self.debug("THE MARKDOWN THINGS", markdownPages, astFlowOptions);
 
   if (markdownPages?.length && markdownPages.length > 0) {
-    self.processMarkdown(
-      markdownPages,
-      astFlowOptions,
-      self.startAstFlow.bind(self),
-      self.getItemPath.bind(self)
-    );
+    !isProductionRequest
+      ? self.processMarkdown(
+          markdownPages,
+          astFlowOptions,
+          self.startAstFlow.bind(self),
+          self.getItemPath.bind(self)
+        )
+      : self.startAstFlow(astFlowOptions);
   } else {
     self.startAstFlow(astFlowOptions);
   }
@@ -81,7 +82,7 @@ methods.handleRemovePagesImport = async function (data) {
   const buildPathFile = readFileSync(buildPath);
   const buildAst = parser.parse(buildPathFile, {
     sourceType: "module",
-    plugins: ["jsx"],
+    plugins: ["jsx", "dynamicImports"],
   });
 
   self.removeImportDeclarations({ ast: buildAst, toRemove: ["./pages.js"] });
@@ -118,8 +119,11 @@ methods.addOrRemoveByAST = function ({
     self.addImportLineToBuildJs(isMarkdown);
   } else if (toRemove.length > 0 && toAdd.length > 0) {
     self.debug("TO REMOVE TO ADD", toRemove, toAdd);
+    let astRoutes = self.getAstRoutes(routesObject, toAdd);
+    self["activeRoute"] = astRoutes[0];
+
     self.addToAST({
-      objectToAdd: self.getAstRoutes(routesObject, toAdd),
+      objectToAdd: astRoutes,
       pagesPaths,
       toRemove: toRemove,
       source: pagesSource,
@@ -135,8 +139,10 @@ methods.addOrRemoveByAST = function ({
   } else {
     self.debug("ABOUT TO PROCESS WITHOUT REMOVE");
     // routesObject = self.getRoutesHelper(toAdd, pagesSource);
+    let astRoutes = self.getAstRoutes(routesObject, toAdd);
+    self["activeRoute"] = astRoutes[0];
     self.addToAST({
-      objectToAdd: self.getAstRoutes(routesObject, toAdd),
+      objectToAdd: astRoutes,
       pagesPaths,
       source: pagesSource,
     });
@@ -522,7 +528,10 @@ methods.addToAST = function ({
   );
   // const altPath = `${cwd}/build_test.js`;
   const jsFile = readFileSync(filePath);
-  let ast = parser.parse(jsFile, { sourceType: "module", plugins: ["jsx"] });
+  let ast = parser.parse(jsFile, {
+    sourceType: "module",
+    plugins: ["jsx", "dynanmicImports"],
+  });
   let isCompsDefined = false;
   let importStrings = "";
   let isMarkdownDefined = false;
@@ -569,15 +578,21 @@ methods.addToAST = function ({
           shouldBuildComps: false,
         };
         if (objectToAdd && toRemove) {
-          self.removeImportDeclarations(astActionsOptions);
+          self.debug("###:: ADD AND REMOVE");
+          process.env?.useLazyLoad === "static"
+            ? self.removeImportDeclarations(astActionsOptions)
+            : self.removeDyanimcImportDeclaration(astActionsOptions);
           importStrings = self.insertImportDeclarations(astActionsOptions);
+          self.debug("###:: ADD AND REMOVE STRING", importStrings);
           path.stop();
         } else if (objectToAdd) {
           importStrings = self.insertImportDeclarations(astActionsOptions);
 
           path.stop();
         } else if (toRemove) {
-          self.removeImportDeclarations(astActionsOptions);
+          process.env?.useLazyLoad === "static"
+            ? self.removeImportDeclarations(astActionsOptions)
+            : self.removeDyanimcImportDeclaration(astActionsOptions);
           path.stop();
         } else if (isNewSource) {
           self.variableCreation({
@@ -607,12 +622,15 @@ methods.addToAST = function ({
   });
 
   self.debug("New AST", ast);
+  self.debug("###:: isCompsDefined", isCompsDefined);
   importStrings = !isCompsDefined
-    ? self.insertImportDeclarations(objectToAdd, true)
+    ? self.insertImportDeclarations({ objectToAdd, shouldBuildComps: true })
     : importStrings
     ? importStrings
     : "";
-  self.addItemsToExportList(ast, ["markdownRoutes", "MarkdownRender"]);
+  isMarkdown
+    ? self.addItemsToExportList(ast, ["markdownRoutes", "MarkdownRender"])
+    : null;
   const { code: genCode } = generate(ast);
   const modifiedCode = genCode;
 
@@ -631,6 +649,7 @@ methods.addToAST = function ({
     lastCompsCount: pagesPaths.length,
     compsPaths: [...pagesPaths],
     isDomainCreated: true,
+    staticOrLazy: process.env.useLazyLoad,
   });
   //self.cacheData(self.keys.CACHE_ROUTES_PATHS_KEY, pagesPaths);
   // self.cacheData(self.keys.SAVE_FILES_KEY, { added: [], deleted: [] });
@@ -746,7 +765,7 @@ methods.astAddNodeMarkdown = function (markdownNode, toAdd) {
   const self = this;
   const t = self.t;
 
-  self.debug("AST NODE BEFORE LEN", toAdd);
+  // self.debug("AST NODE BEFORE LEN", toAdd);
 
   const initProps = markdownNode.init;
 
@@ -979,10 +998,19 @@ methods.insertImportDeclarations = function (options) {
   //     IMPORT_NAME: t.identifier(`${imports[0].componentName}`),
   //     SOURCE: t.stringLiteral(`${imports[0].component}`),
   //   });
-
-  if (!process.env?.useLazyLoad)
+  self.debug(
+    "user lazy load",
+    process.env.useLazyLoad,
+    !process.env?.useLazyLoad
+  );
+  if (process.env.useLazyLoad === "static") {
+    self.debug("STATIC CREATION IMPORTS");
     return self.createStaticComponentsImports(options);
-  return self.createDynamicLazyComponentsImports(options);
+  } else {
+    self.debug("DYNAMIC CREATION IMPORTS");
+    return self.createDynamicLazyComponentsImports(options);
+  }
+
   // saveToFile(filePath, modifiedCode);
   // saveToFile(filePath, modifiedCode);
   // const ast = buildImport({
@@ -1059,6 +1087,54 @@ methods.removeImportDeclarations = function (options) {
   self.debug("AST NODE TO BE REMOVED IS", removedImportsIds);
 };
 
+methods.removeDyanimcImportDeclaration = function (options) {
+  const self = this;
+  const pao = self.pao;
+  const template = self.template;
+  const generate = self.generate;
+  const t = self.t;
+  const parser = self.parser;
+  const traverse = self.traverse;
+  let removedImportsIds = [];
+  const { ast, toRemove, routesNode = null, compsNode = null } = options;
+
+  self.debug("AST REMOVE DECLARATION AS VARIABLE", options);
+
+  traverse(ast, {
+    VariableDeclaration(path) {
+      // self.debug("AST NODE AFTER Import Node", path.node.source.value);
+      // self.debug("AST NODE SPECIFIER", path.node.specifiers[0]?.local.name);
+      // self.debug(
+      //   "AST NODE AFTER Import Test",
+      //   toRemove.indexOf(path.node.source.value) >= 0
+      // );
+      let declarations = path.node.declarations;
+      self.debug("removeDyanimcImportDeclaration: DECLARATIONS", declarations);
+      let isLazyLoadedImportVariable = self.isLazyLoadedImportVariable(
+        declarations[0]
+      );
+      self.debug(
+        "removeDyanimcImportDeclaration: isLazyVar",
+        isLazyLoadedImportVariable
+      );
+      if (
+        isLazyLoadedImportVariable &&
+        toRemove.indexOf(isLazyLoadedImportVariable.importPath) >= 0
+      ) {
+        removedImportsIds.push(isLazyLoadedImportVariable.name);
+        if (routesNode)
+          self.astDeleteNode(
+            routesNode,
+            compsNode,
+            isLazyLoadedImportVariable.name
+          );
+        path.remove();
+      }
+    },
+  });
+  self.debug("AST NODE TO BE REMOVED IS AS VARIABLE", removedImportsIds);
+};
+
 methods.addImportLineToBuildJs = function (isMarkdown = false) {
   const self = this;
   const pao = self.pao;
@@ -1073,7 +1149,7 @@ methods.addImportLineToBuildJs = function (isMarkdown = false) {
   const buildPathFile = readFileSync(buildPath);
   let buildAst = parser.parse(buildPathFile, {
     sourceType: "module",
-    plugins: ["jsx"],
+    plugins: ["jsx", "dynamicImports"],
   });
 
   self.debug("AST FOR BUILD.JS");
@@ -1352,29 +1428,35 @@ methods.createStaticComponentsImports = function (options) {
     compsNode,
     isMarkdown = false,
     objectToAdd: imports,
+    ast: inComingAst,
   } = options;
 
-  const markdownRenderImport = isMarkdown
+  const markdownRenderImport =
+    isMarkdown && !self.isImportSetInAst(inComingAst, null, ["MarkdownRender"])
+      ? t.importDeclaration(
+          [
+            t.importSpecifier(
+              t.identifier("MarkdownRender"), // local name
+              t.identifier("MarkdownRender") // imported name
+            ),
+          ],
+          t.stringLiteral("../../react-components/index.jsx") // source module
+        )
+      : null;
+
+  let lazyExist = self.isImportSetInAst(inComingAst, "kotii-lazy");
+
+  const lazyLoadImport = !lazyExist
     ? t.importDeclaration(
         [
           t.importSpecifier(
-            t.identifier("MarkdownRender"), // local name
-            t.identifier("MarkdownRender") // imported name
+            t.identifier("lazyLoad"), // local name
+            t.identifier("lazyLoad") // imported name
           ),
         ],
-        t.stringLiteral("../../react-components/index.jsx") // source module
+        t.stringLiteral("kotii-lazy") // source module
       )
     : null;
-
-  const lazyLoadImport = t.importDeclaration(
-    [
-      t.importSpecifier(
-        t.identifier("lazyLoad"), // local name
-        t.identifier("lazyLoad") // imported name
-      ),
-    ],
-    t.stringLiteral("kotii-lazy") // source module
-  );
 
   let constString = shouldBuildComps ? `const comps = {` : "";
   let importString = imports.map((im, i) => {
@@ -1382,7 +1464,13 @@ methods.createStaticComponentsImports = function (options) {
     return `import ${im.componentName} from "${im.component}";`;
   });
   let importsAst = isMarkdown
-    ? t.file(t.program([markdownRenderImport, lazyLoadImport]))
+    ? t.file(
+        t.program(
+          !lazyExist
+            ? [markdownRenderImport, lazyLoadImport]
+            : [markdownRenderImport]
+        )
+      )
     : null;
   constString += shouldBuildComps ? "}" : "";
   let joinedString = shouldBuildComps
@@ -1418,29 +1506,34 @@ methods.createDynamicLazyComponentsImports = function (options) {
     compsNode,
     isMarkdown = false,
     objectToAdd: imports,
+    ast: inComingAst,
   } = options;
 
-  const lazyLoadImport = t.importDeclaration(
-    [
-      t.importSpecifier(
-        t.identifier("lazyLoad"), // local name
-        t.identifier("lazyLoad") // imported name
-      ),
-    ],
-    t.stringLiteral("kotii-lazy") // source module
-  );
-
-  const markdownRenderImport = isMarkdown
+  let lazyExist = self.isImportSetInAst(inComingAst, "kotii-lazy");
+  const lazyLoadImport = !lazyExist
     ? t.importDeclaration(
         [
           t.importSpecifier(
-            t.identifier("MarkdownRender"), // local name
-            t.identifier("MarkdownRender") // imported name
+            t.identifier("lazyLoad"), // local name
+            t.identifier("lazyLoad") // imported name
           ),
         ],
-        t.stringLiteral("../../react-components/index.jsx") // source module
+        t.stringLiteral("kotii-lazy") // source module
       )
     : null;
+
+  const markdownRenderImport =
+    isMarkdown && !self.isImportSetInAst(inComingAst, null, ["MarkdownRender"])
+      ? t.importDeclaration(
+          [
+            t.importSpecifier(
+              t.identifier("MarkdownRender"), // local name
+              t.identifier("MarkdownRender") // imported name
+            ),
+          ],
+          t.stringLiteral("../../react-components/index.jsx") // source module
+        )
+      : null;
 
   let constString = shouldBuildComps ? `const comps = {` : "";
   const importDeclarations = imports.map((im) => {
@@ -1461,8 +1554,12 @@ methods.createDynamicLazyComponentsImports = function (options) {
   let importsAst = t.file(
     t.program(
       !isMarkdown
-        ? [lazyLoadImport, ...importDeclarations]
-        : [markdownRenderImport, lazyLoadImport, ...importDeclarations]
+        ? lazyLoadImport
+          ? [lazyLoadImport, ...importDeclarations]
+          : [...importDeclarations]
+        : lazyLoadImport && markdownRenderImport
+        ? [markdownRenderImport, lazyLoadImport, ...importDeclarations]
+        : [...importDeclarations]
     )
   );
 
@@ -1519,8 +1616,20 @@ methods.startAstFlow = function (options) {
           isDomainCreated: meta?.isDomainCreated || false,
         };
 
-        const { lastCompsCount = 0, compsSource, compsPaths } = meta;
+        const {
+          lastCompsCount = 0,
+          compsSource,
+          compsPaths,
+          staticOrLazy,
+        } = meta;
         const pagesPathsLen = pagesPaths.length;
+        const shouldChangeToLazyOrStatic =
+          process.env.useLazyLoad !== staticOrLazy ? true : false;
+        self.debug(
+          "SHOULD CHANGE TO",
+          shouldChangeToLazyOrStatic,
+          process.env.useLazyLoad
+        );
 
         self.debug("THE SEND TO:", sendToRequestor);
 
@@ -1538,6 +1647,24 @@ methods.startAstFlow = function (options) {
             markdownRoutes: markdown || null,
           });
           return self.callback(sendToRequestor);
+        } else if (shouldChangeToLazyOrStatic) {
+          self.debug("CHANGING FROM ONE OPT TO ANOTHER");
+          self
+            .replaceKotiiJsFilesContent()
+            .then(() => {
+              self.debug("FILES HAVE BEEN REPLACED SUCCESSFULLY");
+              self.addToAST({
+                objectToAdd: routesObject,
+                pagesPaths,
+                source: pagesSource,
+                isNewSource: compsSource !== pagesSource,
+                markdownRoutes: markdown || null,
+              });
+              return self.callback(sendToRequestor);
+            })
+            .catch((err) => {
+              self.debug("ERROR REPLACING FILES", err);
+            });
         } else {
           self.addOrRemoveByAST({
             pagesPaths,
@@ -1548,6 +1675,8 @@ methods.startAstFlow = function (options) {
             isMarkdown: markdown ? true : false,
             markdownRoutes: markdown || null,
           });
+          if (self?.activeRoute)
+            sendToRequestor["activeRoute"] = self.activeRoute;
           return self.callback(sendToRequestor);
         }
       })
@@ -1583,7 +1712,7 @@ methods.createMarkdownVariable = function (options) {
   //const files = [{ path: "mypath", component: "myComponent" }];
   // self.debug("THE CREATING METHOD", creationMethod);
   // if(replace)
-  console.log("CREATE MARKDOWN VARIALBLE", files);
+  // console.log("CREATE MARKDOWN VARIALBLE", files);
   const astedMarkdownRoutes = self.createMarkdownRoutesAst({ files });
   creationMethod(
     t.variableDeclaration("const", [
@@ -1603,16 +1732,16 @@ methods.createMarkdownRoutesAst = function (options) {
   const astUtils = self.astMarkdownUtils();
 
   const routeNodes = files.map((route) => {
-    console.log("THE ROUTE", route);
-    console.log("THE PARSED MARKDOWN", route.markdownData[0].parsedMarkdown);
-    console.log(
-      "THE PARSED MARKDOWN.special",
-      route.markdownData[0].parsedMarkdown?.specialContent?.special
-    );
-    console.log(
-      "THE PARSED MARKDOWN",
-      route.markdownData[0].parsedMarkdown?.specialContent?.file
-    );
+    // console.log("THE ROUTE", route);
+    // console.log("THE PARSED MARKDOWN", route.markdownData[0].parsedMarkdown);
+    // console.log(
+    //   "THE PARSED MARKDOWN.special",
+    //   route.markdownData[0].parsedMarkdown?.specialContent?.special
+    // );
+    // console.log(
+    //   "THE PARSED MARKDOWN",
+    //   route.markdownData[0].parsedMarkdown?.specialContent?.file
+    // );
     try {
       return t.objectExpression(
         [
@@ -1676,11 +1805,11 @@ methods.astMarkdownUtils = function () {
                 md.parsedMarkdown,
                 utils
               );
-              console.log("THE PARSE DATA RESULTS", parseMarkdownDataResults);
-              console.log(
-                "THE PARSE PARSE PARSE RESULTS",
-                parseMarkdownDataParseResults
-              );
+              // console.log("THE PARSE DATA RESULTS", parseMarkdownDataResults);
+              // console.log(
+              //   "THE PARSE PARSE PARSE RESULTS",
+              //   parseMarkdownDataParseResults
+              // );
               return t.objectExpression([
                 ...parseMarkdownDataResults,
                 t.objectProperty(
@@ -1739,7 +1868,7 @@ methods.astMarkdownUtils = function () {
         : null;
     },
     parseMarkdownDataParsed: (t, md, utils) => {
-      console.log("PARSED MARKDOWN DATA", md);
+      // console.log("PARSED MARKDOWN DATA", md);
       const metaNode = utils.parsedMetakKeys(t, md.metaDataKeys, utils);
       const htmlNode =
         md?.html && md.html.length > 0 ? utils.parsedHtml(t, md.html) : null;
@@ -1777,11 +1906,11 @@ methods.astMarkdownUtils = function () {
           )
         )
       );
-      console.log("THE META KEY", metaKey);
+      // console.log("THE META KEY", metaKey);
       return metaKey;
     },
     parsedSpecial: (t, specialContent) => {
-      console.log("THE SPECIAL CONTENT", specialContent);
+      // console.log("THE SPECIAL CONTENT", specialContent);
       return t.objectProperty(
         t.identifier("specialContent"),
         t.arrayExpression(
@@ -1819,7 +1948,7 @@ methods.astMarkdownUtils = function () {
                 ])
               ),
             ]);
-            console.log("THE SPECIAL ITEM", specialItem);
+            // console.log("THE SPECIAL ITEM", specialItem);
             return specialItem;
           })
         )
@@ -1855,7 +1984,7 @@ methods.astMarkdownUtils = function () {
       );
     },
     parsedHtml: (t, html) => {
-      console.log("HTML RUNS", html);
+      // console.log("HTML RUNS", html);
       return t.objectProperty(
         t.identifier("html"),
         t.arrayExpression(
@@ -1892,7 +2021,7 @@ methods.astMarkdownUtils = function () {
       );
     },
     parseComponentLazyLoad: (t, componentFilePath) => {
-      console.log("THE COMPONENT FILE", componentFilePath);
+      // console.log("THE COMPONENT FILE", componentFilePath)
       let arrowFunk = t.callExpression(t.identifier("lazyLoad"), [
         t.arrowFunctionExpression(
           [],
@@ -1902,7 +2031,7 @@ methods.astMarkdownUtils = function () {
           )
         ),
       ]);
-      console.log("THE ARROW FUNK", arrowFunk);
+      // console.log("THE ARROW FUNK", arrowFunk);
       return arrowFunk;
     },
   };
@@ -1927,6 +2056,107 @@ methods.addItemsToExportList = function (ast, exportList) {
       }
     },
   });
+};
+
+methods.replaceKotiiJsFilesContent = function () {
+  const self = this;
+  const pao = self.pao;
+  const pagesFilePath = `${kotiiKotiiLandPath}/dev/pages.js`;
+  const manifestFilePath = `${kotiiKotiiLandPath}/dev/manifest.js`;
+  const filesContent = self.getCentralFilesContent();
+  const saveToFile = pao.pa_saveToFile;
+
+  return new Promise((resolve) => {
+    saveToFile(pagesFilePath, filesContent.pages);
+    saveToFile(manifestFilePath, filesContent.manifest);
+    resolve(true);
+  });
+};
+
+methods.getCentralFilesContent = function (file) {
+  const pages = `
+const comps = {};
+const routes = [];
+
+export { comps, routes };
+`;
+  const manifest = `const meta = {
+  comps: [],
+  compsSource: "",
+  appMain: "",
+  lastCompsCount: 0,
+  compsPaths: [],
+  app: {
+    type: "ssr",
+    stateVendor: "redux",
+  },
+  isDomainCreated: false,
+  staticOrLazy: "${process.env.useLazyLoad}",
+};
+export { meta };
+`;
+  return {
+    pages,
+    manifest,
+  };
+};
+
+methods.isImportSetInAst = function (ast, source, specifiers = null) {
+  const self = this;
+  let hasImport = false;
+
+  const t = self.t;
+
+  const traverse = self.traverse;
+
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const { node } = path;
+
+      if (node.source.value === source) {
+        // If no specific specifiers requested → just the module import check
+        if (!specifiers || specifiers.length === 0) {
+          hasImport = true;
+          path.stop();
+          return;
+        }
+
+        const importedNames = node.specifiers.map((s) => {
+          if (t.isImportSpecifier(s)) return s.imported.name;
+          if (t.isImportDefaultSpecifier(s)) return "default";
+          if (t.isImportNamespaceSpecifier(s)) return "*";
+          return null;
+        });
+
+        hasImport = specifiers.every((s) => importedNames.includes(s));
+        if (hasImport) path.stop();
+      }
+    },
+  });
+
+  return hasImport;
+};
+methods.isLazyLoadedImportVariable = function (decl) {
+  const self = this;
+
+  const t = self.t;
+
+  self.debug("isLazyLoadedImportVariable", decl.init);
+
+  if (
+    t.isCallExpression(decl.init) &&
+    t.isArrowFunctionExpression(decl.init?.arguments[0]) &&
+    (t.isImport(decl.init?.arguments[0]?.body) ||
+      t.isCallExpression(decl.init?.arguments[0]?.body))
+  ) {
+    let importValue = decl.init?.arguments[0]?.body?.arguments[0]?.value;
+    self.debug("IS LAZY LOADED VARIABLE", importValue);
+    return {
+      importPath: importValue,
+      name: decl.id.name,
+    };
+  }
+  return null;
 };
 
 export default methods;

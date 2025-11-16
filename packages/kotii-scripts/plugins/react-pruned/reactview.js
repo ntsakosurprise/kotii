@@ -1,7 +1,5 @@
 import React from "react";
 import { renderToPipeableStream, renderToString } from "react-dom/server";
-// import { StaticRouter } from "react-router-dom";
-import { StaticRouter } from "react-router-dom/server.mjs";
 // import Header from "./header.jsx";
 import serialize from "serialize-javascript";
 import { ServerApp } from "../../kotii-land/prod/app_b.js";
@@ -26,8 +24,6 @@ class ReactView {
     this.React = React;
     this.createReduxStore = createReduxStore;
     this.comps = null;
-    // this.Provider = Provider;
-    this.StaticRouter = StaticRouter;
     this.styledTags = "";
     this.REACTAPP = ServerApp;
     this.effectsData = {};
@@ -59,6 +55,13 @@ class ReactView {
     this.doKotiiStyles = methods.doKotiiStyles;
     this.renderHtmlSpa = methods.renderHtmlSpa;
     this.handleReactSpa = methods.handleReactSpa;
+    this.handleSetHtmlPageSettings = methods.handleSetHtmlPageSettings;
+    this.doPageSettings = methods.doPageSettings;
+    this.preloadLazyComponents = methods.preloadLazyComponents;
+    this.processViewAfterCheck = methods.processViewAfterCheck;
+    this.loaderStyles = methods.loaderStyles;
+    this.handleReceiveEnvVariables = methods.handleReceiveEnvVariables;
+    this.getProductionProcess = methods.getProductionProcess;
   }
 }
 export default ReactView;

@@ -6,7 +6,7 @@ export const useUniversalEffect = function () {
   let effect = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
   let dependencies = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
   let updaters = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-  const effectID = `${effect_id_prefix}${currentEffectID}`;
+  const effectID = "".concat(effect_id_prefix).concat(currentEffectID);
   const {
     effectsStore = null
   } = useAppContext();

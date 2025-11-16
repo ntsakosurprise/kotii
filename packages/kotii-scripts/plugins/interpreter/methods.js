@@ -44,7 +44,7 @@ methods.handleInterpreterCliInput = function (data) {
       "-h": "--help",
     },
     {
-      argv: pao.PROMPT.slice(2), // Get passed arguments from the third item in the array of passed arguments
+      argv: JSON.parse(process.env.COMMANDS), // Get passed arguments from the third item in the array of passed arguments
     }
   );
   /**

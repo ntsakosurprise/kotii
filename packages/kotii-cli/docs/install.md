@@ -3,7 +3,7 @@
 ### How To Install kotii-cli for local development
 
 - NPM
-  > **RUN:** `npm i /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`
+  > **RUN:** `npm i /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`, and the full command will be: `npm i /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-1.0.0.tgz`
 - PNPM
 
   > **RUN:** `pnpm add /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`

@@ -12,6 +12,7 @@ class WatchOwnFilesWebpackPlugin {
     this.filesToWatch = options.filesToWatch;
     this.runOnComplete = options.runOnComplete;
     this.notifyClient = options.notifyClient;
+    this.appPathsIDS = options.appPathsIDS;
   }
   apply(compiler) {
     compiler.hooks.initialize.tap("WatchOwnFilesWebpackPlugin", (stats) => {
@@ -20,13 +21,18 @@ class WatchOwnFilesWebpackPlugin {
 
       if (this.isWatchingFiles) return;
       this.isWatchingFiles = true;
+      process.env["IS_WATCHING_FILE"] = this.isWatchingFiles;
 
       this.loggas.watchOwnFilesWebpackPlugin.debug(
         "PLUGIN:: FILES TO WATCH",
         this.filesToWatch,
         compiler.close
       );
-      this.runOnComplete(this.filesToWatch, this.isWatchingFiles);
+      this.runOnComplete(
+        this.filesToWatch,
+        this.appPathsIDS,
+        this.isWatchingFiles
+      );
     });
   }
 }

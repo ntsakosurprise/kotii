@@ -4,6 +4,8 @@ import { loggas, logger } from "kotii-logger";
 import { isBuiltin } from "node:module";
 import { pathToFileURL } from "node:url";
 import path from "path";
+import chalk from "chalk";
+import boxen from "boxen";
 import {
   lessToCssConverter,
   renderCssModules,
@@ -98,148 +100,183 @@ export async function load(url, context, nextLoad) {
     fileExtension
   );
 
-  if (
-    (fileExtension === extJsx ||
-      fileExtension === extJS ||
-      fileExtension === extTs ||
-      fileExtension === extTsx ||
-      fileLoaderExts.includes(fileExtension)) &&
-    !isBuiltin(fileName)
-  ) {
-    loggas.load.debug("EXTENSIONS EXECUTION", fileExtension);
-    let source = null;
-    let options = null;
-
+  try {
     if (
-      fileExtension === extJsx ||
-      fileExtension === extJS ||
-      fileExtension === extTs ||
-      fileExtension === extTsx
+      (fileExtension === extJsx ||
+        fileExtension === extJS ||
+        fileExtension === extTs ||
+        fileExtension === extTsx ||
+        fileLoaderExts.includes(fileExtension)) &&
+      !isBuiltin(fileName)
     ) {
-      loggas.load.debug("JSX SECTION");
-      options = {
-        presets: ["@babel/preset-react", "@babel/preset-typescript"],
-        plugins: [
-          "@babel/plugin-syntax-import-assertions",
-          "@babel/plugin-transform-typescript",
-          ["babel-plugin-styled-components", { ssr: true, displayName: true }],
-        ],
-      };
-      loggas.load.debug("READING FILE", fileExtension, url);
-      let urlInstance = new URL(url).pathname;
-      if (url.indexOf("/api/") >= 0) {
-        if (!fs.existsSync(urlInstance)) {
-          source = `export default ${JSON.stringify({ noApi: true })}`;
-          return {
-            format: "module",
-            shortCircuit: true,
-            source: source,
-          };
-        } else {
+      loggas.load.debug("EXTENSIONS EXECUTION", fileExtension);
+      let source = null;
+      let options = null;
+
+      if (
+        fileExtension === extJsx ||
+        fileExtension === extJS ||
+        fileExtension === extTs ||
+        fileExtension === extTsx
+      ) {
+        loggas.load.debug("JSX SECTION");
+        options = {
+          presets: ["@babel/preset-react", "@babel/preset-typescript"],
+          plugins: [
+            "@babel/plugin-syntax-import-assertions",
+            "@babel/plugin-transform-typescript",
+            [
+              "babel-plugin-styled-components",
+              { ssr: true, displayName: true },
+            ],
+          ],
+        };
+        loggas.load.debug("READING FILE", fileExtension, url);
+        let urlInstance = new URL(url).pathname;
+        if (url.indexOf("/api/") >= 0) {
+          if (!fs.existsSync(urlInstance)) {
+            source = `export default ${JSON.stringify({ noApi: true })}`;
+            return {
+              format: "module",
+              shortCircuit: true,
+              source: source,
+            };
+          } else {
+            source = fs.readFileSync(urlInstance, {
+              encoding: "utf-8",
+            });
+          }
+        } else if (fileExtension === extJsx) {
+          loggas.load.debug("JSX READ FILE", fileExtension);
+          source = fs.readFileSync(urlInstance, {
+            encoding: "utf-8",
+          });
+        } else if (fileExtension === extJS) {
+          if (
+            nodeModulesRegex.test(url) &&
+            url.split("/").includes("kotii-scripts") &&
+            url.indexOf("/kotii-scripts/node_modules") < 0
+          ) {
+            loggas.load.debug(
+              "IS NODE MODULES AND KOTII",
+              fileName,
+              fileExtension,
+              url,
+              urlInstance
+            );
+
+            source = fs.readFileSync(urlInstance, {
+              encoding: "utf-8",
+            });
+          } else {
+            return nextLoad(url);
+          }
+        } else if (fileExtension === extTs) {
+          source = fs.readFileSync(urlInstance, {
+            encoding: "utf-8",
+          });
+        } else if (fileExtension === extTsx) {
           source = fs.readFileSync(urlInstance, {
             encoding: "utf-8",
           });
         }
-      } else if (fileExtension === extJsx) {
-        loggas.load.debug("JSX READ FILE", fileExtension);
-        source = fs.readFileSync(urlInstance, {
-          encoding: "utf-8",
-        });
-      } else if (fileExtension === extJS) {
-        if (
-          nodeModulesRegex.test(url) &&
-          url.split("/").includes("kotii-scripts") &&
-          url.indexOf("/kotii-scripts/node_modules") < 0
-        ) {
-          loggas.load.debug(
-            "IS NODE MODULES AND KOTII",
-            fileName,
-            fileExtension,
-            url,
-            urlInstance
-          );
-
-          source = fs.readFileSync(urlInstance, {
-            encoding: "utf-8",
-          });
-        } else {
-          return nextLoad(url);
+      } else if (fileLoaderExts.includes(fileExtension)) {
+        loggas.load.debug(
+          "The PNG",
+          fileExtension,
+          meta && meta.useInlinedPngs
+        );
+        let pathName = new URL(url).pathname;
+        let fileName = `/${path.basename(pathName)}`;
+        switch (fileExtension) {
+          case ".json":
+            source = await getNodejsForeignData("json", pathName);
+            break;
+          case ".csv":
+            source = await getNodejsForeignData("csv", pathName);
+            break;
+          case ".xml":
+            source = await getNodejsForeignData("xml", pathName);
+            break;
+          case ".jpg":
+          case ".svg":
+          case ".png":
+          case ".gif":
+          case ".mp3":
+          case ".mp4":
+            source = processImageFiles(pathName, fileName, fileExtension);
+            break;
+          case ".scss":
+          case ".sass":
+            source = await getCssFromSass(pathName, fileName);
+            break;
+          case ".less":
+            source = await getCssFromLess(pathName, fileName);
+            break;
+          case ".styl":
+            source = await getCssFromStylus(pathName, fileName);
+            break;
+          case ".css":
+            source = await getCss(pathName, fileName);
+            break;
+          default:
+            source = `export default ${JSON.stringify(fileName)}`;
         }
-      } else if (fileExtension === extTs) {
-        source = fs.readFileSync(urlInstance, {
-          encoding: "utf-8",
-        });
-      } else if (fileExtension === extTsx) {
-        source = fs.readFileSync(urlInstance, {
-          encoding: "utf-8",
-        });
-      }
-    } else if (fileLoaderExts.includes(fileExtension)) {
-      loggas.load.debug("The PNG", fileExtension, meta && meta.useInlinedPngs);
-      let pathName = new URL(url).pathname;
-      let fileName = `/${path.basename(pathName)}`;
-      switch (fileExtension) {
-        case ".json":
-          source = await getNodejsForeignData("json", pathName);
-          break;
-        case ".csv":
-          source = await getNodejsForeignData("csv", pathName);
-          break;
-        case ".xml":
-          source = await getNodejsForeignData("xml", pathName);
-          break;
-        case ".jpg":
-        case ".svg":
-        case ".png":
-        case ".gif":
-        case ".mp3":
-        case ".mp4":
-          source = processImageFiles(pathName, fileName, fileExtension);
-          break;
-        case ".scss":
-        case ".sass":
-          source = await getCssFromSass(pathName, fileName);
-          break;
-        case ".less":
-          source = await getCssFromLess(pathName, fileName);
-          break;
-        case ".styl":
-          source = await getCssFromStylus(pathName, fileName);
-          break;
-        case ".css":
-          source = await getCss(pathName, fileName);
-          break;
-        default:
-          source = `export default ${JSON.stringify(fileName)}`;
-      }
 
-      loggas.load.debug("filename.pathname", fileName, pathName);
+        loggas.load.debug("filename.pathname", fileName, pathName);
+
+        return {
+          format: "module",
+          shortCircuit: true,
+          source: source,
+        };
+      } else {
+        source = await nextLoad(url, { ...context, format });
+      }
+      let rawSource = typeof source === "string" ? source : source.source;
+
+      let result = fileLoaderExts.includes(fileExtension)
+        ? babel.transformFileSync(source, options)
+        : babel.transform(rawSource, {
+            filename: url,
+            presets: options.presets,
+          });
+      if (fileLoaderExts.includes(fileExtension)) {
+        loggas.load.debug("TRANSFORM RESULT", result);
+      }
 
       return {
-        format: "module",
+        format: format ? (format === "commonjs" ? "module" : format) : "module",
         shortCircuit: true,
-        source: source,
+        source: result.code,
       };
+    }
+
+    return nextLoad(url);
+  } catch (error) {
+    const parsed = parseLoaderError(error);
+    const { file } = parsed;
+    const matchPartialPagesPathPattern = `/kotii-land/dev/pages.js`;
+    const matchPartialBuildPathPattern = `/kotii-land/dev/build.js`;
+    let source = ``;
+    let code = 0;
+
+    prettyPrintError(parsed);
+
+    if (
+      file &&
+      (file.indexOf(matchPartialPagesPathPattern) >= 0 ||
+        file.indexOf(matchPartialBuildPathPattern) >= 0)
+    ) {
+      source = `export default null`;
+      code = 50;
     } else {
-      source = await nextLoad(url, { ...context, format });
-    }
-    let rawSource = typeof source === "string" ? source : source.source;
-
-    let result = fileLoaderExts.includes(fileExtension)
-      ? babel.transformFileSync(source, options)
-      : babel.transform(rawSource, { filename: url, presets: options.presets });
-    if (fileLoaderExts.includes(fileExtension)) {
-      loggas.load.debug("TRANSFORM RESULT", result);
+      source = `export default null;`;
     }
 
-    return {
-      format: format ? (format === "commonjs" ? "module" : format) : "module",
-      shortCircuit: true,
-      source: result.code,
-    };
+    await new Promise((r) => setTimeout(r, 10));
+    process.exit(code);
   }
-
-  return nextLoad(url);
 }
 
 export async function resolve(specifier, context, nextResolve) {
@@ -928,3 +965,79 @@ export const escapePeriodsOnPaths = (escapeString) => {
   // );
   return escapeString.replace(matchCopy, matchCopyReplaced);
 };
+
+const extractFile = (str) => {
+  const match = str.match(/\/[^\s:]+?\.(?:[jt]sx?)/);
+  return match ? match[0] : null;
+};
+
+const extractStackFrames = (stack) =>
+  Array.from(stack.matchAll(/at\s+([^(]+)\s+\(([^:]+):(\d+):(\d+)\)/g)).map(
+    ([_, fn, file, line, col]) => ({
+      fn: fn.trim(),
+      file,
+      line: +line,
+      col: +col,
+    })
+  );
+
+export function parseLoaderError(err) {
+  // console.log("PARSE ERROR",err)
+  return {
+    type: err.name || "Error",
+    file: extractFile(err.message || ""),
+    message: (err.message || "").replace(/^.*?:\s*/, ""),
+    line: err.loc?.line ?? null,
+    column: err.loc?.column ?? null,
+    reasonCode: err.reasonCode ?? null,
+    code: err.code ?? null,
+    stackFrames: extractStackFrames(err.stack || ""),
+  };
+}
+
+export function prettyPrintError(parsed) {
+  // console.log("PRETTY PRINTING",parsed)
+  const header = chalk.bgRed.white.bold(` ${parsed.type} `);
+  const filePath = parsed.file
+    ? chalk.cyan(parsed.file)
+    : chalk.gray("(unknown file)");
+  const loc = parsed.line
+    ? chalk.yellow(`:${parsed.line}:${parsed.column || 0}`)
+    : "";
+
+  const message = chalk.redBright(parsed.message);
+  const reason = parsed.reasonCode
+    ? chalk.gray(`Reason: ${parsed.reasonCode}`)
+    : "";
+
+  const body = [
+    `${chalk.bold("File:")} ${filePath}${loc}`,
+    `${chalk.bold("Message:")} ${message}`,
+    reason && `${chalk.bold(reason)}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const box = boxen(body, {
+    padding: 1,
+    borderColor: "red",
+    borderStyle: "round",
+  });
+
+  console.error(`${header}\n${box}`);
+}
+
+export function showCodeSnippet(file, line, context = 2) {
+  if (!file || !fs.existsSync(file)) return "";
+  const lines = fs.readFileSync(file, "utf8").split("\n");
+  const start = Math.max(0, line - context - 1);
+  const end = Math.min(lines.length, line + context);
+  return lines
+    .slice(start, end)
+    .map((l, i) => {
+      const num = start + i + 1;
+      const marker = num === line ? chalk.red(">") : " ";
+      return `${marker} ${chalk.gray(String(num).padStart(3))} | ${l}`;
+    })
+    .join("\n");
+}

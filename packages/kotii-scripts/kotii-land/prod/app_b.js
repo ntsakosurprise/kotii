@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { AppProvider, useAppContext } from "../../react-components-pruned/index.js";
 import createReduxStore from "./app_redux.js";
 import { ClientRoutes, RoutesAsServerRoutes } from "./build_b.js";
+import { AuthProvider } from "kotii-auth";
 logger.setNameSpaces([{
   namespace: "app:start-client",
   id: "appClient"
@@ -25,13 +26,16 @@ let userLayout = null;
 let container = null;
 let customHydrateRoot = null;
 const App = function () {
+  var _window, _window2;
   let appWrapper = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
   let layout = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
   userWrapper = appWrapper;
   userLayout = layout;
   const app = process.env.KOTII_APP_META;
   console.log("THE EFFECTSTORE RAW", window.__KOTII_EFFECTS_STATE__);
-  const effectsStore = window?.__KOTII_EFFECTS_STATE__ ? JSON.parse(window.__KOTII_EFFECTS_STATE__) : null;
+  const effectsStore = (_window = window) !== null && _window !== void 0 && _window.__KOTII_EFFECTS_STATE__ ? JSON.parse(window.__KOTII_EFFECTS_STATE__) : null;
+  const authUser = (_window2 = window) !== null && _window2 !== void 0 && _window2.__KOTII_AUTH_USER__ ? JSON.parse(window.__KOTII_AUTH_USER__) : null;
+  console.log("THE AUTH USER", authUser);
   loggas.appClient.debug("THE PROCESS.BROWSER.ENVS", process.env);
   let {
     type,
@@ -45,13 +49,15 @@ const App = function () {
         appWrapper,
         layout,
         store,
-        effectsStore
+        effectsStore,
+        authUser
       });
     }
     return appSpa({
       appWrapper,
       layout,
-      effectsStore
+      effectsStore,
+      authUser
     });
   } else {
     if (stateVendor && stateVendor === "redux") {
@@ -61,13 +67,15 @@ const App = function () {
         appWrapper,
         layout,
         store,
-        effectsStore
+        effectsStore,
+        authUser
       });
     }
     return appNormal({
       appWrapper,
       layout,
-      effectsStore
+      effectsStore,
+      authUser
     });
   }
 };
@@ -78,7 +86,8 @@ const appWithRedux = function () {
     store,
     isServer = false,
     goodies = null,
-    effectsStore
+    effectsStore,
+    authUser
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
   loggas.appClient.debug("APP WITH REDUX", appWrapper, layout, store, isServer);
   if (isServer) {
@@ -90,7 +99,8 @@ const appWithRedux = function () {
       effectsStore: effectsStore
     }, /*#__PURE__*/React.createElement(AppGeneric, {
       isServer: true,
-      goodies: goodies
+      goodies: goodies,
+      authUser: authUser
     })));
   }
   hydrateInvokes++;
@@ -106,13 +116,15 @@ const appWithRedux = function () {
   //   </Provider>
   // );
   if (customHydrateRoot) {
-    return customHydrateRoot.render( /*#__PURE__*/React.createElement(Provider, {
+    return customHydrateRoot.render(/*#__PURE__*/React.createElement(Provider, {
       store: store
     }, /*#__PURE__*/React.createElement(AppProvider, {
       appWrapper: appWrapper,
       layout: layout,
       effectsStore: effectsStore
-    }, /*#__PURE__*/React.createElement(AppGeneric, null))));
+    }, /*#__PURE__*/React.createElement(AppGeneric, {
+      authUser: authUser
+    }))));
   } else {
     customHydrateRoot = hydrateRoot(container, /*#__PURE__*/React.createElement(Provider, {
       store: store
@@ -120,7 +132,9 @@ const appWithRedux = function () {
       appWrapper: appWrapper,
       layout: layout,
       effectsStore: effectsStore
-    }, /*#__PURE__*/React.createElement(AppGeneric, null))));
+    }, /*#__PURE__*/React.createElement(AppGeneric, {
+      authUser: authUser
+    }))));
     loggas.appClient.debug("CREATED HYDRATED ROOT", customHydrateRoot, customHydrateRoot.render);
   }
 };
@@ -130,21 +144,29 @@ const AppGeneric = props => {
   } = useAppContext();
   const {
     isServer = false,
-    goodies = {}
+    goodies = {},
+    authUser = null
   } = props;
   const AppWrapper = appWrapper;
-  return appWrapper ? /*#__PURE__*/React.createElement(AppWrapper, null, !isServer ? /*#__PURE__*/React.createElement(ClientRoutes, {
+  return appWrapper ? /*#__PURE__*/React.createElement(AuthProvider, {
+    authUser: authUser
+  }, /*#__PURE__*/React.createElement(AppWrapper, null, !isServer ? /*#__PURE__*/React.createElement(ClientRoutes, {
     goodies: goodies
   }) : /*#__PURE__*/React.createElement(RoutesAsServerRoutes, {
     goodies: goodies
-  })) : !isServer ? /*#__PURE__*/React.createElement(ClientRoutes, null) : /*#__PURE__*/React.createElement(RoutesAsServerRoutes, null);
+  }))) : !isServer ? /*#__PURE__*/React.createElement(AuthProvider, {
+    authUser: authUser
+  }, /*#__PURE__*/React.createElement(ClientRoutes, null)) : /*#__PURE__*/React.createElement(AuthProvider, {
+    authUser: authUser
+  }, /*#__PURE__*/React.createElement(RoutesAsServerRoutes, null));
 };
 const appNormal = function () {
   let {
     appWrapper,
     layout,
     isServer = false,
-    effectsStore
+    effectsStore,
+    authUser
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
   loggas.appClient.debug("APP NORMARL IS RUNNING");
   if (isServer) {
@@ -152,45 +174,55 @@ const appNormal = function () {
       appWrapper: appWrapper,
       layout: layout,
       effectsStore: effectsStore
-    }, /*#__PURE__*/React.createElement(AppGeneric, null));
+    }, /*#__PURE__*/React.createElement(AppGeneric, {
+      authUser: authUser
+    }));
   }
   container = !container ? document.getElementById("root") : container;
   hydrateRoot(document.getElementById("root"), /*#__PURE__*/React.createElement(AppProvider, {
     appWrapper: appWrapper,
     layout: layout,
     effectsStore: effectsStore
-  }, /*#__PURE__*/React.createElement(AppGeneric, null)));
+  }, /*#__PURE__*/React.createElement(AppGeneric, {
+    authUser: authUser
+  })));
 };
 const appSpa = function () {
   let {
     appWrapper,
     layout,
-    effectsStore
+    effectsStore,
+    authUser
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
   loggas.appClient.debug("APP SPA IS RUNNING");
   const root = createRoot(document.getElementById("root"));
-  root.render( /*#__PURE__*/React.createElement(StrictMode, null, /*#__PURE__*/React.createElement(AppProvider, {
+  root.render(/*#__PURE__*/React.createElement(StrictMode, null, /*#__PURE__*/React.createElement(AppProvider, {
     appWrapper: appWrapper,
     layout: layout,
     effectsStore: effectsStore
-  }, /*#__PURE__*/React.createElement(AppGeneric, null))));
+  }, /*#__PURE__*/React.createElement(AppGeneric, {
+    authUser: authUser
+  }))));
 };
 const appSpaWithRedux = function () {
   let {
     appWrapper,
     layout,
     store,
-    effectsStore
+    effectsStore,
+    authUser
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
   loggas.appClient.debug("APP SPA WITH REDUX RUNNING");
   const root = createRoot(document.getElementById("root"));
-  root.render( /*#__PURE__*/React.createElement(StrictMode, null, /*#__PURE__*/React.createElement(Provider, {
+  root.render(/*#__PURE__*/React.createElement(StrictMode, null, /*#__PURE__*/React.createElement(Provider, {
     store: store
   }, /*#__PURE__*/React.createElement(AppProvider, {
     appWrapper: appWrapper,
     layout: layout,
     effectsStore: effectsStore
-  }, /*#__PURE__*/React.createElement(AppGeneric, null)))));
+  }, /*#__PURE__*/React.createElement(AppGeneric, {
+    authUser: authUser
+  })))));
 };
 const ServerApp = function () {
   let {
@@ -198,13 +230,14 @@ const ServerApp = function () {
     layout = null,
     goodies = null,
     storeFromSource = null,
-    effectsStore
+    effectsStore,
+    authUser = null
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
   loggas.appServer.debug("THE GOODIES FROM SERVER", goodies);
   const store = !storeFromSource ? createReduxStore() : storeFromSource;
-  const existsMeta = fs.existsSync(`${process.cwd()}${path.sep}app.manifest.json`);
+  const existsMeta = fs.existsSync("".concat(process.cwd()).concat(path.sep, "app.manifest.json"));
   if (!existsMeta) throw new Error("This project is missing app.manifest.json, please add it");
-  const meta = JSON.parse(fs.readFileSync(`${process.cwd()}${path.sep}app.manifest.json`));
+  const meta = JSON.parse(fs.readFileSync("".concat(process.cwd()).concat(path.sep, "app.manifest.json")));
   const {
     app
   } = meta;
@@ -219,7 +252,8 @@ const ServerApp = function () {
       store,
       isServer: true,
       goodies,
-      effectsStore
+      effectsStore,
+      authUser
     });
   }
   return appNormal({
@@ -227,7 +261,8 @@ const ServerApp = function () {
     layout,
     isServer: true,
     goodies,
-    effectsStore
+    effectsStore,
+    authUser
   });
 };
 if (import.meta.webpackHot) {

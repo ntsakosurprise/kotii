@@ -202,6 +202,7 @@
     "LICENSE",
     "preloads.cjs",
     "globals.cjs",
+    "kotii_start.cjs",
     "package.json"
   ],
   "browser": {

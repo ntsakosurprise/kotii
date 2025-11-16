@@ -88,6 +88,7 @@ methods.getAppInContextResources = function (environment = false) {
     const tailwindCjsPath = self.getFilePath(appFolder, "tailwind.config.cjs");
     const tsConfigPath = self.getFilePath(appFolder, "tsconfig.ts");
     const jsConfigPath = self.getFilePath(appFolder, "tsconfig.js");
+    const appConfigPath = self.getFilePath(appFolder, "app.manifest.json");
     const resources = {
       appEnv: self.getEnvFilePath(appFolder),
       appFolder: self.getFilePath(appFolder, "."),
@@ -134,14 +135,20 @@ methods.getAppInContextResources = function (environment = false) {
         : null,
       appTsConfig: self.checkIfIsFile(tsConfigPath) ? tsConfigPath : null,
       appJsConfig: self.checkIfIsFile(jsConfigPath) ? jsConfigPath : null,
+      appConfigPath,
     };
-    if (Object.keys(resources?.appManifest).includes("useLazyLoad")) {
-      resources.appManifest.useLazyLoad
-        ? (process.env["useLazyLoad"] = true)
-        : null;
+    if (resources?.appManifest) {
+      // resources.appManifest.useLazyLoad
+      //   ? (process.env["useLazyLoad"] = true)
+      //   : null;
+      resources.appManifest?.useLazyLoad
+        ? (resources["staticOrLazy"] = "lazy")
+        : (resources["staticOrLazy"] = "static");
     } else {
-      process.env["useLazyLoad"] = true;
+      // process.env["useLazyLoad"] = true;
+      resources["staticOrLazy"] = "static";
     }
+    process.env["useLazyLoad"] = resources.staticOrLazy;
     self.debug("THE RESOURCES", resources);
     // let appFileSavePath = `${resources.appSrc}/about_.js`;
     // let appFilePath = `${resources.appSrc}/about.jsx`;
