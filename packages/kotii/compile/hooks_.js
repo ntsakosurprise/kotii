@@ -154,8 +154,8 @@ export async function load(url, context, nextLoad) {
         } else if (fileExtension === extJS) {
           if (
             nodeModulesRegex.test(url) &&
-            url.split("/").includes("kotii-scripts") &&
-            url.indexOf("/kotii-scripts/node_modules") < 0
+            url.split("/").includes("kotii") &&
+            url.indexOf("/kotii/node_modules") < 0
           ) {
             loggas.load.debug(
               "IS NODE MODULES AND KOTII",
@@ -457,7 +457,7 @@ export const resolvePagesImports = (specifier) => {
  *
  * @param {*} specifier
  * @returns true/false
- * resolveKotiiScriptsImports resolves imports from kotii-scripts' exports during development.
+ * resolveKotiiScriptsImports resolves imports from kotii' exports during development.
  * kotii uses two separate files for app start up in /kotii-land/. The files are in /kotii-land/dev/ and
  * /kotii-land/prod/ respectively.
  *
@@ -465,7 +465,7 @@ export const resolvePagesImports = (specifier) => {
  * To prevent errors that users would potentially face in both development and production environments,
  * we decided to resolve the imports manually from dev during development
  *
- * In Production, kotii-scripts will expectedly export appropriate files where they are needed. It will
+ * In Production, kotii will expectedly export appropriate files where they are needed. It will
  * use nodejs' default resolve hook.
  *
  */
@@ -473,14 +473,14 @@ export const resolveKotiiScriptsImports = (specifier) => {
   loggas.resolve.debug(
     "KOTII SCRIPTS IMPORTS",
     specifier,
-    /^kotii-scripts/.test(specifier)
+    /^kotii/.test(specifier)
   );
-  if (!isBuiltin(specifier) && /^kotii-scripts/.test(specifier)) {
+  if (!isBuiltin(specifier) && /^kotii/.test(specifier)) {
     let kotiiExportsPath = `${kotiiKotiiLandPath}/dev/app_.js`;
     let urlLized = pathToFileURL(kotiiExportsPath).href;
     loggas.resolve.debug(
-      "THE SPECIFIER FOR KOTII-SCRIPTS PATH",
-      "KOTII-SCRIPTS IMPORTS",
+      "THE SPECIFIER FOR kotii PATH",
+      "kotii IMPORTS",
       specifier,
       "EXPORTS PATH",
       kotiiExportsPath,
@@ -500,7 +500,7 @@ export const resolveKotiiScriptsImports = (specifier) => {
  *
  * @param {*} specifier
  * @returns true/false
- * resolveKotiiScriptsInternalImports resolves imports from kotii-scripts' internals during
+ * resolveKotiiScriptsInternalImports resolves imports from kotii' internals during
  * development time. This is mainly done for modules in /kotii-land
  *
  */
@@ -509,7 +509,7 @@ export const resolveKotiiScriptsInternalImports = (specifier) => {
     let kotiiExportsPath = `${kotiiRootPath}${specifier}`;
     let urlLized = pathToFileURL(kotiiExportsPath).href;
     loggas.resolve.debug(
-      "THE SPECIFIER FOR KOTII-SCRIPTS PATH",
+      "THE SPECIFIER FOR kotii PATH",
       "KOTII-LAND IMPORTS",
       specifier,
       "EXPORTS PATH",
@@ -609,7 +609,7 @@ export const guessPathExtension = (guessPath) => {
  * @returns
  * getPagesBasePath this function simply checks to see if we are in node_modules path or kotii path.
  * node_modules path will imply that we are using the base of our paths as user's project, while
- * the kotii path imply that we are using kotii-scripts's folder root as our base.
+ * the kotii path imply that we are using kotii's folder root as our base.
  *
  */
 

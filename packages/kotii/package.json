@@ -24,12 +24,12 @@
     "build": "node kotii.cjs build",
     "start:dev:nodemon": "nodemon index",
     "prepublishOnly": "npm run build",
-    "babel-ssr": "babel --config-file /Users/surprisemashele/Documents/kotii/packages/kotii-scripts/babel.server.json  --out-dir /Users/surprisemashele/Documents/kotii/packages/kotii-scripts/build /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src",
-    "build-ssr": "babel --config-file /Users/surprisemashele/Documents/kotii/packages/kotii-scripts/babel.server.build.json  --out-dir /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/build/src /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src"
+    "babel-ssr": "babel --config-file /Users/surprisemashele/Documents/kotii/packages/kotii/babel.server.json  --out-dir /Users/surprisemashele/Documents/kotii/packages/kotii/build /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src",
+    "build-ssr": "babel --config-file /Users/surprisemashele/Documents/kotii/packages/kotii/babel.server.build.json  --out-dir /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/build/src /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src"
   },
   "keywords": [
     "scripts",
-    "kotii-scripts",
+    "kotii",
     "react scripts",
     "scaffold"
   ],
