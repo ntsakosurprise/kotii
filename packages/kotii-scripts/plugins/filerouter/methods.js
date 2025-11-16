@@ -51,12 +51,14 @@ methods.handleFileRoutes = async function (data) {
   self.debug("THE MARKDOWN THINGS", markdownPages, astFlowOptions);
 
   if (markdownPages?.length && markdownPages.length > 0) {
-    self.processMarkdown(
-      markdownPages,
-      astFlowOptions,
-      self.startAstFlow.bind(self),
-      self.getItemPath.bind(self)
-    );
+    !isProductionRequest
+      ? self.processMarkdown(
+          markdownPages,
+          astFlowOptions,
+          self.startAstFlow.bind(self),
+          self.getItemPath.bind(self)
+        )
+      : self.startAstFlow(astFlowOptions);
   } else {
     self.startAstFlow(astFlowOptions);
   }
