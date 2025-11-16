@@ -6,16 +6,14 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import Calendar from "./Calendar";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Calendar component", () => {
+  test("Check if Calendar component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Calendar children={["option1"]} />
+        <Calendar children={["option1"]} testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
-    // expect(
-    //   screen.getByRole("button", { name: "Button marbella" })
-    // ).toBeDisabled();
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

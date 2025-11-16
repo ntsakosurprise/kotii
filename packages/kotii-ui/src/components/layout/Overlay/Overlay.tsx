@@ -7,9 +7,9 @@ import { PageHeaderProps } from "./types";
 
 const WrappedPage = styled.div<PageHeaderProps>``;
 
-const Overlay: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Overlay: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedPage>
+    <WrappedPage data-testid={testID}>
       <Layer {...props} />
     </WrappedPage>
   );

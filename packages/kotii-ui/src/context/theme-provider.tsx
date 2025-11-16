@@ -6,9 +6,10 @@ import { useTheme } from "../hooks";
 // import { ThemeProvider } from "styled-components";
 
 import { defaultProps as grommetTheme, Grommet } from "grommet";
-type ThemeModeProps = "dark" | "light" | "auto";
+type ThemeModeProps = "dark" | "light";
 type ThemeProps = {
   theme: Object;
+  themeName: string;
   themes: [];
   isThemeLoaded: boolean;
   changeTheme: (currentTheme: any) => void;
@@ -32,17 +33,18 @@ export const CustomThemeProvider = (props) => {
   const { themes, isThemeLoaded } = useTheme();
   const [themeMode, setThemeMode] = React.useState<ThemeModeProps>("dark");
   const [themeName, setThemeName] = useState("dark");
+  const [currentTheme, setCurrentTheme] = useState(directThemes[themeName]);
 
   // console.log("currentTheme;;;", theme);
   // console.log("CurrentThemes", themes);
   // console.log(isThemeLoaded);
-  console.log(props);
+  //console.log(props);
   useEffect(() => {
     logStoredThemesStatus();
   }, []);
 
   const changeThemeMode = (themeMode) => {
-    console.log("CURRENT THEMMODE", JSON.stringify(themeMode));
+    //console.log("CURRENT THEMMODE", JSON.stringify(themeMode));
     if (themeMode === "dark") {
       setThemeMode("light");
     } else {
@@ -51,20 +53,23 @@ export const CustomThemeProvider = (props) => {
   };
 
   const changeTheme = (name) => {
+    console.log(">>> THE THEM NAME", name);
     setThemeName(name);
   };
   useEffect(() => {
-    console.log("THEME NAME CHANGED;;;", themeName);
-    console.log("directThemes", directThemes);
-    console.log("directThemes theme", directThemes[themeName]);
+    // console.log("THEME NAME CHANGED;;;", themeName);
+    // console.log("directThemes", directThemes);
+    // console.log("directThemes theme", directThemes[themeName]);
+    setCurrentTheme(directThemes[themeName]);
   }, [themeName]);
-  console.log("The theme name", themeName);
-  console.log("The them", directThemes[themeName]);
+  // console.log("The theme name", themeName);
+  // console.log("The them", directThemes[themeName]);
 
   return (
     <ThemeContext.Provider
       value={{
-        theme: directThemes[themeName],
+        theme: currentTheme,
+        themeName: themeName,
         themes,
         isThemeLoaded,
         changeTheme,
@@ -73,7 +78,7 @@ export const CustomThemeProvider = (props) => {
         themeMode,
       }}
     >
-      <Grommet theme={directThemes[themeName]} themeMode={themeMode}>
+      <Grommet theme={currentTheme} themeMode={themeMode}>
         {props.children}
       </Grommet>
     </ThemeContext.Provider>

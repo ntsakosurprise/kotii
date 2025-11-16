@@ -8,10 +8,10 @@ import { PageHeaderProps } from "./types";
 
 const WrappedTabs = styled.div<PageHeaderProps>``;
 
-const Tabs: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Tabs: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedTabs>
-      <Gtabs {...props} />
+    <WrappedTabs data-testid={testID}>
+      <Gtabs {...props} onActive={() => console.log("Tabs")} />
     </WrappedTabs>
   );
 };

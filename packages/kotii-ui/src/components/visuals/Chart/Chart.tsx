@@ -8,9 +8,13 @@ import { PageHeaderProps } from "./types";
 
 const WrappedChart = styled.div<PageHeaderProps>``;
 
-const Chart: React.FC<PageHeaderProps> = ({ values, ...props }) => {
+const Chart: React.FC<PageHeaderProps> = ({
+  testID = "",
+  values,
+  ...props
+}) => {
   return (
-    <WrappedChart values={values}>
+    <WrappedChart values={values} data-testid={testID}>
       <Gchart {...props} values={values} />
     </WrappedChart>
   );

@@ -6,11 +6,11 @@ import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
 import InfiniteScroll from "./InfiniteScroll";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for InfiniteScroll component", () => {
+  test("Check if InfiniteScroll component renders", () => {
     render(
       <KotiiThemeProvider>
-        <InfiniteScroll>
+        <InfiniteScroll testID={DOM_BY_TEXT}>
           <p>test</p>
         </InfiniteScroll>
       </KotiiThemeProvider>
@@ -18,6 +18,6 @@ describe("Running Test for Grid component", () => {
     // expect(
     //   screen.getByRole("button", { name: "Button marbella" })
     // ).toBeDisabled();
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

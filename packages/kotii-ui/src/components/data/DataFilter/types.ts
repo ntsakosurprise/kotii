@@ -1,5 +1,5 @@
 import { BaseProps } from "../../../types";
-export interface PageHeaderProps extends BaseProps {
+export interface PageHeaderProps extends Omit<BaseProps, "onClick"> {
   gridArea?: string;
 
   options?: (
@@ -11,6 +11,7 @@ export interface PageHeaderProps extends BaseProps {
       }
   )[];
   property: string;
+  onClick?: (event: React.MouseEvent) => void;
   range?: {
     max: number;
     min: number;

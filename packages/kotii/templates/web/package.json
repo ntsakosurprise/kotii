@@ -1,0 +1,16 @@
+{
+  "name": "newapp",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "anzii": "^2.0.8"
+  },
+ 
+ 
+  "readmeFilename": "README.md"
+  
+}

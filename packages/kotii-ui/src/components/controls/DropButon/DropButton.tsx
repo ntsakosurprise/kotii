@@ -9,9 +9,13 @@ import { PageHeaderProps } from "./types";
 
 const WrappedDropButton = styled.div<PageHeaderProps>``;
 
-const DropButton: React.FC<PageHeaderProps> = ({ dropContent, ...props }) => {
+const DropButton: React.FC<PageHeaderProps> = ({
+  testID = "",
+  dropContent,
+  ...props
+}) => {
   return (
-    <WrappedDropButton dropContent={dropContent}>
+    <WrappedDropButton dropContent={dropContent} data-testid={testID}>
       <GdropButton {...props} dropContent={dropContent} />
     </WrappedDropButton>
   );

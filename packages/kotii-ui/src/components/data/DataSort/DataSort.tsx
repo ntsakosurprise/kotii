@@ -8,9 +8,9 @@ import { PageHeaderProps } from "./types";
 
 const WrappedDataSort = styled.div<PageHeaderProps>``;
 
-const DataSort: React.FC<PageHeaderProps> = ({ ...props }) => {
+const DataSort: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedDataSort>
+    <WrappedDataSort data-testid={testID}>
       <GdataSort {...props} />
     </WrappedDataSort>
   );

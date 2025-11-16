@@ -4,20 +4,20 @@ import React from "react";
 
 import { DOM_BY_TEXT } from "../../../constants";
 import { KotiiThemeProvider } from "../../../context";
-import InfiniteScroll from "./Keyboard";
+import Keyboard from "./Keyboard";
 
-describe("Running Test for Grid component", () => {
-  test("Check if Grid component renders", () => {
+describe("Running Test for Keyboard component", () => {
+  test("Check if Keyboard component renders", () => {
     render(
       <KotiiThemeProvider>
-        <InfiniteScroll>
+        <Keyboard testID={DOM_BY_TEXT}>
           <p>test</p>
-        </InfiniteScroll>
+        </Keyboard>
       </KotiiThemeProvider>
     );
     // expect(
     //   screen.getByRole("button", { name: "Button marbella" })
     // ).toBeDisabled();
-    expect(screen.getByText(DOM_BY_TEXT)).toBeInTheDocument();
+    expect(screen.getByTestId(DOM_BY_TEXT)).toBeInTheDocument();
   });
 });

@@ -8,9 +8,13 @@ import { PageHeaderProps } from "./types";
 
 const WrappedTextArea = styled.div<PageHeaderProps>``;
 
-const TextArea: React.FC<PageHeaderProps> = ({ options, ...props }) => {
+const TextArea: React.FC<PageHeaderProps> = ({
+  testID = "",
+  options,
+  ...props
+}) => {
   return (
-    <WrappedTextArea options={options}>
+    <WrappedTextArea options={options} data-testid={testID}>
       <GtextArea {...props} />
     </WrappedTextArea>
   );

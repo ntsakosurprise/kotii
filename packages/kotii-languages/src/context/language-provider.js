@@ -3,10 +3,10 @@
 // import i18next from "i18next";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import "../config/config";
+import "../config/index.js";
 /* eslint-disable no-unused-vars */
 // import { config } from "../config/index";
-import { addLanguages, initialize } from "../config";
+import { addLanguages, initialize } from "../config/config.js";
 const LanguageContext = React.createContext(null);
 //console.log(config);
 
@@ -18,6 +18,7 @@ export const LanguageProvider = (props) => {
 
   const { children, ln, translations } = props;
   const [updateLanguages, setUpdateLanguages] = useState(null);
+  const [languageName, setLanguageName] = useState("english");
   //const [languagesSet, setLanguagesSet] = useState(false);
 
   // console.log("the children;;", ln);
@@ -38,7 +39,8 @@ export const LanguageProvider = (props) => {
     console.log("NewLanguages;;;", i18n.languages);
   }, [updateLanguages]);
 
-  const changeCurrentLanguage = (language) => {
+  const changeCurrentLanguage = (language, langName) => {
+    setLanguageName(langName);
     i18n.changeLanguage(language, () => {
       setCurrentLanguage(language);
     });
@@ -63,6 +65,7 @@ export const LanguageProvider = (props) => {
         changeCurrentLanguage,
         get,
         getLanguageNames,
+        languageName,
       }}
     >
       {children}

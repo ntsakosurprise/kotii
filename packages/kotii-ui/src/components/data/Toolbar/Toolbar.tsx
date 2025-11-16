@@ -8,9 +8,9 @@ import { PageHeaderProps } from "./types";
 
 const WrappedToolbar = styled.div<PageHeaderProps>``;
 
-const Toolbar: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Toolbar: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedToolbar>
+    <WrappedToolbar data-testid={testID}>
       <Gtoolbar {...props} />
     </WrappedToolbar>
   );

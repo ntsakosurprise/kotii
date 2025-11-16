@@ -8,9 +8,12 @@ import { PageHeaderProps } from "./types";
 
 const WrappedDataTableGBy = styled.div<PageHeaderProps>``;
 
-const DataTableGroupBy: React.FC<PageHeaderProps> = ({ ...props }) => {
+const DataTableGroupBy: React.FC<PageHeaderProps> = ({
+  testID = "",
+  ...props
+}) => {
   return (
-    <WrappedDataTableGBy>
+    <WrappedDataTableGBy data-testid={testID}>
       <GdataTableGroupBy {...props} />
     </WrappedDataTableGBy>
   );

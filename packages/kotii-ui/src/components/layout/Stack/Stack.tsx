@@ -8,9 +8,9 @@ import { PageHeaderProps } from "./types";
 
 const WrappedStack = styled.div<PageHeaderProps>``;
 
-const Stack: React.FC<PageHeaderProps> = ({ ...props }) => {
+const Stack: React.FC<PageHeaderProps> = ({ testID = "", ...props }) => {
   return (
-    <WrappedStack>
+    <WrappedStack data-testid={testID}>
       <Gstack {...props} />
     </WrappedStack>
   );

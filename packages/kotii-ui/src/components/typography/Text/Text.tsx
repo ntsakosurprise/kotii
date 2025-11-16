@@ -9,9 +9,13 @@ import { PageHeaderProps } from "./types";
 
 const WrappedText = styled.div<PageHeaderProps>``;
 
-const Text: React.FC<PageHeaderProps> = ({ children, ...props }) => {
+const Text: React.FC<PageHeaderProps> = ({
+  testID = "",
+  children,
+  ...props
+}) => {
   return (
-    <WrappedText>
+    <WrappedText data-testid={testID}>
       <CustomText {...props}>{children}</CustomText>
     </WrappedText>
   );

@@ -38,7 +38,7 @@ export interface PageHeaderProps
         y?: number[];
       };
   chart?: string;
-  data: {}[];
+  data: [{}];
   detail?: boolean;
   direction?: HorizVert;
   guide?: boolean;

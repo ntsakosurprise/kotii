@@ -8,10 +8,14 @@ import { PageHeaderProps } from "./types";
 
 const WrappedInfiniteScroll = styled.div<PageHeaderProps>``;
 
-const InfiniteScroll: React.FC<PageHeaderProps> = ({ children, ...props }) => {
+const InfiniteScroll: React.FC<PageHeaderProps> = ({
+  testID = "",
+  children,
+  ...props
+}) => {
   return (
-    <WrappedInfiniteScroll>
-      <GinfiteScroll {...props}>{children}</GinfiteScroll>
+    <WrappedInfiniteScroll data-testid={testID}>
+      <GinfiteScroll {...props} children={children} />
     </WrappedInfiniteScroll>
   );
 };

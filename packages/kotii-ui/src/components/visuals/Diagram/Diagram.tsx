@@ -8,9 +8,13 @@ import { PageHeaderProps } from "./types";
 
 const WrappedDiagram = styled.div<PageHeaderProps>``;
 
-const Diagram: React.FC<PageHeaderProps> = ({ connections, ...props }) => {
+const Diagram: React.FC<PageHeaderProps> = ({
+  testID = "",
+  connections,
+  ...props
+}) => {
   return (
-    <WrappedDiagram connections={connections}>
+    <WrappedDiagram connections={connections} data-testid={testID}>
       <Gdiagram {...props} connections={connections} />
     </WrappedDiagram>
   );
