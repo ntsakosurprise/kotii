@@ -1,0 +1,59 @@
+@width: 10px;
+@height: @width + 10px;
+
+.header {
+  width: @width;
+  height: @height;
+  background-color: "brown";
+}
+
+.green {
+  color: rgb(230, 231, 224) !important;
+  font-size: 30px;
+  background-color: rgb(10, 10, 10);
+  font-style: italic;
+  font-weight: bolder;
+  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+img {
+  border-radius: 8px;
+  border: solid 2px rgb(24, 23, 24);
+}
+
+#check-id{
+  color: rgb(128, 247, 17);
+}
+#check-id-2{
+  color: rgb(247, 63, 17);
+}
+
+#check-id-3{
+  color: rgb(17, 247, 121);
+}
+
+#check-id-3 span{
+  color: rgb(86, 17, 247);
+}
+
+#check-id-3 > small {
+  color: rgba(247, 17, 159, 0.219);
+}
+
+#check-id-3 > small + strong {
+  color: rgb(51, 7, 245);
+  font-weight: bolder;
+}
+
+#check-id-3 > small + strong ~ blockquote {
+  color: rgb(20, 20, 22);
+  font-weight: bolder;
+  font-size: 30px;
+}
+
+#check-id-3 > small + strong ~ blockquote:hover {
+  color: rgb(23, 68, 218);
+}
+#check-id-3 > small + strong ~ blockquote::first-letter {
+  font-size: 50px;
+}

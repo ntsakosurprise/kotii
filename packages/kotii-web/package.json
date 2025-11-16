@@ -1,14 +1,14 @@
 {
   "name": "kotii-web",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
-  "homepage": "https://github.com/MTN-Group/mymtn-nextgen-docs#readme",
+  "homepage": "https://github.com/kotiijs#readme",
   "license": "ISC",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MTN-Group/mymtn-nextgen-docs.git"
+    "url": "git+https://github.com/kotiijs.git"
   },
   "scripts": {
     "start": "webpack-dev-server --open --hot --mode development",
@@ -32,13 +32,14 @@
     "escodegen": "^2.0.0",
     "history": "^5.0.0",
     "i18next": "^21.6.14",
-    "kotii-languages": "*",
-    "kotii-logger": "*",
-    "kotii-markdown": "*",
-    "kotii-router": "*",
-    "kotii-router-loader": "*",
-    "kotii-theme": "*",
-    "kotii-ui": "*",
+    "kotii-logger": "workspace:kotii-logger@*",
+    "kotii-router": "workspace:kotii-router@*",
+    "kotii-router-loader": "workspace:kotii-router-loader@*",
+    "kotii-languages": "workspace:kotii-languages@*",
+    "kotii-markdown": "workspace:kotii-markdown@*",
+    "kotii-theme": "workspace:kotii-theme@*",
+    "kotii-ui": "workspace:kotii-ui@*",
+    "kotii-utils": "workspace:kotii-utils@*",
     "lodash": "^4.17.21",
     "object-path": "^0.11.8",
     "prop-types": "^15.7.2",
@@ -73,6 +74,6 @@
     "webpack-dev-server": "^4.7.4"
   },
   "bugs": {
-    "url": "https://github.com/MTN-Group/mymtn-nextgen-docs/issues"
+    "url": "https://github.com/kotiijs/issues"
   }
 }

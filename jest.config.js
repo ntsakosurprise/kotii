@@ -4,6 +4,7 @@ module.exports = {
   verbose: true,
   projects: [
     "<rootDir>/packages/kotii-markdown/jest.config.js",
+    "<rootDir>/packages/kotii/jest.config.cjs",
     "<rootDir>/packages/kotii-ui/jest.config.ts",
   ],
 };

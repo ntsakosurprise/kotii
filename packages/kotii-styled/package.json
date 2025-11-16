@@ -15,5 +15,10 @@
   "license": "ISC",
   "dependencies": {
     "styled-components": "^6.1.11"
-  }
+  },
+  "files": [
+    "src/",
+    "index.js",
+    "package.json"
+  ]
 }

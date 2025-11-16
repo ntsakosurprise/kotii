@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+const path = require("path");
+const { Table } = require("console-table-printer");
 let methods = {};
 methods.init = function () {
   this.logSync("Interpreter is initialising");
@@ -19,6 +21,7 @@ methods.handleInterpreterCliInput = async function (data) {
   const arg = self.arg;
   const figlet = self.figlet;
   const chalk = self.chalk;
+
   let stopFurtherExecution = false;
 
   self.logSync("Handling send-output Cli event");
@@ -26,11 +29,25 @@ methods.handleInterpreterCliInput = async function (data) {
   self.infoSync("ilog");
   const commands = self.parseCommands();
   const filtered = self.processOptionsAsCommands(commands.options);
-  console.log("THE FILTERED", filtered);
-  console.log("The cosand Flags", commands);
+  // console.log("THE FILTERED", filtered);
+  // console.log("The cosand Flags", commands);
+  // self.getTemplateResponse().then((responses) => {
+  //   console.log("Template Response:", responses);
+  //   let fileFolder = getRootDir(module.filename);
+  //   console.log(
+  //     "FILE FOLDER BASE",
+  //     fileFolder,
+  //     path.basename(fileFolder),
+  //     process.cwd()
+  //   );
+  //   // filtered.shouldDoCommand
+  //   //   ? self[filtered.commandAlias](filtered, commands.flags)
+  //   //   : null;
+  // });
+
   filtered.shouldDoCommand
     ? self[filtered.commandAlias](filtered, commands.flags)
-    : null;
+    : self.showAvailableCommands();
 };
 
 methods.handlePromptUser = function (data) {
@@ -115,52 +132,254 @@ methods.outPut = function (message) {
 methods.showAvailableCommands = function () {
   const self = this;
   const chalk = self.chalk;
-  let mainHelp = `
+  let supportedCommands = [
+    {
+      name: "create-app",
+      description: "Creates kotii app",
+    },
+    {
+      name: "help",
+      description: "Shows help menu for kotii-cli",
+    },
+    {
+      name: "version",
+      description: "Shows the current version of kotii-cli",
+    },
+    {
+      name: "dev",
+      description:
+        "Runs kotii app optimized for development with hot reloading and other goodies",
+    },
+    {
+      name: "start",
+      description:
+        "Runs kotii app optimized for production with improved load time",
+    },
+    {
+      name: "build",
+      description: "Builds kotii app that should be catered for production run",
+    },
+    {
+      name: "static",
+      description:
+        "Builds kotii app for production and generates static html files",
+    },
+  ];
 
-	${chalk.greenBright("kotii [command] <options>")}
-	  ${chalk.cyan.bold("create-kotii-app")} ................ Creates kotii app
-	  ${chalk.cyan.bold(
-      "version"
-    )} ............ show the current version of kotii-cli
-	  ${chalk.cyan.bold("help")} ............... show help menu for a command
-	`;
+  const p1 = new Table({
+    style: {
+      headerTop: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      headerBottom: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      tableBottom: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      vertical: "",
+    },
+    columns: [
+      { name: "Option", title: "", alignment: "left" },
+      { name: "Separator", title: "", alignment: "left" },
+      { name: "Description", title: "", alignment: "left" },
+    ],
+  });
+  supportedCommands.forEach((com) => {
+    p1.addRow({
+      Option: chalk.cyan.bold(com.name),
+      Separator: "...................",
+      Description: com.description,
+    });
+  });
 
-  console.log(mainHelp);
+  console.log(chalk.greenBright("Supported Kotii Commands:"));
+  p1.printTable();
 };
 
 methods.help = function () {
   const self = this;
   const chalk = self.chalk;
-  let help = `
 
-	${chalk.greenBright("help <options>")}
-	  ${chalk.cyan.bold("-c | --cli")} ................... Creates kotii cli app
-	  ${chalk.cyan.bold(
-      "-w | --web"
-    )} ................... Creates kotii app suitable for building web pages, apis, and any backend
-	  ${chalk.cyan.bold(
-      "-r | --remote"
-    )} ................ Creates a remote repo and initial commit for you kotii app 
-	  ${chalk.cyan.bold(
-      "-help | --help"
-    )} ............... Shows help menu for create-kotii-app command
-	  ${chalk.cyan.bold(
-      "-g | --git"
-    )} ................... Initializes git for your kotii app
-	  ${chalk.cyan.bold(
-      "-y | --yes"
-    )} ................... Creates kotii app with default settings
-	`;
+  let commands = [
+    {
+      name: "kotii create-app <app-name>",
+      description: "Creates kotii app with app-name as the app's name",
+    },
+    {
+      name: "kotii dev",
+      description:
+        "Runs kotii app optimized for development with hot reloading and other goodies",
+    },
+    {
+      name: "kotii start",
+      description:
+        "Runs kotii app optimized for production with improved load time",
+    },
+    {
+      name: "kotii build",
+      description: "Builds kotii app that should be catered for production run",
+    },
+    {
+      name: "kotii static",
+      description:
+        "Builds kotii app for production and generates static html files",
+    },
+    {
+      name: "kotii help",
+      description: "Shows help menu for kotii-cli",
+    },
+    {
+      name: "kotii version",
+      description: "Shows the currrent version of kotii-cli",
+    },
+  ];
+  let commandsOpts = [
+    {
+      name: "-t | --type",
+      description:
+        "Sets kotii app template type at creation time (javascript|js|typescript|ts)s",
+    },
+    {
+      name: "--template : -temp",
+      description:
+        "Sets kotii app template name at creation time (spa|ssr|mua)",
+    },
+    {
+      name: "--packager",
+      description:
+        "Sets kotii installation packager for the app (npm|npnm|yarn)",
+    },
+    {
+      name: "--public",
+      description: "Sets kotii app as a public git repository",
+    },
+    {
+      name: "--private",
+      description: "Sets kotii app as a private git repository",
+    },
+    {
+      name: "--help",
+      description: "Shows help for a command in context",
+    },
+    {
+      name: "--git",
+      description: "Initiates kotii app as a git repositiory at creation time",
+    },
+    {
+      name: "-y | --yes",
+      description: "Accepts default settings for a command in context",
+    },
+  ];
 
-  console.log(help);
+  const p1 = new Table({
+    style: {
+      headerTop: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      headerBottom: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      tableBottom: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      vertical: "",
+    },
+    columns: [
+      { name: "Option", title: "", alignment: "left" },
+      { name: "Separator", title: "", alignment: "left" },
+      { name: "Description", title: "", alignment: "left" },
+    ],
+  });
+  commands.forEach((com) => {
+    p1.addRow({
+      Option: chalk.cyan.bold(com.name),
+      Separator: "...................",
+      Description: com.description,
+    });
+  });
+  const p2 = new Table({
+    style: {
+      headerTop: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      headerBottom: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      tableBottom: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      vertical: "",
+    },
+    columns: [
+      { name: "Option", title: "", alignment: "left" },
+      { name: "Separator", title: "", alignment: "left" },
+      { name: "Description", title: "", alignment: "left" },
+    ],
+  });
+  commandsOpts.forEach((com) => {
+    p2.addRow({
+      Option: chalk.cyan.bold(com.name),
+      Separator: "...................",
+      Description: com.description,
+    });
+  });
+
+  console.log(chalk.greenBright("kotii <command> [options]"));
+  console.log();
+
+  console.log(chalk.greenBright("Commands:"));
+  console.log();
+  p1.printTable();
+
+  console.log();
+  console.log();
+
+  console.log(chalk.greenBright("Commands options:"));
+  p2.printTable();
 };
 
-methods.versionCommand = function () {
+methods.version = function () {
   const self = this;
   const pao = self.pao;
   const chalk = self.chalk;
-  const loadFile = pao.pa_loadFile;
-  console.log(loadFile("./package.json").version);
+  const loadFileSync = pao.pa_loadFileSync;
+  const getRootDir = pao.pa_getRootDir;
+  const sep = path.sep;
+  let fileFolder = getRootDir(module.filename);
+  // console.log("FILE FOLDER BASE", fileFolder, path.basename(fileFolder));
+  // console.log("path join", path.join(fileFolder, "../../package.json"));
+  const packageJson = loadFileSync(
+    path.join(fileFolder, `..${sep}..${sep}package.json`)
+  );
+  console.log(chalk.greenBright.bold(packageJson.version));
   // let help = `
 
   // ${chalk.greenBright('version <options>')}
@@ -175,41 +394,195 @@ methods.versionCommand = function () {
   // console.log(help)
 };
 
-methods.createKotiiAppCommand = function () {
+methods.createKotiiAppCommandHelpOption = function () {
   const self = this;
   const chalk = self.chalk;
-  let help = `
 
-	${chalk.greenBright("create-kotii-app <options>")}
+  // let yesOptionTable = [
+  //   {}
+  // ]
+  // let help = `
 
-	  ${chalk.cyan.bold(
-      "-s | --spa"
-    )}    ................... Creates kotii app suitable simple single page applications
-	  ${chalk.cyan.bold(
-      "-m | --mua"
-    )}    ................... Creates kotii app suitable for building multi-page applications
-    ${chalk.cyan.bold(
-      "-ssr | --ssr"
-    )}    ................... Creates kotii app that is universal(server renders components)
-	  ${chalk.cyan.bold(
-      "-r | --remote"
-    )} ................... Creates a remote repo and an initial commit for your kotii app 
-	  ${chalk.cyan.bold(
-      "-h | --help"
-    )}   ................... Shows help menu for create-kotii-app command
-	  ${chalk.cyan.bold(
-      "-g | --git"
-    )}    ................... Initializes git for your kotii app
-	  ${chalk.cyan.bold(
-      "-y | --yes"
-    )}    ................... Creates kotii app with default settings
-	`;
+  // ${chalk.greenBright("create-kotii-app <options>")}
 
-  console.log(help);
+  //   ${chalk.cyan.bold(
+  //     "-s | --spa"
+  //   )}    ................... Creates kotii app suitable simple single page applications
+  //   ${chalk.cyan.bold(
+  //     "-m | --mua"
+  //   )}    ................... Creates kotii app suitable for building multi-page applications
+  //   ${chalk.cyan.bold(
+  //     "-ssr | --ssr"
+  //   )}    ................... Creates kotii app that is universal(server renders components)
+  //   ${chalk.cyan.bold(
+  //     "-r | --remote"
+  //   )} ................... Creates a remote repo and an initial commit for your kotii app
+  //   ${chalk.cyan.bold(
+  //     "-h | --help"
+  //   )}   ................... Shows help menu for create-kotii-app command
+  //   ${chalk.cyan.bold(
+  //     "-g | --git"
+  //   )}    ................... Initializes git for your kotii app
+  //   ${chalk.cyan.bold(
+  //     "-y | --yes"
+  //   )}    ................... Creates kotii app with default settings
+
+  // `;
+
+  // console.log(help);
+
+  const commandOptions = self.commands["create-app"].options;
+
+  const p1 = new Table({
+    style: {
+      /*
+        Style:
+        ╔══════╦═════╦══════╗
+        ║ hob  ║ foo ║ mia  ║
+        ╟══════╬═════╬══════╢
+        ║ ball ║ fox ║ mama ║
+        ╚══════╩═════╩══════╝
+        */
+      headerTop: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      headerBottom: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      tableBottom: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      vertical: "",
+    },
+    columns: [
+      { name: "Option", title: "", alignment: "left" },
+      { name: "Separator", title: "", alignment: "left" },
+      { name: "Description", title: "", alignment: "left" },
+    ],
+  });
+
+  const p = new Table({
+    style: {
+      /*
+        Style:
+        ╔══════╦═════╦══════╗
+        ║ hob  ║ foo ║ mia  ║
+        ╟══════╬═════╬══════╢
+        ║ ball ║ fox ║ mama ║
+        ╚══════╩═════╩══════╝
+        */
+      headerTop: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      headerBottom: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      tableBottom: {
+        left: "",
+        mid: "",
+        right: "",
+        other: "",
+      },
+      vertical: "",
+    },
+    columns: [
+      {
+        name: "Option-Name",
+        title: chalk.yellow.bold("Option-Name"),
+        alignment: "left",
+      },
+      { name: "Option", title: chalk.yellow.bold("Option"), alignment: "left" },
+      {
+        name: "Option-Aliases",
+        title: chalk.yellow.bold("Option-Aliase"),
+        alignment: "left",
+      },
+      { name: "Values", title: chalk.yellow.bold("Value"), alignment: "left" },
+      {
+        name: "Default",
+        title: chalk.yellow.bold("Default"),
+        alignment: "left",
+      },
+      {
+        name: "Description",
+        title: chalk.yellow.bold("Description"),
+        alignment: "left",
+      },
+    ],
+  });
+
+  commandOptions.forEach((com) => {
+    if (com?.optionFlagsString) {
+      p1.addRow({
+        Option: chalk.cyan.bold(com.optionFlagsString),
+        Separator: "...................",
+        Description: com.description,
+      });
+    }
+  });
+  console.log(chalk.greenBright("create-kotii-app <options>"));
+  console.log();
+  p1.printTable();
+
+  console.log();
+  console.log();
+  console.log(`${chalk.cyan.bold("Default settings by option:")}`);
+  console.log();
+  commandOptions.forEach((com) => {
+    if (com?.isDefault) {
+      p.addRow({
+        ["Option-Name"]: com.name,
+        Option: com.option,
+        ["Option-Aliases"]: com.optionAlias,
+        Values: com.validValues,
+        Default: com.default,
+        Description: com.description,
+      });
+    }
+  });
+  p.printTable();
+
+  // add rows with color
+  // p1.addRow({
+  //   Option: ` ${chalk.cyan.bold("-s | --spa")}`,
+  //   Separator: "...................",
+  //   Description: `${chalk.cyan.bold("I would like some red wine please")}`,
+  // });
+  // p.addRow(
+  //   { row: 2, text: "I would like some green gemuse please", value: 20.0 },
+  //   { color: "green" }
+  // );
+  // p.addRow(
+  //   { row: 3, text: "I would like some gelb bananen bitte", value: 100 },
+  //   { color: "yellow" }
+  // );
+
+  // print
+
+  // console.table({
+  //   "Long Option": "Long",
+  //   "Short Option": "SHort",
+  //   Description: "Description",
+  // });
 };
 
 methods.startCommand = function () {
-  console.log("START COMMAND RAN");
+  // console.log("START COMMAND RAN");
   const self = this;
   const pao = self.pao;
   const chalk = self.chalk;
@@ -263,8 +636,8 @@ methods.parseCommands = function () {
     argv: pao.PROMPT.slice(2),
     permissive: true,
   }); // Get passed arguments from the third item in the array of passed arguments)
-  console.log("COMBINED OPTIONS", combinedOptionsAliases);
-  console.log("PARSED COMMANDS", parsedCommands);
+  // console.log("COMBINED OPTIONS", combinedOptionsAliases);
+  // console.log("PARSED COMMANDS", parsedCommands);
   let modified = { ...parsedCommands };
   let optionsLen = modified._.indexOf("cli");
   // modified._.slice(optionsLen);
@@ -278,10 +651,13 @@ methods.parseCommands = function () {
 methods.processOptionsAsCommands = function (options) {
   const self = this;
   const { pao, commands } = self;
+  // console.log("COMMANDS FROM SELF", commands, options);
 
   const entries = Object.keys(commands).map((en, i) => en.toLowerCase());
+  // console.log("ENTRIES LOWERCASED", entries);
   const command = options[0];
   const commandIndex = entries.indexOf(command);
+  // console.log("COMMAND INDEX", commandIndex);
   const definedCommand = commandIndex >= 0 ? command : null;
   return {
     shouldDoCommand: definedCommand ? true : false,
@@ -305,18 +681,18 @@ methods.createCommandAlias = function (command) {
   return aliasedCommand;
 };
 methods.capitalizeFirstLetter = function (text) {
-  console.log("The text Uppercasing;;;", text);
+  // console.log("The text Uppercasing;;;", text);
   return `${text.slice(0, 1).toUpperCase()}${text.slice(1)}`;
 };
 
 methods.createApp = function (commandData, flags = []) {
-  console.log("COMMAND, OPTIONS, FLAGS", flags);
-  console.log("COMMAND OPTIONS", commandData);
+  // console.log("COMMAND, OPTIONS, FLAGS", flags);
+  // console.log("COMMAND OPTIONS", commandData);
   const self = this;
   const stringFlags = ["--type", "--template", "--packager"];
   const help = flags["--help"] ? true : false;
   let tasks = null;
-  if (help) return self.createKotiiAppCommand();
+  if (help) return self.createKotiiAppCommandHelpOption();
   if (!self.validateStringFlags(flags, stringFlags)) return;
   tasks = self.getFlagsAsTasks(flags);
   self.infoSync("tasks");
@@ -526,5 +902,20 @@ methods.__old = function () {
   // 	process.exit(1)
 
   //   })
+};
+methods.getTemplateResponse = function () {
+  const self = this;
+  return new Promise((resolve, reject) => {
+    self.emit({
+      type: "get-template",
+      data: {
+        name: "spa",
+        type: "javascript",
+        callback: (templateInfo) => {
+          resolve(templateInfo);
+        },
+      },
+    });
+  });
 };
 module.exports = methods;

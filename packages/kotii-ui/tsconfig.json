@@ -15,5 +15,6 @@
     //   "Constants": ["./src/constants/*"]
     // }
   },
-  "include": ["./src"]
+
+  "include": ["./src", "./jest-setup.ts"]
 }

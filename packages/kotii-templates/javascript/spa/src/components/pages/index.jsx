@@ -1,5 +1,5 @@
+import styled from "kotii-styled";
 import React from "react";
-import styled from "styled-components";
 
 const Hero = styled("div")(() => {
   return {
@@ -12,10 +12,16 @@ const HeroText = styled("p")(() => {
     marginLeft: "10px",
   };
 });
+
+{
+  /* <Hero>
+<HeroText>Focus on your idea, Forget about configurations</HeroText>;
+</Hero> */
+}
 const Index = () => {
   return (
     <Hero>
-      <HeroText>Focus on your idea, Forget about configurations</HeroText>;
+      <HeroText>Focus on your idea, Forget about configurations</HeroText>
     </Hero>
   );
 };

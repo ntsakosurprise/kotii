@@ -1,3 +1,3 @@
-import { GlobalStyle } from "./styles";
+import { GlobalStyle } from "./styles.js";
 
 export { GlobalStyle };

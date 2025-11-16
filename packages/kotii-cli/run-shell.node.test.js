@@ -3,7 +3,7 @@ import runNodeScript from "./shell/runNodeScript";
 const scriptPath = __dirname;
 const contextScriptRoot = path.join(scriptPath, "..");
 // const packagesPath = path.join(contextScriptRoot, "packages");
-//const kotiiScriptsPath = path.join(packagesPath, "kotii-scripts");
+//const kotiiScriptsPath = path.join(packagesPath, "kotii");
 const nodeScriptPath = scriptPath;
 
 describe("Test shell scripting semulation", () => {
