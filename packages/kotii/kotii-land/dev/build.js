@@ -66,7 +66,7 @@ const ClientRoutes = (props) => {
       refinedRoutes.push({
         component: () => <ComponentWrapped />,
         path: route.path,
-        isPrivate: r?.isPrivate || false,
+        isPrivate: route?.isPrivate || false,
       });
     });
   }
@@ -133,7 +133,7 @@ const RoutesAsServerRoutes = (props) => {
       refinedRoutes.push({
         component: () => <ComponentWrapped />,
         path: route.path,
-        isPrivate: r?.isPrivate || false,
+        isPrivate: route?.isPrivate || false,
       });
     });
   }
