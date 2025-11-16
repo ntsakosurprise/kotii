@@ -32,7 +32,7 @@ let customExtensionsRegex = /\.(png|css|jpg|jpeg|gif)$/;
 // // let pagesURL =
 // //   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src/pages/";
 // let styledUrl =
-//   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-scriptsnk/import_test.js";
+//   "file:///Users/surprisemashele/Documents/kotii/packages/kotiink/import_test.js";
 let anziiPath =
   "file:///Users/surprisemashele/Documents/kotii/node_modules/anzii/lib/start.js";
 let extJsx = ".jsx";
@@ -76,7 +76,7 @@ export async function load(url, context, nextLoad) {
 
   // if (
   //   parentURL ===
-  //   "file:///Users/surprisemashele/Documents/kotii/packages/kotii-scripts/app.js"
+  //   "file:///Users/surprisemashele/Documents/kotii/packages/kotii/app.js"
   // ) {
   //   console.log("MODULE MATCH");
   // }

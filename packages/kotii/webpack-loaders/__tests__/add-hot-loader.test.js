@@ -4,7 +4,7 @@ import webpackContext from "../__mocks__/webpack-context.js";
 
 describe("add-hot-loader", () => {
   it("should add hot module reload to the app entry source", () => {
-    const input = `import App from "kotii-scripts";
+    const input = `import App from "kotii";
     import { Layout, Root } from "Startup";
     App(Root, Layout);
     `;

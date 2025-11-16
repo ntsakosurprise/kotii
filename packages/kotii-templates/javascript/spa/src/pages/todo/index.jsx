@@ -1,11 +1,11 @@
-import { Head } from "kotii-scripts";
+import { Head } from "kotii";
 import React from "react";
 import "../../styles/color.styl";
 import "../../styles/color.global.scss";
-import styles from "./todo.module.less"
+import styles from "./todo.module.less";
 
 const Todo = () => {
-   console.log("THE STYLES", styles)
+  console.log("THE STYLES", styles);
   return (
     <div>
       <Head title={"Todo page kotii"} />

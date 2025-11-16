@@ -13,7 +13,7 @@ const commands = parseScriptArguments();
 const commandToRun = commands[0];
 console.log("THE COMMAND TO RUN", commandToRun, commands);
 
-const childPath = path.resolve("./node_modules/kotii-scripts/kotii_start.cjs");
+const childPath = path.resolve("./node_modules/kotii/kotii_start.cjs");
 
 const createChildProcess = (isaRestart = false) => {
   if (!isaRestart) {
@@ -57,7 +57,7 @@ const attachListenerToChildProcess = () => {
   });
 
   childProcess.on("exit", (code) => {
-    console.log("I'M DYING OF THIRST");
+    console.log("I'M DYING OF THIRST", code);
 
     if (code === 50) {
       if (RESTART_RETRIES > RESTART_TIMES) {

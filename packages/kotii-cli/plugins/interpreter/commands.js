@@ -101,7 +101,7 @@ const commands = {
         option: "--local-scripts",
         optionAlias: "-l",
         type: "string",
-        description: "Sets a path to a local copy of kotii-scripts",
+        description: "Sets a path to a local copy of kotii",
       },
     ],
   },

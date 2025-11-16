@@ -283,44 +283,53 @@ export async function resolve(specifier, context, nextResolve) {
   const { parentURL = "" } = context;
   loggas.resolve.debug("RESOLVE specifier", specifier, parentURL);
 
-  let shouldTerminate = false;
-  if (cssSpecifiers.includes(path.extname(specifier))) {
-    let url = new URL(specifier, parentURL);
-    loggas.resolve.debug("THE CWD");
-    storeCssModuleSpecifier(
-      createImportPathContext(url.pathname, specifier, "src")
-    );
-    // storeCssModuleSpecifier(specifier, url.pathname);
-  }
-  if (fileSpecifiers.includes(path.extname(specifier))) {
-    let url = new URL(specifier, parentURL);
-    storeFileModuleSpecifier(
-      createImportPathContext(url.pathname, specifier, "src")
-    );
-  }
-  if (!meta && !metaChecked) {
-    loadMeta();
-  }
+  try {
+    let shouldTerminate = false;
+    if (cssSpecifiers.includes(path.extname(specifier))) {
+      let url = new URL(specifier, parentURL);
+      loggas.resolve.debug("THE CWD");
+      storeCssModuleSpecifier(
+        createImportPathContext(url.pathname, specifier, "src")
+      );
+      // storeCssModuleSpecifier(specifier, url.pathname);
+    }
+    if (fileSpecifiers.includes(path.extname(specifier))) {
+      let url = new URL(specifier, parentURL);
+      storeFileModuleSpecifier(
+        createImportPathContext(url.pathname, specifier, "src")
+      );
+    }
+    if (!meta && !metaChecked) {
+      loadMeta();
+    }
 
-  if (specifier.indexOf("../kotii-land/dev") >= 0) {
-    loggas.resolve.debug("ALSO HANDLED BY LOADERS", meta);
-  }
-  shouldTerminate = resolveUserlandImports(specifier);
-  if (shouldTerminate) return shouldTerminate;
-  shouldTerminate = resolveAliasedImports(specifier);
-  if (shouldTerminate) return shouldTerminate;
-  shouldTerminate = resolveKotiiLandImports(specifier);
-  if (shouldTerminate) return shouldTerminate;
-  shouldTerminate = resolvePagesImports(specifier);
-  if (shouldTerminate) return shouldTerminate;
-  shouldTerminate = resolveKotiiScriptsImports(specifier);
-  if (shouldTerminate) return shouldTerminate;
-  shouldTerminate = resolveKotiiUserApiPlugins(specifier);
-  if (shouldTerminate) return shouldTerminate;
-  shouldTerminate = resolveKotiiScriptsInternalImports(specifier);
-  if (shouldTerminate) return shouldTerminate;
+    if (specifier.indexOf("../kotii-land/dev") >= 0) {
+      loggas.resolve.debug("ALSO HANDLED BY LOADERS", meta);
+    }
+    shouldTerminate = resolveUserlandImports(specifier);
+    if (shouldTerminate) return shouldTerminate;
+    shouldTerminate = resolveAliasedImports(specifier);
+    if (shouldTerminate) return shouldTerminate;
+    shouldTerminate = resolveKotiiLandImports(specifier);
+    if (shouldTerminate) return shouldTerminate;
+    shouldTerminate = resolvePagesImports(specifier);
+    if (shouldTerminate) return shouldTerminate;
+    shouldTerminate = resolveKotiiScriptsImports(specifier);
+    if (shouldTerminate) return shouldTerminate;
+    shouldTerminate = resolveKotiiUserApiPlugins(specifier);
+    if (shouldTerminate) return shouldTerminate;
+    shouldTerminate = resolveKotiiScriptsInternalImports(specifier);
+    if (shouldTerminate) return shouldTerminate;
 
-  return nextResolve(specifier);
+    return nextResolve(specifier);
+  } catch (error) {
+    const parsed = parseLoaderError(error);
+
+    prettyPrintError(parsed);
+
+    await new Promise((r) => setTimeout(r, 10));
+    process.exit(code);
+  }
 }
 
 /**

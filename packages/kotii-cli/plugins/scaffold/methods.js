@@ -429,7 +429,7 @@ methods.buildTaskList = async function (answers, options) {
                 answers.packager.toLowerCase() === "yarn" ? "file:" : "";
               let kotiiScriptsPackageJson = loadFileSync(
                 path.join(
-                  `${options.kotiiMain}${sep}packages${sep}kotii-scripts`,
+                  `${options.kotiiMain}${sep}packages${sep}kotii`,
                   "package.json"
                 )
               );
@@ -441,7 +441,7 @@ methods.buildTaskList = async function (answers, options) {
               );
               installed = await self.installLocally(
                 [
-                  `${fileProtocol}${options.kotiiMain}${sep}packages${sep}kotii-scripts${sep}kotii-scripts-${kotiiScriptsPackageJson.version}.tgz`.trim(),
+                  `${fileProtocol}${options.kotiiMain}${sep}packages${sep}kotii${sep}kotii-${kotiiScriptsPackageJson.version}.tgz`.trim(),
                   `${fileProtocol}${options.kotiiMain}${sep}packages${sep}kotii-styled${sep}kotii-styled-${kotiiStyledPackageJson.version}.tgz`.trim(),
                 ],
                 options.newFolder,
@@ -1005,18 +1005,18 @@ methods.doPackageJson = function (answers, options, deletePackage = false) {
 
   if (deletePackage) {
     // console.log("DELETE PACKAGE", packageJson);
-    if (packageJson.dependencies["kotii-scripts"].indexOf("file") >= 0) {
+    if (packageJson.dependencies["kotii"].indexOf("file") >= 0) {
       // console.log("Index of ZERO", options);
       const scriptsJson = loadFileSync(
-        path.join(options.kotiiPackages, `kotii-scripts${sep}package.json`)
+        path.join(options.kotiiPackages, `kotii${sep}package.json`)
       );
       // console.log(
       //   "THE SCRIPT JSON PATH",
-      //   path.join(options.kotiiPackages, "kotii-scripts/package.json")
+      //   path.join(options.kotiiPackages, "kotii/package.json")
       // );
       // console.log("THE SCRTIPS JSON", scriptsJson);
       self.isLocalRun = true;
-      delete packageJson.dependencies["kotii-scripts"];
+      delete packageJson.dependencies["kotii"];
       packageJson["devDependencies"] = { ...scriptsJson.devDependencies };
 
       saveToFile(
@@ -1032,7 +1032,7 @@ methods.doPackageJson = function (answers, options, deletePackage = false) {
   // console.log("FILE FOLDER BASE", path.basename(fileFolder));
   packageJson["name"] = options.folderName;
   packageJson["description"] = answers?.description ? answers.description : "";
-  // packageJson.dependencies["kotii-scripts"] = answers["local-scripts"];
+  // packageJson.dependencies["kotii"] = answers["local-scripts"];
   packageJson["scripts"] = {
     dev: "kotii dev",
     start: "kotii start",

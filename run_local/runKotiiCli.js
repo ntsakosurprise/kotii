@@ -8,11 +8,11 @@ const scriptPath = __dirname;
 const contextScriptRoot = path.join(scriptPath, "..");
 //const workingDir = process.cwd();
 const packagesPath = path.join(contextScriptRoot, "packages");
-const kotiiScriptsPath = path.join(packagesPath, "kotii-scripts");
+const kotiiScriptsPath = path.join(packagesPath, "kotii");
 console.log("Packages PATH", kotiiScriptsPath);
 const madeTarballs = createTarballs(packagesPath, [
   "kotii-cli",
-  "kotii-scripts",
+  "kotii",
   "kotii-styled",
   "kotii-templates",
   "kotii-logger",

@@ -102,7 +102,7 @@ export default (options) => {
 
     // externals: [
     //   webpackNodeExternals({
-    //     allowlist: ["kotii-scripts"],
+    //     allowlist: ["kotii"],
     //   }),
     // ],
     resolve: {
@@ -117,7 +117,7 @@ export default (options) => {
         "react-router": path.resolve(
           `${env.appFolder}/node_modules/react-router`
         ),
-        "kotii-scripts": path.resolve(`${scriptsWebpackResolve}`),
+        kotii: path.resolve(`${scriptsWebpackResolve}`),
         "/kotii-user-land-aliase/src/store/index": guessPathExtension(
           `${env.appSrc}/store/index`
         ),
@@ -190,11 +190,11 @@ export default (options) => {
                 path.join(process.cwd(), "node_modules"),
                 path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
               ],
-          // exclude: /node_modules\/(?!(kotii-scripts)\/).*/,
+          // exclude: /node_modules\/(?!(kotii)\/).*/,
           // include: [scriptsWebpackResolve],
           exclude: !isProjectPNPM
-            ? /node_modules\/(?!kotii-scripts).+/
-            : /node_modules\/\.pnpm\/node_modules\/(?!kotii-scripts)/,
+            ? /node_modules\/(?!kotii).+/
+            : /node_modules\/\.pnpm\/node_modules\/(?!kotii)/,
           use: [
             {
               loader: "kotii-add-hot-loader",
@@ -242,11 +242,11 @@ export default (options) => {
                 path.join(process.cwd(), "node_modules"),
                 path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
               ],
-          // exclude: /node_modules\/(?!(kotii-scripts)\/).*/,
+          // exclude: /node_modules\/(?!(kotii)\/).*/,
           // include: [scriptsWebpackResolve],
           exclude: !isProjectPNPM
-            ? /node_modules\/(?!kotii-scripts).+/
-            : /node_modules\/\.pnpm\/node_modules\/(?!kotii-scripts)/,
+            ? /node_modules\/(?!kotii).+/
+            : /node_modules\/\.pnpm\/node_modules\/(?!kotii)/,
           use: [
             // {
             //   loader:"babel-loader",

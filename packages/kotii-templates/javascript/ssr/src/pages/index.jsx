@@ -4,7 +4,7 @@ import { CONFIG } from "Config";
 // import SearchImage from "../assets/docs_search.png";
 // import StonesJPG from "../assets/stones.jpg";
 import { loggas } from "kotii-logger";
-import { Head, useUniversalEffect } from "kotii-scripts";
+import { Head, useUniversalEffect } from "kotii";
 import styled from "kotii-styled";
 import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";

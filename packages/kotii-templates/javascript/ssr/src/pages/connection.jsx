@@ -1,4 +1,4 @@
-import { Head } from "kotii-scripts";
+import { Head } from "kotii";
 import React from "react";
 import "../styles/color.global.scss";
 

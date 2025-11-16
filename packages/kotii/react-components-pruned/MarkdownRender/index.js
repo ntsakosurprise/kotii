@@ -45,7 +45,6 @@ function _toPrimitive(t, r) {
 /* eslint-disable react/prop-types */
 // eslint-disable unused-imports/no-unused-imports */
 import { useLanguage } from "kotii-languages";
-import { capitalizeFirstLetter } from "kotii-utils";
 import PropTypes from "prop-types";
 import React from "react";
 import styled from "kotii-styled";

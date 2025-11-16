@@ -66,11 +66,10 @@ methods.getAppInContextResources = function (environment = false) {
 
   self.setNodeEnv(environment);
   return new Promise((resolve, reject) => {
-    const templateFolder = folder.slice(0, folder.indexOf("/kotii-scripts"));
+    const templateFolder = folder.slice(0, folder.indexOf("/kotii"));
     const appPackageJson = JSON.parse(readFileSync(`${folder}/package.json`));
 
-    const isPackageNameKotii =
-      appPackageJson.name === "kotii-scripts" ? true : false;
+    const isPackageNameKotii = appPackageJson.name === "kotii" ? true : false;
     const appFolder = isPackageNameKotii
       ? `${templateFolder}/kotii-templates/javascript/ssr`
       : folder;

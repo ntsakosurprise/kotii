@@ -13,7 +13,7 @@
 
 ### <span style="color:red">**cannot combine importAssertions and importAttributes plugins jest**</span>
 
-#### COMMAND RAN: `pnpm --filter kotii-scripts test`
+#### COMMAND RAN: `pnpm --filter kotii test`
 
 #### SOLUTIONS:
 

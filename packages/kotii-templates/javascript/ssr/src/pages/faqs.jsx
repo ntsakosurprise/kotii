@@ -1,4 +1,4 @@
-import { Head, useUniversalEffect } from "kotii-scripts";
+import { Head, useUniversalEffect } from "kotii";
 // import { CONFIG } from "Config";
 import React, { useState } from "react";
 

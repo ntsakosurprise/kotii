@@ -95,11 +95,11 @@ export default () => {
                 path.join(process.cwd(), "node_modules"),
                 path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
               ],
-          // exclude: /node_modules\/(?!(kotii-scripts)\/).*/,
+          // exclude: /node_modules\/(?!(kotii)\/).*/,
           // include: [scriptsWebpackResolve],
           exclude: !isProjectPNPM
-            ? /node_modules\/(?!kotii-scripts).+/
-            : /node_modules\/\.pnpm\/node_modules\/(?!kotii-scripts)/,
+            ? /node_modules\/(?!kotii).+/
+            : /node_modules\/\.pnpm\/node_modules\/(?!kotii)/,
           use: [
             // {
             //   loader:"babel-loader",
