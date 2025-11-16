@@ -1,4 +1,4 @@
-import { Head } from "kotii-scripts";
+import { Head } from "kotii";
 import React, { useEffect, useState } from "react";
 import "../styles/color.module.less";
 const About = () => {

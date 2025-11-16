@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Head } from "kotii-scripts";
+import { Head } from "kotii";
 import React, { useEffect, useState } from "react";
 import "../styles/color.less";
 const About = () => {
