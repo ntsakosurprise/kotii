@@ -20,9 +20,6 @@ const ClientRoutes = props => {
   const {
     layout
   } = useAppContext();
-  console.log("THE PROCESS ENV", process.env);
-  // const AppWrapper = props.wrapper;
-  // console.log("THE CLIENT ROUTES", layout);
   const Layout = layout ? layout : () => {
     return /*#__PURE__*/React.createElement(React.Fragment, null);
   };
@@ -40,12 +37,8 @@ const ClientRoutes = props => {
       isPrivate: (r === null || r === void 0 ? void 0 : r.isPrivate) || false
     };
   });
-  console.log("SERVER ROUTES:", markRoutes);
-  console.log("SERVER ROUTES RENDER:", MarkdownRendr);
   if (markRoutes.length > 0) {
-    console.log("SERVER ROUTES:.length", markRoutes);
     markRoutes.forEach((route, index) => {
-      var _r;
       const ComponentWrapped = () => {
         return /*#__PURE__*/React.createElement(Wrapper, {
           key: index
@@ -58,7 +51,7 @@ const ClientRoutes = props => {
       refinedRoutes.push({
         component: () => /*#__PURE__*/React.createElement(ComponentWrapped, null),
         path: route.path,
-        isPrivate: ((_r = r) === null || _r === void 0 ? void 0 : _r.isPrivate) || false
+        isPrivate: (route === null || route === void 0 ? void 0 : route.isPrivate) || false
       });
     });
   }
@@ -80,8 +73,6 @@ const RoutesAsServerRoutes = props => {
   const markRoutes = (goodies === null || goodies === void 0 ? void 0 : goodies.markdownRoutes) || [];
   const MarkdownRendr = (goodies === null || goodies === void 0 ? void 0 : goodies.MarkdownRender) || null;
   const posts = {};
-  console.log("SERVER ROUTES:", markRoutes);
-  console.log("SERVER ROUTES RENDER:", MarkdownRendr);
   const {
     layout
   } = useAppContext();
@@ -90,7 +81,6 @@ const RoutesAsServerRoutes = props => {
   };
   let refinedRoutes = gRoutes.map((r, index) => {
     let Component = gComps[r.component];
-    console.log("Server component", Component);
     const ComponentWrapped = () => {
       return /*#__PURE__*/React.createElement(Wrapper, {
         key: index
@@ -104,10 +94,7 @@ const RoutesAsServerRoutes = props => {
     };
   });
   if (markRoutes.length > 0) {
-    console.log("SERVER ROUTES:");
     markRoutes.forEach((route, index) => {
-      var _r2;
-      console.log("SERVER ROUTES: route", route);
       const ComponentWrapped = () => {
         return /*#__PURE__*/React.createElement(Wrapper, {
           key: index
@@ -120,11 +107,10 @@ const RoutesAsServerRoutes = props => {
       refinedRoutes.push({
         component: () => /*#__PURE__*/React.createElement(ComponentWrapped, null),
         path: route.path,
-        isPrivate: ((_r2 = r) === null || _r2 === void 0 ? void 0 : _r2.isPrivate) || false
+        isPrivate: (route === null || route === void 0 ? void 0 : route.isPrivate) || false
       });
     });
   }
-  console.log("SERVER ROUTES:::", refinedRoutes);
   return /*#__PURE__*/React.createElement(Layout, null, /*#__PURE__*/React.createElement(Routes, {
     routes: refinedRoutes,
     suspense: LazySuspense

@@ -32,17 +32,13 @@ const App = function () {
   userWrapper = appWrapper;
   userLayout = layout;
   const app = process.env.KOTII_APP_META;
-  console.log("THE EFFECTSTORE RAW", window.__KOTII_EFFECTS_STATE__);
   const effectsStore = (_window = window) !== null && _window !== void 0 && _window.__KOTII_EFFECTS_STATE__ ? JSON.parse(window.__KOTII_EFFECTS_STATE__) : null;
   const authUser = (_window2 = window) !== null && _window2 !== void 0 && _window2.__KOTII_AUTH_USER__ ? JSON.parse(window.__KOTII_AUTH_USER__) : null;
-  console.log("THE AUTH USER", authUser);
-  loggas.appClient.debug("THE PROCESS.BROWSER.ENVS", process.env);
   let {
     type,
     stateVendor = null
   } = app;
   if (type !== "ssr") {
-    loggas.appClient.debug("NOT SSR", stateVendor);
     if (stateVendor && stateVendor === "redux") {
       const store = createReduxStore();
       return appSpaWithRedux({
@@ -61,7 +57,6 @@ const App = function () {
     });
   } else {
     if (stateVendor && stateVendor === "redux") {
-      loggas.appClient.debug("TYPE IS SSR");
       const store = createReduxStore(window.__PRELOADED_STATE__);
       return appWithRedux({
         appWrapper,
@@ -89,7 +84,6 @@ const appWithRedux = function () {
     effectsStore,
     authUser
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
-  loggas.appClient.debug("APP WITH REDUX", appWrapper, layout, store, isServer);
   if (isServer) {
     return /*#__PURE__*/React.createElement(Provider, {
       store: store
@@ -104,17 +98,7 @@ const appWithRedux = function () {
     })));
   }
   hydrateInvokes++;
-  loggas.appClient.debug(" ABOUT TO HYDRATE ON THE CLIENT", document.getElementById);
   container = !container ? document.getElementById("root") : container;
-
-  // customHydrateRoot = hydrateRoot(
-  //   container,
-  //   <Provider store={store}>
-  //     <AppProvider appWrapper={appWrapper} layout={layout}>
-  //       <AppGeneric />
-  //     </AppProvider>
-  //   </Provider>
-  // );
   if (customHydrateRoot) {
     return customHydrateRoot.render(/*#__PURE__*/React.createElement(Provider, {
       store: store
@@ -135,7 +119,6 @@ const appWithRedux = function () {
     }, /*#__PURE__*/React.createElement(AppGeneric, {
       authUser: authUser
     }))));
-    loggas.appClient.debug("CREATED HYDRATED ROOT", customHydrateRoot, customHydrateRoot.render);
   }
 };
 const AppGeneric = props => {
@@ -168,7 +151,6 @@ const appNormal = function () {
     effectsStore,
     authUser
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
-  loggas.appClient.debug("APP NORMARL IS RUNNING");
   if (isServer) {
     return /*#__PURE__*/React.createElement(AppProvider, {
       appWrapper: appWrapper,
@@ -194,7 +176,6 @@ const appSpa = function () {
     effectsStore,
     authUser
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
-  loggas.appClient.debug("APP SPA IS RUNNING");
   const root = createRoot(document.getElementById("root"));
   root.render(/*#__PURE__*/React.createElement(StrictMode, null, /*#__PURE__*/React.createElement(AppProvider, {
     appWrapper: appWrapper,
@@ -212,7 +193,6 @@ const appSpaWithRedux = function () {
     effectsStore,
     authUser
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
-  loggas.appClient.debug("APP SPA WITH REDUX RUNNING");
   const root = createRoot(document.getElementById("root"));
   root.render(/*#__PURE__*/React.createElement(StrictMode, null, /*#__PURE__*/React.createElement(Provider, {
     store: store
@@ -233,7 +213,6 @@ const ServerApp = function () {
     effectsStore,
     authUser = null
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
-  loggas.appServer.debug("THE GOODIES FROM SERVER", goodies);
   const store = !storeFromSource ? createReduxStore() : storeFromSource;
   const existsMeta = fs.existsSync("".concat(process.cwd()).concat(path.sep, "app.manifest.json"));
   if (!existsMeta) throw new Error("This project is missing app.manifest.json, please add it");
@@ -244,7 +223,6 @@ const ServerApp = function () {
   const {
     stateVendor = null
   } = app;
-  loggas.appServer.debug("SERVER META", meta);
   if (stateVendor && stateVendor === "redux") {
     return appWithRedux({
       appWrapper,
@@ -266,10 +244,7 @@ const ServerApp = function () {
   });
 };
 if (import.meta.webpackHot) {
-  loggas.appClient.debug("THE META.HOT");
   import.meta.webpackHot.accept("./build.js", er => {
-    loggas.appClient.debug("THE HOT ERROR", er);
-    loggas.appClient.debug("THE CUSTOM", customHydrateRoot, userLayout, userWrapper);
     App(userWrapper, userLayout);
   });
 }
