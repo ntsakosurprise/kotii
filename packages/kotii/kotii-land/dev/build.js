@@ -23,9 +23,7 @@ const ClientRoutes = (props) => {
   let MarkdownRendr =
     typeof MarkdownRender === "undefined" ? null : MarkdownRender;
   const { layout } = useAppContext();
-  console.log("THE PROCESS ENV", process.env);
-  // const AppWrapper = props.wrapper;
-  // console.log("THE CLIENT ROUTES", layout);
+
   const Layout = layout
     ? layout
     : () => {
@@ -47,10 +45,8 @@ const ClientRoutes = (props) => {
       isPrivate: r?.isPrivate || false,
     };
   });
-  console.log("SERVER ROUTES:", markRoutes);
-  console.log("SERVER ROUTES RENDER:", MarkdownRendr);
+
   if (markRoutes.length > 0) {
-    console.log("SERVER ROUTES:.length", markRoutes);
     markRoutes.forEach((route, index) => {
       const ComponentWrapped = () => {
         return (
@@ -90,8 +86,7 @@ const RoutesAsServerRoutes = (props) => {
   const markRoutes = goodies?.markdownRoutes || [];
   const MarkdownRendr = goodies?.MarkdownRender || null;
   const posts = {};
-  console.log("SERVER ROUTES:", markRoutes);
-  console.log("SERVER ROUTES RENDER:", MarkdownRendr);
+
   const { layout } = useAppContext();
   const Layout = layout
     ? layout
@@ -100,7 +95,7 @@ const RoutesAsServerRoutes = (props) => {
       };
   let refinedRoutes = gRoutes.map((r, index) => {
     let Component = gComps[r.component];
-    console.log("Server component", Component);
+
     const ComponentWrapped = () => {
       return (
         <Wrapper key={index}>
@@ -116,9 +111,7 @@ const RoutesAsServerRoutes = (props) => {
     };
   });
   if (markRoutes.length > 0) {
-    console.log("SERVER ROUTES:");
     markRoutes.forEach((route, index) => {
-      console.log("SERVER ROUTES: route", route);
       const ComponentWrapped = () => {
         return (
           <Wrapper key={index}>
@@ -137,7 +130,7 @@ const RoutesAsServerRoutes = (props) => {
       });
     });
   }
-  console.log("SERVER ROUTES:::", refinedRoutes);
+
   return (
     <Layout>
       <Routes
