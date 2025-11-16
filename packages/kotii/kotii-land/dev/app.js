@@ -1,25 +1,6 @@
 import { anzii } from "anzii";
-import { spawn } from "child_process";
-import { loggas } from "kotii-logger";
 import plugins from "../../plugins/index.js";
 
-process.on("beforeExit", () => {
-  loggas.startUp.debug("THE PROCESS IS ABOUT TO EXIST");
-});
-
-process.on("exit", function () {
-  if (process.env.CUSTOM_RESTART && process.env.CUSTOM_RESTART === "true") {
-    process.env.ANZII_OPEN_BROWSER = "false";
-    process.env.CUSTOM_RESTART = "false";
-    spawn(process.argv.shift(), process.argv, {
-      cwd: process.cwd(),
-      detached: true,
-      stdio: "inherit",
-    });
-  } else {
-    process.env.KOTII_WEBPACK_COMPILATION_SET = "false";
-  }
-});
 import("/kotii-user-api/plugins").then((imported) => {
   let userPlugins = imported.default;
 
