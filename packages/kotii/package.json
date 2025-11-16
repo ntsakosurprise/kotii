@@ -33,7 +33,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ntsakosurprise/anzii-cli"
+    "url": "https://github.com/ntsakosurprise/kotii"
   },
   "author": {
     "email": "mashelesepru@gmail.com",
@@ -46,7 +46,7 @@
       "email": "mashelesepru@gmail.com"
     }
   ],
-  "homepage": "https://github.com/ntsakosurprise/anzi-clii#readme",
+  "homepage": "https://github.com/ntsakosurprise/kotii#readme",
   "license": "MIT",
   "dependencies": {
     "@octokit/auth-basic": "^1.4.6",
