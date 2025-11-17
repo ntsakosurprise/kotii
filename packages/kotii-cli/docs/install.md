@@ -1,4 +1,4 @@
-# Koii-cli Development
+# Kotii-cli Development
 
 ### How To Install kotii-cli for local development
 
