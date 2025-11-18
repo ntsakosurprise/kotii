@@ -11,14 +11,33 @@
       "default": "./index_.js"
     }
   },
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "email": "mashelesepru@gmail.com",
+    "name": "Ntsako Surpris Mashele",
+    "url": "http://iiprodakts.io"
+  },
+  "contributors": [
+    {
+      "name": "Surprise Mashele",
+      "email": "mashelesepru@gmail.com",
+      "website": "https://www.nstakosurprise.com"
+    }
+  ],
+  "license": "MIT",
   "dependencies": {
     "styled-components": "^6.1.11"
+  },
+  "readme": "See README file",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/ntsakosurprise/kotii/kotii-styled/issues"
   },
   "files": [
     "src/",
     "index.js",
-    "package.json"
+    "package.json",
+    "dist",
+    "README.md",
+    "LICENSE"
   ]
 }
