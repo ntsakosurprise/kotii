@@ -1,7 +1,7 @@
 {
   "name": "kotii-styled",
   "version": "1.0.0",
-  "description": "",
+  "description": "a wrapper around the official styled-components",
   "main": "index.js",
   "type": "module",
   "exports": {
