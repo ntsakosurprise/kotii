@@ -7,8 +7,8 @@
   "exports": {
     ".": {
       "import": "./index.js",
-      "require": "./index.js",
-      "default": "./index_.js"
+      "require": "./dist/index.cjs",
+      "default": "./index.js"
     }
   },
   "author": {
@@ -36,8 +36,9 @@
     "src/",
     "index.js",
     "package.json",
+    "kotii.svg",
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE.md"
   ]
 }
