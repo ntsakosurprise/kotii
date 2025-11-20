@@ -1,32 +1,79 @@
-# Kotii-cli Development
+# Security Policy
 
-### How To Install kotii-cli for local development
+## Supported Versions
 
-- NPM
-  > **RUN:** `npm i /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`, and the full command will be: `npm i /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-1.0.0.tgz`
-- PNPM
+| Version | Supported      |
+| ------- | -------------- |
+| 2.x     | ✅ Yes         |
+| 1.x     | ⚠️ Limited     |
+| 0.x     | ❌ End of Life |
 
-  > **RUN:** `pnpm add /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`
+We provide security updates and critical fixes only for supported versions.
 
-- YARN
-  > **RUN:** `yarn add /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`
+---
 
-### Kotii-cli commands
+## Reporting a Vulnerability
 
-- create-app
-- help
-- version
+If you discover a security vulnerability, please **report it privately** to the maintainers. Do **not** create a public issue.
 
-### Create-app
+**Contact:** [security@kotii.com](mailto:security@kotii.com)
 
-<p>
+Please include:
 
-To create your new app based on the TLB, you need to open a terminal window on your computer and type the following command to create a
-new app: `kotii create-app app-name --packager npm`
+- A detailed description of the vulnerability
+- Steps to reproduce
+- Impact assessment (if possible)
+- Environment details (OS, dependencies, versions)
 
-</p>
+---
 
-<p> Exapmple:  `jonentsakodoe@jonentsako ~ % kotii create-app to-do-app --packager yarn` </p>
+## Security Update Policy
 
-- With default config: `kotii create-app new-with-pnpm --yes --packager pnpm`
-- With local scripts: `kotii create-app new-with-pnpm --yes --packager pnpm --local-scripts /Users/surprisemashele/Documents/kotii`
+- Security vulnerabilities are prioritized and fixed as soon as possible.
+- Fixes will be released in the next patch version for the supported versions.
+- Users will be notified via release notes or security advisories.
+
+---
+
+## Encryption and Credentials
+
+- Do **not** commit secrets, credentials, or private keys to the repository.
+- Use environment variables or secret management solutions for sensitive information.
+- If credentials are accidentally committed, rotate them immediately.
+
+---
+
+## Dependencies
+
+- Keep third-party dependencies up to date.
+- Monitor for known vulnerabilities using tools like:
+  - `npm audit`
+  - `yarn audit`
+  - `Dependabot` (GitHub security alerts)
+- Avoid using unmaintained or deprecated packages.
+
+---
+
+## Best Practices
+
+- Validate all inputs to prevent injection attacks.
+- Use HTTPS for all network communications.
+- Follow principle of least privilege when granting access.
+- Regularly review code for security risks.
+- Apply security patches promptly.
+
+---
+
+## Reporting Timeline
+
+- We aim to respond to security reports within 48 hours.
+- A fix or mitigation strategy will be communicated within 7 days.
+- Updates will be made available through GitHub releases or advisories.
+
+---
+
+## References
+
+- [GitHub Security Advisories](https://docs.github.com/en/code-security/security-advisories)
+- [OWASP Top Ten](https://owasp.org/www-project-top-ten/)
+- [CVE Database](https://cve.mitre.org/)
