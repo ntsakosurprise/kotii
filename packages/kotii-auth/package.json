@@ -26,8 +26,6 @@
     "access": "public"
   },
   "scripts": {
-    "build:tsc": "tsc -b",
-    "clean": "rimraf lib coverage tsconfig.tsbuildinfo",
     "build": "webpack --mode production",
     "compile:esm": "cross-env NODE_ENV=development NODE_MODE=esm webpack",
     "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
