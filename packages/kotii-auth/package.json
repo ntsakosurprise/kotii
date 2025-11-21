@@ -8,9 +8,9 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
+      "import": "./index.js",
       "require": "./dist/index.cjs",
-      "default": "./dist/index.cjs"
+      "default": "./index.js"
     }
   },
   "directories": {
@@ -26,7 +26,6 @@
     "access": "public"
   },
   "scripts": {
-    "build": "webpack --mode production",
     "compile:esm": "cross-env NODE_ENV=development NODE_MODE=esm webpack",
     "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
   },
