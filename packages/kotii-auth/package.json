@@ -1,7 +1,7 @@
 {
   "name": "kotii-auth",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.0-beta.1.0",
+  "description": "A tiny authentication library that helps secure your app.",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
   "homepage": "https://github.com/ntsakosurprise/kotii/tree/develop/packages/kotii-auth#readme",
   "license": "MIT",
@@ -20,7 +20,9 @@
   "files": [
     "dist/",
     "index.js",
-    "src/"
+    "src/",
+    "README.md",
+    "package.json"
   ],
   "publishConfig": {
     "access": "public"
