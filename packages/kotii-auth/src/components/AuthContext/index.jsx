@@ -12,7 +12,6 @@ const AuthProvider = ({
   onLogin = null,
   onLogout = null,
 }) => {
-  console.log("AUTH PROVIDER DEFAULT USER", defaultUser);
   const [user, setUser] = useState(defaultUser);
   const authLogin = (authUser, onLoginAction = null) => {
     setUser(authUser);

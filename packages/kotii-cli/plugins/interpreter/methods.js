@@ -24,10 +24,9 @@ methods.handleInterpreterCliInput = async function (data) {
 
   let stopFurtherExecution = false;
 
-  self.logSync("Handling send-output Cli event");
-
-  self.infoSync("ilog");
   const commands = self.parseCommands();
+  self.logSync("THE COMMANDS", commands);
+
   const filtered = self.processOptionsAsCommands(commands.options);
   // console.log("THE FILTERED", filtered);
   // console.log("The cosand Flags", commands);
@@ -632,17 +631,24 @@ methods.parseCommands = function () {
   });
 
   combinedOptionsAliases = { ...cliArgsObject, ...aliases };
+  self.debug("Combined Option", combinedOptionsAliases);
   const parsedCommands = arg(combinedOptionsAliases, {
     argv: pao.PROMPT.slice(2),
     permissive: true,
   }); // Get passed arguments from the third item in the array of passed arguments)
+  self.debug("PARSED COMMANDS", parsedCommands);
   // console.log("COMBINED OPTIONS", combinedOptionsAliases);
   // console.log("PARSED COMMANDS", parsedCommands);
   let modified = { ...parsedCommands };
   let optionsLen = modified._.indexOf("cli");
-  // modified._.slice(optionsLen);
+  self.debug("Options LEN", optionsLen);
   let options = [...modified._.slice(0, optionsLen)];
   delete modified._;
+  self.debug("OPTIONS", options, modified);
+
+  options.length === 0 && modified
+    ? options.push(Object.keys(modified)[0].replace("--", ""))
+    : null;
 
   return { options, flags: { ...modified }, parsedCommands };
   // return commands;

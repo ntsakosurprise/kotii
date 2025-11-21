@@ -9,7 +9,7 @@ console.log("webpack path", path.resolve(__dirname, "node_modules"));
 const isESM = process.env.NODE_MODE === "esm" ? true : false;
 
 const kotiiRouter = {
-  entry: "./src/index.js",
+  entry: "./index.js",
   target: "web",
   mode: "development",
   devtool: "inline-source-map",
@@ -31,11 +31,6 @@ const kotiiRouter = {
       react: "react",
       "react-dom": "react-dom",
     },
-
-    // nodeExternals({
-    //   modulesDir:
-    //     "/Users/surprisemashele/Documents/Development/frameworks/anzii/node_modules",
-    // }),
   ],
   resolve: {
     extensions: [".js", ".jsx"],
@@ -47,21 +42,10 @@ const kotiiRouter = {
         exclude: /node_modules/,
         use: "babel-loader",
       },
-      // {
-      //   test: /\.html$/,
-      //   use: "html-loader",
-      // },
-      /*Choose only one of the following two: if you're using 
-      plain CSS, use the first one, and if you're using a
-      preprocessor, in this case SASS, use the second one*/
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"],
       },
-      // {
-      //   test: /\.scss$/,
-      //   use: ["style-loader", "css-loader", "sass-loader"],
-      // },
     ],
   },
 };

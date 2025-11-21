@@ -1,16 +1,16 @@
 {
   "name": "kotii-auth",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.0-beta.1.0",
+  "description": "A tiny authentication library that helps secure your app.",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
-  "homepage": "https://github.com/kotiijs#readme",
+  "homepage": "https://github.com/ntsakosurprise/kotii/tree/develop/packages/kotii-auth#readme",
   "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
+      "import": "./index.js",
       "require": "./dist/index.cjs",
-      "default": "./dist/index.cjs"
+      "default": "./index.js"
     }
   },
   "directories": {
@@ -20,15 +20,14 @@
   "files": [
     "dist/",
     "index.js",
-    "src/"
+    "src/",
+    "README.md",
+    "package.json"
   ],
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "build:tsc": "tsc -b",
-    "clean": "rimraf lib coverage tsconfig.tsbuildinfo",
-    "build": "webpack --mode production",
     "compile:esm": "cross-env NODE_ENV=development NODE_MODE=esm webpack",
     "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
   },
