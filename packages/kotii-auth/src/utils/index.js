@@ -11,14 +11,11 @@ export const cleanRouteUrl = (pathString) => {
 
 export const navigate = (to, routeState = {}) => {
   //   window.location.hash = to;
-  console.log("GOINT TO", to);
-  console.log("GOING TO STATE", routeState);
   window.history.pushState(routeState, "", to);
   const navEvent = new PopStateEvent("popstate");
   window.dispatchEvent(navEvent);
 };
 export const navigateByReplace = (to, routeState = {}) => {
-  console.log("Replace URL", to);
   window.history.replaceState(routeState, "", to);
   const navEvent = new PopStateEvent("popstate");
   window.dispatchEvent(navEvent);
@@ -51,10 +48,7 @@ export const matchParams = (routeComponentPath, currentPath) => {
 export const matchRouteQuery = (route, queryStringSet) => {
   // if (routeComponentPath === currentPath) return true;
 
-  console.log("RUNNING MATCH ROUTE QUERY", route, queryStringSet);
-
   const queryString = queryStringSet.slice(1, queryStringSet.length);
-  console.log("THE QUERY STRING", queryString);
 
   let queryParams = {};
 
@@ -66,7 +60,6 @@ export const matchRouteQuery = (route, queryStringSet) => {
   } else {
     return null;
   }
-  console.log("MATCH QUERY ROUTE URL", queryParams, route);
 
   return { route, params: queryParams };
 };
@@ -92,36 +85,19 @@ export const getUrlSegements = (url = "") => {
 export const matchRoute = (routeComponentPath, currentPath) => {
   // if (routeComponentPath === currentPath) return true;
 
-  console.log("MATCHING ROUTE", routeComponentPath, currentPath);
-
   const routeSegments = routeComponentPath.split("/").filter(Boolean);
   const currentSegments = currentPath.split("/").filter(Boolean);
   let colonIndex = -1;
 
-  console.log("ROUTES SEGMENTS", routeSegments, currentSegments);
-
   if (routeSegments.length === currentSegments.length) {
-    console.log("routes segments equals", routeSegments === currentSegments);
     if (routeComponentPath === currentPath) return true;
     colonIndex = routeComponentPath.indexOf(":");
-    console.log("THE COLON INDEX", colonIndex);
+
     if (!colonIndex) return false;
     let sliceFromFirstParam = routeComponentPath.slice(0, colonIndex);
-    console.log(
-      "Sliced first Param",
-      sliceFromFirstParam,
-      currentPath.indexOf(sliceFromFirstParam) >= 0
-    );
+
     if (currentPath.indexOf(sliceFromFirstParam) >= 0) return true;
     return false;
-
-    // for (let i = 0; i < routeSegments.length; i++) {
-    //   const routeSegment = routeSegments[i];
-    //   const currentSegment = currentSegments[i];
-
-    //   if (!routeSegment.startsWith(":") && routeSegment !== currentSegment)
-    //     return false;
-    // }
   }
   return false;
 };
