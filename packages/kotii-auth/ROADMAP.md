@@ -1,32 +1,89 @@
-# Kotii-cli Development
+# Project Roadmap
 
-### How To Install kotii-cli for local development
+This roadmap outlines the planned features, improvements, and milestones for the project.  
+All dates are approximate and subject to change.
 
-- NPM
-  > **RUN:** `npm i /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`, and the full command will be: `npm i /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-1.0.0.tgz`
-- PNPM
+---
 
-  > **RUN:** `pnpm add /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`
+## **v1.0.0 — Initial Release**
 
-- YARN
-  > **RUN:** `yarn add /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`
+**Target:** Q1 2025
 
-### Kotii-cli commands
+### Goals
 
-- create-app
-- help
-- version
+- Establish core authentication and authorization system
+- Implement `useAuth` hook for React
+- Provide basic login and logout components
+- Set up testing and CI/CD pipeline
 
-### Create-app
+### Features
 
-<p>
+- User registration and login
+- Logout and session handling
+- Context-based auth state management
+- Basic documentation
 
-To create your new app based on the TLB, you need to open a terminal window on your computer and type the following command to create a
-new app: `kotii create-app app-name --packager npm`
+---
 
-</p>
+## **v1.1.0 — Enhancements**
 
-<p> Exapmple:  `jonentsakodoe@jonentsako ~ % kotii create-app to-do-app --packager yarn` </p>
+**Target:** Q2 2025
 
-- With default config: `kotii create-app new-with-pnpm --yes --packager pnpm`
-- With local scripts: `kotii create-app new-with-pnpm --yes --packager pnpm --local-scripts /Users/surprisemashele/Documents/kotii`
+### Goals
+
+- Improve user experience for authentication flows
+- Expand documentation with examples
+- Introduce event hooks for login/logout actions
+
+### Features
+
+- `registerOnLoginActions` and `registerOnLogoutActions` hooks
+- Error handling improvements
+- Loading and error states for auth components
+- Initial changelog setup
+
+---
+
+## **v1.2.0 — Security & Stability**
+
+**Target:** Q3 2025
+
+### Goals
+
+- Enhance security features
+- Refactor authentication logic for scalability
+- Introduce token refresh and session expiration handling
+
+### Features
+
+- Automatic token refresh
+- Multi-factor authentication support
+- Improved session management
+- Unit and integration tests coverage > 80%
+
+---
+
+## **v2.0.0 — Advanced Features**
+
+**Target:** Q4 2025
+
+### Goals
+
+- Expand project to include role-based access
+- Add enterprise-level features
+- Improve developer experience
+
+### Features
+
+- Role-based authorization (`RBAC`)
+- Admin dashboard components
+- Analytics hooks for user events
+- CLI tool for project setup and scaffolding
+
+---
+
+## Notes
+
+- All target dates are **approximate** and may shift based on development priorities.
+- Community contributions are welcome! Check the [Contributing Guide](CONTRIBUTING.md) for details.
+- For up-to-date progress, see the [GitHub Issues](https://github.com/your-repo/issues) and [Projects](https://github.com/your-repo/projects) pages.
