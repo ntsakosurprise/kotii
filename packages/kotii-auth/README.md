@@ -299,7 +299,7 @@ export function UserInfo() {
 }
 ```
 
-# Questions
+# Questions & Support
 
 For questions and support please use kotiijs's Suppport page on [Github repo](https://github.com/ntsakosurprise/kotii/tree/develop/packages/kotii-auth/SUPPORT.md).
 
@@ -317,7 +317,7 @@ A summary of release changes can be found in our [Release Notes](https://github.
 
 # Stay In Touch
 
-[Twitter @kotiijs](https://twitter.com/kotii).
+[Twitter @kotiijs](https://x.com/kotiijs).
 
 # Contribution
 
