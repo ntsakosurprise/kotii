@@ -24,6 +24,10 @@
     }
   ],
   "license": "MIT",
+  "scripts": {
+    "compile:esm": "cross-env NODE_ENV=development NODE_MODE=esm webpack",
+    "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
+  },
   "dependencies": {
     "styled-components": "^6.1.11"
   },
