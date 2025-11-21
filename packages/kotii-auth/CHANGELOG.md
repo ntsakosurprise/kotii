@@ -1,32 +1,49 @@
-# Kotii-cli Development
+# Changelog
 
-### How To Install kotii-cli for local development
+All notable changes to this project will be documented in this file.
 
-- NPM
-  > **RUN:** `npm i /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`, and the full command will be: `npm i /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-1.0.0.tgz`
-- PNPM
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)  
+and [Semantic Versioning](https://semver.org/).
 
-  > **RUN:** `pnpm add /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`
+---
 
-- YARN
-  > **RUN:** `yarn add /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`
+## [Unreleased]
 
-### Kotii-cli commands
+- Describe upcoming changes here
+- Bug fixes, new features, or improvements in progress
 
-- create-app
-- help
-- version
+---
 
-### Create-app
+## [1.2.0] - 2025-11-20
 
-<p>
+### Added
 
-To create your new app based on the TLB, you need to open a terminal window on your computer and type the following command to create a
-new app: `kotii create-app app-name --packager npm`
+- Introduced a new `useAuth` hook for simplified authentication
+- Added `registerOnLoginActions` and `registerOnLogoutActions` hooks
 
-</p>
+### Changed
 
-<p> Exapmple:  `jonentsakodoe@jonentsako ~ % kotii create-app to-do-app --packager yarn` </p>
+- Updated login flow to support token refresh
+- Refactored user context provider
 
-- With default config: `kotii create-app new-with-pnpm --yes --packager pnpm`
-- With local scripts: `kotii create-app new-with-pnpm --yes --packager pnpm --local-scripts /Users/surprisemashele/Documents/kotii`
+### Fixed
+
+- Fixed issue where logout did not clear local state
+- Resolved bug causing double notifications after login
+
+---
+
+## [1.1.0] - 2025-09-10
+
+### Added
+
+- Added initial authentication context
+- Included example components for login and logout
+
+### Changed
+
+- Improved error handling on failed login attempts
+
+---
+
+## [1.0.0] -
