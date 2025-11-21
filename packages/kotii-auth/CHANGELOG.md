@@ -14,7 +14,7 @@ and [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [1.2.0] - 2025-11-20
+## [1.0.0-beta.1.0] - 2025-11-22
 
 ### Added
 
@@ -26,7 +26,7 @@ and [Semantic Versioning](https://semver.org/).
 - Updated login flow to support token refresh
 - Refactored user context provider
 
-### Fixed
+<!-- ### Fixed
 
 - Fixed issue where logout did not clear local state
 - Resolved bug causing double notifications after login
@@ -46,4 +46,4 @@ and [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [1.0.0] -
+## [1.0.0] - -->

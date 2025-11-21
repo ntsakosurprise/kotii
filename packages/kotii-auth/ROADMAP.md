@@ -1,13 +1,13 @@
-# Project Roadmap
+# Kotii-auth Roadmap
 
 This roadmap outlines the planned features, improvements, and milestones for the project.  
 All dates are approximate and subject to change.
 
 ---
 
-## **v1.0.0 — Initial Release**
+## **v1.0.0-beta.1.0 — Initial Release**
 
-**Target:** Q1 2025
+**Target:** Q4 2025
 
 ### Goals
 
@@ -25,9 +25,9 @@ All dates are approximate and subject to change.
 
 ---
 
-## **v1.1.0 — Enhancements**
+<!-- ## **v1.1.0 — Enhancements** -->
 
-**Target:** Q2 2025
+<!-- **Target:** Q2 2025
 
 ### Goals
 
@@ -42,8 +42,9 @@ All dates are approximate and subject to change.
 - Loading and error states for auth components
 - Initial changelog setup
 
----
+--- -->
 
+<!--
 ## **v1.2.0 — Security & Stability**
 
 **Target:** Q3 2025
@@ -80,10 +81,10 @@ All dates are approximate and subject to change.
 - Analytics hooks for user events
 - CLI tool for project setup and scaffolding
 
----
+--- -->
 
 ## Notes
 
 - All target dates are **approximate** and may shift based on development priorities.
-- Community contributions are welcome! Check the [Contributing Guide](CONTRIBUTING.md) for details.
-- For up-to-date progress, see the [GitHub Issues](https://github.com/your-repo/issues) and [Projects](https://github.com/your-repo/projects) pages.
+- Community contributions are welcome! Check the [Contributing Guide](https://github.com/ntsakosurprise/kotii/tree/develop/packages/kotii-auth/CONTRIBUTING.md) for details.
+- For up-to-date progress, see the [GitHub Issues](https://github.com/ntsakosurprise/kotii/tree/develop/packages/kotii-auth/issues).
