@@ -1,6 +1,6 @@
 {
   "name": "kotii-auth",
-  "version": "1.0.0-beta.1.0",
+  "version": "1.0.0-beta.2",
   "description": "A tiny authentication library that helps secure your app.",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
   "homepage": "https://github.com/ntsakosurprise/kotii/tree/develop/packages/kotii-auth#readme",
