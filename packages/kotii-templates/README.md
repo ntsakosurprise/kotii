@@ -1,4 +1,15 @@
-# kotii-templates
+<p align="center">
+  <a href="#" style="
+       display: inline-flex;
+       flex-direction: column;
+       align-items: center;
+       text-decoration: none;
+       color: inherit;
+     ">
+    <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/kotii.svg" alt="kotii logo">
+    <strong>Kotii-Templates</strong>
+  </a>
+</p>
 
 **kotii-templates** is a lightweight template provider for the Kotii ecosystem.  
 It delivers ready-to-use **SSR (Server-Side Rendering)** and **SPA (Single-Page Application)** templates, supporting both **JavaScript** and **TypeScript** project setups.

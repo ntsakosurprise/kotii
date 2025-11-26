@@ -1,4 +1,15 @@
-# Kotii Router
+<p align="center">
+  <a href="#" style="
+       display: inline-flex;
+       flex-direction: column;
+       align-items: center;
+       text-decoration: none;
+       color: inherit;
+     ">
+    <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/kotii.svg" alt="kotii logo">
+    <strong>Kotii-Router</strong>
+  </a>
+</p>
 
 **kotii-router** is a lightweight and flexible routing library for modern JavaScript and TypeScript applications. It provides declarative routing components and powerful hooks to manage navigation, route matching, and redirection.
 

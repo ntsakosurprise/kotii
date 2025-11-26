@@ -6,7 +6,7 @@
        text-decoration: none;
        color: inherit;
      ">
-    <img src="./kotii.svg" alt="Example">
+    <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/kotii.svg" alt="kotii logo">
     <strong>Kotii-Styled</strong>
   </a>
 </p>

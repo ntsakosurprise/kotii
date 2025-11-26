@@ -1,4 +1,15 @@
-# Kotii Modules
+<p align="center">
+  <a href="#" style="
+       display: inline-flex;
+       flex-direction: column;
+       align-items: center;
+       text-decoration: none;
+       color: inherit;
+     ">
+    <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/kotii.svg" alt="kotii logo">
+    <strong>Kotii-Modules</strong>
+  </a>
+</p>
 
 **kotii-modules** provides a collection of reusable functional components for React, Vue, and AngularJS, designed for working with Markdown content, interactive demos, and media. It’s perfect for building documentation, blogs, and interactive content platforms.
 

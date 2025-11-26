@@ -1,4 +1,15 @@
-# kotii-languages
+<p align="center">
+  <a href="#" style="
+       display: inline-flex;
+       flex-direction: column;
+       align-items: center;
+       text-decoration: none;
+       color: inherit;
+     ">
+    <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/kotii.svg" alt="kotii logo">
+    <strong>Kotii-Languages</strong>
+  </a>
+</p>
 
 `kotii-languages` is a lightweight and flexible library for managing multilingual support in your React applications. It provides tools to switch languages dynamically and access the current language state throughout your app.
 

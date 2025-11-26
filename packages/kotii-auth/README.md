@@ -6,8 +6,8 @@
        text-decoration: none;
        color: inherit;
      ">
-    <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/packages/kotii-auth/kotii.svg" alt="Example">
-    <strong style="font-size:50px; font-weight: 800">kotii-auth</strong>
+    <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/kotii.svg" alt="kotii logo">
+    <strong>Kotii-Auth</strong>
   </a>
 </p>
 

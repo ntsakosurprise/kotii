@@ -1,4 +1,15 @@
-# Introduction
+<p align="center">
+  <a href="#" style="
+       display: inline-flex;
+       flex-direction: column;
+       align-items: center;
+       text-decoration: none;
+       color: inherit;
+     ">
+    <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/kotii.svg" alt="kotii logo">
+    <strong>Kotii</strong>
+  </a>
+</p>
 
 ## Welcome
 

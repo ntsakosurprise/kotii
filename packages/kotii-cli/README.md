@@ -1,6 +1,17 @@
-# Kotii-Cli
+<p align="center">
+  <a href="#" style="
+       display: inline-flex;
+       flex-direction: column;
+       align-items: center;
+       text-decoration: none;
+       color: inherit;
+     ">
+    <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/kotii.svg" alt="kotii logo">
+    <strong>Kotii-Cli</strong>
+  </a>
+</p>
 
-is a command-line interface for generating and managing applications built with the Kotii Framework.
+Kotii-cli is a command-line interface for generating and managing applications built with the Kotii Framework.
 kotii-cli provides a fast, configurable way to scaffold projects, manage templates, control packaging tools, and more.
 
 ## Installation
