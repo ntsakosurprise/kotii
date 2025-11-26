@@ -1,17 +1,19 @@
 {
   "name": "kotii-utils",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1.0",
+  "description": "a lightweight JavaScript utility library that provides helpful functions for string manipulation and local storage management. Perfect for small projects or quick utilities.",
   "license": "MIT",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
+      "import": "./src/index.js",
       "require": "./dist/index.cjs",
-      "default": "./dist/index.cjs"
+      "default": "./src/index.js"
     }
   },
   "files": [
     "dist/",
-    "src/"
+    "src/",
+    "README.md"
   ],
   "scripts": {
     "start": "webpack-dev-server --watch",
