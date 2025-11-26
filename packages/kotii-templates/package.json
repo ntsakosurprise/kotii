@@ -1,7 +1,7 @@
 {
   "name": "kotii-templates",
-  "version": "1.0.0",
-  "description": "Kotii-templates is the container for kotiiJS templates",
+  "version": "1.0.0-beta.1.0",
+  "description": "a lightweight template provider for the Kotii ecosystem.It delivers ready-to-use **SSR (Server-Side Rendering)** and **SPA (Single-Page Application)** templates, supporting both **JavaScript** and **TypeScript** project setups",
   "type": "module",
   "engines": {
     "node": ">=17.2.0",
@@ -47,8 +47,8 @@
     ]
   },
   "dependencies": {
-    "anzii": "file:/Users/surprisemashele/Documents/Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz",
-    "kotii-logger": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-logger/kotii-logger-1.0.0.tgz"
+    "anzii": "8.0.0",
+    "kotii-logger": "1.0.0-beta.1.0"
   },
   "files": [
     "dist/",
@@ -56,7 +56,8 @@
     "typescript/",
     "index.js",
     "package.json",
-    "plugins/"
+    "plugins/",
+    "README.md"
   ],
   "devDependencies": {
     "@babel/cli": "^7.24.8",
