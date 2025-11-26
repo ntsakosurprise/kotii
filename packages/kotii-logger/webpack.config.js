@@ -5,8 +5,7 @@ import nodeExternals from "webpack-node-externals";
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
-console.log("Webpack dir name", __dirname);
-console.log("webpack path", path.resolve(__dirname, "node_modules"));
+
 const isESM = process.env.NODE_MODE === "esm" ? true : false;
 
 const kotiiLogger = {
@@ -17,7 +16,7 @@ const kotiiLogger = {
   experiments: {
     outputModule: false,
   },
-  //devtool: "inline-source-map",
+
   output: {
     path: path.resolve("dist"),
     filename: isESM ? "index.mjs" : "index.cjs",
@@ -28,10 +27,6 @@ const kotiiLogger = {
     nodeExternals({
       modulesDir: path.resolve(__dirname, "node_modules"),
     }),
-    // nodeExternals({
-    //   modulesDir:
-    //     "/Users/surprisemashele/Documents/Development/frameworks/anzii/node_modules",
-    // }),
   ],
   resolve: {
     extensions: [".js"],
@@ -40,10 +35,7 @@ const kotiiLogger = {
     rules: [
       {
         test: /\.(js)$/,
-        exclude: [
-          path.resolve(__dirname, "node_modules"),
-          //   "/Users/surprisemashele/Documents/Development/frameworks/anzii/node_modules",
-        ],
+        exclude: [path.resolve(__dirname, "node_modules")],
         use: ["babel-loader"],
       },
     ],

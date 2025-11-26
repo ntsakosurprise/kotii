@@ -1,7 +1,7 @@
 {
   "name": "kotii",
   "version": "1.0.0",
-  "description": "Kotii is a react meta framework designed to be consistent and intuitive",
+  "description": "Kotii is a meta framework designed to be consistent and intuitive",
   "engines": {
     "node": ">=17.2.0",
     "yarn": ">=1.22.11",

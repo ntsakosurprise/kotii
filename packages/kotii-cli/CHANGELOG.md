@@ -1,32 +1,91 @@
-# Kotii-cli Development
+# Changelog
 
-### How To Install kotii-cli for local development
+All notable changes to **kotii-cli** will be documented in this file.
 
-- NPM
-  > **RUN:** `npm i /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`, and the full command will be: `npm i /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-1.0.0.tgz`
-- PNPM
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and follows [Semantic Versioning](https://semver.org/).
 
-  > **RUN:** `pnpm add /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`
+---
 
-- YARN
-  > **RUN:** `yarn add /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`
+## [1.0.0] - 2025-11-26
 
-### Kotii-cli commands
+**Initial Release**
 
-- create-app
-- help
-- version
+### Added
 
-### Create-app
+- `create-app` command to scaffold new Kotii projects
+  - Options for app type: `spa`, `mua`, `ssr`
+  - Template selection: `js`, `ts`, `javascript`, `typescript`
+  - Package manager selection: `npm`, `pnpm`, `yarn`
+  - Public/private repository toggle
+  - Git initialization and optional remote repository
+- Quick Start Wizard for guided app creation
+- Default settings shortcut (`--yes / -y`)
+- `help` command for CLI instructions
+- `version` command for CLI version display
+- Validation and error messages for string-based options: `--type`, `--template`, `--packager`
+- Support for local Kotii scripts using `--local-scripts`
 
-<p>
+### Changed
 
-To create your new app based on the TLB, you need to open a terminal window on your computer and type the following command to create a
-new app: `kotii create-app app-name --packager npm`
+- N/A (first release)
 
-</p>
+### Fixed
 
-<p> Exapmple:  `jonentsakodoe@jonentsako ~ % kotii create-app to-do-app --packager yarn` </p>
+- N/A (first release)
 
-- With default config: `kotii create-app new-with-pnpm --yes --packager pnpm`
-- With local scripts: `kotii create-app new-with-pnpm --yes --packager pnpm --local-scripts /Users/surprisemashele/Documents/kotii`
+---
+
+## [1.1.0] - Planned
+
+**Upcoming Improvements**
+
+### Added
+
+- Interactive wizard with color highlights and emoji feedback
+- Multiple starter templates (blog, dashboard, e-commerce)
+- `add-feature` command to scaffold modules into existing apps
+- `update-app` command to update project scaffolds
+
+### Changed
+
+- Wizard now dynamically skips prompts when defaults are acceptable
+- Inline help messages for wizard options
+
+### Fixed
+
+- Edge-case handling in CLI arguments
+- Platform-specific compatibility issues (Windows, Linux, macOS)
+
+---
+
+## [2.0.0] - Future
+
+**Major Features**
+
+### Added
+
+- Plugin system for third-party CLI extensions
+- Interactive CLI dashboard
+- Visual dependency graph for projects
+- CI/CD scaffolding (`GitHub Actions`, `GitLab CI`, `CircleCI`)
+- Cloud deployment scaffolding (Vercel, Netlify, AWS)
+- Official documentation generator
+- Community template marketplace
+- CLI analytics & telemetry for usage insights
+
+### Changed
+
+- Improved project scaffolding performance
+- Streamlined template selection and dependency installation
+
+### Fixed
+
+- Minor UX and CLI stability improvements
+
+---
+
+### Notes
+
+- Versions follow **Semantic Versioning (MAJOR.MINOR.PATCH)**.
+- Keep your CLI updated to access the latest features and fixes.
+- Contributions are welcome via GitHub pull requests.

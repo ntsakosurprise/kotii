@@ -52,4 +52,4 @@ Please make sure to read the Contributing Guide before making a pull request. 
 
 [MIT](https://.github.com/).
 
-copyright (c) 2019-present, iiprodatks. Ntsako (Surprise) Mashele
+© Kotii Ecosystem 2025-present. Ntsako (Surprise) Mashele
