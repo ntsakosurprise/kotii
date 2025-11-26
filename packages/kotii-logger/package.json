@@ -1,6 +1,6 @@
 {
   "name": "kotii-logger",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1.0",
   "description": "a flexible and lightweight logger for JavaScript/Node.js projects, supporting namespaces and environment-based log level control.",
   "license": "MIT",
   "type": "module",
