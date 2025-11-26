@@ -11,7 +11,7 @@
   </a>
 </p>
 
-Kotii-cli is a command-line interface for generating and managing applications built with the Kotii Framework.
+Kotii-cli is a command-line interface for generating and managing applications built with Kotii meta Framework.
 kotii-cli provides a fast, configurable way to scaffold projects, manage templates, control packaging tools, and more.
 
 ## Installation

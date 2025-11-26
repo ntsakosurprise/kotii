@@ -1,7 +1,7 @@
 {
   "name": "kotii-cli",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.0-beta.1.0",
+  "description": "a command-line interface for generating and managing applications built with Kotii meta Framework.",
   "main": "app.js",
   "bin": {
     "kotii": "./app.js"
