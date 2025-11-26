@@ -1,32 +1,89 @@
-# Kotii-cli Development
+# Kotii-CLI Roadmap
 
-### How To Install kotii-cli for local development
+A roadmap outlining planned features, improvements, and priorities for **kotii-cli**.
 
-- NPM
-  > **RUN:** `npm i /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`, and the full command will be: `npm i /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-1.0.0.tgz`
-- PNPM
+---
 
-  > **RUN:** `pnpm add /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`
+## 🚀 Short-Term Goals (0-3 months)
 
-- YARN
-  > **RUN:** `yarn add /Users/path/to/my/kotii/clone/kotii/packages/kotii-cli/kotii-cli-version-number.tgz -g`<br /><br> Please note that version number may be different based on the script that you run for your desired-local-testing version, for example, as of this writing, the version number is `1.0.0`. This means that the part of the path for version will be: `kotii-cli-1.0.0.tgz`
+These are features and fixes planned for immediate releases.
 
-### Kotii-cli commands
+### Core Features
 
-- create-app
-- help
-- version
+- [x] `create-app` command with type, template, and packager options
+- [x] Public/private repository toggle
+- [x] Git initialization and remote repository option
+- [x] Quick Start Wizard for guided app creation
+- [x] Default options shortcut (`--yes / -y`)
+- [x] Validation for string-based options (`type`, `template`, `packager`)
+- [x] Help (`help`) and version (`version`) commands
 
-### Create-app
+### UX Improvements
 
-<p>
+- [ ] Add interactive prompts with better color highlighting
+- [ ] Show emoji feedback for success/error messages
+- [ ] Add ASCII or diagram visualization for project setup
 
-To create your new app based on the TLB, you need to open a terminal window on your computer and type the following command to create a
-new app: `kotii create-app app-name --packager npm`
+### Bug Fixes
 
-</p>
+- [ ] Ensure cross-platform compatibility (Windows, Linux, macOS)
+- [ ] Validate edge cases in CLI arguments
 
-<p> Exapmple:  `jonentsakodoe@jonentsako ~ % kotii create-app to-do-app --packager yarn` </p>
+---
 
-- With default config: `kotii create-app new-with-pnpm --yes --packager pnpm`
-- With local scripts: `kotii create-app new-with-pnpm --yes --packager pnpm --local-scripts /Users/surprisemashele/Documents/kotii`
+## 📦 Mid-Term Goals (3-6 months)
+
+Planned improvements to enhance flexibility and developer experience.
+
+### Project Templates
+
+- [ ] Add multiple starter templates (blog, dashboard, e-commerce)
+- [ ] Support for additional front-end frameworks
+- [ ] Template versioning system
+
+### CLI Features
+
+- [ ] `add-feature` command to scaffold modules into existing apps
+- [ ] `update-app` command for updating dependencies or scaffolds
+- [ ] Auto-detect local Kotii scripts versions
+
+### Package Management
+
+- [ ] Automatic dependency installation based on selected template
+- [ ] Option to choose package manager globally or per-project
+
+### Wizard Improvements
+
+- [ ] Skip options dynamically if defaults are acceptable
+- [ ] Add inline help descriptions for each prompt
+
+---
+
+## 🌐 Long-Term Goals (6+ months)
+
+Ambitious features to make **kotii-cli** a full-featured framework companion.
+
+### Advanced CLI
+
+- [ ] Plugin system for third-party extensions
+- [ ] Interactive dashboard in CLI
+- [ ] Visual dependency graph for projects
+
+### Integration
+
+- [ ] CI/CD setup scaffolding (`GitHub Actions`, `GitLab CI`, `CircleCI`)
+- [ ] Cloud deployment scaffolding (Vercel, Netlify, AWS)
+
+### Ecosystem
+
+- [ ] Official documentation generator for projects
+- [ ] Community template marketplace
+- [ ] Kotii CLI analytics & telemetry for feature improvement
+
+---
+
+## 📌 Notes
+
+- The roadmap is **iterative** and may change based on user feedback and framework updates.
+- Contributions are welcome via GitHub pull requests.
+- Priorities will be evaluated based on adoption, feedback, and technical feasibility.

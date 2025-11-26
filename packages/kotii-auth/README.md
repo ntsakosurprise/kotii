@@ -6,7 +6,7 @@
        text-decoration: none;
        color: inherit;
      ">
-    <img src="./kotii.svg" alt="Example">
+    <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/packages/kotii-auth/kotii.svg" alt="Example">
     <strong style="font-size:50px; font-weight: 800">kotii-auth</strong>
   </a>
 </p>

@@ -14,8 +14,7 @@ class Template {
 
   handleGetTemplate(data) {
     const self = this;
-    const pao = self.pao;
-    const getWorkingFolder = pao.pa_getWorkingFolder;
+
     // const getRootDir = pao.pa_getRootDir;
     self.callback = data.callback;
     const { name, type } = data;

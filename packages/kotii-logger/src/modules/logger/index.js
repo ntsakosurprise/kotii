@@ -46,7 +46,7 @@ class KOLogger {
   }
   createNameSpaces = (nameSpaces) => {
     const self = this;
-    nameSpaces.forEach((debugr, i) => {
+    nameSpaces.forEach((debugr) => {
       this.createNameSpacesDebug(
         "Creating debug namespace=>",
         `${this.appName}:${debugr}`
@@ -98,7 +98,7 @@ class KOLogger {
 
     this.envLoggingContainer = {
       shouldShowStandardLogs,
-      shouldShowStandardLogs,
+
       shouldShowDebugLogs,
       shouldShowWarningLogs,
       shouldShowErrorLogs,
