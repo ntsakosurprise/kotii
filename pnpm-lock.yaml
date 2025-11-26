@@ -717,15 +717,12 @@ importers:
 
   packages/kotii-languages:
     dependencies:
-      '@node-loader/babel':
-        specifier: ^2.0.1
-        version: 2.1.0
       i18next:
         specifier: ^21.8.14
         version: 21.10.0
       kotii-utils:
-        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-utils/kotii-utils-0.0.0.tgz
-        version: file:packages/kotii-utils/kotii-utils-0.0.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 1.0.0-beta.1.0
+        version: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-i18next:
         specifier: ^11.18.1
         version: 11.18.6(i18next@21.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -8939,6 +8936,9 @@ packages:
   kotii-ui@file:packages/kotii-ui/kotii-ui-1.0.0.tgz:
     resolution: {integrity: sha512-M4l+nKe63PGY6pVdXtJ8yj+SDq4t3spe98NP6Wls+PHwqgM7aB9/VHyHUlWuMNaWInJd48bNn1eflwrUsQX3UA==, tarball: file:packages/kotii-ui/kotii-ui-1.0.0.tgz}
     version: 1.0.0
+
+  kotii-utils@1.0.0-beta.1.0:
+    resolution: {integrity: sha512-zqQgtEiFpB8O/QPDv2CR9m3CwgtV6OzCcGD6pbg1+vCQw4116w1zJ9fJV9gn2BjQgnxv8d9rqYfGFlLxIjQjYw==}
 
   kotii-utils@file:packages/kotii-utils/kotii-utils-0.0.0.tgz:
     resolution: {integrity: sha512-Tu98iew25qkmacO8waX2aGQbFKWbjceuPjmSZE+QOFnhvMpiMtHfEqCzCZgm0QMoG+CHPw+NdqRCF5YrNBzQeQ==, tarball: file:packages/kotii-utils/kotii-utils-0.0.0.tgz}
@@ -17298,7 +17298,7 @@ snapshots:
   '@webpack-cli/configtest@1.2.0(webpack-cli@4.10.0)(webpack@5.101.3)':
     dependencies:
       webpack: 5.101.3(@swc/core@1.13.5)(webpack-cli@4.10.0)
-      webpack-cli: 4.10.0(webpack@5.101.3)
+      webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.101.3)
 
   '@webpack-cli/configtest@2.1.1(webpack-cli@5.1.4)(webpack@5.101.3)':
     dependencies:
@@ -17308,7 +17308,7 @@ snapshots:
   '@webpack-cli/info@1.5.0(webpack-cli@4.10.0)':
     dependencies:
       envinfo: 7.14.0
-      webpack-cli: 4.10.0(webpack@5.101.3)
+      webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.101.3)
 
   '@webpack-cli/info@2.0.2(webpack-cli@5.1.4)(webpack@5.101.3)':
     dependencies:
@@ -22720,6 +22720,14 @@ snapshots:
       - supports-color
       - typescript
 
+  kotii-utils@1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      styled-components: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      use-local-storage: 2.3.6(react@18.3.1)
+    transitivePeerDependencies:
+      - react
+      - react-dom
+
   kotii-utils@file:packages/kotii-utils/kotii-utils-0.0.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@node-loader/babel': 2.1.0
@@ -26570,7 +26578,7 @@ snapshots:
 
   style-loader@3.3.4(webpack@5.101.3):
     dependencies:
-      webpack: 5.101.3(@swc/core@1.13.5)(webpack-cli@5.1.4)
+      webpack: 5.101.3(@swc/core@1.13.5)(webpack-cli@4.10.0)
 
   style-to-js@1.1.8:
     dependencies:
@@ -27709,7 +27717,7 @@ snapshots:
       watchpack: 2.4.4
       webpack-sources: 3.3.3
     optionalDependencies:
-      webpack-cli: 4.10.0(webpack@5.101.3)
+      webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.101.3)
     transitivePeerDependencies:
       - '@swc/core'
       - esbuild

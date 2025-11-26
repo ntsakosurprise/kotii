@@ -23,7 +23,6 @@
     "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
   },
   "dependencies": {
-    "@node-loader/babel": "^2.0.1",
     "i18next": "^21.8.14",
     "kotii-utils": "1.0.0-beta.1.0",
     "react-i18next": "^11.18.1",
