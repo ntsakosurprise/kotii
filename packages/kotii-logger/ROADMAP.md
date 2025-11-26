@@ -1,90 +1,58 @@
-# Kotii-auth Roadmap
+# Kotii Logger Roadmap
 
-This roadmap outlines the planned features, improvements, and milestones for the project.  
-All dates are approximate and subject to change.
+## Phase 1 – Core Enhancements (Short-Term)
 
----
+**Goal:** Strengthen the core logger functionality and developer experience.
 
-## **v1.0.0-beta.1.0 — Initial Release**
+- ✅ Refactor core logging API for clarity and consistency
+- ✅ Support namespace-based logging with unique IDs
+- ✅ Implement environment variable controls (`KOTII_SHOW_ALL_LOGS`, `KOTII_SHOW_DEBUG_LOGS`)
+- ✅ Provide quick logging via `loggas`
+- ✅ Create `KOLogger` class for dedicated logger instances
+- ✅ Add detailed README with usage examples
 
-**Target:** Q4 2025
+**Planned Improvements:**
 
-### Goals
-
-- Establish core authentication and authorization system
-- Implement `useAuth` hook for React
-- Provide basic login and logout components
-- Set up testing and CI/CD pipeline
-
-### Features
-
-- User registration and login
-- Logout and session handling
-- Context-based auth state management
-- Basic documentation
+- Add default timestamp to all log outputs
+- Support color-coded log levels for better readability in terminals
+- Improve TypeScript types and exports
 
 ---
 
-<!-- ## **v1.1.0 — Enhancements** -->
+## Phase 2 – Mid-Term Features
 
-<!-- **Target:** Q2 2025
+**Goal:** Expand functionality and configuration options.
 
-### Goals
-
-- Improve user experience for authentication flows
-- Expand documentation with examples
-- Introduce event hooks for login/logout actions
-
-### Features
-
-- `registerOnLoginActions` and `registerOnLogoutActions` hooks
-- Error handling improvements
-- Loading and error states for auth components
-- Initial changelog setup
-
---- -->
-
-<!--
-## **v1.2.0 — Security & Stability**
-
-**Target:** Q3 2025
-
-### Goals
-
-- Enhance security features
-- Refactor authentication logic for scalability
-- Introduce token refresh and session expiration handling
-
-### Features
-
-- Automatic token refresh
-- Multi-factor authentication support
-- Improved session management
-- Unit and integration tests coverage > 80%
+- 🔹 Support dynamic log level control per namespace
+- 🔹 Add file logging support (e.g., logs saved to disk)
+- 🔹 Add log formatting options (JSON output, custom templates)
+- 🔹 Support async logging with queue for performance-heavy apps
+- 🔹 Enable grouping or tagging logs for structured applications
 
 ---
 
-## **v2.0.0 — Advanced Features**
+## Phase 3 – Long-Term Goals
 
-**Target:** Q4 2025
+**Goal:** Build an ecosystem-friendly, production-ready logger.
 
-### Goals
+- 🔹 Integrate with cloud logging platforms (e.g., AWS CloudWatch, Datadog, Loggly)
+- 🔹 Add plugin system for custom log transports (e.g., database, HTTP)
+- 🔹 Provide real-time log streaming via WebSocket or Web UI
+- 🔹 Introduce structured error tracking and stack trace enhancements
+- 🔹 Add performance monitoring/logging metrics for apps
 
-- Expand project to include role-based access
-- Add enterprise-level features
-- Improve developer experience
+---
 
-### Features
+## Community & Ecosystem
 
-- Role-based authorization (`RBAC`)
-- Admin dashboard components
-- Analytics hooks for user events
-- CLI tool for project setup and scaffolding
+- 🔹 Encourage contributions via GitHub issues and pull requests
+- 🔹 Build example projects demonstrating best practices
+- 🔹 Create a visual dashboard or playground for testing logs
 
---- -->
+---
 
-## Notes
+## Stretch Goals
 
-- All target dates are **approximate** and may shift based on development priorities.
-- Community contributions are welcome! Check the [Contributing Guide](https://github.com/ntsakosurprise/kotii/tree/develop/packages/kotii-auth/CONTRIBUTING.md) for details.
-- For up-to-date progress, see the [GitHub Issues](https://github.com/ntsakosurprise/kotii/tree/develop/packages/kotii-auth/issues).
+- 🔹 Implement context-aware logging (attach request/session data automatically)
+- 🔹 Support multi-environment configurations (development, staging, production)
+- 🔹 Auto-detect and filter sensitive information in logs
