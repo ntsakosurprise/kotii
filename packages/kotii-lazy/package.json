@@ -1,6 +1,6 @@
 {
   "name": "kotii-lazy",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1.0",
   "description": "",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
   "homepage": "https://github.com/kotiijs#readme",
@@ -8,9 +8,9 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
+      "import": "./index.js",
       "require": "./dist/index.cjs",
-      "default": "./dist/index.cjs"
+      "default": "./index.cjs"
     }
   },
   "directories": {
