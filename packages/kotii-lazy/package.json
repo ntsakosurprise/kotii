@@ -1,7 +1,7 @@
 {
   "name": "kotii-lazy",
   "version": "1.0.0-beta.1.0",
-  "description": "",
+  "description": "kotii-lazy is a lightweight utility library for lazy loading React components with ease",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
   "homepage": "https://github.com/kotiijs#readme",
   "license": "MIT",

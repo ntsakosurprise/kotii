@@ -1,7 +1,7 @@
 {
   "name": "kotii-router",
   "version": "1.0.0-beta.1.0",
-  "description": "",
+  "description": "kotii-router is a lightweight and flexible routing library for modern JavaScript and TypeScript applications. It provides declarative routing components and powerful hooks to manage navigation, route matching, and redirection.",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
   "homepage": "https://github.com/kotiijs#readme",
   "license": "MIT",

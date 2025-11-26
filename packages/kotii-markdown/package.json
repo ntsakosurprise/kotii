@@ -1,13 +1,14 @@
 {
   "name": "kotii-markdown",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1.0",
+  "description": "a lightweight JavaScript library for parsing, extracting, and converting Markdown content. It provides a set of utility functions and loaders to help you efficiently handle Markdown files in Node.js or browser environments.",
   "main": "index.js",
   "license": "MIT",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
+      "import": "./index.js",
       "require": "./dist/index.cjs",
-      "default": "./dist/index.cjs"
+      "default": "./index.js"
     }
   },
   "directories": {
@@ -17,7 +18,8 @@
   "files": [
     "dist/",
     "index.js",
-    "lib/"
+    "lib/",
+    "README.md"
   ],
   "scripts": {
     "test": "jest",
