@@ -1,59 +1,92 @@
-# kotii-templates Roadmap
+# kotii-templates
 
-A structured roadmap outlining the planned features, improvements, and long-term vision for the **kotii-templates** package.
+**kotii-templates** is a lightweight template provider for the Kotii ecosystem.  
+It delivers ready-to-use **SSR (Server-Side Rendering)** and **SPA (Single-Page Application)** templates, supporting both **JavaScript** and **TypeScript** project setups.
 
----
-
-## Phase 1 – Core Stabilization (Short-term, 0–3 months)
-
-**Objective:** Solidify the core functionality and ensure the package works reliably with SSR/SPA templates in JS/TS.
-
-- ✅ Finalize `Template` class API
-- ✅ Event-driven template fetching (`get-template`)
-- ✅ SSR and SPA templates for JavaScript and TypeScript
-- ✅ Path resolution across different environments (dist vs src)
-- ✅ Basic error handling for unsupported template types or names
-- ✅ Documentation and README with examples
+The package exposes a single class, `Template`, that allows developers to fetch template paths and manage template generation dynamically.
 
 ---
 
-## Phase 2 – Developer Experience Enhancements (Mid-term, 3–6 months)
+## Features
 
-**Objective:** Make `kotii-templates` more user-friendly and ready for CLI or programmatic use.
-
-- [ ] Implement `getPackageJson()` and `savePackageJson()` to allow template `package.json` management
-- [ ] Add TypeScript typings for `Template` and event payloads
-- [ ] Create CLI tool for scaffolded project generation
-- [ ] Add template validation (check required files, folder structure)
-- [ ] Expand README with interactive examples and diagrams
-- [ ] Add logging options or verbosity levels
+- Supports **SSR** and **SPA** templates
+- Works with **JavaScript** and **TypeScript**
+- Unified `Template` API for template resolution
+- Lightweight and modular
+- Ideal for scaffolding, CLI generators, or project bootstrapping
 
 ---
 
-## Phase 3 – Ecosystem & Integration (Long-term, 6–12 months)
+## Installation
 
-**Objective:** Make `kotii-templates` a fully integrated solution in the Kotii ecosystem and beyond.
+```bash
+npm install kotii-templates
+```
 
-- [ ] Add support for additional template types (e.g., React, Vue, Svelte starters)
-- [ ] Publish npm package with versioning and changelog
-- [ ] Integration with CI/CD pipelines for automated scaffolding
-- [ ] Event-driven plugin system for custom template hooks
-- [ ] Add template update/upgrade functionality
-- [ ] Community-driven template repository (allow users to contribute new templates)
+## Requesting a Template
 
----
+In an event-driven architecture, templates are requested by emitting an event:
 
-## Phase 4 – Advanced Features (Optional / Future)
+```js
+self.emit({
+  type: "get-template",
+  data: {
+    name: apptype, // "spa" or "ssr"
+    type: template, // "javascript" or "typescript"
+    callback: (templateInfo) => {
+      console.log("The template info:", templateInfo);
 
-**Objective:** Enable advanced templating and automation capabilities.
+      let kotiiMain = options["local-scripts"] || null;
+      let kotiiPackages = kotiiMain ? path.join(kotiiMain, "./packages") : null;
 
-- [ ] Template configuration system (custom settings per project)
-- [ ] Template preview & diff system before generation
-- [ ] Hot-swappable templates for live scaffolding
-- [ ] Analytics and usage tracking (optional, privacy-friendly)
+      resolve({
+        newFolder,
+        folderName,
+        repoUrl,
+        ...templateInfo,
+        kotiiMain,
+        kotiiPackages,
+      });
+    },
+  },
+});
+```
 
----
+## Template variants
 
-## Vision
+| Rendering Mode | Language   | Example Identifier |
+| -------------- | ---------- | ------------------ |
+| SSR            | JavaScript | `ssr/javascript`   |
+| SSR            | TypeScript | `ssr/typescript`   |
+| SPA            | JavaScript | `spa/javascript`   |
+| SPA            | TypeScript | `spa/typescript`   |
 
-By completing this roadmap, **kotii-templates** will evolve from a simple template resolver into a **full-featured, event-driven, multi-language scaffolding system** that integrates seamlessly with Kotii projects and developer tooling pipelines.
+# Questions & Support
+
+For questions and support please use kotii-loggerjs's Suppport page on [Github repo](https://github.com/ntsakosurprise/kotii-logger/development/SUPPORT.md).
+
+# Issues
+
+Please make sure to read the [Issue](https://github.com/ntsakosurprise/kotii-logger/development/ISSUES.md) Reporting Checklist before opening an issue. Issues not conforming to the guidelines may be closed immediately.
+
+# Changelog
+
+Detailed changes for each release are documented in our [Changelog](https://github.com/ntsakosurprise/kotii-logger/development//CHANGELOG.md).
+
+# Release Notes
+
+A summary of release changes can be found in our [Release Notes](https://github.com/ntsakosurprise/kotii-logger/development//RELEASE_NOTES.md).
+
+# Stay In Touch
+
+[Twitter @ntsakosurprise](https://twitter.com/ntsakosurprise).
+
+# Contribution
+
+Please make sure to read the [Contributing Guide](https://github.com/ntsakosurprise/kotii-logger/development/CONTRIBUTING.md) before making a pull request. If you have an kotii-logger plugin, add it with a pull request.
+
+# Licence
+
+[MIT](https://.github.com/) - see the [LICENSE](https://github.com/ntsakosurprise/kotii-logger/development/LICENSE.md) file for details.
+
+© Kotii Ecosystem 2025-present. Ntsako (Surprise) Mashele
