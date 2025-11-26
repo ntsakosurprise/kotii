@@ -13,8 +13,7 @@
     "start:dev": "concurrently --kill-others \"npm run build:dev\" \"cross-env NODE_ENV=production nodemon index \" ",
     "start:dev:nodemon": "node app.js start",
     "build": "cross-env NODE_ENV=production webpack",
-    "build:dev": "webpack --mode development --watch",
-    "prepublishOnly": "npm run build"
+    "build:dev": "webpack --mode development --watch"
   },
   "keywords": [
     "kotii-cli",
