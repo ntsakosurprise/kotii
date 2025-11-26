@@ -8,7 +8,6 @@
     "yarn": ">=1.22.11",
     "npm": ">=8.19.2"
   },
-  "private": true,
   "exports": {
     ".": {
       "import": "./index.js",
