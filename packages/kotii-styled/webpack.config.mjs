@@ -4,15 +4,12 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
-console.log("Webpack dir name", __dirname);
-console.log("webpack path", path.resolve(__dirname, "node_modules"));
+
 const isESM = process.env.NODE_MODE === "esm" ? true : false;
 
-const kotiiRouter = {
+const kotiiStyled = {
   entry: "./index.js",
-  target: "web",
   mode: "development",
-  devtool: "inline-source-map",
 
   experiments: {
     outputModule: isESM ? true : false,
@@ -26,12 +23,7 @@ const kotiiRouter = {
 
     module: isESM ? true : false,
   },
-  externals: [
-    {
-      react: "react",
-      "react-dom": "react-dom",
-    },
-  ],
+
   resolve: {
     extensions: [".js", ".jsx"],
   },
@@ -39,11 +31,25 @@ const kotiiRouter = {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: "babel-loader",
+        exclude: [path.resolve(__dirname, "node_modules")],
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              [
+                "@babel/preset-env",
+                {
+                  modules: isESM ? false : "auto",
+                },
+              ],
+              "@babel/preset-react",
+            ], // Use presets for ES features and React JSX
+          },
+        },
       },
     ],
+    exprContextCritical: false, // Temporary workaround
   },
 };
 
-export default kotiiRouter;
+export default kotiiStyled;
