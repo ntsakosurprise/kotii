@@ -1,145 +1,303 @@
-# Kotii-Auth API
+# Kotii Logger — API Reference
 
-## AuthProvider
+This document provides a complete reference of all public APIs exposed by **kotii-logger**.
 
-AuthProvider is a wrapper component that mantains your login/logout state. It takes three optional props/arguments these are:
+---
 
-| Prop       | Required | Description                                         |   Type   |
-| ---------- | -------- | --------------------------------------------------- | :------: |
-| `authUser` | No       | Sets initial user(useful in server renderd apps)    |  Object  |
-| `onLogin`  | No       | Sets a function that should run on successful login | Function |
-| `onLogout` | No       | Sets a function that should run on logout           | Function |
+## Table of Contents
 
-### Example
+- [Imports](#imports)
+- [Logger Object](#logger-object)
+  - [logger.setNameSpaces()](#loggersetnamespaces)
+  - [logger.log()](#loggerlog)
+  - [logger.info()](#loggerinfo)
+  - [logger.debug()](#loggerdebug)
+  - [logger.warn()](#loggerwarn)
+  - [logger.error()](#loggererror)
+- [KOLogger Class](#kologger-class)
+  - [new KOLogger()](#new-kologger)
+  - [KOLogger.log()](#kologgerlog)
+  - [KOLogger.info()](#kologgerinfo)
+  - [KOLogger.debug()](#kologgerdebug)
+  - [KOLogger.warn()](#kologgerwarn)
+  - [KOLogger.error()](#kologgererror)
+- [loggas Utility](#loggas-utility)
+- [Environment Variables](#environment-variables)
+- [Namespace Configuration](#namespace-configuration)
+- [Examples](#examples)
 
-```js
-let myUser = null;
-let onLogin = (user) => {
-  console.log("My Logged In User");
-};
-let onLogout = () => {
-  console.log("User is Logged out");
-};
-<AuthProvider authUser={initialUser} onLogin={onLogin onLogoug={onLogout}}>
-  <App />
-</AuthProvider>;
+---
+
+## Imports
+
+Import any combination of the logger utilities:
+
+```javascript
+import { logger, KOLogger, loggas } from "kotii-logger";
 ```
 
-## registerOnLoginActions
+# 🧾 Logger Object
 
-registerOnLoginActions allows you to register
+The **Logger Object** provides a namespace-based logging API for structured and organized logging.
 
-| argument    | Required | Description                       |   Type   |
-| ----------- | -------- | --------------------------------- | :------: |
-| `action(s)` | yes      | a list of actions to run on login | Function |
+---
 
-### Example
+## 🔧 `logger.setNameSpaces()`
+
+The `setNameSpaces` method allows you to define or update logging namespaces used throughout the application.
 
 ```js
-import { registerOnLoginActions } from "kotii-auth";
-import { useNavigate } from "kotii-router";
-import { useEffect } from "react";
-
-export function RedirectAfterLogin() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const unregister = registerOnLoginActions(() => {
-      navigate("/dashboard");
-    });
-
-    return unregister;
-  }, []);
-
-  return null;
-}
+logger.setNameSpaces(
+  nameSpaces: Array<{ namespace: string; id: string }>
+): void
 ```
 
-## registerOnLogoutActions
+Registers namespaces for structured logging.
 
-registerOnLogoutActions allows you to register an action that will be run when a user logs out of an app.
+| Name      | Type   | Description                                        |
+| --------- | ------ | -------------------------------------------------- |
+| namespace | string | Readable namespace name (ex: `"app:start-server"`) |
+| id        | string | Unique ID used internally to reference logs        |
 
-| argument    | Required | Description                        |   Type   |
-| ----------- | -------- | ---------------------------------- | :------: |
-| `action(s)` | yes      | a list of actions to run on logout | Function |
-
-### Example
+#### Example
 
 ```js
-import { registerOnLogoutActions } from "kotii-auth";
-import { useEffect } from "react";
-import { queryClient } from "react-query";
-
-export function ClearCacheOnLogout() {
-  useEffect(() => {
-    const unregister = registerOnLogoutActions(() => {
-      queryClient.clear(); // clear cached on logout
-    });
-
-    return unregister;
-  }, []);
-
-  return null;
-}
+logger.setNameSpaces([
+  { namespace: "app:start-client", id: "appClient" },
+  { namespace: "app:start-server", id: "appServer" },
+]);
 ```
 
-## useAuthRegisterActions
+---
 
-useAuthRegisterActions allows you to register functions that will run when a user logs in or logs out of the app. It is basically just a convenience hook to add login and logout actions on one go.
-
-| argument   | Required | Description               |   Type   |
-| ---------- | -------- | ------------------------- | :------: |
-| `onLogout` | yes      | a action to run on login  | Function |
-| `onLogout` | yes      | a action to run on logout | Function |
-
-### Example
+### logger.log()
 
 ```js
-import React from "react";
-import { analytics } from "../analytics";
-import { useRegisterAuthActions } from "kotii-auth";
-
-export function AuthAnalytics() {
-  useRegisterAuthActions({
-    onLogin: (user) => analytics.track("login", { userId: user.id }),
-    onLogout: () => analytics.track("logout"),
-  });
-
-  return null;
-}
+logger.log(id: string, message: string): void
 ```
 
-## useAuth
+Logs a standard, general-purpose message.
 
-useAuth is a hook central to kotii-auth's authentication functionality, it returns things such as the function to login with
+---
 
-| Resource               | Type                             | Description                                                        | Example Usage                  |
-| ---------------------- | -------------------------------- | ------------------------------------------------------------------ | ------------------------------ |
-| `user`                 | `object \| null`                 | The authenticated user object, or `null` if logged out.            | `user?.name`                   |
-| `isAuthenticated`      | `boolean`                        | Indicates whether a user is logged in.                             | `if (isAuthenticated) …`       |
-| `login`                | `(credentials) => Promise<void>` | Function to authenticate a user. Sets `user`.                      | `login({ email, password })`   |
-| `logout`               | `() => Promise<void>`            | Function to log the user out. Clears `user`.                       | `logout()`                     |
-| `loading` _(optional)_ | `boolean`                        | Whether auth state is initializing or login/logout is in progress. | `if (loading) return spinner;` |
-| `error` _(optional)_   | `string \| null`                 | Authentication error message.                                      | `if (error) showError(error);` |
-
-### Example
+### logger.info()
 
 ```js
-import React from "react";
-import { useAuth } from "./useAuth";
+logger.info(id: string, message: string): void
+```
 
-export function UserInfo() {
-  const { user = null } = useAuth();
+Logs an informational message.
 
-  if (!user) {
-    return <p>You are not logged in.</p>;
-  }
+---
 
-  return (
-    <div>
-      <h3>Name, {user.name}!</h3>
-      <p>Surname: {user.surname}</p>
-    </div>
-  );
-}
+### logger.debug()
+
+```js
+logger.debug(id: string, message: string): void
+```
+
+Logs a debug-level message.\
+Visibility controlled by:
+
+- `KOTII_SHOW_DEBUG_LOGS`
+
+- `KOTII_SHOW_ALL_LOGS`
+
+---
+
+### logger.warn()
+
+```js
+logger.warn(id: string, message: string): void
+```
+
+Logs a warning message.
+
+---
+
+### logger.error()
+
+```js
+logger.error(id: string, message: string): void
+```
+
+Logs an error message.
+
+---
+
+## KOLogger Class
+
+The `KOLogger` class creates a dedicated logger bound to a single namespace.
+
+---
+
+### new KOLogger()
+
+```js
+new  KOLogger(namespace: string)
+```
+
+Creates a new logger instance scoped to a given namespace.
+
+#### Example
+
+```js
+const apiLogger = new KOLogger("api");
+```
+
+---
+
+### KOLogger.log()
+
+```js
+KOLogger.log(message: string): void
+```
+
+---
+
+### KOLogger.info()
+
+```js
+KOLogger.info(message: string): void
+```
+
+---
+
+### KOLogger.debug()
+
+```js
+KOLogger.debug(message: string): void
+```
+
+---
+
+### KOLogger.warn()
+
+```js
+KOLogger.warn(message: string): void
+```
+
+---
+
+### KOLogger.error()
+
+```js
+KOLogger.error(message: string): void
+```
+
+---
+
+## loggas Utility
+
+A small helper for quick and unstructured logging.
+
+---
+
+### loggas()
+
+```js
+loggas(message: any): void
+```
+
+A shortcut for simple logs without namespace or formatting.
+
+#### Example
+
+```js
+loggas("Quick message");
+```
+
+---
+
+## Environment Variables
+
+Environment variables control visibility of certain log levels at runtime.
+
+---
+
+### KOTII_SHOW_ALL_LOGS
+
+```js
+export KOTII_SHOW_ALL_LOGS=true
+```
+
+When enabled:
+
+- all logs (info, warn, error, debug) are shown.
+
+---
+
+### KOTII_SHOW_DEBUG_LOGS
+
+```js
+export KOTII_SHOW_DEBUG_LOGS=true
+```
+
+When enabled:
+
+- debug logs are shown
+
+- but other logs still depend on `KOTII_SHOW_ALL_LOGS`
+
+---
+
+### Log Visibility Matrix
+
+| KOTII_SHOW_ALL_LOGS | KOTII_SHOW_DEBUG_LOGS | Visible Logs      |
+| ------------------- | --------------------- | ----------------- |
+| true                | true                  | All logs shown    |
+| true                | false                 | info, warn, error |
+| false               | true                  | debug only        |
+| false               | false                 | minimal output    |
+
+---
+
+## Namespace Configuration
+
+Each namespace entry looks like:
+
+```js
+{ namespace: "app:start-client", id: "appClient" }
+```
+
+- **namespace** = human readable name
+
+- **id** = key used when logging
+
+This allows clean separation of logs from different modules.
+
+---
+
+## Examples
+
+### Basic Usage
+
+```js
+import { logger } from "kotii-logger";
+
+logger.setNameSpaces([{ namespace: "app:start-server", id: "server" }]);
+
+logger.log("server", "Server started");
+logger.debug("server", "Debug details");
+```
+
+---
+
+### Using KOLogger
+
+```js
+import { KOLogger } from "kotii-logger";
+const dbLogger = new KOLogger("database");
+
+dbLogger.info("Connecting...");
+dbLogger.error("Connection failed");
+```
+
+---
+
+### Quick Logging
+
+```js
+import { loggas } from "kotii-logger";
+loggas("Just a quick log");
 ```
