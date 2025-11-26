@@ -100,3 +100,63 @@ logger.error("app", "Something failed"); // NOT shown
 | `logger.error(id, message)`   | Logs an error message                               |
 | `loggas(message)`             | Quick logging utility                               |
 | `KOLogger(namespace)`         | Creates a dedicated logger instance for a namespace |
+
+# Questions & Support
+
+For questions and support please use kotii-loggerjs's Suppport page on [Github repo](https://github.com/ntsakosurprise/kotii-logger/development/SUPPORT.md).
+
+# Issues
+
+Please make sure to read the [Issue](https://github.com/ntsakosurprise/kotii-logger/development/ISSUES.md) Reporting Checklist before opening an issue. Issues not conforming to the guidelines may be closed immediately.
+
+# Changelog
+
+Detailed changes for each release are documented in our [Changelog](https://github.com/ntsakosurprise/kotii-logger/development//CHANGELOG.md).
+
+# Release Notes
+
+A summary of release changes can be found in our [Release Notes](https://github.com/ntsakosurprise/kotii-logger/development//RELEASE_NOTES.md).
+
+# Stay In Touch
+
+[Twitter @ntsakosurprise](https://twitter.com/ntsakosurprise).
+
+# Contribution
+
+Please make sure to read the [Contributing Guide](https://github.com/ntsakosurprise/kotii-logger/development/CONTRIBUTING.md) before making a pull request. If you have kotii-logger feature you want to integrate, add it with a pull request.
+
+# Licence
+
+[MIT](https://.github.com/) - see the [LICENSE](https://github.com/ntsakosurprise/kotii-logger/development/LICENSE.md) file for details.
+
+copyright (c) 2018-present. Ntsako (Surprise) Mashele
+
+# Questions & Support
+
+For questions and support please use kotii-loggerjs's Suppport page on [Github repo](https://github.com/ntsakosurprise/kotii-logger/development/SUPPORT.md).
+
+# Issues
+
+Please make sure to read the [Issue](https://github.com/ntsakosurprise/kotii-logger/development/ISSUES.md) Reporting Checklist before opening an issue. Issues not conforming to the guidelines may be closed immediately.
+
+# Changelog
+
+Detailed changes for each release are documented in our [Changelog](https://github.com/ntsakosurprise/kotii-logger/development//CHANGELOG.md).
+
+# Release Notes
+
+A summary of release changes can be found in our [Release Notes](https://github.com/ntsakosurprise/kotii-logger/development//RELEASE_NOTES.md).
+
+# Stay In Touch
+
+[Twitter @ntsakosurprise](https://twitter.com/ntsakosurprise).
+
+# Contribution
+
+Please make sure to read the [Contributing Guide](https://github.com/ntsakosurprise/kotii-logger/development/CONTRIBUTING.md) before making a pull request. If you have an kotii-logger plugin, add it with a pull request.
+
+# Licence
+
+[MIT](https://.github.com/) - see the [LICENSE](https://github.com/ntsakosurprise/kotii-logger/development/LICENSE.md) file for details.
+
+copyright (c) 2018-present. Ntsako (Surprise) Mashele
