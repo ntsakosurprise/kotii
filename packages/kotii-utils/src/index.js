@@ -2,6 +2,7 @@ import {
   getFromStorage,
   removeFromStorage,
   setInStorage,
+  isItemInStorage,
 } from "./localStorage";
 import {
   capitalizeFirstLetter,
@@ -14,4 +15,5 @@ export {
   getFromStorage,
   setInStorage,
   removeFromStorage,
+  isItemInStorage,
 };

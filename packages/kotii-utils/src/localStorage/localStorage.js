@@ -21,3 +21,10 @@ export const removeFromStorage = (key) => {
   if (!getFromStorage(key)) return true;
   return false;
 };
+
+export const isItemInStorage = async (key) => {
+  if (await getFromStorage(key)) {
+    return true;
+  }
+  return false;
+};
