@@ -8,9 +8,9 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./index.js",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
-      "default": "./index.cjs"
+      "default": "./dist/index.mjs"
     }
   },
   "directories": {
@@ -20,7 +20,8 @@
   "files": [
     "dist/",
     "index.js",
-    "src/"
+    "src/",
+    "README.md"
   ],
   "publishConfig": {
     "access": "public"

@@ -1,14 +1,14 @@
-import { createBasicAuth } from "@octokit/auth-basic";
-import * as Octokit from "@octokit/rest";
+// import { createBasicAuth } from "@octokit/auth-basic";
+// import * as Octokit from "@octokit/rest";
 import Configstore from "configstore";
-import execa from "execa";
-import Listr from "listr";
-import * as github from "octonode";
-import * as pkgInstall from "pkg-install";
-import simpleGit from "simple-git";
+// import execa from "execa";
+// import Listr from "listr";
+// import * as github from "octonode";
+// import * as pkgInstall from "pkg-install";
+// import simpleGit from "simple-git";
 import methods from "./methods.js";
 // import pkgInstall$0 from "pkg-install";
-import isOnline from "is-online";
+// import isOnline from "is-online";
 // const { projectInstall } = pkgInstall$0;
 // const Bitbucket = require('bitbucket').Bitbucket
 // const pkg = require('../package.json')
@@ -24,14 +24,14 @@ import isOnline from "is-online";
 class Scaffold {
   constructor(pao) {
     this.pao = pao;
-    this.Listr = Listr;
-    this.execa = execa;
-    this.Octokit = Octokit;
-    this.simpleGit = simpleGit;
+    this.Listr = {};
+    this.execa = {};
+    this.Octokit = {};
+    this.simpleGit = {};
     this.Configstore = Configstore;
-    this.github = github;
-    this.projectInstall = pkgInstall;
-    this.isOnline = isOnline;
+    this.github = {};
+    this.projectInstall = {};
+    this.isOnline = {};
     //  this.Bitbucket = Bitbucket
     //  this.octokit = new Octokit()
     this.createBasicAuth = createBasicAuth;

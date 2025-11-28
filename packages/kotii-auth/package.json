@@ -8,9 +8,9 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./index.js",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
-      "default": "./index.js"
+      "default": "./dist/index.mjs"
     }
   },
   "directories": {

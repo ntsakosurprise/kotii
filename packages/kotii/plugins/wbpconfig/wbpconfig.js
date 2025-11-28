@@ -7,7 +7,7 @@ import webpack from "webpack";
 import webpackDevMiddleware from "webpack-dev-middleware";
 import webpackHotMiddleware from "webpack-hot-middleware";
 import methods from "./methods.js";
-import webPackConfig from "./webpack.config.js";
+// import webPackConfig from "./webpack.config.js";
 import webPackServerConfig from "./webpack.server.config.js";
 
 /**
@@ -16,7 +16,7 @@ import webPackServerConfig from "./webpack.server.config.js";
 class WebpackConfig {
   constructor(pao) {
     this.pao = pao;
-    this.webPackConfig = webPackConfig;
+    this.webPackConfig = {};
     this.webPackServerConfig = webPackServerConfig;
     this.addedEmptyFiles = null;
     this.webpack = webpack;
