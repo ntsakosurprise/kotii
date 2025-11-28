@@ -38,20 +38,15 @@
     ]
   },
   "dependencies": {
-    "@node-loader/babel": "^2.0.1",
     "@types/jsdom": "20",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@yarnpkg/parsers": "^3.0.0",
-    "anzii": "file:/Users/surprisemashele/Documents/Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz",
-    "babel-register-esm": "^1.2.5",
-    "cjstoesm": "^2.1.2",
+    "anzii": "8.0.0",
     "cross-spawn": "^7.0.3",
-    "kotii-languages": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-languages/kotii-languages-1.0.0.tgz",
-    "patch-package": "^8.0.0",
+    "kotii-languages": "1.0.0-beta.1.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "styled-components": "5.3.11"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@babel/plugin-syntax-import-assertions": "^7.24.7",
