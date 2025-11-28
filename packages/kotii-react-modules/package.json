@@ -62,10 +62,8 @@
   "dependencies": {
     "debug": "^4.4.0",
     "html-react-parser": "^4.0.0",
-    "kotii-markdown-loader": "file:../kotii-markdown-loader/kotii-markdown-loader-1.0.0.tgz",
-    "kotii-theme": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-theme/kotii-theme-0.0.0.tgz",
-    "kotii-ui": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-ui/kotii-ui-1.0.0.tgz",
-    "kotii-utils": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-utils/kotii-utils-0.0.0.tgz",
+    "kotii-markdown": "1.0.0-beta.1.0",
+    "kotii-utils": "1.0.0-beta.1.0",
     "prop-types": "^15.7.2"
   }
 }
