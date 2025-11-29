@@ -11,7 +11,7 @@ const AuthContext = React.createContext({
 });
 
 const AuthProvider = ({
-  authUser: defaultUser = {},
+  authUser: defaultUser = null,
   children,
   onLogin = null,
   onLogout = null,

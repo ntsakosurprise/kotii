@@ -20,7 +20,9 @@ const Routes = ({ children, routes = null, suspense = null }) => {
     urlSegments,
   } = useContext(KotiiRouterContenxt);
   console.log("AUTH RENDER ORDER", useAuth());
-  const { user } = useAuth() || null;
+  // const { user } = useAuth() || null;
+  const user = useAuth()?.user ?? null;
+  console.log("THE USER AUTHENTICATION", user);
 
   let currentPath = urlSegments.path;
   let elementToRender = null;
@@ -43,6 +45,7 @@ const Routes = ({ children, routes = null, suspense = null }) => {
     const matchedRoute = matchRoute(fullUrl, currentPath);
 
     if (matchedRoute) {
+      console.log("THE CHILD MATCHED ROUTE", user, child);
       if (!user && child?.isPrivate) return <Redirect to={"/login"} />;
 
       const match =
