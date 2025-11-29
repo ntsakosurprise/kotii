@@ -34,7 +34,7 @@ class Scaffold {
     this.isOnline = {};
     //  this.Bitbucket = Bitbucket
     //  this.octokit = new Octokit()
-    this.createBasicAuth = createBasicAuth;
+    this.createBasicAuth = {};
     this.questions = {
       remote: [
         {

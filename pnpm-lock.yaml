@@ -208,23 +208,23 @@ importers:
         specifier: ^7.1.0
         version: 7.2.0
       kotii-auth:
-        specifier: 1.0.0-beta.1.0
-        version: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-auth/kotii-auth-1.0.0-beta.2.tgz
+        version: file:packages/kotii-auth/kotii-auth-1.0.0-beta.2.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-languages:
         specifier: 1.0.0-beta.1.0
         version: 1.0.0-beta.1.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-lazy:
-        specifier: 1.0.0-beta.1.0
-        version: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-lazy/kotii-lazy-1.0.0-beta.2.0.tgz
+        version: file:packages/kotii-lazy/kotii-lazy-1.0.0-beta.2.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-logger:
         specifier: 1.0.0-beta.1.0
         version: 1.0.0-beta.1.0
       kotii-markdown:
-        specifier: 1.0.0-beta.1.0
-        version: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-markdown/kotii-markdown-1.0.0-beta.1.0.tgz
+        version: file:packages/kotii-markdown/kotii-markdown-1.0.0-beta.1.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-router:
-        specifier: 1.0.0-beta.1.0
-        version: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-router/kotii-router-1.0.0-beta.2.0.tgz
+        version: file:packages/kotii-router/kotii-router-1.0.0-beta.2.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-styled:
         specifier: 1.0.0-beta.1.0
         version: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -8418,6 +8418,13 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
 
+  kotii-auth@file:packages/kotii-auth/kotii-auth-1.0.0-beta.2.tgz:
+    resolution: {integrity: sha512-9JMGt0xRAbbITTjuS02/5M0bxRYHx2CHvDdLkh1Ro6mm3/1zZ1r2KVhQRcKD23Z2/VuCqoLC3S0UZ0lUC0RLwA==, tarball: file:packages/kotii-auth/kotii-auth-1.0.0-beta.2.tgz}
+    version: 1.0.0-beta.2
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
+
   kotii-languages@1.0.0-beta.1.0:
     resolution: {integrity: sha512-WGPRuzpHlf2B2RbEnNmegZ+lUosnBkZvI/AUcMdV/VesDtxnUrAP5yvmYbUylnlNBLXV8GSseuI21/UqqEcX3A==}
 
@@ -8425,8 +8432,9 @@ packages:
     resolution: {integrity: sha512-O9XLlaRAN/nhd/38Dfae+iXyMffhl8EO/ZXr6p0sA2BoK9NOiMCbYgBUbyVbhMDhs8GyuYsr2KEPn41UMdfHAA==, tarball: file:packages/kotii-languages/kotii-languages-1.0.0.tgz}
     version: 1.0.0
 
-  kotii-lazy@1.0.0-beta.1.0:
-    resolution: {integrity: sha512-kq1hWgncfd2sIwzTv2omJNgSfR95gCyTrzQddJYfU7l9ExHn0mud8VZ7Qwu1fJr9LYEPlwxNR2lyaR4vO1glWQ==}
+  kotii-lazy@file:packages/kotii-lazy/kotii-lazy-1.0.0-beta.2.0.tgz:
+    resolution: {integrity: sha512-TmP6/sScPhIqpkM8Y36Ejvj1D7gCfL8TEkSPbFQ6qLiP3Ah17dKq1cZRchWc7Nc/tZ99+Mc2fkGHIbltKOGhzQ==, tarball: file:packages/kotii-lazy/kotii-lazy-1.0.0-beta.2.0.tgz}
+    version: 1.0.0-beta.2.0
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -8441,6 +8449,10 @@ packages:
   kotii-markdown@1.0.0-beta.1.0:
     resolution: {integrity: sha512-LCKHALDn++nlxY/dLMRAr/H4YrcSWiOQWXXdzIKYbWKrKCUKT4ojabDEnFi7GwTl4OBlzE9Ac8JAwG8lVWCKSg==}
 
+  kotii-markdown@file:packages/kotii-markdown/kotii-markdown-1.0.0-beta.1.0.tgz:
+    resolution: {integrity: sha512-1BeUhtFYL6QUn2xi9eGxuxTvZ7GETbeEm+yFOJuXUOMzueMqY1QB1HnXLXaNYrE7vc/vbB206e+lUiWi2EeL9w==, tarball: file:packages/kotii-markdown/kotii-markdown-1.0.0-beta.1.0.tgz}
+    version: 1.0.0-beta.1.0
+
   kotii-markdown@file:packages/kotii-markdown/kotii-markdown-1.0.0.tgz:
     resolution: {integrity: sha512-dT+NpHtjRdf5eWko410VS4dHrzHKgdhY6dcNnNF/92FD/Fju5z26Od5Umkpau/xaTaXj8o6KjCvx5kNiaRPSCw==, tarball: file:packages/kotii-markdown/kotii-markdown-1.0.0.tgz}
     version: 1.0.0
@@ -8452,8 +8464,9 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
 
-  kotii-router@1.0.0-beta.1.0:
-    resolution: {integrity: sha512-rvblYJjSrSQMMBT+Ec2Pdx4sTdaHHNkbSC7BQLQIbQneTCboFHes1dPslVtB5IHbh2KY+OZKRGgAFaelrzZHHg==}
+  kotii-router@file:packages/kotii-router/kotii-router-1.0.0-beta.2.0.tgz:
+    resolution: {integrity: sha512-gyK4rU83fgsh1LxfdRz+cD6PF0GSfIFlbhgI+SbytnxaCMZRsuKMRAuIziIXW1S1vMgIbXH4IC4758tf7as37A==, tarball: file:packages/kotii-router/kotii-router-1.0.0-beta.2.0.tgz}
+    version: 1.0.0-beta.2.0
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -21305,6 +21318,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  kotii-auth@file:packages/kotii-auth/kotii-auth-1.0.0-beta.2.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      debug: 4.4.3(supports-color@5.5.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    transitivePeerDependencies:
+      - supports-color
+
   kotii-languages@1.0.0-beta.1.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       i18next: 21.10.0
@@ -21336,7 +21357,7 @@ snapshots:
       - react-native
       - supports-color
 
-  kotii-lazy@1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  kotii-lazy@file:packages/kotii-lazy/kotii-lazy-1.0.0-beta.2.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
       react: 18.3.1
@@ -21362,6 +21383,17 @@ snapshots:
       - react-dom
 
   kotii-markdown@1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@node-loader/babel': 2.1.0
+      cross-env: 10.1.0
+      marked: 4.3.0
+      prism: 4.1.2(react@18.3.1)
+      styled-components: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+    transitivePeerDependencies:
+      - react
+      - react-dom
+
+  kotii-markdown@file:packages/kotii-markdown/kotii-markdown-1.0.0-beta.1.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@node-loader/babel': 2.1.0
       cross-env: 10.1.0
@@ -21402,7 +21434,7 @@ snapshots:
       - supports-color
       - typescript
 
-  kotii-router@1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  kotii-router@file:packages/kotii-router/kotii-router-1.0.0-beta.2.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
       kotii-auth: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

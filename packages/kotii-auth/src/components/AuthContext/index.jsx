@@ -4,15 +4,21 @@ import React, { useState } from "react";
 const onLoginActions = new Set();
 const onLogoutActions = new Set();
 
-const AuthContext = React.createContext(null);
+const AuthContext = React.createContext({
+  user: null,
+  login: () => {},
+  logout: () => {},
+});
 
 const AuthProvider = ({
-  authUser: defaultUser = null,
+  authUser: defaultUser = {},
   children,
   onLogin = null,
   onLogout = null,
 }) => {
+  console.log("THE AUTH PROVIDER", defaultUser);
   const [user, setUser] = useState(defaultUser);
+  console.log("THE USER", user);
   const authLogin = (authUser, onLoginAction = null) => {
     setUser(authUser);
     onLoginActions.forEach((afterLogin) => {
@@ -40,7 +46,9 @@ const AuthProvider = ({
 
 export default AuthProvider;
 export const useAuth = () => {
-  return React.useContext(AuthContext);
+  const contextStuff = React.useContext(AuthContext);
+  console.log("USE AUTH CONTEXT DATA", contextStuff);
+  return contextStuff;
 };
 export const registerOnLoginActions = (afterLoginAction) => {
   onLoginActions.add(afterLoginAction);

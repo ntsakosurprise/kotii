@@ -19,7 +19,8 @@ const Routes = ({ children, routes = null, suspense = null }) => {
     setQueryParams,
     urlSegments,
   } = useContext(KotiiRouterContenxt);
-  const { user } = useAuth();
+  console.log("AUTH RENDER ORDER", useAuth());
+  const { user } = useAuth() || null;
 
   let currentPath = urlSegments.path;
   let elementToRender = null;

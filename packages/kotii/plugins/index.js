@@ -20,7 +20,7 @@ import Interpreter from "./interpreter/index.js";
 import Markdownr from "./markdownr/index.js";
 import ReactView from "./react/reactview.js";
 // import ReactToJsx from "./reacttojsx/index.js";
-import Scaffold from "./scaffold/index.js";
+// import Scaffold from "./scaffold/index.js";
 import ScriptsUtils from "./scripts-util/scripts-util.js";
 import ServerBuild from "./server-build/index.js";
 import ServerSentEvents from "./server-sent-events/index.js";
@@ -44,7 +44,7 @@ export {
   Interpreter,
   KotiiCatchAll,
   Markdownr,
-  Scaffold,
+  // Scaffold,
   ScriptsUtils,
   ServerBuild,
   ServerSentEvents,
@@ -55,8 +55,6 @@ export {
 };
 export default {
   Interpreter,
-  Scaffold,
-
   Start,
   Config,
   Build,
