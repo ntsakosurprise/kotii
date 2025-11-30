@@ -1378,7 +1378,7 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
       viewso: "react",
       title: "REACT SERVE-SIDE RENDERING COMPONENT",
       method: "GET",
-      type: "public",
+      type: route?.isPrivate ? "private" : "public",
       name: route.componentName,
       requiresData: route.getServerState,
       hasEffectsToRun: route.universalEffects ? true : false,
