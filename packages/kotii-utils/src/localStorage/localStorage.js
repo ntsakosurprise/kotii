@@ -1,10 +1,10 @@
-export const setInStorage = (key, value) => {
+export const setInStorage = async (key, value) => {
   localStorage.setItem(key, JSON.stringify(value));
   if (getFromStorage(key)) return true;
   return false;
 };
 
-export const getFromStorage = (key) => {
+export const getFromStorage = async (key) => {
   let foundItem = key ? localStorage.getItem(key) : null;
   if (!foundItem) return null;
   if (!foundItem) return null;
@@ -15,7 +15,7 @@ export const getFromStorage = (key) => {
   return JSON.parse(foundItem);
 };
 
-export const removeFromStorage = (key) => {
+export const removeFromStorage = async (key) => {
   // console.log("Removing Key from storage;;;", key);
   localStorage.removeItem(key);
   if (!getFromStorage(key)) return true;

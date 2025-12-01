@@ -3,6 +3,6 @@ import {
   removeFromStorage,
   setInStorage,
   isItemInStorage,
-} from "./localStorage";
+} from "./localStorage.js";
 
 export { setInStorage, getFromStorage, removeFromStorage, isItemInStorage };

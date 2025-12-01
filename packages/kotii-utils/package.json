@@ -3,6 +3,7 @@
   "version": "1.0.0-beta.1.0",
   "description": "a lightweight JavaScript utility library that provides helpful functions for string manipulation and local storage management. Perfect for small projects or quick utilities.",
   "license": "MIT",
+  "type": "module",
   "exports": {
     ".": {
       "import": "./src/index.js",
@@ -13,7 +14,8 @@
   "files": [
     "dist/",
     "src/",
-    "README.md"
+    "README.md",
+    "package.json"
   ],
   "scripts": {
     "start": "webpack-dev-server --watch",

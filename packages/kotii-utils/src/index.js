@@ -3,11 +3,11 @@ import {
   removeFromStorage,
   setInStorage,
   isItemInStorage,
-} from "./localStorage";
+} from "./localStorage/index.js";
 import {
   capitalizeFirstLetter,
   capitalizeLastLetter,
-} from "./textManipulations/index";
+} from "./textManipulations/index.js";
 
 export {
   capitalizeFirstLetter,
