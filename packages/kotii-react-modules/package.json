@@ -1,6 +1,6 @@
 {
   "name": "kotii-react-modules",
-  "version": "1.0.0-beta.2.0",
+  "version": "1.0.0-beta.3.0",
   "description": "provides a collection of reusable functional components for React, Vue, and AngularJS, designed for working with Markdown content, interactive demos, and media. It’s perfect for building documentation, blogs, and interactive content platforms.",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
   "homepage": "https://github.com/kotii#readme",
