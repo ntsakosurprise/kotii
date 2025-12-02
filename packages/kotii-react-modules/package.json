@@ -3,7 +3,7 @@
   "version": "1.0.0-beta.2.0",
   "description": "provides a collection of reusable functional components for React, Vue, and AngularJS, designed for working with Markdown content, interactive demos, and media. It’s perfect for building documentation, blogs, and interactive content platforms.",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
-  "homepage": "https://github.com/kotiijs#readme",
+  "homepage": "https://github.com/kotii#readme",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -20,7 +20,9 @@
   "files": [
     "dist/",
     "index.js",
-    "src/"
+    "src/",
+    "README.md",
+    "package.json"
   ],
   "publishConfig": {
     "access": "public"
@@ -62,8 +64,8 @@
   "dependencies": {
     "debug": "^4.4.0",
     "html-react-parser": "^4.0.0",
-    "kotii-markdown": "1.0.0-beta.1.0",
-    "kotii-utils": "1.0.0-beta.1.0",
+    "kotii-markdown": "1.0.0-beta.2.0",
+    "kotii-utils": "1.0.0-beta.3.0",
     "prop-types": "^15.7.2"
   }
 }
