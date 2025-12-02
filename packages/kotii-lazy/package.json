@@ -21,7 +21,8 @@
     "dist/",
     "index.js",
     "src/",
-    "README.md"
+    "README.md",
+    "package.json"
   ],
   "publishConfig": {
     "access": "public"
