@@ -87,7 +87,7 @@
     "helmet": "^7.1.0",
     "kotii-auth": "1.0.0-beta.3.0",
     "kotii-languages": "1.0.0-beta.3.0",
-    "kotii-lazy": "1.0.0-beta.2.0",
+    "kotii-lazy": "1.0.0-beta.3.0",
     "kotii-logger": "1.0.0-beta.4.0",
     "kotii-markdown": "1.0.0-beta.2.0",
     "kotii-router": "1.0.0-beta.3.0",
