@@ -1,6 +1,6 @@
 {
   "name": "kotii",
-  "version": "1.0.0-beta.3.0",
+  "version": "1.0.0-beta.4.0",
   "description": "a frontend meta framework that has been made to be simple and intuitive. It is currently designed to work with React.",
   "main": "app.js",
   "type": "module",
