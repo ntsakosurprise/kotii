@@ -1,6 +1,6 @@
 {
   "name": "kotii-languages",
-  "version": "1.0.0-beta.1.0",
+  "version": "1.0.0-beta.2.0",
   "description": "is a lightweight and flexible library for managing multilingual support in your React applications.",
   "license": "MIT",
   "type": "module",
