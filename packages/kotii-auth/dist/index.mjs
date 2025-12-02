@@ -6,9 +6,8 @@
  * or disable the default devtool with "devtool: false".
  * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
  */
-/******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
+import * as __WEBPACK_EXTERNAL_MODULE_react__ from "react";
+/******/ var __webpack_modules__ = ({
 
 /***/ "./index.js":
 /*!******************!*\
@@ -26,7 +25,7 @@ eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpa
   \**********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__),\n/* harmony export */   registerOnLoginActions: () => (/* binding */ registerOnLoginActions),\n/* harmony export */   registerOnLogoutActions: () => (/* binding */ registerOnLogoutActions),\n/* harmony export */   useAuth: () => (/* binding */ useAuth)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* eslint-disable react/prop-types */\n\n\nconst onLoginActions = new Set();\nconst onLogoutActions = new Set();\nconst AuthContext = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createContext({\n  user: null,\n  login: () => {},\n  logout: () => {}\n});\nconst AuthProvider = ({\n  authUser: defaultUser = null,\n  children,\n  onLogin = null,\n  onLogout = null\n}) => {\n  console.log(\"THE AUTH PROVIDER\", defaultUser);\n  const [user, setUser] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(defaultUser);\n  console.log(\"THE USER\", user);\n  const authLogin = (authUser, onLoginAction = null) => {\n    console.log(\"OnLogin Actions\", onLogin);\n    setUser(authUser);\n    onLoginActions.forEach(afterLogin => {\n      afterLogin(authUser);\n    });\n    if (onLoginAction) onLoginAction();\n    if (onLogin && typeof onLogin === \"function\") onLogin();\n  };\n  const authLogout = (onLogoutAction = null) => {\n    setUser(null);\n    onLogoutActions.forEach(afterLoginout => {\n      afterLoginout();\n    });\n    if (onLogoutAction) onLogoutAction();\n    if (onLogout && typeof onLogout === \"function\") onLogout();\n  };\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {\n    console.log(\"User Has Been updated\", user);\n  }, [user]);\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement(AuthContext.Provider, {\n    value: {\n      login: authLogin,\n      user,\n      logout: authLogout\n    }\n  }, children);\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AuthProvider);\nconst useAuth = () => {\n  return react__WEBPACK_IMPORTED_MODULE_0___default().useContext(AuthContext);\n};\nconst registerOnLoginActions = afterLoginAction => {\n  onLoginActions.add(afterLoginAction);\n  return () => onLoginActions.delete(afterLoginAction);\n};\nconst registerOnLogoutActions = afterLogoutAction => {\n  onLogoutActions.add(afterLogoutAction);\n  return () => onLogoutActions.delete(afterLogoutAction);\n};\n\n//# sourceURL=webpack://kotii-auth/./src/components/AuthContext/index.jsx?\n}");
+eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__),\n/* harmony export */   registerOnLoginActions: () => (/* binding */ registerOnLoginActions),\n/* harmony export */   registerOnLogoutActions: () => (/* binding */ registerOnLogoutActions),\n/* harmony export */   useAuth: () => (/* binding */ useAuth)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"react\");\n/* eslint-disable react/prop-types */\n\n\nconst onLoginActions = new Set();\nconst onLogoutActions = new Set();\nconst AuthContext = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__[\"default\"].createContext({\n  user: null,\n  login: () => {},\n  logout: () => {}\n});\nconst AuthProvider = ({\n  authUser: defaultUser = null,\n  children,\n  onLogin = null,\n  onLogout = null\n}) => {\n  console.log(\"THE AUTH PROVIDER\", defaultUser);\n  const [user, setUser] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(defaultUser);\n  console.log(\"THE USER\", user);\n  const authLogin = (authUser, onLoginAction = null) => {\n    console.log(\"OnLogin Actions\", onLogin);\n    setUser(authUser);\n    onLoginActions.forEach(afterLogin => {\n      afterLogin(authUser);\n    });\n    if (onLoginAction) onLoginAction();\n    if (onLogin && typeof onLogin === \"function\") onLogin();\n  };\n  const authLogout = (onLogoutAction = null) => {\n    setUser(null);\n    onLogoutActions.forEach(afterLoginout => {\n      afterLoginout();\n    });\n    if (onLogoutAction) onLogoutAction();\n    if (onLogout && typeof onLogout === \"function\") onLogout();\n  };\n  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {\n    console.log(\"User Has Been updated\", user);\n  }, [user]);\n  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__[\"default\"].createElement(AuthContext.Provider, {\n    value: {\n      login: authLogin,\n      user,\n      logout: authLogout\n    }\n  }, children);\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (AuthProvider);\nconst useAuth = () => {\n  return react__WEBPACK_IMPORTED_MODULE_0__[\"default\"].useContext(AuthContext);\n};\nconst registerOnLoginActions = afterLoginAction => {\n  onLoginActions.add(afterLoginAction);\n  return () => onLoginActions.delete(afterLoginAction);\n};\nconst registerOnLogoutActions = afterLogoutAction => {\n  onLogoutActions.add(afterLogoutAction);\n  return () => onLogoutActions.delete(afterLogoutAction);\n};\n\n//# sourceURL=webpack://kotii-auth/./src/components/AuthContext/index.jsx?\n}");
 
 /***/ }),
 
@@ -76,84 +75,75 @@ eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpa
   \************************/
 /***/ ((module) => {
 
-module.exports = require("react");
+module.exports = __WEBPACK_EXTERNAL_MODULE_react__;
 
 /***/ })
 
-/******/ 	});
+/******/ });
 /************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
+/******/ // The module cache
+/******/ var __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __webpack_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
 /******/ 	}
-/******/ 	
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 		// no module.id needed
+/******/ 		// no module.loaded needed
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
+/******/ 
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
+/******/ /* webpack/runtime/define property getters */
+/******/ (() => {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__webpack_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
 /******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
+/******/ 		}
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ (() => {
+/******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/make namespace object */
+/******/ (() => {
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = (exports) => {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/ })();
+/******/ 
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module can't be inlined because the eval devtool is used.
-/******/ 	var __webpack_exports__ = __webpack_require__("./index.js");
-/******/ 	module.exports = __webpack_exports__;
-/******/ 	
-/******/ })()
-;
+/******/ 
+/******/ // startup
+/******/ // Load entry module and return exports
+/******/ // This entry module can't be inlined because the eval devtool is used.
+/******/ var __webpack_exports__ = __webpack_require__("./index.js");
+/******/ const __webpack_exports__AuthProvider = __webpack_exports__.AuthProvider;
+/******/ const __webpack_exports__registerOnLoginActions = __webpack_exports__.registerOnLoginActions;
+/******/ const __webpack_exports__registerOnLogoutActions = __webpack_exports__.registerOnLogoutActions;
+/******/ const __webpack_exports__useAuth = __webpack_exports__.useAuth;
+/******/ const __webpack_exports__useAuthRegisterActions = __webpack_exports__.useAuthRegisterActions;
+/******/ export { __webpack_exports__AuthProvider as AuthProvider, __webpack_exports__registerOnLoginActions as registerOnLoginActions, __webpack_exports__registerOnLogoutActions as registerOnLogoutActions, __webpack_exports__useAuth as useAuth, __webpack_exports__useAuthRegisterActions as useAuthRegisterActions };
+/******/ 

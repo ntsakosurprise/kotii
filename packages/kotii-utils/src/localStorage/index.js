@@ -2,6 +2,7 @@ import {
   getFromStorage,
   removeFromStorage,
   setInStorage,
-} from "./localStorage";
+  isItemInStorage,
+} from "./localStorage.js";
 
-export { setInStorage, getFromStorage, removeFromStorage };
+export { setInStorage, getFromStorage, removeFromStorage, isItemInStorage };

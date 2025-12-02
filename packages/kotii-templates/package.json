@@ -1,14 +1,15 @@
 {
   "name": "kotii-templates",
-  "version": "1.0.0",
-  "description": "Kotii-templates is the container for kotiiJS templates",
+  "version": "1.0.0-beta.2.0",
+  "description": "a lightweight template provider for the Kotii ecosystem.It delivers ready-to-use **SSR (Server-Side Rendering)** and **SPA (Single-Page Application)** templates, supporting both **JavaScript** and **TypeScript** project setups",
+  "author": "ntsakosurprise <mashelesepru@gmail.com>",
+  "homepage": "https://github.com/ntsakosurprise/kotii",
   "type": "module",
   "engines": {
     "node": ">=17.2.0",
     "yarn": ">=1.22.11",
     "npm": ">=8.19.2"
   },
-  "private": true,
   "exports": {
     ".": {
       "import": "./index.js",
@@ -47,17 +48,9 @@
     ]
   },
   "dependencies": {
-    "anzii": "file:/Users/surprisemashele/Documents/Development/frameworks/anzii/packages/anzii/anzii-7.1.0.tgz",
-    "kotii-logger": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-logger/kotii-logger-1.0.0.tgz"
+    "anzii": "8.0.1",
+    "kotii-logger": "1.0.0-beta.2.0"
   },
-  "files": [
-    "dist/",
-    "javascript/",
-    "typescript/",
-    "index.js",
-    "package.json",
-    "plugins/"
-  ],
   "devDependencies": {
     "@babel/cli": "^7.24.8",
     "@babel/core": "^7.25.2",
@@ -66,5 +59,14 @@
     "webpack": "^5.93.0",
     "webpack-cli": "^5.1.4",
     "webpack-node-externals": "^3.0.0"
-  }
+  },
+  "files": [
+    "dist/",
+    "javascript/",
+    "typescript/",
+    "index.js",
+    "package.json",
+    "plugins/",
+    "README.md"
+  ]
 }

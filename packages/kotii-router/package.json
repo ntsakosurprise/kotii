@@ -1,9 +1,9 @@
 {
   "name": "kotii-router",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.0-beta.3.0",
+  "description": "a lightweight and flexible routing library for modern JavaScript and TypeScript applications. It provides declarative routing components and powerful hooks to manage navigation, route matching, and redirection.",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
-  "homepage": "https://github.com/kotiijs#readme",
+  "homepage": "https://github.com/kotii",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -20,7 +20,9 @@
   "files": [
     "dist/",
     "index.js",
-    "src/"
+    "src/",
+    "README.md",
+    "package.json"
   ],
   "publishConfig": {
     "access": "public"
@@ -61,7 +63,6 @@
     "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "debug": "^4.4.0",
-    "kotii-auth": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-auth/kotii-auth-0.0.0.tgz"
+    "debug": "^4.4.0"
   }
 }

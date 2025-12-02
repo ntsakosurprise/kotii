@@ -2,11 +2,12 @@ import {
   getFromStorage,
   removeFromStorage,
   setInStorage,
-} from "./localStorage";
+  isItemInStorage,
+} from "./localStorage/index.js";
 import {
   capitalizeFirstLetter,
   capitalizeLastLetter,
-} from "./textManipulations/index";
+} from "./textManipulations/index.js";
 
 export {
   capitalizeFirstLetter,
@@ -14,4 +15,5 @@ export {
   getFromStorage,
   setInStorage,
   removeFromStorage,
+  isItemInStorage,
 };

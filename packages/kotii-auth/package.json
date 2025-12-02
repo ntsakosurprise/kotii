@@ -1,16 +1,16 @@
 {
   "name": "kotii-auth",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3.0",
   "description": "A tiny authentication library that helps secure your app.",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
-  "homepage": "https://github.com/ntsakosurprise/kotii/tree/develop/packages/kotii-auth#readme",
+  "homepage": "https://github.com/ntsakosurprise/kotii",
   "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
-      "import": "./index.js",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
-      "default": "./index.js"
+      "default": "./dist/index.mjs"
     }
   },
   "directories": {

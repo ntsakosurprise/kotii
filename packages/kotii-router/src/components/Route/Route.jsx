@@ -2,7 +2,6 @@
 import React from "react";
 
 const Route = ({ component: Component, children }) => {
-  console.log("THE ROUTE CHILDREN", children);
   return (
     <>
       <Component />

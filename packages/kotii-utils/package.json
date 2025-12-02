@@ -1,17 +1,23 @@
 {
   "name": "kotii-utils",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.3.0",
+  "description": "a lightweight JavaScript utility library that provides helpful functions for string manipulation and local storage management. Perfect for small projects or quick utilities.",
+  "author": "ntsakosurprise <mashelesepru@gmail.com>",
+  "homepage": "https://github.com/kotii",
   "license": "MIT",
+  "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
+      "import": "./src/index.js",
       "require": "./dist/index.cjs",
-      "default": "./dist/index.cjs"
+      "default": "./src/index.js"
     }
   },
   "files": [
     "dist/",
-    "src/"
+    "src/",
+    "README.md",
+    "package.json"
   ],
   "scripts": {
     "start": "webpack-dev-server --watch",
@@ -20,7 +26,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@node-loader/babel": "^2.0.1",
     "styled-components": "^6.0.5",
     "use-local-storage": "^2.3.6"
   },
@@ -34,7 +39,6 @@
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.6.1",
     "webpack": "^5.69.1",
-    "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.7.4"
+    "webpack-cli": "^4.9.2"
   }
 }

@@ -1,4 +1,15 @@
-# kotii-markdown
+<p align="center">
+  <a href="#" style="
+       display: inline-flex;
+       flex-direction: column;
+       align-items: center;
+       text-decoration: none;
+       color: inherit;
+     ">
+    <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/kotii.svg" alt="kotii logo">
+    <strong>Kotii-Markdown</strong>
+  </a>
+</p>
 
 **kotii-markdown** is a lightweight JavaScript library for parsing, extracting, and converting Markdown content. It provides a set of utility functions and loaders to help you efficiently handle Markdown files in Node.js or browser environments.
 

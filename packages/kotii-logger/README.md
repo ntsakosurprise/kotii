@@ -1,6 +1,17 @@
-# Kotii Logger
+<p align="center">
+  <a href="#" style="
+       display: inline-flex;
+       flex-direction: column;
+       align-items: center;
+       text-decoration: none;
+       color: inherit;
+     ">
+    <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/kotii.svg" alt="kotii logo">
+    <strong>Kotii-Logger</strong>
+  </a>
+</p>
 
-A flexible and lightweight logger for JavaScript/Node.js projects, supporting namespaces and environment-based log level control.
+Kotii-logger is a flexible and lightweight logger for JavaScript/Node.js projects, supporting namespaces and environment-based log level control.
 
 ## Features
 

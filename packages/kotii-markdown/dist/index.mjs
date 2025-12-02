@@ -7,6 +7,7 @@
  * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
  */
 import { createRequire as __WEBPACK_EXTERNAL_createRequire } from "node:module";
+const __WEBPACK_EXTERNAL_createRequire_require = __WEBPACK_EXTERNAL_createRequire(import.meta.url);
 /******/ var __webpack_modules__ = ({
 
 /***/ "../../node_modules/.pnpm/marked@4.3.0/node_modules/marked/lib/marked.esm.js":
@@ -65,7 +66,7 @@ eval("{__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpa
   \*********************/
 /***/ ((module) => {
 
-module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("fs");
+module.exports = __WEBPACK_EXTERNAL_createRequire_require("fs");
 
 /***/ }),
 
@@ -75,7 +76,7 @@ module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("fs");
   \***********************/
 /***/ ((module) => {
 
-module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("path");
+module.exports = __WEBPACK_EXTERNAL_createRequire_require("path");
 
 /***/ })
 

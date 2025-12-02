@@ -1,10 +1,15 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
+import { useEffect } from "react";
 
 const onLoginActions = new Set();
 const onLogoutActions = new Set();
 
-const AuthContext = React.createContext(null);
+const AuthContext = React.createContext({
+  user: null,
+  login: () => {},
+  logout: () => {},
+});
 
 const AuthProvider = ({
   authUser: defaultUser = null,
@@ -12,8 +17,11 @@ const AuthProvider = ({
   onLogin = null,
   onLogout = null,
 }) => {
+  console.log("THE AUTH PROVIDER", defaultUser);
   const [user, setUser] = useState(defaultUser);
+  console.log("THE USER", user);
   const authLogin = (authUser, onLoginAction = null) => {
+    console.log("OnLogin Actions", onLogin);
     setUser(authUser);
     onLoginActions.forEach((afterLogin) => {
       afterLogin(authUser);
@@ -29,6 +37,9 @@ const AuthProvider = ({
     if (onLogoutAction) onLogoutAction();
     if (onLogout && typeof onLogout === "function") onLogout();
   };
+  useEffect(() => {
+    console.log("User Has Been updated", user);
+  }, [user]);
   return (
     <AuthContext.Provider
       value={{ login: authLogin, user, logout: authLogout }}

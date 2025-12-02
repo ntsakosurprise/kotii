@@ -1,7 +1,8 @@
 {
   "name": "kotii-styled",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.2.0",
   "description": "a wrapper around the official styled-components",
+  "homepage": "https://github.com/kotii",
   "main": "index.js",
   "type": "module",
   "exports": {
@@ -38,11 +39,15 @@
   },
   "files": [
     "src/",
+    "dist/",
     "index.js",
     "package.json",
     "kotii.svg",
     "dist",
     "README.md",
     "LICENSE.md"
-  ]
+  ],
+  "devDependencies": {
+    "cross-env": "^10.1.0"
+  }
 }

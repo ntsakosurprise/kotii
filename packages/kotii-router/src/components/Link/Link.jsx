@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React from "react";
 import { navigate } from "../../utils/index.js";
@@ -9,11 +10,9 @@ const Link = ({
   children,
   ...props
 }) => {
-  console.log("THE NAVIGATE FUNCTION", to, isAbsolute);
   const handleOnclick = (e) => {
-    console.log("HANDLE CLICK RUNS", e);
     e.preventDefault();
-    console.log("LINK NAVIGATION TO", to);
+
     navigate(to, routeState);
   };
   return (

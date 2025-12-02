@@ -1,18 +1,23 @@
 {
   "name": "kotii-languages",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.3.0",
+  "description": "is a lightweight and flexible library for managing multilingual support in your React applications.",
+  "author": "ntsakosurprise <mashelesepru@gmail.com>",
+  "homepage": "https://github.com/kotii",
   "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
-      "default": "./dist/index.cjs"
+      "default": "./dist/index.mjs"
     }
   },
   "files": [
     "dist/",
-    "src/"
+    "src/",
+    "README.md",
+    "package.json"
   ],
   "scripts": {
     "start": "webpack-dev-server --watch",
@@ -21,9 +26,8 @@
     "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
   },
   "dependencies": {
-    "@node-loader/babel": "^2.0.1",
     "i18next": "^21.8.14",
-    "kotii-utils": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-utils/kotii-utils-0.0.0.tgz",
+    "kotii-utils": "1.0.0-beta.2.0",
     "react-i18next": "^11.18.1",
     "react-icons": "^4.12.0",
     "react-select": "^5.4.0",
