@@ -1,6 +1,6 @@
 {
   "name": "kotii-cli",
-  "version": "1.0.0-beta.1.0",
+  "version": "1.0.0-beta.2.0",
   "description": "a command-line interface for generating and managing applications built with Kotii meta Framework.",
   "main": "app.js",
   "bin": {
@@ -23,7 +23,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ntsakosurprise/anzii-cli"
+    "url": "https://github.com/ntsakosurprise/kotii"
   },
   "author": {
     "email": "mashelesepru@gmail.com",
@@ -36,7 +36,7 @@
       "email": "mashelesepru@gmail.com"
     }
   ],
-  "homepage": "https://github.com/ntsakosurprise/anzi-clii#readme",
+  "homepage": "https://github.com/ntsakosurprise/kotii",
   "license": "MIT",
   "dependencies": {
     "@octokit/auth-basic": "^1.4.6",
@@ -54,7 +54,7 @@
     "inquirer": "^7.3.3",
     "is-online": "^8.5.1",
     "isomorphic-git": "^1.27.1",
-    "kotii-templates": "1.0.0-beta.1.0",
+    "kotii-templates": "1.0.0-beta.2.0",
     "listr": "^0.14.3",
     "octonode": "^0.9.5",
     "open": "^9.1.0",
