@@ -103,7 +103,7 @@ methods.handleWebpackConfig = function (data) {
           });
       })
       .catch((err) => {
-        self.debug("An error occured loading file", err);
+        throw new Error("An error occured loading a certs config json file");
       });
   } else {
     let server = {
@@ -365,8 +365,8 @@ methods.configureDevServer = function (
     data: { payload: { routes: [...anziiManualConfigs.routes] } },
   });
   if (anziiManualConfigs.api && fs.existsSync(anziiManualConfigs.api)) {
-    loadFile(`${anziiManualConfigs.api}${path.sep}.config.js`).then(
-      (config) => {
+    loadFile(`${anziiManualConfigs.api}${path.sep}.config.js`)
+      .then((config) => {
         self.debug("API PLUGIN THE CONFIG FILE", config);
         let appConfig = {
           ...anziiManualConfigs,
@@ -407,8 +407,12 @@ methods.configureDevServer = function (
           },
         });
         // resolve(config);
-      }
-    );
+      })
+      .catch((err) => {
+        throw new Error(
+          `.config.js file is missing, kotii requires this file when api is enabled\n ${err?.message}`
+        );
+      });
   } else {
     self.emit({
       type: serverType,
