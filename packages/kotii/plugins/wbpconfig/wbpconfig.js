@@ -4,10 +4,9 @@ import template from "@babel/template";
 import traverse from "@babel/traverse";
 import * as t from "@babel/types";
 import webpack from "webpack";
-import webpackDevMiddleware from "webpack-dev-middleware";
 import webpackHotMiddleware from "webpack-hot-middleware";
 import methods from "./methods.js";
-// import webPackConfig from "./webpack.config.js";
+
 import webPackServerConfig from "./webpack.server.config.js";
 
 /**
@@ -20,7 +19,6 @@ class WebpackConfig {
     this.webPackServerConfig = webPackServerConfig;
     this.addedEmptyFiles = null;
     this.webpack = webpack;
-    this.webpackDevMiddleware = webpackDevMiddleware;
     this.webpackHotMiddleware = webpackHotMiddleware;
     this.fileIsAddOrDelProcessed = false;
     this.lastAddOrDelFile = "";
