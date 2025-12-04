@@ -5,18 +5,14 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
+      "import": "./index.js",
       "require": "./dist/index.cjs",
-      "default": "./dist/index.mjs"
+      "default": "./index.js"
     }
   },
   "scripts": {
     "lint": "eslint .",
     "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings=ExperimentalWarning' jest",
-    "start": "node kotii.cjs start",
-    "dev": "node kotii.cjs dev",
-    "static": "node kotii.cjs static",
-    "build": "node kotii.cjs build",
     "start:dev:nodemon": "nodemon index",
     "babel-ssr": "babel --config-file /Users/surprisemashele/Documents/kotii/packages/kotii/babel.server.json  --out-dir /Users/surprisemashele/Documents/kotii/packages/kotii/build /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src",
     "build-ssr": "babel --config-file /Users/surprisemashele/Documents/kotii/packages/kotii/babel.server.build.json  --out-dir /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/build/src /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src"

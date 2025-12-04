@@ -1,0 +1,12 @@
+{
+  "./img/docs_search.png": {
+    "content": "/docs_search.png",
+    "inlined": false,
+    "pathContext": {
+      "fileRelativePath": "./img/docs_search.png",
+      "fileRoot": "/Users/surprisemashele/Apps/test-with-css-ssr",
+      "fileUserRequest": "./img/docs_search.png",
+      "fileFullPath": "/Users/surprisemashele/Apps/test-with-css-ssr/src/assets/img/docs_search.png"
+    }
+  }
+}

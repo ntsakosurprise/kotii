@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const fs = require("node:fs");
 const Papa = require("papaparse");
 const path = require("path");
