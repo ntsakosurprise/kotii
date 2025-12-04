@@ -1,0 +1,89 @@
+{
+  "name": "kotii-runtime",
+  "version": "1.0.0-beta.1.0",
+  "description": "",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.js",
+      "default": "./index.js"
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings=ExperimentalWarning' jest",
+    "start:dev:nodemon": "nodemon index",
+    "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
+  },
+  "keywords": [
+    "scripts",
+    "kotii",
+    "react scripts",
+    "scaffold"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ntsakosurprise/kotii"
+  },
+  "author": {
+    "email": "mashelesepru@gmail.com",
+    "name": "Surprise Ntsako Mashele",
+    "url": "https://www.twitter.com/ntsakosurprise"
+  },
+  "contributors": [
+    {
+      "name": "Surprise Mashele",
+      "email": "mashelesepru@gmail.com"
+    }
+  ],
+  "homepage": "https://github.com/ntsakosurprise/kotii#readme",
+  "license": "MIT",
+  "dependencies": {
+    "anzii": "8.0.1",
+    "kotii-auth": "1.0.0-beta.3.0",
+    "kotii-languages": "1.0.0-beta.3.0",
+    "kotii-lazy": "1.0.0-beta.3.0",
+    "kotii-logger": "1.0.0-beta.4.0",
+    "kotii-router": "1.0.0-beta.3.0",
+    "react": "^18.2.0",
+    "react-helmet": "^6.1.0",
+    "react-redux": "^9.0.4",
+    "react-router-dom": "^6.25.1",
+    "redux": "^5.0.0",
+    "redux-thunk": "^3.1.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "cross-env": "^10.1.0",
+    "jest": "^29.5.0"
+  },
+  "readme": "See README file",
+  "readmeFilename": "README.md",
+  "files": [
+    "compile/",
+    "client-tools/",
+    "plugins/",
+    "kotii-land/",
+    "start/",
+    "react-components-pruned/",
+    "kotii_paths.js",
+    "README.md",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "preloads.js",
+    "index.js",
+    "run.js",
+    "package.json"
+  ],
+  "browser": {
+    "path": false
+  },
+  "bugs": {
+    "url": "https://github.com/ntsakosurprise/kotii/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

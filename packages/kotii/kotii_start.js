@@ -11,14 +11,8 @@ process.on("message", (msg) => {
       console.log("THE COMMAND TO RUN", commandToRun);
       process.env["COMMANDS"] = JSON.stringify(commands);
       if (commandToRun === "start") {
-        // process.env.ANZII_KICK_OFF_MANUALLY = "true";
-        // process.env.NODE_ENV = "production";
-        // register("./compile/hooks_prod.js", parentURL);
-        // getAndSetEnvironmentVariables(process.env.NODE_ENV);
-        // import("./kotii-land/prod/app_prod.js");
-        // run();
+        run(commandToRun);
       } else {
-        console.log("THE COMMAND NAME IS", commandToRun);
         beginCreations(commandToRun);
       }
       break;

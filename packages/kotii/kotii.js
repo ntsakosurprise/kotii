@@ -8,7 +8,7 @@
 import { fork } from "child_process";
 import path from "path";
 import cli from "./cli.cjs"; // CJS → ESM default import
-import { replaceKotiiJsFilesContent } from "kotii-create-time"; // CJS package import
+import { replaceKotiiJsFilesContent } from "kotii-creation-time"; // CJS package import
 
 const { parseScriptArguments } = cli; // Destructure CJS exports
 
