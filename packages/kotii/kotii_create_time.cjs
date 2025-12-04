@@ -1,14 +1,6 @@
 const beginCreations = (commandToRun) => {
   const { dev, build, ssg } = require("kotii-create-time");
 
-  register("./compile/hooks_.js", parentURL);
-  getAndSetEnvironmentVariables(
-    process.env.NODE_ENV
-      ? process.env.NODE_ENV != "development"
-        ? "development"
-        : process.env.NODE_ENV
-      : "development"
-  );
   switch (commandToRun) {
     case "dev":
       return dev();
