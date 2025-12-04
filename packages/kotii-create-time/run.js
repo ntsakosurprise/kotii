@@ -1,6 +1,9 @@
-const { register } = require("node:module");
-const { pathToFileURL } = require("node:url");
-const { getAndSetEnvironmentVariables } = require("./preloads.cjs");
+import { register } from "node:module";
+// import path from "path";
+import { pathToFileURL, fileURLToPath } from "node:url";
+import { getAndSetEnvironmentVariables } from "./preloads.js";
+const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
 const parentURL = pathToFileURL(__filename);
 export default () => {

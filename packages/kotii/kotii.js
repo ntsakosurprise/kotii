@@ -1,19 +1,27 @@
 #!/usr/bin/env node
 
-const { fork } = require("child_process");
-const path = require("path");
-const cli = require("./cli.cjs");
-const { parseScriptArguments } = cli;
-const { replaceKotiiJsFilesContent } = require("kotii-create-time");
+// const { fork } = require("child_process");
+// const path = require("path");
+// const cli = require("./cli.cjs");
+// const { parseScriptArguments } = cli;
+// const { replaceKotiiJsFilesContent } = require("kotii-create-time");
+import { fork } from "child_process";
+import path from "path";
+import cli from "./cli.cjs"; // CJS → ESM default import
+import { replaceKotiiJsFilesContent } from "kotii-create-time"; // CJS package import
+
+const { parseScriptArguments } = cli; // Destructure CJS exports
+
 let RESTART_RETRIES = 3;
 let RESTART_TIMES = 0;
 let SHOULD_RESTART = false;
+let childProcess = null;
 
 const commands = parseScriptArguments();
 const commandToRun = commands[0];
 console.log("THE COMMAND TO RUN", commandToRun, commands);
 
-const childPath = path.resolve("./node_modules/kotii/kotii_start.cjs");
+const childPath = path.resolve("./node_modules/kotii/kotii_start.js");
 
 const createChildProcess = (isaRestart = false) => {
   if (!isaRestart) {

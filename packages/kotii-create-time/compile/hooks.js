@@ -15,7 +15,7 @@ import {
   stylusToCssConverter,
 } from "../css/index.js";
 import { loadFile } from "../file-loader/index.js";
-import { createImportPathContext, getNodejsForeignData } from "../globals.cjs";
+import { createImportPathContext, getNodejsForeignData } from "../globals.js";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
 
 let meta = null;
@@ -156,8 +156,8 @@ export async function load(url, context, nextLoad) {
         } else if (fileExtension === extJS) {
           if (
             nodeModulesRegex.test(url) &&
-            url.split("/").includes("kotii") &&
-            url.indexOf("/kotii/node_modules") < 0
+            url.split("/").includes("kotii-create-time") &&
+            url.indexOf("/kotii-create-time/node_modules") < 0
           ) {
             loggas.load.debug(
               "IS NODE MODULES AND KOTII",

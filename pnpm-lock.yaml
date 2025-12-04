@@ -99,60 +99,6 @@ importers:
 
   packages/kotii:
     dependencies:
-      '@babel/cli':
-        specifier: ^7.2.3
-        version: 7.28.3(@babel/core@7.28.5)
-      '@babel/core':
-        specifier: ^7.23.2
-        version: 7.28.5
-      '@babel/generator':
-        specifier: ^7.23.3
-        version: 7.28.5
-      '@babel/parser':
-        specifier: ^7.23.3
-        version: 7.28.5
-      '@babel/plugin-proposal-json-modules':
-        specifier: ^7.24.7
-        version: 7.25.9(@babel/core@7.28.5)
-      '@babel/plugin-proposal-object-rest-spread':
-        specifier: ^7.0.0
-        version: 7.20.7(@babel/core@7.28.5)
-      '@babel/plugin-syntax-import-assertions':
-        specifier: ^7.24.7
-        version: 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-react-jsx':
-        specifier: ^7.22.15
-        version: 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-strict-mode':
-        specifier: ^7.10.4
-        version: 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-typescript':
-        specifier: ^7.26.8
-        version: 7.28.5(@babel/core@7.28.5)
-      '@babel/preset-env':
-        specifier: ^7.23.2
-        version: 7.28.5(@babel/core@7.28.5)
-      '@babel/preset-react':
-        specifier: ^7.22.15
-        version: 7.28.5(@babel/core@7.28.5)
-      '@babel/preset-typescript':
-        specifier: ^7.26.0
-        version: 7.28.5(@babel/core@7.28.5)
-      '@babel/register':
-        specifier: ^7.4.4
-        version: 7.28.3(@babel/core@7.28.5)
-      '@babel/template':
-        specifier: ^7.22.15
-        version: 7.27.2
-      '@babel/traverse':
-        specifier: ^7.23.3
-        version: 7.28.5(supports-color@5.5.0)
-      '@babel/types':
-        specifier: ^7.23.3
-        version: 7.28.5
-      '@reduxjs/toolkit':
-        specifier: ^2.0.1
-        version: 2.11.0(react-redux@9.2.0(@types/react@18.3.27)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
       anzii:
         specifier: 8.0.1
         version: 8.0.1
@@ -162,141 +108,6 @@ importers:
       autoprefixer:
         specifier: ^8.6.5
         version: 8.6.5
-      babel-loader:
-        specifier: ^8.0.6
-        version: 8.4.1(@babel/core@7.28.5)(webpack@5.103.0)
-      babel-plugin-styled-components:
-        specifier: ^2.1.4
-        version: 2.1.4(@babel/core@7.28.5)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      babel-plugin-transform-remove-strict-mode:
-        specifier: 0.0.2
-        version: 0.0.2
-      babel-plugin-transform-strict-mode:
-        specifier: ^6.24.1
-        version: 6.24.1
-      boxen:
-        specifier: ^8.0.1
-        version: 8.0.1
-      chalk:
-        specifier: ^4.1.0
-        version: 4.1.2
-      concat:
-        specifier: ^1.0.3
-        version: 1.0.3
-      configstore:
-        specifier: ^5.0.1
-        version: 5.0.1
-      csv-loader:
-        specifier: ^3.0.5
-        version: 3.0.5
-      dotenv:
-        specifier: ^16.4.5
-        version: 16.6.1
-      dotenv-expand:
-        specifier: ^11.0.6
-        version: 11.0.7
-      execa:
-        specifier: ^4.0.3
-        version: 4.1.0
-      fast-xml-parser:
-        specifier: ^5.3.2
-        version: 5.3.2
-      glob:
-        specifier: ^10.3.10
-        version: 10.5.0
-      helmet:
-        specifier: ^7.1.0
-        version: 7.2.0
-      html-react-parser:
-        specifier: ^4.0.0
-        version: 4.2.10(react@18.3.1)
-      kotii-auth:
-        specifier: 1.0.0-beta.3.0
-        version: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-languages:
-        specifier: 1.0.0-beta.3.0
-        version: 1.0.0-beta.3.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-lazy:
-        specifier: 1.0.0-beta.3.0
-        version: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-logger:
-        specifier: 1.0.0-beta.4.0
-        version: 1.0.0-beta.4.0
-      kotii-markdown:
-        specifier: 1.0.0-beta.2.0
-        version: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-router:
-        specifier: 1.0.0-beta.3.0
-        version: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-styled:
-        specifier: 1.0.0-beta.2.0
-        version: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      less:
-        specifier: ^4.2.0
-        version: 4.4.2
-      node-cache:
-        specifier: ^5.1.2
-        version: 5.1.2
-      papaparse:
-        specifier: ^5.5.3
-        version: 5.5.3
-      postcss:
-        specifier: ^8.5.1
-        version: 8.5.6
-      postcss-loader:
-        specifier: ^8.1.1
-        version: 8.2.0(postcss@8.5.6)(typescript@4.9.5)(webpack@5.103.0)
-      postcss-nested:
-        specifier: ^7.0.2
-        version: 7.0.2(postcss@8.5.6)
-      postcss-preset-env:
-        specifier: ^10.1.4
-        version: 10.4.0(postcss@8.5.6)
-      postcss-selector-parser:
-        specifier: ^7.1.0
-        version: 7.1.1
-      prettier:
-        specifier: 2.6.2
-        version: 2.6.2
-      react:
-        specifier: ^18.2.0
-        version: 18.3.1
-      react-helmet:
-        specifier: ^6.1.0
-        version: 6.1.0(react@18.3.1)
-      react-redux:
-        specifier: ^9.0.4
-        version: 9.2.0(@types/react@18.3.27)(react@18.3.1)(redux@5.0.1)
-      react-router-dom:
-        specifier: ^6.25.1
-        version: 6.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      redux:
-        specifier: ^5.0.0
-        version: 5.0.1
-      redux-thunk:
-        specifier: ^3.1.0
-        version: 3.1.0(redux@5.0.1)
-      rxjs-compat:
-        specifier: ^6.6.7
-        version: 6.6.7
-      sass:
-        specifier: ^1.82.0
-        version: 1.94.2
-      serialize-javascript:
-        specifier: ^6.0.1
-        version: 6.0.2
-      stylus:
-        specifier: ^0.63.0
-        version: 0.63.0
-      suku:
-        specifier: ^1.0.0
-        version: 1.0.0
-      tailwindcss:
-        specifier: ^3.4.17
-        version: 3.4.18
-      ts-loader:
-        specifier: ^9.4.4
-        version: 9.5.4(typescript@4.9.5)(webpack@5.103.0)
       typescript:
         specifier: ^4.9.4
         version: 4.9.5
@@ -312,15 +123,6 @@ importers:
       webpack-node-externals:
         specifier: ^2.5.2
         version: 2.5.2
-      ws:
-        specifier: ^8.18.3
-        version: 8.18.3
-      xml-loader:
-        specifier: ^1.2.1
-        version: 1.2.1
-      xml2js:
-        specifier: ^0.6.2
-        version: 0.6.2
     devDependencies:
       '@eslint/js':
         specifier: ^9.21.0
@@ -331,6 +133,10 @@ importers:
       jest:
         specifier: ^29.5.0
         version: 29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5))
+    optionalDependencies:
+      kotii-create-time:
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-create-time/kotii-create-time-1.0.0-beta.1.0.tgz
+        version: file:packages/kotii-create-time/kotii-create-time-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
 
   packages/kotii-auth:
     dependencies:
@@ -8643,6 +8449,10 @@ packages:
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
+
+  kotii-create-time@file:packages/kotii-create-time/kotii-create-time-1.0.0-beta.1.0.tgz:
+    resolution: {integrity: sha512-b4Om3ER175cUUnIdaMNIi51VNE6qAaluIdL1wmiCXl0IeXNg4aKbjbZ0SBgCbYNQCJtxZrfGn51FO/Gz/IFS5Q==, tarball: file:packages/kotii-create-time/kotii-create-time-1.0.0-beta.1.0.tgz}
+    version: 1.0.0-beta.1.0
 
   kotii-languages@1.0.0-beta.1.0:
     resolution: {integrity: sha512-WGPRuzpHlf2B2RbEnNmegZ+lUosnBkZvI/AUcMdV/VesDtxnUrAP5yvmYbUylnlNBLXV8GSseuI21/UqqEcX3A==}
@@ -17244,7 +17054,7 @@ snapshots:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.103.0(webpack-cli@5.1.4)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
 
   babel-loader@9.2.1(@babel/core@7.28.5)(webpack@5.103.0):
     dependencies:
@@ -21539,6 +21349,101 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  kotii-create-time@file:packages/kotii-create-time/kotii-create-time-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
+    dependencies:
+      '@babel/cli': 7.28.3(@babel/core@7.28.5)
+      '@babel/core': 7.28.5
+      '@babel/generator': 7.28.5
+      '@babel/parser': 7.28.5
+      '@babel/plugin-proposal-json-modules': 7.25.9(@babel/core@7.28.5)
+      '@babel/plugin-proposal-object-rest-spread': 7.20.7(@babel/core@7.28.5)
+      '@babel/plugin-syntax-import-assertions': 7.27.1(@babel/core@7.28.5)
+      '@babel/plugin-transform-react-jsx': 7.27.1(@babel/core@7.28.5)
+      '@babel/plugin-transform-strict-mode': 7.27.1(@babel/core@7.28.5)
+      '@babel/plugin-transform-typescript': 7.28.5(@babel/core@7.28.5)
+      '@babel/preset-env': 7.28.5(@babel/core@7.28.5)
+      '@babel/preset-react': 7.28.5(@babel/core@7.28.5)
+      '@babel/preset-typescript': 7.28.5(@babel/core@7.28.5)
+      '@babel/register': 7.28.3(@babel/core@7.28.5)
+      '@babel/template': 7.27.2
+      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/types': 7.28.5
+      '@reduxjs/toolkit': 2.11.0(react-redux@9.2.0(@types/react@18.3.27)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
+      anzii: 8.0.1
+      arg: 4.1.3
+      autoprefixer: 8.6.5
+      babel-loader: 8.4.1(@babel/core@7.28.5)(webpack@5.103.0)
+      babel-plugin-styled-components: 2.1.4(@babel/core@7.28.5)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      babel-plugin-transform-remove-strict-mode: 0.0.2
+      babel-plugin-transform-strict-mode: 6.24.1
+      boxen: 8.0.1
+      chalk: 4.1.2
+      concat: 1.0.3
+      configstore: 5.0.1
+      csv-loader: 3.0.5
+      dotenv: 16.6.1
+      dotenv-expand: 11.0.7
+      execa: 4.1.0
+      fast-xml-parser: 5.3.2
+      glob: 10.5.0
+      helmet: 7.2.0
+      html-react-parser: 4.2.10(react@18.3.1)
+      kotii-auth: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      kotii-languages: 1.0.0-beta.3.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      kotii-lazy: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      kotii-logger: 1.0.0-beta.4.0
+      kotii-markdown: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      kotii-router: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      kotii-styled: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      less: 4.4.2
+      node-cache: 5.1.2
+      papaparse: 5.5.3
+      postcss: 8.5.6
+      postcss-loader: 8.2.0(postcss@8.5.6)(typescript@4.9.5)(webpack@5.103.0)
+      postcss-nested: 7.0.2(postcss@8.5.6)
+      postcss-preset-env: 10.4.0(postcss@8.5.6)
+      postcss-selector-parser: 7.1.1
+      prettier: 2.6.2
+      react: 18.3.1
+      react-helmet: 6.1.0(react@18.3.1)
+      react-redux: 9.2.0(@types/react@18.3.27)(react@18.3.1)(redux@5.0.1)
+      react-router-dom: 6.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      redux: 5.0.1
+      redux-thunk: 3.1.0(redux@5.0.1)
+      rxjs-compat: 6.6.7
+      sass: 1.94.2
+      serialize-javascript: 6.0.2
+      stylus: 0.63.0
+      suku: 1.0.0
+      tailwindcss: 3.4.18
+      ts-loader: 9.5.4(typescript@4.9.5)(webpack@5.103.0)
+      typescript: 4.9.5
+      webpack: 5.103.0(webpack-cli@5.1.4)
+      webpack-cli: 5.1.4(webpack@5.103.0)
+      webpack-hot-middleware: 2.26.1
+      webpack-node-externals: 2.5.2
+      ws: 8.18.3
+      xml-loader: 1.2.1
+      xml2js: 0.6.2
+    transitivePeerDependencies:
+      - '@rspack/core'
+      - '@swc/core'
+      - '@types/react'
+      - '@webpack-cli/generators'
+      - bufferutil
+      - esbuild
+      - react-dom
+      - react-native
+      - styled-components
+      - supports-color
+      - tsx
+      - uglify-js
+      - utf-8-validate
+      - webpack-bundle-analyzer
+      - webpack-dev-server
+      - yaml
+    optional: true
+
   kotii-languages@1.0.0-beta.1.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       i18next: 21.10.0
@@ -25616,7 +25521,7 @@ snapshots:
       semver: 7.7.3
       source-map: 0.7.6
       typescript: 4.9.5
-      webpack: 5.103.0(webpack-cli@5.1.4)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
 
   ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5):
     dependencies:

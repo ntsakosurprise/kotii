@@ -1,11 +1,5 @@
-const { register } = require("node:module");
-const { pathToFileURL } = require("node:url");
-// const { getAndSetEnvironmentVariables } = require("./preloads.cjs");
-// const { removeStylesJson } = require("./globals.cjs");
-const { beginCreation } = require("./kotii_create_time.cjs");
-const { run } = require("./kotii_runtime.cjs");
-
-const parentURL = pathToFileURL(__filename);
+import { beginCreations } from "./kotii_create_time.js";
+import { run } from "./kotii_runtime.js";
 
 process.on("message", (msg) => {
   console.log("Child received:", msg);
@@ -24,7 +18,8 @@ process.on("message", (msg) => {
         // import("./kotii-land/prod/app_prod.js");
         // run();
       } else {
-        beginCreation(commandToRun);
+        console.log("THE COMMAND NAME IS", commandToRun);
+        beginCreations(commandToRun);
       }
       break;
 

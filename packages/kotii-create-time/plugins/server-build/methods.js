@@ -6,7 +6,7 @@ import path, { resolve } from "path";
 import {
   getNodejsForeignData,
   getNodejsForeignDataSync,
-} from "../../globals.cjs";
+} from "../../globals.js";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../../kotii_paths.js";
 import runNpmScript from "./runNpmScript.js";
 
