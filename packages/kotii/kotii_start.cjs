@@ -2,6 +2,8 @@ const { register } = require("node:module");
 const { pathToFileURL } = require("node:url");
 const { getAndSetEnvironmentVariables } = require("./preloads.cjs");
 const { removeStylesJson } = require("./globals.cjs");
+const { beginCreation } = require("./kotii_create_time.cjs");
+const { run } = require("./kotii_runtime.cjs");
 
 const parentURL = pathToFileURL(__filename);
 
@@ -21,17 +23,9 @@ process.on("message", (msg) => {
         getAndSetEnvironmentVariables(process.env.NODE_ENV);
 
         import("./kotii-land/prod/app_prod.js");
+        run();
       } else {
-        // removeStylesJson();
-        register("./compile/hooks_.js", parentURL);
-        getAndSetEnvironmentVariables(
-          process.env.NODE_ENV
-            ? process.env.NODE_ENV != "development"
-              ? "development"
-              : process.env.NODE_ENV
-            : "development"
-        );
-        import("./kotii-land/dev/app.js");
+        beginCreation(commandToRun);
       }
       break;
 
