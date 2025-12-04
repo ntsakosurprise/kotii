@@ -1,7 +1,7 @@
 const { register } = require("node:module");
 const { pathToFileURL } = require("node:url");
-const { getAndSetEnvironmentVariables } = require("./preloads.cjs");
-const { removeStylesJson } = require("./globals.cjs");
+// const { getAndSetEnvironmentVariables } = require("./preloads.cjs");
+// const { removeStylesJson } = require("./globals.cjs");
 const { beginCreation } = require("./kotii_create_time.cjs");
 const { run } = require("./kotii_runtime.cjs");
 
@@ -17,13 +17,12 @@ process.on("message", (msg) => {
       console.log("THE COMMAND TO RUN", commandToRun);
       process.env["COMMANDS"] = JSON.stringify(commands);
       if (commandToRun === "start") {
-        process.env.ANZII_KICK_OFF_MANUALLY = "true";
-        process.env.NODE_ENV = "production";
-        register("./compile/hooks_prod.js", parentURL);
-        getAndSetEnvironmentVariables(process.env.NODE_ENV);
-
-        import("./kotii-land/prod/app_prod.js");
-        run();
+        // process.env.ANZII_KICK_OFF_MANUALLY = "true";
+        // process.env.NODE_ENV = "production";
+        // register("./compile/hooks_prod.js", parentURL);
+        // getAndSetEnvironmentVariables(process.env.NODE_ENV);
+        // import("./kotii-land/prod/app_prod.js");
+        // run();
       } else {
         beginCreation(commandToRun);
       }

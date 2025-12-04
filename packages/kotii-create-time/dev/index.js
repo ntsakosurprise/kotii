@@ -1,4 +1,4 @@
-import run from "../run.cjs";
+import run from "../run.mjs";
 export const dev = () => {
   run();
 };
