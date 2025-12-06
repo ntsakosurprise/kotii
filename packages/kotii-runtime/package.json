@@ -4,11 +4,8 @@
   "description": "",
   "type": "module",
   "exports": {
-    ".": {
-      "import": "./index.js",
-      "require": "./index.js",
-      "default": "./index.js"
-    }
+    ".": "./index.js",
+    "./kotii-land/*": "./kotii-land/*"
   },
   "scripts": {
     "lint": "eslint .",

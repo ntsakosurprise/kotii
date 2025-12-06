@@ -3,7 +3,7 @@ import fs from "fs";
 import { isBuiltin } from "node:module";
 import { pathToFileURL } from "node:url";
 import path from "path";
-
+import { loggas, logger } from "kotii-logger";
 let meta = null;
 let kotiiLandServerBundle = null;
 let workdir = `${process.cwd()}`;
@@ -13,6 +13,11 @@ const IMAGE_FILES_SPECIFIERS = {};
 
 let extensions = [".js", ".jsx", ".tsx", ".ts"];
 let fileSpecifiers = [".gif", ".png", ".svg", ".jpg", ".jpeg"];
+
+logger.setNameSpaces([
+  { namespace: "nodejs:compilation:load", id: "load" },
+  { namespace: "nodejs:compilation:resolve", id: "resolve" },
+]);
 
 export async function resolve(specifier, context, nextResolve) {
   const { parentURL = workdir } = context;
@@ -80,13 +85,13 @@ export async function load(url, context, nextLoad) {
 const resolveAliasedImports = (specifier) => {
   if (!isBuiltin(specifier) && doMeta(specifier)) {
     let specifierAlias = meta.aliases[specifier];
-
-    let fileUrl = pathToFileURL(`${workdir}${specifierAlias}`);
+    let workdirAsBuild = getPagesBasePath();
+    let fileUrl = pathToFileURL(`${workdirAsBuild}${specifierAlias}`);
 
     let fileUrlExt = path.extname(specifierAlias);
 
     if (!fileUrlExt.trim()) {
-      let pathUrl = `${workdir}${specifierAlias}`;
+      let pathUrl = `${workdirAsBuild}${specifierAlias}`;
       let pathUrlFileExtension = extensions.filter((ext) => {
         if (fs.existsSync(`${pathUrl}${ext}`)) return true;
       });
@@ -180,17 +185,6 @@ const resolveKotiiUserApiPlugins = (specifier) => {
 };
 
 const getPagesBasePath = () => {
-  // let nodeModulesPath = `${path.join(workdir, "../node_modules")}`;
-  // let kotiiPath = `${path.join(workdir, "..")}`;
-  // console.log("KOTII NODE MODULES PATH", nodeModulesPath);
-  // console.log("KOTII PATH", kotiiPath);
-  // let inKotiiLand = fs.existsSync(`${kotiiPath}`);
-  // let inUserLand = fs.existsSync(`${nodeModulesPath}`);
-  // console.log("IS KOTII LAND", inKotiiLand, kotiiPath);
-  // console.log("IS USER LAND", inUserLand, nodeModulesPath);
-  // let resolvePath = inUserLand
-  //   ? `${path.join(nodeModulesPath, "kotii-templates/javascript/ssr/build")}`
-  //   : `${path.join(kotiiPath, "kotii-templates/javascript/ssr/build")}`;
   let resolvePath = `${path.join(workdir, "./build")}`;
 
   return resolvePath;
@@ -198,7 +192,7 @@ const getPagesBasePath = () => {
 
 const doMeta = (specifier) => {
   if (!meta) {
-    let metaPath = path.resolve(workdir, "app.manifest.json");
+    let metaPath = path.resolve(workdir, "build/.kotii-land/app.manifest.json");
 
     if (fs.existsSync(metaPath)) {
       meta = JSON.parse(
@@ -231,12 +225,6 @@ const loadUserKotiiLandBundle = () => {
     kotiiLandServerBundle = imports;
     loadUserIsRunning = false;
   });
-
-  // if (fs.existsSync(metaPath)) {
-  //   kotiiLandServerBundle = fs.readFileSync(metaPath, {
-  //     encoding: "utf8",
-  //   });
-  // }
 };
 const storeModuleSpecifier = (fileUrl, specifier) => {
   IMAGE_FILES_SPECIFIERS[fileUrl] = {

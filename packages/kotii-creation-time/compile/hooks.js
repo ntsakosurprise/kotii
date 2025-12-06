@@ -233,6 +233,7 @@ export async function load(url, context, nextLoad) {
           source: source,
         };
       } else {
+        loggas.load.debug("", result);
         source = await nextLoad(url, { ...context, format });
       }
       let rawSource = typeof source === "string" ? source : source.source;
