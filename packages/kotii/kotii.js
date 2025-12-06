@@ -1,10 +1,5 @@
 #!/usr/bin/env node
 
-// const { fork } = require("child_process");
-// const path = require("path");
-// const cli = require("./cli.cjs");
-// const { parseScriptArguments } = cli;
-// const { replaceKotiiJsFilesContent } = require("kotii-create-time");
 import { fork } from "child_process";
 import path from "path";
 import cli from "./cli.cjs"; // CJS → ESM default import
@@ -95,7 +90,6 @@ const startApp = (isaRestart = false) => {
 };
 
 process.on("SIGINT", () => {
-  console.log("Parent received SIGINT");
   childProcess.kill("SIGINT"); // forward to child
 });
 

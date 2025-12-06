@@ -2,13 +2,11 @@ import { beginCreations } from "./kotii_create_time.js";
 import { run } from "./kotii_runtime.js";
 
 process.on("message", (msg) => {
-  console.log("Child received:", msg);
-
   switch (msg.event) {
     case "take-commands":
       console.log("COMMANDS RECEIVED", msg.event);
       const { commandToRun, commands } = msg.data;
-      console.log("THE COMMAND TO RUN", commandToRun);
+
       process.env["COMMANDS"] = JSON.stringify(commands);
       if (commandToRun === "start") {
         run(commandToRun);

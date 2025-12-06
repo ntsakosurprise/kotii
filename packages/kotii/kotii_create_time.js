@@ -1,6 +1,5 @@
 const beginCreations = (commandToRun) => {
   import("kotii-creation-time").then((kotiiCreateTime) => {
-    console.log("IMPORTED KOTII-CREAT-TIME", kotiiCreateTime);
     const { dev, build, ssg } = kotiiCreateTime;
 
     switch (commandToRun) {
