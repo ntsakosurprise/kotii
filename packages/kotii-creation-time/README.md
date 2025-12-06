@@ -7,105 +7,69 @@
        color: inherit;
      ">
     <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/kotii.svg" alt="kotii logo">
-    <strong>Kotii-Lazy</strong>
+    <strong>Kotii-creation-time</strong>
   </a>
 </p>
 
-`kotii-lazy` is a lightweight utility library for lazy loading React components with ease. It provides a simple API to dynamically load components and wrap them in suspense for optimal performance.
+`kotii-creation-time` is a development-time and build-time utilities for the **Kotii Framework**.
 
-## Features
+This package provides internal tooling used by Kotii to:
 
-- Simple API for lazy loading React components
-- Suspense support for fallback UI
-- Lightweight and minimal
+- run the framework's development server
+- execute production builds
+- generate static site output (SSG)
+- perform framework-level JavaScript transformations
 
-## Installation
+It is designed for **Node.js environments only** and should be used **during development or build**, not shipped to client-side bundles.
 
-```bash
-npm install kotii-lazy
+---
+
+## 📦 Installation
+
+```sh
+npm install kotii-creation-time --save-dev
 ```
 
-# or
+## Example Usage
 
-```bash
-yarn add kotii-lazy
-```
+Below is a typical usage pattern inside a CLI or framework bootstrap script.  
+The tools are imported dynamically so they are only loaded when needed.
 
-## Usage
+```js const beginCreations = (commandToRun) => {
+  import("kotii-creation-time").then((kotiiCreateTime) => {
+    const { dev, build, ssg } = kotiiCreateTime;
 
-### Import
+    switch (commandToRun) {
+      case "dev":
+        return dev();
+      case "build":
+        return build();
+      case "static":
+        return ssg();
+      default:
+        throw new Error("KotiiJS was started with an unrecognised command");
+    }
+  });
+};
 
-```js
-import { LazySuspense, lazyLoad } from "kotii-lazy";
-```
-
-### lazyLoad
-
-`lazyLoad` allows you to dynamically import a component, enabling code-splitting and improving initial load performance.
-
-```js
-import { lazyLoad } from "kotii-lazy";
-
-const MyComponent = lazyLoad(() => import("./MyComponent"));
-```
-
-## LazySuspense
-
-`LazySuspense` is a wrapper component that handles the loading state while your lazy-loaded component is being fetched.
-
-```js
-import { LazySuspense, lazyLoad } from "kotii-lazy";
-
-const MyComponent = lazyLoad(() => import("./MyComponent"));
-
-function App() {
-  return (
-    <LazySuspense fallback={<div>Loading...</div>}>
-      <MyComponent />
-    </LazySuspense>
-  );
-}
-```
-
-fallback — React node displayed while the lazy component is loading.
-
-## Example
-
-```js
-import React from "react";
-import { LazySuspense, lazyLoad } from "kotii-lazy";
-
-const Dashboard = lazyLoad(() => import("./Dashboard"));
-
-function App() {
-  return (
-    <div>
-      <h1>Welcome to My App</h1>
-      <LazySuspense fallback={<p>Loading dashboard...</p>}>
-        <Dashboard />
-      </LazySuspense>
-    </div>
-  );
-}
-
-export default App;
+export { beginCreations };
 ```
 
 # Questions & Support
 
-For questions and support please use kotii-lazyjs's Suppport page on [Github repo](https://github.com/ntsakosurprise/kotii-lazy/development/SUPPORT.md).
+For questions and support please use kotii-lazyjs's Suppport page on [Github repo](https://github.com/ntsakosurprise/SUPPORT.md).
 
 # Issues
 
-Please make sure to read the [Issue](https://github.com/ntsakosurprise/kotii-lazy/development/ISSUES.md) Reporting Checklist before opening an issue. Issues not conforming to the guidelines may be closed immediately.
+Please make sure to read the [Issue](https://github.com/ntsakosurprise/ISSUES.md) Reporting Checklist before opening an issue. Issues not conforming to the guidelines may be closed immediately.
 
 # Changelog
 
-Detailed changes for each release are documented in our [Changelog](https://github.com/ntsakosurprise/kotii-lazy/development//CHANGELOG.md).
+Detailed changes for each release are documented in our [Changelog](https://github.com/ntsakosurprise/CHANGELOG.md).
 
 # Release Notes
 
-A summary of release changes can be found in our [Release Notes](https://github.com/ntsakosurprise/kotii-lazy/development//RELEASE_NOTES.md).
+A summary of release changes can be found in our [Release Notes](https://github.com/ntsakosurprise/RELEASE_NOTES.md).
 
 # Stay In Touch
 
@@ -113,10 +77,10 @@ A summary of release changes can be found in our [Release Notes](https://github.
 
 # Contribution
 
-Please make sure to read the [Contributing Guide](https://github.com/ntsakosurprise/kotii-lazy/development/CONTRIBUTING.md) before making a pull request. If you have an kotii-lazy plugin, add it with a pull request.
+Please make sure to read the [Contributing Guide](https://github.com/ntsakosurprise/CONTRIBUTING.md) before making a pull request. If you have an kotii-creation-time plugin, add it with a pull request.
 
 # Licence
 
-[MIT](https://.github.com/) - see the [LICENSE](https://github.com/ntsakosurprise/kotii-lazy/development/LICENSE.md) file for details.
+[MIT](https://.github.com/) - see the [LICENSE](https://github.com/ntsakosurprise/LICENSE.md) file for details.
 
 © Kotii Ecosystem 2025-present. Ntsako (Surprise) Mashele
