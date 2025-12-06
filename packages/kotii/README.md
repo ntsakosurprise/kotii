@@ -13,11 +13,133 @@
 
 ## Welcome
 
-Kotii is a frontend meta framework that has been made to be simple and intuitive. It is currently designed to work with React. There are also considerations to integrate it with other mainstream JavaScript frameworks.
+# Kotii Framework
 
-Kotii is actually from one of the languages in South Africa known as XiTsonga or simply Tsonga. The name Kotii itself is derived from the word “kotani”, which in English is translated to mean “be able (to build with)”
+**Kotii** is a next-generation **full-stack meta-framework** for building modern web applications.  
+It combines a powerful compiler pipeline, flexible backend architecture, file-based routing, and first-class React support — all built on top of the **Anzii framework** and its event-driven, plugin-powered architecture.
 
-It was initially intended to be a boilerplate under the react framework paradigm, but evolved overtime into a framework instead, as a result of a strong desire that the initial author had of creating something meaningful.
+Kotii stands among the most capable frameworks in the ecosystem — **Next.js**, **Remix**, **Nuxt**, **Astro**, **SvelteKit** —while offering its own unique combination of:
+
+- a deeply integrated backend plugin system
+- compiler-level AST transformations
+- custom Node.js hooks
+- full-stack file-based routing
+- and an advanced markdown + content pipeline
+
+Kotii is designed to be simple, expressive, and incredibly powerful.
+
+---
+
+## 🌍 Name Origin
+
+**Kotii** comes from the Tsonga word **“kotani”**, meaning:
+
+> **“be able (to build with)”**
+
+This meaning reflects the framework’s purpose:  
+to empower developers to build anything with clarity, speed, and confidence.
+
+---
+
+## ✨ Major Features at a Glance
+
+### **Full-stack**
+
+Kotii supports:
+
+- API routes
+- Middleware
+- Custom backend logic
+- Database integration
+- Server actions
+- Plugin-based backend extensions
+
+All powered by Anzii’s event-driven core.
+
+### **Modern Frontend**
+
+- React support
+- Fast HMR (JS/CSS/Markdown/Components)
+- Tailwind CSS
+- CSS Modules
+- Custom PostCSS pipeline
+- Optimized production builds
+
+### **Compiler / Build System**
+
+- Custom Webpack loaders + plugins
+- Custom Babel plugins + transforms
+- AST transformations
+- Markdown transformation pipeline
+- Automatic asset handling
+- Image optimization pipeline
+- CSV / JSON importing
+
+### **Routing & Rendering**
+
+- **File-based routing** (frontend and backend)
+- **Server-Side Rendering (SSR)**
+- **Static Site Generation (SSG)**
+- **Hybrid rendering** per route
+- **Server Actions** for mutating server-side operations
+
+### **Content Pipeline**
+
+- Advanced Markdown engine
+- Frontmatter support
+- React components inside markdown
+- Custom Markdown extension syntax
+- Slug generation + rich metadata
+- Extensible via plugins
+
+### **Runtime**
+
+- Node.js extension hooks
+- Minimal overhead execution
+- Plugin-driven server
+- Fully event-driven lifecycle
+
+### **Developer Experience**
+
+- Fast dev server
+- Dedicated Kotii DevTools
+- Plugin API for extending both dev and runtime
+- Typed configuration
+- Zero-config defaults with powerful escape hatches
+
+---
+
+## 🚀 Getting Started
+
+Install:
+
+```bash
+npm install kotii
+```
+
+Start dev
+
+```bash
+kotii start
+```
+
+Start build
+
+```bash
+kotii build
+```
+
+Generate static
+
+```bash
+kotii static
+```
+
+Start production
+
+```bash
+kotii start
+```
 
 ### Code Snippets
 
