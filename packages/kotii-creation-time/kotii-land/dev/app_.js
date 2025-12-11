@@ -8,7 +8,7 @@ import path from "path";
 import React, { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 
-import { AppProvider, useAppContext } from "@kotii/components";
+import { AppProvider, useAppContext } from "kotii-components";
 
 import { ClientRoutes, RoutesAsServerRoutes } from "@kotii/dev";
 import { AuthProvider } from "kotii-auth";
