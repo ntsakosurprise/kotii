@@ -1,4 +1,4 @@
-import { useAppContext } from "kotii";
+import { useAppContext } from "../AppContext/index.jsx";
 import { useEffect, useState } from "react";
 const effect_id_prefix = "kotii_eff_id_";
 let currentEffectID = 1;
