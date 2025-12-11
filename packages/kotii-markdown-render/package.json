@@ -60,7 +60,8 @@
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "kotii-languages": "1.0.0-beta.3.0"
   },
   "dependencies": {
     "debug": "^4.4.0"
