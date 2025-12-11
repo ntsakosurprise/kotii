@@ -51,11 +51,12 @@
     "webpack-node-externals": "^3.0.0"
   },
   "peerDependencies": {
+    "kotii-languages": "1.0.0-beta.3.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "kotii-languages": "1.0.0-beta.3.0"
+    "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "kotii-styled": "^1.0.0-beta.2.0"
+    "kotii-styled": "^1.0.0-beta.2.0",
+    "prop-types": "^15.7.2"
   }
 }

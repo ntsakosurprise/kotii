@@ -907,6 +907,9 @@ importers:
       kotii-styled:
         specifier: ^1.0.0-beta.2.0
         version: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      prop-types:
+        specifier: ^15.7.2
+        version: 15.8.1
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -16619,7 +16622,7 @@ snapshots:
 
   '@webpack-cli/configtest@1.2.0(webpack-cli@4.10.0)(webpack@5.103.0)':
     dependencies:
-      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+      webpack: 5.103.0(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
 
   '@webpack-cli/configtest@2.1.1(webpack-cli@5.1.4)(webpack@5.103.0)':
@@ -16645,7 +16648,7 @@ snapshots:
     dependencies:
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
     optionalDependencies:
-      webpack-dev-server: 4.15.2(debug@4.4.3)(webpack-cli@4.10.0)(webpack@5.103.0)
+      webpack-dev-server: 4.15.2(webpack-cli@4.10.0)(webpack@5.103.0)
 
   '@webpack-cli/serve@2.0.5(webpack-cli@5.1.4)(webpack@5.103.0)':
     dependencies:
@@ -17180,7 +17183,7 @@ snapshots:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+      webpack: 5.103.0(webpack-cli@4.10.0)
 
   babel-loader@9.2.1(@babel/core@7.28.5)(webpack@5.103.0):
     dependencies:
@@ -25497,7 +25500,7 @@ snapshots:
       schema-utils: 4.3.3
       serialize-javascript: 6.0.2
       terser: 5.44.1
-      webpack: 5.103.0(webpack-cli@5.1.4)
+      webpack: 5.103.0(webpack-cli@4.10.0)
 
   terser@5.44.1:
     dependencies:
@@ -26087,10 +26090,10 @@ snapshots:
       import-local: 3.2.0
       interpret: 2.2.0
       rechoir: 0.7.1
-      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+      webpack: 5.103.0(webpack-cli@4.10.0)
       webpack-merge: 5.10.0
     optionalDependencies:
-      webpack-dev-server: 4.15.2(debug@4.4.3)(webpack-cli@4.10.0)(webpack@5.103.0)
+      webpack-dev-server: 4.15.2(webpack-cli@4.10.0)(webpack@5.103.0)
 
   webpack-cli@4.10.0(webpack@5.103.0):
     dependencies:
@@ -26132,7 +26135,7 @@ snapshots:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.3.3
-      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+      webpack: 5.103.0(webpack-cli@4.10.0)
 
   webpack-dev-server@4.15.2(debug@4.4.3)(webpack-cli@4.10.0)(webpack@5.103.0):
     dependencies:

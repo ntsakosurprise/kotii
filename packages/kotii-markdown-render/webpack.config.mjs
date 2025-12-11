@@ -27,7 +27,7 @@ const kotiiRouter = {
     {
       react: "react",
       "react-dom": "react-dom",
-      "kotii-auth": "kotii-auth",
+      "kotii-languages": "kotii-languages",
     },
   ],
   resolve: {
