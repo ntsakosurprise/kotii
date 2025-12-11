@@ -1,7 +1,10 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { LazySuspense } from "kotii-lazy";
 import { Router, Routes } from "kotii-router";
-import { useAppContext } from "../../react-components/index.jsx";
+import { useAppContext } from "kotii-components";
 const Wrapper = (props) => {
   //const Component = props.component;
   return (

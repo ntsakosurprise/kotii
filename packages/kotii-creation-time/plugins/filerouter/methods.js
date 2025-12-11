@@ -1,3 +1,7 @@
+/* eslint-disable no-async-promise-executor */
+/* eslint-disable no-undef */
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-unused-vars */
 const methods = {};
 import path from "node:path";
 import { kotiiKotiiLandPath } from "../../kotii_paths.js";
@@ -1449,7 +1453,7 @@ methods.createStaticComponentsImports = function (options) {
               t.identifier("MarkdownRender") // imported name
             ),
           ],
-          t.stringLiteral("../../react-components/index.jsx") // source module
+          t.stringLiteral("kotii-markdown-render") // source module
         )
       : null;
 
@@ -1540,7 +1544,7 @@ methods.createDynamicLazyComponentsImports = function (options) {
               t.identifier("MarkdownRender") // imported name
             ),
           ],
-          t.stringLiteral("../../react-components/index.jsx") // source module
+          t.stringLiteral("kotii-markdown-render") // source module
         )
       : null;
 

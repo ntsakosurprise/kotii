@@ -1,3 +1,5 @@
+/* eslint-disable no-async-promise-executor */
+/* eslint-disable no-unused-vars */
 const methods = {};
 const MATCH_REMOTE_RESOURCE_REGEX = /(https|http):+\/\//i;
 let tailwindConfig = null;

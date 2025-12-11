@@ -7,10 +7,7 @@ import path from "path";
 import React, { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-import {
-  AppProvider,
-  useAppContext,
-} from "../react-components-pruned/index.js";
+import { AppProvider, useAppContext } from "kotii-components";
 import createReduxStore from "./redux.js";
 import { ClientRoutes, RoutesAsServerRoutes } from "./build.js";
 import { AuthProvider } from "kotii-auth";

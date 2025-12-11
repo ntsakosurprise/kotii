@@ -1,9 +1,12 @@
+/* eslint-disable no-async-promise-executor */
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 const methods = {};
 import fs from "fs";
 import { Router } from "kotii-router";
 import { ServerStyleSheet } from "kotii-styled";
 import path from "path";
-import { kotiiKotiiLandPath } from "../../kotii_paths.js";
+import { kotiiKotiiLandPath } from "@kotii/_internal/root";
 
 methods.init = function () {
   this.listens({
@@ -119,7 +122,6 @@ methods.runReactView = function (data) {
     // Header,
     // Footer,
     // GlobalStyle,
-    createReduxStore,
     HeadHelmet,
     meta,
   } = self;
@@ -150,7 +152,15 @@ methods.runReactView = function (data) {
 
   // Grab the initial state from our Redux store
   return new Promise(async (resolve) => {
-    const store = stateVendor === "redux" ? createReduxStore() : {};
+    const { loadReduxServer } = await import("@kotii/_internal/land");
+    let isRedux = true;
+    // console.log("THE CREATE FUNCTION IMPORT", createReduxStore)
+    self.reduxResources = isRedux ? await loadReduxServer() : null;
+    self.debug("SELF.REDUX RESOURCES", self.reduxResources);
+    const store = self?.reduxResources
+      ? await self.reduxResources.createReduxStore()
+      : null;
+    console.log("THE CREATE RESULT STORE", store);
     let stateData = await self.getStateDataFromServer({
       routePath: view.match,
       store,
@@ -213,6 +223,7 @@ methods.runReactView = function (data) {
                 goodies,
                 effectsStore,
                 authUser,
+                reduxResources: self.reduxResources,
               })}
             </Router>
           ) : layoutRoot.Layout && layoutRoot.Root ? (
@@ -224,6 +235,7 @@ methods.runReactView = function (data) {
                 goodies,
                 effectsStore,
                 authUser,
+                reduxResources: self.reduxResources,
               })}
             </Router>
           ) : layoutRoot.Layout ? (
@@ -234,6 +246,7 @@ methods.runReactView = function (data) {
                 goodies,
                 effectsStore,
                 authUser,
+                reduxResources: self.reduxResources,
               })}
             </Router>
           ) : (
@@ -243,6 +256,7 @@ methods.runReactView = function (data) {
                 storeFromSource: store,
                 effectsStore,
                 authUser,
+                reduxResources: self.reduxResources,
               })}
             </Router>
           )
@@ -265,8 +279,8 @@ methods.runReactView = function (data) {
     // } catch (error) {
     //   self.debug("THE RENDER ERROR", error);
     // }
-
-    const finalState = store.getState();
+    console.log("THE FINAL STATE", store, store.getState());
+    const finalState = store.getState() || store;
     const helmetGenerated = HeadHelmet.renderStatic();
     // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
     const fullPage = self.renderFullPage({

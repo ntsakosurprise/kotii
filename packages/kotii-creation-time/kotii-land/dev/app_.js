@@ -10,10 +10,9 @@ import { createRoot, hydrateRoot } from "react-dom/client";
 
 import { AppProvider, useAppContext } from "kotii-components";
 
-import { ClientRoutes, RoutesAsServerRoutes } from "@kotii/dev";
+import { ClientRoutes, RoutesAsServerRoutes } from "@kotii/_internal/land";
 import { AuthProvider } from "kotii-auth";
-import { OptionalDynamiceReduxWrapper } from "@kotii/dev";
-import { createReduxStore } from "./index.js";
+import { OptionalDynamiceReduxWrapper } from "@kotii/_internal/land";
 
 logger.setNameSpaces([
   { namespace: "app:start-client", id: "appClient" },

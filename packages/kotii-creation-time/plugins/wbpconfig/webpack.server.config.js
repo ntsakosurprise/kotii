@@ -1,4 +1,5 @@
-import fs, { symlink } from "fs";
+/* eslint-disable no-unused-vars */
+import fs from "fs";
 import { loggas, logger } from "kotii-logger";
 // import syncStylesLoader from "kotii-sync-styles-loader"
 // import stylesHmr from "kotii-styles-hmr"
@@ -110,6 +111,7 @@ export default (options) => {
       extensions: [".js", ".jsx", ".ts", ".tsx", ".png", ".jpg"], // tell webpack to use these extenstions to resolve imported files[for importing without specifying the extension name]
       alias: {
         ...options.appManifest.aliases,
+        ...getKotiiAliasPaths(env.appFolder),
         "react-router-dom": path.resolve(
           `${env.appFolder}/node_modules/react-router-dom`
         ),
@@ -542,3 +544,12 @@ function guessPathExtension(guessPath) {
   console.log("THE LIVING EXTENSION", livingExtension);
   return livingExtension;
 }
+
+const getKotiiAliasPaths = (workdir) => {
+  const KOTII_INTERNAL_ALIASES = {
+    "@kotii/_internal/land": `${workdir}/node_modules/kotii-creation-time/kotii-land/dev/index`,
+    "@kotii/_internal/plugins": `${workdir}/node_modules/kotii-creation-time/plugins/index`,
+    "@kotii/_internal/root": `${workdir}/node_modules/kotii-creation-time/kotii_paths`,
+  };
+  return KOTII_INTERNAL_ALIASES;
+};

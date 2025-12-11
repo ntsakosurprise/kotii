@@ -1,5 +1,5 @@
 import { anzii } from "anzii";
-import plugins from "../../plugins/index.js";
+import plugins from "@kotii/_internal/plugins";
 
 import("/kotii-user-api/plugins").then((imported) => {
   let userPlugins = imported.default;

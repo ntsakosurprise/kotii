@@ -49,6 +49,20 @@ const KOTII_USER_LAND_ALIASES = {
   },
 };
 
+const KOTII_INTERNAL_ALIASES = {
+  // layout: {
+  //   alias: "/kotii-user-land-aliase/src/components/startup/index",
+  //   value: "/src/components/startup/index",
+  // },
+  // redux: {
+  //   alias: "/kotii-user-land-aliase/src/store/index",
+  //   value: "/src/store/index",
+  // },
+  "@kotii/_internal/land": `${workdir}/node_modules/kotii-creation-time/kotii-land/dev/index`,
+  "@kotii/_internal/plugins": `${workdir}/node_modules/kotii-creation-time/plugins/index`,
+  "@kotii/_internal/root": `${workdir}/node_modules/kotii-creation-time/kotii_paths`,
+};
+
 let cssSpecifiers = [".css", ".scss", ".sass", ".less", ".styl"];
 let fileSpecifiers = [".gif", ".png", ".svg", ".jpg", ".jpeg"];
 
@@ -233,7 +247,6 @@ export async function load(url, context, nextLoad) {
           source: source,
         };
       } else {
-        loggas.load.debug("", result);
         source = await nextLoad(url, { ...context, format });
       }
       let rawSource = typeof source === "string" ? source : source.source;
@@ -309,6 +322,9 @@ export async function resolve(specifier, context, nextResolve) {
     if (specifier.indexOf("../kotii-land/dev") >= 0) {
       loggas.resolve.debug("ALSO HANDLED BY LOADERS", meta);
     }
+
+    shouldTerminate = resolveKotiiInternalImports(specifier);
+    if (shouldTerminate) return shouldTerminate;
     shouldTerminate = resolveUserlandImports(specifier);
     if (shouldTerminate) return shouldTerminate;
     shouldTerminate = resolveAliasedImports(specifier);
@@ -584,6 +600,36 @@ export const resolveUserlandImports = (specifier) => {
     );
     let aliaseTruePathValue = KOTII_USER_LAND_ALIASES[aliaseTruePath[0]].value;
     let aliasePossiblePath = `${basePath}${aliaseTruePathValue}`;
+
+    try {
+      let livingPath = guessPathExtension(aliasePossiblePath);
+      return {
+        url: pathToFileURL(`${livingPath}`).href,
+        shortCircuit: true,
+      };
+    } catch (error) {
+      console.log("THE APP HAS ERRORED", error);
+    }
+  } else {
+    return false;
+  }
+};
+export const resolveKotiiInternalImports = (specifier) => {
+  loggas.resolve.debug("KOTII LAND USER LAND", specifier);
+  if (!isBuiltin(specifier) && /^@kotii\/_internal(\/.*)?$/.test(specifier)) {
+    loggas.resolve.debug("THE SPECIFIER FOR INTERNAL IMPORTS", specifier);
+    // let basePath = getPagesBasePath(specifier);
+
+    // let aliaseTruePath = Object.keys(KOTII_USER_LAND_ALIASES).filter(
+    //   (aliase) => KOTII_USER_LAND_ALIASES[aliase].alias === specifier
+    // );
+    // let aliaseTruePathValue = KOTII_USER_LAND_ALIASES[aliaseTruePath[0]].value;
+
+    let aliasePossiblePath = `${KOTII_INTERNAL_ALIASES[specifier]}`;
+    loggas.resolve.debug(
+      "THE SPECIFIER FOR INTERNAL IMPORTS: FULL PATH",
+      aliasePossiblePath
+    );
 
     try {
       let livingPath = guessPathExtension(aliasePossiblePath);
