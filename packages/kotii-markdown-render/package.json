@@ -3,7 +3,7 @@
   "version": "1.0.0-beta.1.0",
   "description": "is the **React renderer** used by Kotii after Markdown is parsed and transformed",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
-  "homepage": "https://github.com/kotii",
+  "homepage": "https://github.com/ntsakosurprise/kotii",
   "license": "MIT",
   "type": "module",
   "exports": {

@@ -1,9 +1,9 @@
 {
   "name": "@kotii/anzii-plugins-env",
-  "version": "1.0.0-beta.1.0",
+  "version": "1.0.0-beta.2.0",
   "description": "is an Anzii plugin for managing and retrieving environment variables in Node.js applications",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
-  "homepage": "https://github.com/kotii",
+  "homepage": "https://github.com/ntsakosurprise/kotii",
   "license": "MIT",
   "type": "module",
   "exports": {
