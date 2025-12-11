@@ -67,19 +67,19 @@ A hook that behaves like `useEffect` but works universally in both client- and s
 
 # Questions & Support
 
-For questions and support please use kotii-routerjs's Suppport page on [Github repo](https://github.com/ntsakosurprise/kotii-router/development/SUPPORT.md).
+For questions and support please use kotii-routerjs's Suppport page on [Github repo](https://github.com/ntsakosurprise/kotii/SUPPORT.md).
 
 # Issues
 
-Please make sure to read the [Issue](https://github.com/ntsakosurprise/kotii-router/development/ISSUES.md) Reporting Checklist before opening an issue. Issues not conforming to the guidelines may be closed immediately.
+Please make sure to read the [Issue](https://github.com/ntsakosurprise/kotii/ISSUES.md) Reporting Checklist before opening an issue. Issues not conforming to the guidelines may be closed immediately.
 
 # Changelog
 
-Detailed changes for each release are documented in our [Changelog](https://github.com/ntsakosurprise/kotii-router/development//CHANGELOG.md).
+Detailed changes for each release are documented in our [Changelog](https://github.com/ntsakosurprise/kotii//CHANGELOG.md).
 
 # Release Notes
 
-A summary of release changes can be found in our [Release Notes](https://github.com/ntsakosurprise/kotii-router/development//RELEASE_NOTES.md).
+A summary of release changes can be found in our [Release Notes](https://github.com/ntsakosurprise/kotii//RELEASE_NOTES.md).
 
 # Stay In Touch
 
@@ -87,11 +87,11 @@ A summary of release changes can be found in our [Release Notes](https://github.
 
 # Contribution
 
-Please make sure to read the [Contributing Guide](https://github.com/ntsakosurprise/kotii-router/development/CONTRIBUTING.md) before making a pull request. If you have an kotii-router plugin, add it with a pull request.
+Please make sure to read the [Contributing Guide](https://github.com/ntsakosurprise/kotii/CONTRIBUTING.md) before making a pull request.
 
 # Licence
 
-[MIT](https://.github.com/) - see the [LICENSE](https://github.com/ntsakosurprise/kotii-router/development/LICENSE.md) file for details.
+[MIT](https://.github.com/) - see the [LICENSE](https://github.com/ntsakosurprise/kotii/LICENSE.md) file for details.
 
 © Kotii Ecosystem 2025-present. Ntsako (Surprise) Mashele
 
