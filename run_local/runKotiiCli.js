@@ -28,6 +28,7 @@ const madeTarballs = createTarballs(packagesPath, [
   "kotii-auth",
   "kotii-creation-time",
   "kotii-runtime",
+  "kotii-markdown-render",
 ]);
 console.log("MADE TARBALLS", madeTarballs);
 // const nodeScriptPath = path.join(packagesPath, "kotii-cli");
