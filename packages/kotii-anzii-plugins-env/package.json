@@ -31,5 +31,8 @@
   },
   "peerDependencies": {
     "anzii": "8.0.1"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
   }
 }

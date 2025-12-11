@@ -30,6 +30,13 @@
     "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
   },
   "peerDependencies": {
-    "anzii": "8.0.1"
+    "anzii": "8.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "dependencies": {
+    "kotii-router": "1.0.0-beta.3.0",
+    "kotii-styled": "1.0.0-beta.2.0",
+    "serialize-javascript": "^6.0.1"
   }
 }

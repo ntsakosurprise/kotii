@@ -7,26 +7,162 @@
        color: inherit;
      ">
     <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/kotii.svg" alt="kotii logo">
-    <strong>@kotii/anzii-plugins-env</strong>
+    <strong>@kotii/anzii-plugins-react</strong>
   </a>
 </p>
 
-# @kotii/anzii-plugins-env
+# @kotii/anzii-plugins-react
 
-An Anzii plugin for managing and retrieving environment variables in Node.js applications. This plugin is designed to work within the Anzii framework's event-driven architecture, allowing you to load `.env` files, filter environment variables with the prefix `KOTII_APP_`, and return them in raw and stringified formats.
+A full-featured React Server-Side Rendering (SSR), SPA rendering, static rendering, and effects-driven data loader plugin for the **Anzii Framework** built for kotii.
+
+This plugin brings a **Next.js-like** rendering workflow to Anzii — but with more control, zero magic, and first-class integration with the **Kotii ecosystem**.
+
+---
 
 ## Features
 
-- Load environment variables from a `.env` file.
-- Filter variables prefixed with `KOTII_APP_`.
-- Fully compatible with the Anzii event-driven system.
-- Returns environment variables in raw and stringified formats.
-- Supports dynamic module imports via `doImport`.
-- Debug logging for easier troubleshooting.
+### **Core Rendering**
+
+- Server-Side Rendering (SSR)
+- Static site rendering
+- Single Page Application (SPA) HTML shell rendering
+- Integrated React Router-based SSR via **kotii-router**
+- Styled component SSR extraction (**kotii-styled**)
+- Head & metadata SSR via **HeadHelmet** and **Head**
+
+### **Data Loading & Effects System**
+
+- Route-based async SSR data loading (`requiresData`)
+- Component effects system (`effectsToRun`)
+- Automatic script hydration of effects & auth state
+
+### **Kotii Integrations**
+
+- Kotii React **ServerApp** support
+- Kotii page metadata injection
+- Kotii lazy component preloading
+- Kotii environment variable hydration
+
+### **Build System Features**
+
+- Handles Tailwind, internal styles, and bundled styles
+- Handles production `process.env` injection
+- Works in dev & production (bundled import paths differ)
+
+## Installation
+
+```bash
+npm install @kotii/anzii-plugins-react-view
+```
+
+## Registering with anzii in kotii
+
+```js
+import { anzii } from "anzii";
+import ReactViewPlugin from "@kotii/anzii-plugins-react-view";
+
+const plugins = {
+  ReactView: ReactViewPlugin,
+};
+
+anzii(plugins);
+```
+
+## Emmitting the Events
+
+```js
+class Hello {
+  constructor(pao) {
+    this.pao = pao; // Every plugin is passed this object
+  }
+
+  init() {
+    this.listens({
+      "handle-hello-task": this.handleHelloTask.bind(this), // Event and handling method
+    });
+  } // Define the required init() method
+
+  handleHelloTask(data) {
+    const self = this;
+
+    self.callback = data.callback;
+
+    // SSR a Single React View
+
+    self.emit({
+      type: "handle-react-view",
+      data: {
+        view: { match: "/home" },
+        payload: {},
+        callback: (err, html) => {
+          console.log(html);
+        },
+      },
+    });
+
+    // SPA Rendering
+    self.emit({
+      type: "handle-react-spa",
+      data: {
+        callback: (html) => console.log(html),
+      },
+    });
+  }
+
+  // provide SSR ROUTES
+
+  self.emit({
+    type: "take-ssr-routes",
+    data: {
+      payload: {
+        routes: [
+          {
+            path: "/",
+            requiresData: (store) => store.dispatch(fetchHome()),
+            hasEffectsToRun: true,
+            effectsToRun: [loadHeroSection],
+          }
+        ]
+      }
+  }
+});
+
+}
+
+export default Hello;
+```
+
+## Internal Rendering Pipeline
+
+```scss
+handle-react-view
+   ⬇
+Authentication (optional)
+   ⬇
+processViewAfterCheck
+   ⬇
+runReactView
+   • Load redux server
+   • Load SSR routes
+   • Run requiresData()
+   • Run effectsToRun()
+   • Lazy component preload
+   • Load layout + pages bundle
+   • Styled components SSR
+   ⬇
+renderFullPage
+   • Inject styles
+   • Inject helmet
+   • Inject effects state
+   • Inject user auth
+   • Attach client hydration scripts
+   ⬇
+callback(html)
+```
 
 # Questions & Support
 
-For questions and support please use @kotii/anzii-plugins-envjs's Suppport page on [Github repo](https://github.com/ntsakosurprise/kotii/SUPPORT.md).
+For questions and support please use @kotii/anzii-plugins-reactjs's Suppport page on [Github repo](https://github.com/ntsakosurprise/kotii/SUPPORT.md).
 
 # Issues
 
