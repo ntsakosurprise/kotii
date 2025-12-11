@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-undef */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
@@ -6,7 +7,8 @@ import { loggas, logger } from "kotii-logger";
 import path from "path";
 import React, { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
-import { AppProvider, useAppContext } from "kotii-components";
+
+import { AppProvider, useAppContext } from "@kotii/components";
 
 import { ClientRoutes, RoutesAsServerRoutes } from "@kotii/dev";
 import { AuthProvider } from "kotii-auth";
