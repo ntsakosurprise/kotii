@@ -1,12 +1,13 @@
 import Env from "@kotii/anzii-plugins-env";
 import ReactView from "@kotii/anzii-plugins-react";
+import FileRouter from "@kotii/anzii-plugins-filerouter";
+import ViewGuard from "@kotii/anzii-plugins-viewguard";
 import Build from "./buildsc/index.js";
 import Cachr from "./cachr/index.js";
 import KotiiCatchAll from "./catch-all/catch-all.js";
 import Config from "./config/index.js";
 import ContextApp from "./contextapp/index.js";
 import Dev from "./dev/index.js";
-import FileRouter from "./filerouter/index.js";
 import Hello from "./hello/hello.js";
 import Init from "./init/index.js";
 import Interpreter from "./interpreter/index.js";
@@ -21,7 +22,7 @@ import Start from "./start/index.js";
 import Static from "./static/index.js";
 import Watchr from "./watchr/index.js";
 import WebpackConfig from "./wbpconfig/index.js";
-import ViewGuard from "./view-guard/index.js";
+// import ViewGuard from "./view-guard/index.js";
 
 export {
   Build,
