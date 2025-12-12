@@ -1,0 +1,94 @@
+import babel from "@babel/core";
+import generate from "@babel/generator";
+import parser from "@babel/parser";
+import template from "@babel/template";
+import traverse from "@babel/traverse";
+import * as t from "@babel/types";
+import execSync from "child_process";
+import fs from "fs";
+import { globSync } from "glob";
+import path from "path";
+import methods from "./methods.js";
+
+/**
+ * @type FileRouter
+ */
+class FileRouter {
+  constructor(pao) {
+    this.pao = pao;
+    this.globSync = globSync;
+    this.babel = babel;
+    this.fs = fs;
+    this.path = path;
+    this.kotiiUtils = null;
+    // this.require = require;
+    this.parser = parser;
+    this.traverse = traverse.default;
+    this.t = t;
+    this.template = template.default;
+    this.generate = generate.default;
+    this.execSync = execSync.spawn;
+    this.keys = {
+      SAVE_FILES_KEY: "SAVE_FILES_KEY",
+      CACHE_ROUTES_PATHS_KEY: "CACHE_ROUTES_PATHS_KEY",
+    };
+
+    // this.openApp = openApp;
+    // this.apps = apps;
+    this.init = methods.init;
+    this.handleFileRoutes = methods.handleFileRoutes;
+    this.dynamicImport = methods.dynamicImport;
+    this.createRouterComponents = methods.createRouterComponents;
+    this.getPages = methods.getPages;
+    this.getItemPathAndFile = methods.getItemPathAndFile;
+    this.buildFile = methods.buildFile;
+    this.buildStringCode = methods.buildStringCode;
+    this.parseJsxToReact = methods.parseJsxToReact;
+    this.getSourceCodes = methods.getSourceCodes;
+    this.enableBabelRegister = methods.enableBabelRegister;
+    this.addToAST = methods.addToAST;
+    this.variableCreation = methods.variableCreation;
+    this.funcToJsx = methods.funcToJsx;
+    this.doImports = methods.doImports;
+    this.doImport = methods.doImport;
+    this.insertImportDeclarations = methods.insertImportDeclarations;
+    this.checkForSavedFiles = methods.checkForSavedFiles;
+    this.watchFileAddEvent = methods.watchFileAddEvent;
+    this.updateCacheData = methods.updateCacheData;
+    this.watchFileDeleteEvent = methods.watchFileDeleteEvent;
+    this.cacheData = methods.cacheData;
+    this.getRoutesHelper = methods.getRoutesHelper;
+    this.astAddNode = methods.astAddNode;
+    this.astDeleteNode = methods.astDeleteNode;
+    this.removeImportDeclarations = methods.removeImportDeclarations;
+    this.createMetaAst = methods.createMetaAst;
+    this.merge = methods.merge;
+    this.buildServerRoutes = methods.buildServerRoutes;
+    this.getComponentServerState = methods.getComponentServerState;
+    this.insertIdentifierImportDeclarations =
+      methods.insertIdentifierImportDeclarations;
+    this.getAstRoutes = methods.getAstRoutes;
+    this.handleRemovePagesImport = methods.handleRemovePagesImport;
+    this.addImportLineToBuildJs = methods.addImportLineToBuildJs;
+    this.addOrRemoveByAST = methods.addOrRemoveByAST;
+    this.createStaticComponentsImports = methods.createStaticComponentsImports;
+    this.createDynamicLazyComponentsImports =
+      methods.createDynamicLazyComponentsImports;
+
+    this.startAstFlow = methods.startAstFlow;
+    this.processMarkdown = methods.processMarkdown;
+    this.getItemPath = methods.getItemPath;
+    this.createMarkdownVariable = methods.createMarkdownVariable;
+    this.addItemsToExportList = methods.addItemsToExportList;
+    this.astAddNodeMarkdown = methods.astAddNodeMarkdown;
+    this.createMarkdownRoutesAst = methods.createMarkdownRoutesAst;
+    this.astMarkdownUtils = methods.astMarkdownUtils;
+    this.replaceKotiiJsFilesContent = methods.replaceKotiiJsFilesContent;
+    this.getCentralFilesContent = methods.getCentralFilesContent;
+    this.isImportSetInAst = methods.isImportSetInAst;
+    this.removeDyanimcImportDeclaration =
+      methods.removeDyanimcImportDeclaration;
+    this.isLazyLoadedImportVariable = methods.isLazyLoadedImportVariable;
+  }
+}
+export default FileRouter;

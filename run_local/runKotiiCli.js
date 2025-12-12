@@ -26,6 +26,14 @@ const madeTarballs = createTarballs(packagesPath, [
   "kotii-markdown-loader",
   "kotii-react-modules",
   "kotii-auth",
+  "kotii-creation-time",
+  "kotii-runtime",
+  "kotii-markdown-render",
+  "kotii-components",
+  "kotii-anzii-plugins-env",
+  "kotii-anzii-plugins-react",
+  "kotii-anzii-plugins-viewguard",
+  "kotii-anzii-plugins-filerouter",
 ]);
 console.log("MADE TARBALLS", madeTarballs);
 // const nodeScriptPath = path.join(packagesPath, "kotii-cli");
