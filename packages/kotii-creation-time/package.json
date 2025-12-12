@@ -142,8 +142,6 @@
     ".babelrc",
     "babel.server.build.json",
     "babel.server.json",
-    "react-components/",
-    "react-components-pruned/",
     "hot-load-css-modules.js",
     "kotii_paths.js",
     "openssl.conf",
