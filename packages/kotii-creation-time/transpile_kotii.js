@@ -6,10 +6,7 @@ import traverse from "@babel/traverse";
 import fs from "fs";
 import { loggas, logger } from "kotii-logger";
 import path from "path";
-// let options = {
-//   presets: ["@babel/preset-react"],
-//   plugins: ["@babel/plugin-syntax-import-assertions"],
-// };
+
 logger.setNameSpaces([{ namespace: "transpilation:prod", id: "transpile" }]);
 
 let options = {
