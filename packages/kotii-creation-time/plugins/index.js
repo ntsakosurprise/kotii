@@ -1,4 +1,5 @@
 import Env from "@kotii/anzii-plugins-env";
+import ReactView from "@kotii/anzii-plugins-react";
 import Build from "./buildsc/index.js";
 import Cachr from "./cachr/index.js";
 import KotiiCatchAll from "./catch-all/catch-all.js";
@@ -10,7 +11,7 @@ import Hello from "./hello/hello.js";
 import Init from "./init/index.js";
 import Interpreter from "./interpreter/index.js";
 import Markdownr from "./markdownr/index.js";
-import ReactView from "./react/reactview.js";
+// import ReactView from "./react/reactview.js";
 
 import ScriptsUtils from "./scripts-util/scripts-util.js";
 import ServerBuild from "./server-build/index.js";

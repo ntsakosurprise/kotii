@@ -60,6 +60,7 @@
     "@babel/traverse": "^7.23.3",
     "@babel/types": "^7.23.3",
     "@kotii/anzii-plugins-env": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-env/kotii-anzii-plugins-env-1.0.0-beta.1.0.tgz",
+    "@kotii/anzii-plugins-react": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz",
     "@reduxjs/toolkit": "^2.0.1",
     "anzii": "8.0.1",
     "arg": "^4.1.3",
