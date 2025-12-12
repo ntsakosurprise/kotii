@@ -1,7 +1,7 @@
 {
   "name": "kotii",
-  "version": "1.0.0-beta.8.0",
-  "description": "a frontend meta framework that has been made to be simple and intuitive. It is currently designed to work with React.",
+  "version": "1.0.0-beta.9.0",
+  "description": "is a next-generation full-stack meta-framework for building modern web applications It combines a powerful compiler pipeline, flexible backend architecture, file-based routing, and first-class React support — all built on top of the Anzii framework and its event-driven, plugin-powered architecture.",
   "main": "app.js",
   "type": "module",
   "exports": {
