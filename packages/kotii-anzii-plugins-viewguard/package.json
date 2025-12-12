@@ -1,7 +1,7 @@
 {
-  "name": "@kotii/anzii-plugins-filerouter",
+  "name": "@kotii/anzii-plugins-viewguard",
   "version": "1.0.0-beta.1.0",
-  "description": "is an advanced file-based routing engine that automatically scans your filesystem, parses your files into ASTs, generates React components, builds static and lazy route imports, processes Markdown, and maintains a live routing manifest with caching and file watching.",
+  "description": "is a Node.js plugin for the Anzii backend framework that provides view-level authentication for server-side rendered (SSR) applications",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
   "homepage": "https://github.com/ntsakosurprise/kotii",
   "license": "MIT",
@@ -31,14 +31,5 @@
   },
   "peerDependencies": {
     "anzii": "8.0.1"
-  },
-  "optionalDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.23.2",
-    "@babel/generator": "^7.23.3",
-    "@babel/parser": "^7.23.3"
-  },
-  "dependencies": {
-    "glob": "^10.3.10"
   }
 }

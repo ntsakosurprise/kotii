@@ -8,7 +8,6 @@ import KotiiCatchAll from "./catch-all/catch-all.js";
 import Config from "./config/index.js";
 import ContextApp from "./contextapp/index.js";
 import Dev from "./dev/index.js";
-import Hello from "./hello/hello.js";
 import Init from "./init/index.js";
 import Interpreter from "./interpreter/index.js";
 import Markdownr from "./markdownr/index.js";
@@ -56,7 +55,6 @@ export default {
   FileRouter,
   Cachr,
   Watchr,
-  Hello,
   ReactView,
   Ssg,
   Env,

@@ -11,11 +11,9 @@
   </a>
 </p>
 
-# @kotii/anzii-plugins-react
+# @kotii/anzii-plugins-filerouter
 
-# FileRouter
-
-**FileRouter** is an advanced file-based routing engine that automatically scans your filesystem, parses your files into ASTs, generates React components, builds static and lazy route imports, processes Markdown, and maintains a live routing manifest with caching and file watching.
+**@kotii/anzii-plugins-filerouter** is an advanced file-based routing engine that automatically scans your filesystem, parses your files into ASTs, generates React components, builds static and lazy route imports, processes Markdown, and maintains a live routing manifest with caching and file watching.
 
 It is designed for frameworks, CLIs, meta-frameworks, static site generators, or any environment that needs automatic routing from the filesystem.
 

@@ -150,6 +150,28 @@ importers:
         specifier: ^16.4.5
         version: 16.6.1
 
+  packages/kotii-anzii-plugins-filerouter:
+    dependencies:
+      anzii:
+        specifier: 8.0.1
+        version: 8.0.1
+      glob:
+        specifier: ^10.3.10
+        version: 10.5.0
+    optionalDependencies:
+      '@babel/cli':
+        specifier: ^7.2.3
+        version: 7.28.3(@babel/core@7.28.5)
+      '@babel/core':
+        specifier: ^7.23.2
+        version: 7.28.5
+      '@babel/generator':
+        specifier: ^7.23.3
+        version: 7.28.5
+      '@babel/parser':
+        specifier: ^7.23.3
+        version: 7.28.5
+
   packages/kotii-anzii-plugins-react:
     dependencies:
       anzii:
@@ -225,6 +247,12 @@ importers:
       webpack-node-externals:
         specifier: ^3.0.0
         version: 3.0.0
+
+  packages/kotii-anzii-plugins-viewguard:
+    dependencies:
+      anzii:
+        specifier: 8.0.1
+        version: 8.0.1
 
   packages/kotii-auth:
     dependencies:
@@ -564,24 +592,18 @@ importers:
       '@babel/preset-typescript':
         specifier: ^7.26.0
         version: 7.28.5(@babel/core@7.28.5)
-      '@babel/register':
-        specifier: ^7.4.4
-        version: 7.28.3(@babel/core@7.28.5)
-      '@babel/template':
-        specifier: ^7.22.15
-        version: 7.27.2
-      '@babel/traverse':
-        specifier: ^7.23.3
-        version: 7.28.5(supports-color@5.5.0)
-      '@babel/types':
-        specifier: ^7.23.3
-        version: 7.28.5
       '@kotii/anzii-plugins-env':
         specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-env/kotii-anzii-plugins-env-1.0.0-beta.1.0.tgz
         version: file:packages/kotii-anzii-plugins-env/kotii-anzii-plugins-env-1.0.0-beta.1.0.tgz(anzii@8.0.1)
+      '@kotii/anzii-plugins-filerouter':
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz
+        version: file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz(anzii@8.0.1)
       '@kotii/anzii-plugins-react':
         specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz
         version: file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz(anzii@8.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@kotii/anzii-plugins-viewguard':
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-viewguard/kotii-anzii-plugins-viewguard-1.0.0-beta.1.0.tgz
+        version: file:packages/kotii-anzii-plugins-viewguard/kotii-anzii-plugins-viewguard-1.0.0-beta.1.0.tgz(anzii@8.0.1)
       '@reduxjs/toolkit':
         specifier: ^2.0.1
         version: 2.11.0(react-redux@9.2.0(@types/react@18.3.27)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
@@ -720,9 +742,6 @@ importers:
       sass:
         specifier: ^1.82.0
         version: 1.94.2
-      serialize-javascript:
-        specifier: ^6.0.1
-        version: 6.0.2
       stylus:
         specifier: ^0.63.0
         version: 0.63.0
@@ -3524,13 +3543,25 @@ packages:
     peerDependencies:
       anzii: 8.0.1
 
+  '@kotii/anzii-plugins-filerouter@file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz':
+    resolution: {integrity: sha512-Rd2nvlYKlDQF2OpCna5x2y3enrX82WOtwaHh9M3CQxLkRIlXCeCkDTtOqAkbzvMZwONot8aEWBW70pCdySN2RA==, tarball: file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz}
+    version: 1.0.0-beta.1.0
+    peerDependencies:
+      anzii: 8.0.1
+
   '@kotii/anzii-plugins-react@file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz':
-    resolution: {integrity: sha512-5tHmVHgwPdJXRrhodf4byQ8hC4SXMA0iJr3RaYGumKGxmxt8KB/o/vKKCx/Fnm2zOvaY2rwDFJgbAGFP0CYqxw==, tarball: file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz}
+    resolution: {integrity: sha512-psAOTj/GKfMIU9AwudbxJgj7qDzcDq/xguXkfH1w16fGjJWZwGxXSLeyEKP64Gs9ygtAlBprp6eRxVM82GB2IQ==, tarball: file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz}
     version: 1.0.0-beta.1.0
     peerDependencies:
       anzii: 8.0.1
       react: ^18.2.0
       react-dom: ^18.2.0
+
+  '@kotii/anzii-plugins-viewguard@file:packages/kotii-anzii-plugins-viewguard/kotii-anzii-plugins-viewguard-1.0.0-beta.1.0.tgz':
+    resolution: {integrity: sha512-LRhIexZoksD8l6UrwTts3dHbm9YaisRFbwYzvMaZMpKxKwT75qqnpsmAVSs9qyJIcXn4Ak3z3icxLNzNULMHUg==, tarball: file:packages/kotii-anzii-plugins-viewguard/kotii-anzii-plugins-viewguard-1.0.0-beta.1.0.tgz}
+    version: 1.0.0-beta.1.0
+    peerDependencies:
+      anzii: 8.0.1
 
   '@kwsites/file-exists@1.1.1':
     resolution: {integrity: sha512-m9/5YGR18lIwxSFDwfE3oA7bWuq9kdau6ugN4H2rJeyhFQZcG9AgSHkQtSD15a8WvTgfz9aikZMrKPHvbpqFiw==}
@@ -8767,7 +8798,7 @@ packages:
       react-dom: ^18.2.0
 
   kotii-creation-time@file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.1.0.tgz:
-    resolution: {integrity: sha512-TPu2r9m8w0EM7x4A8ugMqcGy2cm4qn4e+Vw7oDn414b8G8lJZWvmaT4lKZ090RLnr5oHagmnMe/PEVYno718Bg==, tarball: file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.1.0.tgz}
+    resolution: {integrity: sha512-OGp5tviakeL53aJjW7HXFzn0sF7WLFs7P5cROkwsqssT+Z3qnX1H5kujnjptKeVj/SuzLic3oEEQ2AeaBN2ovA==, tarball: file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.1.0.tgz}
     version: 1.0.0-beta.1.0
 
   kotii-languages@1.0.0-beta.1.0:
@@ -14680,6 +14711,18 @@ snapshots:
     dependencies:
       anzii: 8.0.1
 
+  '@kotii/anzii-plugins-filerouter@file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz(anzii@8.0.1)':
+    dependencies:
+      anzii: 8.0.1
+      glob: 10.5.0
+    optionalDependencies:
+      '@babel/cli': 7.28.3(@babel/core@7.28.5)
+      '@babel/core': 7.28.5
+      '@babel/generator': 7.28.5
+      '@babel/parser': 7.28.5
+    transitivePeerDependencies:
+      - supports-color
+
   '@kotii/anzii-plugins-react@file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz(anzii@8.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       anzii: 8.0.1
@@ -14691,6 +14734,10 @@ snapshots:
       serialize-javascript: 6.0.2
     transitivePeerDependencies:
       - supports-color
+
+  '@kotii/anzii-plugins-viewguard@file:packages/kotii-anzii-plugins-viewguard/kotii-anzii-plugins-viewguard-1.0.0-beta.1.0.tgz(anzii@8.0.1)':
+    dependencies:
+      anzii: 8.0.1
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
@@ -21720,10 +21767,6 @@ snapshots:
       '@babel/preset-env': 7.28.5(@babel/core@7.28.5)
       '@babel/preset-react': 7.28.5(@babel/core@7.28.5)
       '@babel/preset-typescript': 7.28.5(@babel/core@7.28.5)
-      '@babel/register': 7.28.3(@babel/core@7.28.5)
-      '@babel/template': 7.27.2
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
-      '@babel/types': 7.28.5
       '@kotii/anzii-plugins-env': file:packages/kotii-anzii-plugins-env/kotii-anzii-plugins-env-1.0.0-beta.1.0.tgz(anzii@8.0.1)
       '@kotii/anzii-plugins-react': file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz(anzii@8.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@reduxjs/toolkit': 2.11.0(react-redux@9.2.0(@types/react@18.3.27)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
@@ -21772,7 +21815,6 @@ snapshots:
       redux-thunk: 3.1.0(redux@5.0.1)
       rxjs-compat: 6.6.7
       sass: 1.94.2
-      serialize-javascript: 6.0.2
       stylus: 0.63.0
       suku: 1.0.0
       tailwindcss: 3.4.18
