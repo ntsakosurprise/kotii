@@ -1,7 +1,8 @@
 {
   "name": "kotii-runtime",
   "version": "1.0.0-beta.1.0",
-  "description": "",
+  "description": "is the **production runtime layer** of the Kotii Framework",
+  "homepage": "https://github.com/ntsakosurprise/kotii",
   "type": "module",
   "exports": {
     ".": "./index.js",
@@ -34,7 +35,6 @@
       "email": "mashelesepru@gmail.com"
     }
   ],
-  "homepage": "https://github.com/ntsakosurprise/kotii#readme",
   "license": "MIT",
   "dependencies": {
     "anzii": "8.0.1",
