@@ -79,7 +79,7 @@
     "kotii-land/",
     "dev/",
     "dist/",
-    "internal",
+    "internal.js",
     "README.md",
     "package.json"
   ],

@@ -81,7 +81,7 @@ const ClientRoutes = (props) => {
     </Router>
   );
 };
-const RoutesAsServerRoutes = (props) => {
+const ServerRoutes = (props) => {
   const { goodies = {} } = props;
   // const {routes=[], comps={}} = goodies
   const gRoutes = goodies?.routes || [];
@@ -147,4 +147,4 @@ const RoutesAsServerRoutes = (props) => {
 
 // export { RoutesAsServerRoutes, routes };
 // export default ClientRoutes;
-export { ClientRoutes, RoutesAsServerRoutes };
+export { ClientRoutes, ServerRoutes };

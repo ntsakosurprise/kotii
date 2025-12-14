@@ -190,6 +190,7 @@ methods.runReactView = function (data) {
         process.env.NODE_ENV == "development"
           ? `${kotiiInternal}/pages.js`
           : `.kotii-land/bundle-imports.js`;
+      self.debug("THE COMPLETE ABS", compsAbsolutePath);
       self.comps = await self.doImport(`${compsAbsolutePath}`, true, false);
     }
 

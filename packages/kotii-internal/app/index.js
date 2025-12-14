@@ -3,6 +3,7 @@ import createReduxStore from "./create_store.js";
 import { ClientRoutes, ServerRoutes } from "./build.js";
 import { meta } from "./manifest.js";
 import { ServerApp } from "./app_.js";
+import App from "./app_.js";
 import { rootPath, kotiiInternal } from "../internal.js";
 export {
   OptionalDynamiceReduxWrapper,
@@ -15,3 +16,4 @@ export {
   rootPath,
   kotiiInternal,
 };
+export default App;

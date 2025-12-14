@@ -66,7 +66,7 @@ const ClientRoutes = props => {
     suspense: LazySuspense
   })));
 };
-const RoutesAsServerRoutes = props => {
+const ServerRoutes = props => {
   const {
     goodies = {}
   } = props;
@@ -123,4 +123,4 @@ const RoutesAsServerRoutes = props => {
 
 // export { RoutesAsServerRoutes, routes };
 // export default ClientRoutes;
-export { ClientRoutes, RoutesAsServerRoutes };
+export { ClientRoutes, ServerRoutes };

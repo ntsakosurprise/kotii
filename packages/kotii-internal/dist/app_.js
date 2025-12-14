@@ -235,114 +235,134 @@ const kotiiApp = function () {
     }));
   }
 };
-const appWithRedux = function () {
-  let {
-    appWrapper,
-    layout,
-    store,
-    isServer = false,
-    goodies = null,
-    effectsStore,
-    authUser
-  } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
-  if (isServer) {
-    return /*#__PURE__*/React.createElement(Provider, {
-      store: store
-    }, /*#__PURE__*/React.createElement(AppProvider, {
-      appWrapper: appWrapper,
-      layout: layout,
-      effectsStore: effectsStore
-    }, /*#__PURE__*/React.createElement(AppGeneric, {
-      isServer: true,
-      goodies: goodies,
-      authUser: authUser
-    })));
-  }
-  hydrateInvokes++;
-  container = !container ? document.getElementById("root") : container;
-  if (customHydrateRoot) {
-    return customHydrateRoot.render(/*#__PURE__*/React.createElement(Provider, {
-      store: store
-    }, /*#__PURE__*/React.createElement(AppProvider, {
-      appWrapper: appWrapper,
-      layout: layout,
-      effectsStore: effectsStore
-    }, /*#__PURE__*/React.createElement(AppGeneric, {
-      authUser: authUser
-    }))));
-  } else {
-    customHydrateRoot = hydrateRoot(container, /*#__PURE__*/React.createElement(Provider, {
-      store: store
-    }, /*#__PURE__*/React.createElement(AppProvider, {
-      appWrapper: appWrapper,
-      layout: layout,
-      effectsStore: effectsStore
-    }, /*#__PURE__*/React.createElement(AppGeneric, {
-      authUser: authUser
-    }))));
-  }
-};
-const appNormal = function () {
-  let {
-    appWrapper,
-    layout,
-    isServer = false,
-    effectsStore,
-    authUser
-  } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
-  if (isServer) {
-    return /*#__PURE__*/React.createElement(AppProvider, {
-      appWrapper: appWrapper,
-      layout: layout,
-      effectsStore: effectsStore
-    }, /*#__PURE__*/React.createElement(AppGeneric, {
-      authUser: authUser
-    }));
-  }
-  container = !container ? document.getElementById("root") : container;
-  hydrateRoot(document.getElementById("root"), /*#__PURE__*/React.createElement(AppProvider, {
-    appWrapper: appWrapper,
-    layout: layout,
-    effectsStore: effectsStore
-  }, /*#__PURE__*/React.createElement(AppGeneric, {
-    authUser: authUser
-  })));
-};
-const appSpa = function () {
-  let {
-    appWrapper,
-    layout,
-    effectsStore,
-    authUser
-  } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
-  const root = createRoot(document.getElementById("root"));
-  root.render(/*#__PURE__*/React.createElement(StrictMode, null, /*#__PURE__*/React.createElement(AppProvider, {
-    appWrapper: appWrapper,
-    layout: layout,
-    effectsStore: effectsStore
-  }, /*#__PURE__*/React.createElement(AppGeneric, {
-    authUser: authUser
-  }))));
-};
-const appSpaWithRedux = function () {
-  let {
-    appWrapper,
-    layout,
-    store,
-    effectsStore,
-    authUser
-  } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
-  const root = createRoot(document.getElementById("root"));
-  root.render(/*#__PURE__*/React.createElement(StrictMode, null, /*#__PURE__*/React.createElement(Provider, {
-    store: store
-  }, /*#__PURE__*/React.createElement(AppProvider, {
-    appWrapper: appWrapper,
-    layout: layout,
-    effectsStore: effectsStore
-  }, /*#__PURE__*/React.createElement(AppGeneric, {
-    authUser: authUser
-  })))));
-};
+
+// const appWithRedux = ({
+//   appWrapper,
+//   layout,
+//   store,
+//   isServer = false,
+//   goodies = null,
+//   effectsStore,
+//   authUser,
+// } = props) => {
+//   if (isServer) {
+//     return (
+//       <Provider store={store}>
+//         <AppProvider
+//           appWrapper={appWrapper}
+//           layout={layout}
+//           effectsStore={effectsStore}
+//         >
+//           <AppGeneric isServer={true} goodies={goodies} authUser={authUser} />
+//         </AppProvider>
+//       </Provider>
+//     );
+//   }
+//   hydrateInvokes++;
+
+//   container = !container ? document.getElementById("root") : container;
+
+//   if (customHydrateRoot) {
+//     return customHydrateRoot.render(
+//       <Provider store={store}>
+//         <AppProvider
+//           appWrapper={appWrapper}
+//           layout={layout}
+//           effectsStore={effectsStore}
+//         >
+//           <AppGeneric authUser={authUser} />
+//         </AppProvider>
+//       </Provider>
+//     );
+//   } else {
+//     customHydrateRoot = hydrateRoot(
+//       container,
+//       <Provider store={store}>
+//         <AppProvider
+//           appWrapper={appWrapper}
+//           layout={layout}
+//           effectsStore={effectsStore}
+//         >
+//           <AppGeneric authUser={authUser} />
+//         </AppProvider>
+//       </Provider>
+//     );
+//   }
+// };
+
+// const appNormal = ({
+//   appWrapper,
+//   layout,
+//   isServer = false,
+//   effectsStore,
+//   authUser,
+// } = props) => {
+//   if (isServer) {
+//     return (
+//       <AppProvider
+//         appWrapper={appWrapper}
+//         layout={layout}
+//         effectsStore={effectsStore}
+//       >
+//         <AppGeneric authUser={authUser} />
+//       </AppProvider>
+//     );
+//   }
+//   container = !container ? document.getElementById("root") : container;
+//   hydrateRoot(
+//     document.getElementById("root"),
+//     <AppProvider
+//       appWrapper={appWrapper}
+//       layout={layout}
+//       effectsStore={effectsStore}
+//     >
+//       <AppGeneric authUser={authUser} />
+//     </AppProvider>
+//   );
+// };
+
+// const appSpa = ({ appWrapper, layout, effectsStore, authUser } = props) => {
+//   const root = createRoot(document.getElementById("root"));
+//   root.render(
+//     <StrictMode>
+//       <AppProvider
+//         appWrapper={appWrapper}
+//         layout={layout}
+//         effectsStore={effectsStore}
+//       >
+//         <AppGeneric authUser={authUser} />
+//       </AppProvider>
+//     </StrictMode>
+//   );
+// };
+
+// const appSpaWithRedux = ({
+//   appWrapper,
+//   layout,
+//   store,
+//   effectsStore,
+//   authUser,
+// } = props) => {
+//   const root = createRoot(document.getElementById("root"));
+//   root.render(
+//     <StrictMode>
+//       <Provider store={store}>
+//         <AppProvider
+//           appWrapper={appWrapper}
+//           layout={layout}
+//           effectsStore={effectsStore}
+//         >
+//           <AppGeneric authUser={authUser} />
+//         </AppProvider>
+//       </Provider>
+//     </StrictMode>
+//   );
+// };
+if (import.meta.webpackHot) {
+  import.meta.webpackHot.accept("kotii-internal/dist/build.js", er => {
+    App(userWrapper, userLayout);
+  });
+}
 export { Head, Image, Svg, useAppContext, useUniversalEffect } from "kotii-components";
 export { ServerApp };
 export default App;

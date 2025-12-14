@@ -138,8 +138,8 @@ importers:
         version: 2.5.2
     optionalDependencies:
       kotii-creation-time:
-        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.1.0.tgz
-        version: file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.2.0.tgz
+        version: file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.2.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
 
   packages/kotii-anzii-plugins-env:
     dependencies:
@@ -180,6 +180,9 @@ importers:
       kotii-components:
         specifier: 1.0.0-beta.1.0
         version: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      kotii-internal:
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz
+        version: file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-router:
         specifier: 1.0.0-beta.3.0
         version: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -596,11 +599,11 @@ importers:
         specifier: 1.0.0-beta.1.0
         version: 1.0.0-beta.1.0(anzii@8.0.1)
       '@kotii/anzii-plugins-filerouter':
-        specifier: 1.0.0-beta.1.0
-        version: 1.0.0-beta.1.0(anzii@8.0.1)
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz
+        version: file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz(anzii@8.0.1)
       '@kotii/anzii-plugins-react':
-        specifier: 1.0.0-beta.1.0
-        version: 1.0.0-beta.1.0(anzii@8.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz
+        version: file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(anzii@8.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@kotii/anzii-plugins-viewguard':
         specifier: 1.0.0-beta.1.0
         version: 1.0.0-beta.1.0(anzii@8.0.1)
@@ -672,7 +675,7 @@ importers:
         version: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-internal:
         specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz
-        version: file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        version: file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-languages:
         specifier: 1.0.0-beta.3.0
         version: 1.0.0-beta.3.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -3639,32 +3642,14 @@ packages:
     peerDependencies:
       anzii: 8.0.1
 
-  '@kotii/anzii-plugins-env@file:packages/kotii-anzii-plugins-env/kotii-anzii-plugins-env-1.0.0-beta.1.0.tgz':
-    resolution: {integrity: sha512-pmNq2K3ym7L1W3BH/xHrAMhNgX/dw0FFrW0gmqwTPZ6LaUFXPkB9PET2l2SbIOwlLT2/0/UvVwfuF4rXFdh/Tg==, tarball: file:packages/kotii-anzii-plugins-env/kotii-anzii-plugins-env-1.0.0-beta.1.0.tgz}
-    version: 1.0.0-beta.1.0
-    peerDependencies:
-      anzii: 8.0.1
-
-  '@kotii/anzii-plugins-filerouter@1.0.0-beta.1.0':
-    resolution: {integrity: sha512-6VptNKAQJbCLrjm+ZBxedmdOGR3wReHPTHB78IsZITlpmaz6zYONtNFTEiki/2ptWl6FNGY0IN1YivYVkiuS+Q==}
-    peerDependencies:
-      anzii: 8.0.1
-
   '@kotii/anzii-plugins-filerouter@file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz':
-    resolution: {integrity: sha512-6VptNKAQJbCLrjm+ZBxedmdOGR3wReHPTHB78IsZITlpmaz6zYONtNFTEiki/2ptWl6FNGY0IN1YivYVkiuS+Q==, tarball: file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz}
+    resolution: {integrity: sha512-8r4fSLv+3l/t+iq88BQ4T3vltWUCTjizQj8qkY+qMBUFoUV4okujsbjbiiDcBlNBJ1OAVc4XwviiFU56cWB4aA==, tarball: file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz}
     version: 1.0.0-beta.1.0
     peerDependencies:
       anzii: 8.0.1
-
-  '@kotii/anzii-plugins-react@1.0.0-beta.1.0':
-    resolution: {integrity: sha512-psAOTj/GKfMIU9AwudbxJgj7qDzcDq/xguXkfH1w16fGjJWZwGxXSLeyEKP64Gs9ygtAlBprp6eRxVM82GB2IQ==}
-    peerDependencies:
-      anzii: 8.0.1
-      react: ^18.2.0
-      react-dom: ^18.2.0
 
   '@kotii/anzii-plugins-react@file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz':
-    resolution: {integrity: sha512-psAOTj/GKfMIU9AwudbxJgj7qDzcDq/xguXkfH1w16fGjJWZwGxXSLeyEKP64Gs9ygtAlBprp6eRxVM82GB2IQ==, tarball: file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz}
+    resolution: {integrity: sha512-UJsW7mRN8uGySEQdGSEkicnVK3giOxwk/TSWrnK+552+nH3RpoPwFS+99sYJswlkzDp/Ioon/Fr23/JJgl3v3Q==, tarball: file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz}
     version: 1.0.0-beta.1.0
     peerDependencies:
       anzii: 8.0.1
@@ -3673,12 +3658,6 @@ packages:
 
   '@kotii/anzii-plugins-viewguard@1.0.0-beta.1.0':
     resolution: {integrity: sha512-OhteO0NC7AaDHerm/l+4JzqqYLG+E5EkQOxtXJUhuy5WB6TUfliiL4909MBMkroeLbOfrOIVZ+1IsG+kTIncgg==}
-    peerDependencies:
-      anzii: 8.0.1
-
-  '@kotii/anzii-plugins-viewguard@file:packages/kotii-anzii-plugins-viewguard/kotii-anzii-plugins-viewguard-1.0.0-beta.1.0.tgz':
-    resolution: {integrity: sha512-OhteO0NC7AaDHerm/l+4JzqqYLG+E5EkQOxtXJUhuy5WB6TUfliiL4909MBMkroeLbOfrOIVZ+1IsG+kTIncgg==, tarball: file:packages/kotii-anzii-plugins-viewguard/kotii-anzii-plugins-viewguard-1.0.0-beta.1.0.tgz}
-    version: 1.0.0-beta.1.0
     peerDependencies:
       anzii: 8.0.1
 
@@ -8909,24 +8888,16 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
 
-  kotii-components@file:packages/kotii-components/kotii-components-1.0.0-beta.1.0.tgz:
-    resolution: {integrity: sha512-h7f6OF0TpLmo8ZmPq9z8F0YVYNn9Od6mq16rvXy+EIWsQqMxlsobUqpBh7nQGirOjwDfgy3jwhSjc8YmdwS84w==, tarball: file:packages/kotii-components/kotii-components-1.0.0-beta.1.0.tgz}
+  kotii-creation-time@file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.2.0.tgz:
+    resolution: {integrity: sha512-/j3FWgNaMkjtBSNNovwfJmH2vAdapl2W8gNjvORU7qC1xaW5Rdw4tg7LqyUUiDbeVYOtNAlFcvxGpUQLUnhNbw==, tarball: file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.2.0.tgz}
+    version: 1.0.0-beta.2.0
+
+  kotii-internal@file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz:
+    resolution: {integrity: sha512-/C3Tq/rXP/XGsk7RJ0aiJ7On24regkmzV/AqYHz6nBxcYKVVZMy3l3Qz5P2MIupv0pn5HL9kTw5R2ePQ1SPlAg==, tarball: file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz}
     version: 1.0.0-beta.1.0
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
-
-  kotii-creation-time@1.0.0-beta.2.0:
-    resolution: {integrity: sha512-rCYpXjI8rittvwY6a1PMZ6zvtM4mJXw+VfyVqLiZUZF1UVYJzpwUEiNv0pG9Kc0EEZET3FWYOm6entXrVaY8Yw==}
-
-  kotii-creation-time@file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.1.0.tgz:
-    resolution: {integrity: sha512-5KKTr/DSCZyvii0+fFDU+2ar+WiiJ1QYYNa8PQVpi7GQO+8VaFCb7uOpZj0MIeDX4kr4HeL8hcI97sfMZCDLIw==, tarball: file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.1.0.tgz}
-    version: 1.0.0-beta.1.0
-
-  kotii-internal@file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz:
-    resolution: {integrity: sha512-SyBtIm1UwGS1eqdjiyD//r+ltFEkvt4XvkR35W4HtB/M+c7d9xmJmLoqYdScnhXubMSkXCFdKPvI6K85n+rxMg==, tarball: file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz}
-    version: 1.0.0-beta.1.0
-    hasBin: true
 
   kotii-languages@1.0.0-beta.1.0:
     resolution: {integrity: sha512-WGPRuzpHlf2B2RbEnNmegZ+lUosnBkZvI/AUcMdV/VesDtxnUrAP5yvmYbUylnlNBLXV8GSseuI21/UqqEcX3A==}
@@ -8948,14 +8919,6 @@ packages:
 
   kotii-markdown-render@1.0.0-beta.1.0:
     resolution: {integrity: sha512-Ey2+RmzTW3WFJBVCUZBqJbEDVCdRiazZtTitTQSZRPBg0OzgjClNPs+FUXw1wSlNdz+MbnhownY6sau3GsXSDA==}
-    peerDependencies:
-      kotii-languages: 1.0.0-beta.3.0
-      react: ^18.2.0
-      react-dom: ^18.2.0
-
-  kotii-markdown-render@file:packages/kotii-markdown-render/kotii-markdown-render-1.0.0-beta.1.0.tgz:
-    resolution: {integrity: sha512-kRtHV2zUAsRY+Z+B4iL+COHK113ttHSovEUhb+T5F81hDgFTVGyNF2lPk2KzjB3asZDxb6MUz9Dljp+zcTRPdA==, tarball: file:packages/kotii-markdown-render/kotii-markdown-render-1.0.0-beta.1.0.tgz}
-    version: 1.0.0-beta.1.0
     peerDependencies:
       kotii-languages: 1.0.0-beta.3.0
       react: ^18.2.0
@@ -14845,23 +14808,6 @@ snapshots:
       anzii: 8.0.1
       dotenv: 16.6.1
 
-  '@kotii/anzii-plugins-env@file:packages/kotii-anzii-plugins-env/kotii-anzii-plugins-env-1.0.0-beta.1.0.tgz(anzii@8.0.1)':
-    dependencies:
-      anzii: 8.0.1
-    optional: true
-
-  '@kotii/anzii-plugins-filerouter@1.0.0-beta.1.0(anzii@8.0.1)':
-    dependencies:
-      anzii: 8.0.1
-      glob: 10.5.0
-    optionalDependencies:
-      '@babel/cli': 7.28.3(@babel/core@7.28.5)
-      '@babel/core': 7.28.5
-      '@babel/generator': 7.28.5
-      '@babel/parser': 7.28.5
-    transitivePeerDependencies:
-      - supports-color
-
   '@kotii/anzii-plugins-filerouter@file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz(anzii@8.0.1)':
     dependencies:
       anzii: 8.0.1
@@ -14873,41 +14819,27 @@ snapshots:
       '@babel/parser': 7.28.5
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
-  '@kotii/anzii-plugins-react@1.0.0-beta.1.0(anzii@8.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@kotii/anzii-plugins-react@file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(anzii@8.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       anzii: 8.0.1
       kotii-components: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      kotii-internal: file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-router: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-styled: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       serialize-javascript: 6.0.2
     transitivePeerDependencies:
+      - '@types/react'
+      - bufferutil
+      - react-native
       - supports-color
-
-  '@kotii/anzii-plugins-react@file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz(anzii@8.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      anzii: 8.0.1
-      kotii-components: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-router: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-styled: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      serialize-javascript: 6.0.2
-    transitivePeerDependencies:
-      - supports-color
-    optional: true
+      - utf-8-validate
 
   '@kotii/anzii-plugins-viewguard@1.0.0-beta.1.0(anzii@8.0.1)':
     dependencies:
       anzii: 8.0.1
-
-  '@kotii/anzii-plugins-viewguard@file:packages/kotii-anzii-plugins-viewguard/kotii-anzii-plugins-viewguard-1.0.0-beta.1.0.tgz(anzii@8.0.1)':
-    dependencies:
-      anzii: 8.0.1
-    optional: true
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
@@ -17615,7 +17547,7 @@ snapshots:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.103.0(webpack-cli@4.10.0)
+      webpack: 5.103.0(webpack-cli@5.1.4)
 
   babel-loader@9.2.1(@babel/core@7.28.5)(webpack@5.103.0):
     dependencies:
@@ -21916,14 +21848,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       react-helmet: 6.1.0(react@18.3.1)
 
-  kotii-components@file:packages/kotii-components/kotii-components-1.0.0-beta.1.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-helmet: 6.1.0(react@18.3.1)
-    optional: true
-
-  kotii-creation-time@1.0.0-beta.2.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
+  kotii-creation-time@file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.2.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:
       '@babel/cli': 7.28.3(@babel/core@7.28.5)
       '@babel/core': 7.28.5
@@ -21939,8 +21864,8 @@ snapshots:
       '@babel/preset-react': 7.28.5(@babel/core@7.28.5)
       '@babel/preset-typescript': 7.28.5(@babel/core@7.28.5)
       '@kotii/anzii-plugins-env': 1.0.0-beta.1.0(anzii@8.0.1)
-      '@kotii/anzii-plugins-filerouter': 1.0.0-beta.1.0(anzii@8.0.1)
-      '@kotii/anzii-plugins-react': 1.0.0-beta.1.0(anzii@8.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@kotii/anzii-plugins-filerouter': file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz(anzii@8.0.1)
+      '@kotii/anzii-plugins-react': file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(anzii@8.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@kotii/anzii-plugins-viewguard': 1.0.0-beta.1.0(anzii@8.0.1)
       '@reduxjs/toolkit': 2.11.0(react-redux@9.2.0(@types/react@18.3.27)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
       anzii: 8.0.1
@@ -21964,6 +21889,7 @@ snapshots:
       html-react-parser: 4.2.10(react@18.3.1)
       kotii-auth: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-components: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      kotii-internal: file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-languages: 1.0.0-beta.3.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-lazy: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-logger: 1.0.0-beta.4.0
@@ -22019,126 +21945,21 @@ snapshots:
       - yaml
     optional: true
 
-  kotii-creation-time@file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
+  kotii-internal@file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@babel/cli': 7.28.3(@babel/core@7.28.5)
-      '@babel/core': 7.28.5
-      '@babel/generator': 7.28.5
-      '@babel/parser': 7.28.5
-      '@babel/plugin-proposal-json-modules': 7.25.9(@babel/core@7.28.5)
-      '@babel/plugin-proposal-object-rest-spread': 7.20.7(@babel/core@7.28.5)
-      '@babel/plugin-syntax-import-assertions': 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-react-jsx': 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-strict-mode': 7.27.1(@babel/core@7.28.5)
-      '@babel/plugin-transform-typescript': 7.28.5(@babel/core@7.28.5)
-      '@babel/preset-env': 7.28.5(@babel/core@7.28.5)
-      '@babel/preset-react': 7.28.5(@babel/core@7.28.5)
-      '@babel/preset-typescript': 7.28.5(@babel/core@7.28.5)
-      '@kotii/anzii-plugins-env': file:packages/kotii-anzii-plugins-env/kotii-anzii-plugins-env-1.0.0-beta.1.0.tgz(anzii@8.0.1)
-      '@kotii/anzii-plugins-filerouter': file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz(anzii@8.0.1)
-      '@kotii/anzii-plugins-react': file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz(anzii@8.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@kotii/anzii-plugins-viewguard': file:packages/kotii-anzii-plugins-viewguard/kotii-anzii-plugins-viewguard-1.0.0-beta.1.0.tgz(anzii@8.0.1)
-      '@reduxjs/toolkit': 2.11.0(react-redux@9.2.0(@types/react@18.3.27)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
       anzii: 8.0.1
       arg: 4.1.3
-      autoprefixer: 8.6.5
-      babel-loader: 8.4.1(@babel/core@7.28.5)(webpack@5.103.0)
-      babel-plugin-styled-components: 2.1.4(@babel/core@7.28.5)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
-      babel-plugin-transform-remove-strict-mode: 0.0.2
-      babel-plugin-transform-strict-mode: 6.24.1
-      boxen: 8.0.1
-      chalk: 4.1.2
-      concat: 1.0.3
-      configstore: 5.0.1
-      csv-loader: 3.0.5
-      dotenv: 16.6.1
-      dotenv-expand: 11.0.7
-      execa: 4.1.0
-      fast-xml-parser: 5.3.2
-      glob: 10.5.0
-      helmet: 7.2.0
-      html-react-parser: 4.2.10(react@18.3.1)
       kotii-auth: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-components: file:packages/kotii-components/kotii-components-1.0.0-beta.1.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-languages: 1.0.0-beta.3.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-lazy: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-logger: 1.0.0-beta.4.0
-      kotii-markdown: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-markdown-render: file:packages/kotii-markdown-render/kotii-markdown-render-1.0.0-beta.1.0.tgz(kotii-languages@1.0.0-beta.3.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-router: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-styled: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      less: 4.4.2
-      node-cache: 5.1.2
-      papaparse: 5.5.3
-      postcss: 8.5.6
-      postcss-loader: 8.2.0(postcss@8.5.6)(typescript@4.9.5)(webpack@5.103.0)
-      postcss-nested: 7.0.2(postcss@8.5.6)
-      postcss-preset-env: 10.4.0(postcss@8.5.6)
-      postcss-selector-parser: 7.1.1
-      prettier: 2.6.2
-      react: 18.3.1
-      react-helmet: 6.1.0(react@18.3.1)
-      react-redux: 9.2.0(@types/react@18.3.27)(react@18.3.1)(redux@5.0.1)
-      react-router-dom: 6.30.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      redux: 5.0.1
-      redux-thunk: 3.1.0(redux@5.0.1)
-      rxjs-compat: 6.6.7
-      sass: 1.94.2
-      stylus: 0.63.0
-      suku: 1.0.0
-      tailwindcss: 3.4.18
-      ts-loader: 9.5.4(typescript@4.9.5)(webpack@5.103.0)
-      typescript: 4.9.5
-      webpack: 5.103.0(webpack-cli@5.1.4)
-      webpack-cli: 5.1.4(webpack@5.103.0)
-      webpack-hot-middleware: 2.26.1
-      webpack-node-externals: 2.5.2
-      ws: 8.18.3
-      xml-loader: 1.2.1
-      xml2js: 0.6.2
-    transitivePeerDependencies:
-      - '@rspack/core'
-      - '@swc/core'
-      - '@types/react'
-      - '@webpack-cli/generators'
-      - bufferutil
-      - esbuild
-      - react-dom
-      - react-native
-      - styled-components
-      - supports-color
-      - tsx
-      - uglify-js
-      - utf-8-validate
-      - webpack-bundle-analyzer
-      - webpack-dev-server
-      - yaml
-    optional: true
-
-  kotii-internal@file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
-    dependencies:
-      anzii: 8.0.1
-      arg: 4.1.3
+      kotii-components: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-runtime: 1.0.0-beta.1.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))
-    optionalDependencies:
-      kotii-creation-time: 1.0.0-beta.2.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
-      - '@rspack/core'
-      - '@swc/core'
       - '@types/react'
-      - '@webpack-cli/generators'
       - bufferutil
-      - esbuild
-      - react-dom
       - react-native
-      - styled-components
       - supports-color
-      - tsx
-      - uglify-js
       - utf-8-validate
-      - webpack-bundle-analyzer
-      - webpack-dev-server
-      - yaml
 
   kotii-languages@1.0.0-beta.1.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -22198,16 +22019,6 @@ snapshots:
       prop-types: 15.8.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-
-  kotii-markdown-render@file:packages/kotii-markdown-render/kotii-markdown-render-1.0.0-beta.1.0.tgz(kotii-languages@1.0.0-beta.3.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      html-react-parser: 4.2.10(react@18.3.1)
-      kotii-languages: 1.0.0-beta.3.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-styled: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      prop-types: 15.8.1
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-    optional: true
 
   kotii-markdown@1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -26259,7 +26070,7 @@ snapshots:
       semver: 7.7.3
       source-map: 0.7.6
       typescript: 4.9.5
-      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+      webpack: 5.103.0(webpack-cli@5.1.4)
 
   ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5):
     dependencies:

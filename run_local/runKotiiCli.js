@@ -12,7 +12,7 @@ const kotiiScriptsPath = path.join(packagesPath, "kotii");
 console.log("Packages PATH", kotiiScriptsPath);
 const madeTarballs = createTarballs(packagesPath, [
   // "kotii-cli",
-  // "kotii",
+  "kotii",
   // "kotii-styled",
   // "kotii-templates",
   // "kotii-logger",
@@ -33,7 +33,7 @@ const madeTarballs = createTarballs(packagesPath, [
   // "kotii-anzii-plugins-env",
   "kotii-anzii-plugins-react",
   // "kotii-anzii-plugins-viewguard",
-  // "kotii-anzii-plugins-filerouter",
+  "kotii-anzii-plugins-filerouter",
   "kotii-internal",
 ]);
 console.log("MADE TARBALLS", madeTarballs);
