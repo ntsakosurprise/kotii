@@ -54,7 +54,7 @@
     "kotii-runtime": "1.0.0-beta.1.0"
   },
   "optionalDependencies": {
-    "kotii-creation-time": "1.0.0-beta.2.0"
+    "kotii-creation-time": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.1.0.tgz"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
