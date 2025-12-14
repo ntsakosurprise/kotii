@@ -7,10 +7,8 @@ import { loggas, logger } from "kotii-logger";
 import path from "path";
 import React, { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
-
 import { AppProvider, useAppContext } from "kotii-components";
-
-import { ClientRoutes, RoutesAsServerRoutes } from "@kotii/_internal/land";
+import { ClientRoutes, ServerRoutes } from "@kotii/_internal/land";
 import { AuthProvider } from "kotii-auth";
 import { OptionalDynamiceReduxWrapper } from "@kotii/_internal/land";
 
@@ -134,7 +132,7 @@ const ServerApp = ({
   // });
 };
 const AppGeneric = (props) => {
-  console.log("THE APP GENERIC. Server", RoutesAsServerRoutes);
+  console.log("THE APP GENERIC. Server", ServerRoutes);
   console.log("THE APP GENERIC. Client", ClientRoutes);
   const { appWrapper } = useAppContext();
   const { isServer = false, goodies = {}, authUser = null } = props;
@@ -147,7 +145,7 @@ const AppGeneric = (props) => {
         {!isServer ? (
           <ClientRoutes goodies={goodies} />
         ) : (
-          <RoutesAsServerRoutes goodies={goodies} />
+          <ServerRoutes goodies={goodies} />
         )}
       </AppWrapper>
     </AuthProvider>
@@ -157,7 +155,7 @@ const AppGeneric = (props) => {
     </AuthProvider>
   ) : (
     <AuthProvider authUser={authUser}>
-      <RoutesAsServerRoutes />
+      <ServerRoutes />
     </AuthProvider>
   );
 };
@@ -378,12 +376,6 @@ const appSpaWithRedux = ({
     </StrictMode>
   );
 };
-
-if (import.meta.webpackHot) {
-  import.meta.webpackHot.accept("./build.js", (er) => {
-    App(userWrapper, userLayout);
-  });
-}
 
 export {
   Head,

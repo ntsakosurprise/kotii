@@ -1,13 +1,22 @@
-import { anzii } from "anzii";
-import plugins from "@kotii/_internal/plugins";
+/* eslint-disable react/jsx-no-undef */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 
-import("/kotii-user-api/plugins").then((imported) => {
-  let userPlugins = imported.default;
+import App from "kotii-internal";
+if (import.meta.webpackHot) {
+  import.meta.webpackHot.accept("", (er) => {
+    App(userWrapper, userLayout);
+  });
+}
 
-  if (userPlugins?.noApi && Object.keys(userPlugins).length === 1) {
-    anzii(plugins);
-  } else {
-    let pluginsCombined = { ...userPlugins, ...plugins };
-    anzii(pluginsCombined);
-  }
-});
+export {
+  Head,
+  Image,
+  Svg,
+  useAppContext,
+  useUniversalEffect,
+  ServerApp,
+} from "kotii-internal";
+
+export default App;
