@@ -5,11 +5,8 @@
   "main": "app.js",
   "type": "module",
   "exports": {
-    ".": {
-      "import": "./dist/app_.js",
-      "require": "./dist/app_.js",
-      "default": "./dist/app_.js"
-    }
+    ".": "./dist/index.js",
+    "./dist/*": "./dist/*"
   },
   "scripts": {
     "lint": "eslint .",
@@ -82,6 +79,7 @@
     "kotii-land/",
     "dev/",
     "dist/",
+    "internal",
     "README.md",
     "package.json"
   ],
