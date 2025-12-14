@@ -17,6 +17,7 @@ import {
 import { loadFile } from "../file-loader/index.js";
 import { createImportPathContext, getNodejsForeignData } from "../globals.js";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
+// import { kotiiInternal } from "kotii-internal";
 
 let meta = null;
 let kotiiAssetsMeta = {};
@@ -504,7 +505,7 @@ export const resolveKotiiScriptsImports = (specifier) => {
     /^kotii$/.test(specifier)
   );
   if (!isBuiltin(specifier) && /^kotii$/.test(specifier)) {
-    let kotiiExportsPath = `${kotiiKotiiLandPath}/dev/app_.js`;
+    let kotiiExportsPath = `${workdir}/node_modules/kotii-internal/dist/app_.js`;
     let urlLized = pathToFileURL(kotiiExportsPath).href;
     loggas.resolve.debug(
       "THE SPECIFIER FOR kotii PATH",
@@ -608,7 +609,12 @@ export const resolveUserlandImports = (specifier) => {
         shortCircuit: true,
       };
     } catch (error) {
-      console.log("THE APP HAS ERRORED", error);
+      console.log(
+        "THE APP HAS ERRORED",
+        error,
+        "THE ERRORED PATH",
+        aliasePossiblePath
+      );
     }
   } else {
     return false;
@@ -630,6 +636,7 @@ export const resolveKotiiInternalImports = (specifier) => {
       "THE SPECIFIER FOR INTERNAL IMPORTS: FULL PATH",
       aliasePossiblePath
     );
+    console.log("THE POSSIBLE PATH", aliasePossiblePath);
 
     try {
       let livingPath = guessPathExtension(aliasePossiblePath);
@@ -638,7 +645,12 @@ export const resolveKotiiInternalImports = (specifier) => {
         shortCircuit: true,
       };
     } catch (error) {
-      console.log("THE APP HAS ERRORED", error);
+      console.log(
+        "THE APP HAS ERRORED",
+        error,
+        "WITH PATH",
+        aliasePossiblePath
+      );
     }
   } else {
     return false;
@@ -646,6 +658,7 @@ export const resolveKotiiInternalImports = (specifier) => {
 };
 
 export const guessPathExtension = (guessPath) => {
+  console.log("THE GUESSS", guessPath);
   let livingExtension = guessPath;
   for (let ext = 0; ext < extensions.length; ext++) {
     let guessPathWithExtension = `${guessPath}${extensions[ext]}`;
@@ -654,6 +667,7 @@ export const guessPathExtension = (guessPath) => {
       break;
     }
   }
+
   if (livingExtension === guessPath)
     throw new Error(
       `Node-Kotiijs-Resolve: requested file does not exist:${livingExtension}`
