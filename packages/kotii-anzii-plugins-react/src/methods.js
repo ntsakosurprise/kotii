@@ -7,6 +7,7 @@ import { Router } from "kotii-router";
 import { ServerStyleSheet } from "kotii-styled";
 import path from "path";
 import { kotiiKotiiLandPath } from "@kotii/_internal/root";
+import { kotiiInternal } from "kotii-internal";
 
 methods.init = function () {
   this.listens({
@@ -187,7 +188,7 @@ methods.runReactView = function (data) {
     if (!self.comps) {
       let compsAbsolutePath =
         process.env.NODE_ENV == "development"
-          ? `/kotii-land/dev/pages.js`
+          ? `${kotiiInternal}/pages.js`
           : `.kotii-land/bundle-imports.js`;
       self.comps = await self.doImport(`${compsAbsolutePath}`, true, false);
     }
