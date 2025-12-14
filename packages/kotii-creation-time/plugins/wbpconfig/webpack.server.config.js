@@ -7,6 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import webpack from "webpack";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../../kotii_paths.js";
+import { kotiiInternal } from "kotii-internal";
 import {
   BroadcastCompilationWebpackPlugin,
   CopyAssetsWebpackPlugin,
@@ -39,9 +40,13 @@ export default (options) => {
     path.resolve(__dirname, "../..")
   );
   let scriptsPath = path.resolve(__dirname, "../..");
+  // let scriptsWebpackResolve = path.resolve(
+  //   scriptsPath,
+  //   "kotii-land/dev/app_.js"
+  // );
   let scriptsWebpackResolve = path.resolve(
-    scriptsPath,
-    "kotii-land/dev/app_.js"
+    env.appFolder,
+    "node_modules/kotii-internal/dist/app_.js"
   );
   loggas.webpack.debug(
     "WEBPACK KOTII RESOLVE",
@@ -119,7 +124,7 @@ export default (options) => {
         "react-router": path.resolve(
           `${env.appFolder}/node_modules/react-router`
         ),
-        kotii: path.resolve(`${scriptsWebpackResolve}`),
+        kotii: scriptsWebpackResolve,
         "/kotii-user-land-aliase/src/store/index": guessPathExtension(
           `${env.appSrc}/store/index`
         ),
@@ -137,6 +142,7 @@ export default (options) => {
         http: false,
         https: false,
         stream: false,
+        util: false,
 
         // "crypto": false,
       }, // Add these as polyfills for use in the browser, webpack no longer auto-polyfills them
@@ -414,7 +420,7 @@ export default (options) => {
       new webpack.HotModuleReplacementPlugin(),
       new RemoveImportsWebpackPlugin(
         {
-          removeFilePath: `${scriptsPath}/kotii-land/dev/build.js`,
+          removeFilePath: `${kotiiInternal}/build.js`,
           removeFileSpecifiers: ["./pages.js"],
         },
         loggas
@@ -547,7 +553,7 @@ function guessPathExtension(guessPath) {
 
 const getKotiiAliasPaths = (workdir) => {
   const KOTII_INTERNAL_ALIASES = {
-    "@kotii/_internal/land": `${workdir}/node_modules/kotii-creation-time/kotii-land/dev/index`,
+    "@kotii/_internal/land": `${workdir}/node_modules/kotii-internal/dist/index`,
     "@kotii/_internal/plugins": `${workdir}/node_modules/kotii-creation-time/plugins/index`,
     "@kotii/_internal/root": `${workdir}/node_modules/kotii-creation-time/kotii_paths`,
   };
