@@ -7,7 +7,7 @@ import { Router } from "kotii-router";
 import { ServerStyleSheet } from "kotii-styled";
 import path from "path";
 import { kotiiKotiiLandPath } from "@kotii/_internal/root";
-import { kotiiInternal } from "kotii-internal";
+import { kotiiInternal } from "kotii-internal/internal.js";
 
 methods.init = function () {
   this.listens({

@@ -4,7 +4,7 @@
 /* eslint-disable no-unused-vars */
 const methods = {};
 import path from "node:path";
-import { kotiiInternal } from "kotii-internal";
+import { kotiiInternal } from "kotii-internal/internal.js";
 methods.init = function () {
   this.listens({
     "create-file-routes": this.handleFileRoutes.bind(this),

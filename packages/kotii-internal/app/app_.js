@@ -377,6 +377,7 @@ const kotiiApp = ({
 //   );
 // };
 if (import.meta.webpackHot) {
+  console.log("THE META WEBPACK");
   import.meta.webpackHot.accept("kotii-internal/dist/build.js", (er) => {
     App(userWrapper, userLayout);
   });

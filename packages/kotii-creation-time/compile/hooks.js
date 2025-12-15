@@ -60,6 +60,7 @@ const KOTII_INTERNAL_ALIASES = {
   //   value: "/src/store/index",
   // },
   "@kotii/_internal/land": `${workdir}/node_modules/kotii-internal/dist/index`,
+  "@kotii/_internal/app": `${workdir}/node_modules/kotii-internal/dist/app`,
   "@kotii/_internal/plugins": `${workdir}/node_modules/kotii-creation-time/plugins/index`,
   "@kotii/_internal/root": `${workdir}/node_modules/kotii-creation-time/kotii_paths`,
 };

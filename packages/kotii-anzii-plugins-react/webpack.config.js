@@ -34,6 +34,7 @@ const config = {
       "kotii-languages": "kotii-languages",
       "@kotii/_internal/land": "@kotii/_internal/land",
       "@kotii/_internal/root": "@kotii/_internal/root",
+      "@kotii/_internal/app": "@kotii/_internal/app",
     },
   ],
 

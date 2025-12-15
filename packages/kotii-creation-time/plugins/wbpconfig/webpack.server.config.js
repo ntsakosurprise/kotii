@@ -7,7 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import webpack from "webpack";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../../kotii_paths.js";
-import { kotiiInternal } from "kotii-internal";
+import { kotiiInternal } from "kotii-internal/internal.js";
 import {
   BroadcastCompilationWebpackPlugin,
   CopyAssetsWebpackPlugin,

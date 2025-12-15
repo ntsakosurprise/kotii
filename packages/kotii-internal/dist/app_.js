@@ -358,11 +358,12 @@ const kotiiApp = function () {
 //     </StrictMode>
 //   );
 // };
-if (import.meta.webpackHot) {
-  import.meta.webpackHot.accept("kotii-internal/dist/build.js", er => {
-    App(userWrapper, userLayout);
-  });
-}
+// if (import.meta.webpackHot) {
+//   console.log("THE META WEBPACK");
+//   import.meta.webpackHot.accept("kotii-internal/dist/build.js", (er) => {
+//     App(userWrapper, userLayout);
+//   });
+// }
 export { Head, Image, Svg, useAppContext, useUniversalEffect } from "kotii-components";
 export { ServerApp };
 export default App;

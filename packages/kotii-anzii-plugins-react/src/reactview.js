@@ -2,7 +2,7 @@ import React from "react";
 import { renderToPipeableStream, renderToString } from "react-dom/server";
 // import Header from "./header.jsx";
 import serialize from "serialize-javascript";
-import { ServerApp } from "@kotii/_internal/land";
+import { ServerApp } from "@kotii/_internal/app";
 import { meta } from "@kotii/_internal/land";
 import { Head, HeadHelmet } from "kotii-components";
 import methods from "./methods.js";
