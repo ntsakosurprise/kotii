@@ -10,7 +10,8 @@ import { createRoot, hydrateRoot } from "react-dom/client";
 import { AppProvider, useAppContext } from "kotii-components";
 import { ClientRoutes, ServerRoutes } from "@kotii/_internal/land";
 import { AuthProvider } from "kotii-auth";
-import { OptionalDynamiceReduxWrapper } from "@kotii/_internal/land";
+import { OptionalDynamiceReduxWrapperLazy } from "./OptionalDynamiceReduxWrapperLazy.js";
+import { LazySuspense } from "kotii-lazy";
 logger.setNameSpaces([{
   namespace: "app:start-client",
   id: "appClient"
@@ -46,7 +47,7 @@ const App = function () {
     appWrapper,
     layout,
     store,
-    isServer: true,
+    isServer: false,
     effectsStore,
     authUser,
     reduxEnabled: stateVendor && stateVendor === "redux" ? true : false
@@ -171,7 +172,7 @@ const KotiiMainApp = props => {
     reduxEnabled,
     reduxResources
   } = props;
-  return /*#__PURE__*/React.createElement(StrictMode, null, /*#__PURE__*/React.createElement(OptionalDynamiceReduxWrapper, {
+  return /*#__PURE__*/React.createElement(StrictMode, null, /*#__PURE__*/React.createElement(LazySuspense, null, /*#__PURE__*/React.createElement(OptionalDynamiceReduxWrapperLazy, {
     enabled: reduxEnabled,
     preloadState: store,
     isStoreCreated: isStoreCreated,
@@ -184,55 +185,25 @@ const KotiiMainApp = props => {
     isServer: isServer,
     goodies: goodies,
     authUser: authUser
-  }))));
+  })))));
 };
-const kotiiApp = function () {
-  let {
-    appWrapper,
-    layout,
-    store,
-    isServer = false,
-    goodies = null,
-    effectsStore,
-    authUser,
-    isStoreCreated,
-    reduxEnabled,
-    reduxResources
-  } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
-  if (isServer) {
-    return /*#__PURE__*/React.createElement(KotiiMainApp, {
-      appWrapper: appWrapper,
-      layout: layout,
-      effectsStore: effectsStore,
-      authUser: authUser,
-      store: store,
-      goodies: goodies,
-      reduxEnabled: reduxEnabled,
-      isStoreCreated: isStoreCreated,
-      reduxResources: reduxResources,
-      isServer: isServer
-    });
+const kotiiApp = props => {
+  if (props !== null && props !== void 0 && props.isServer) {
+    return /*#__PURE__*/React.createElement(KotiiMainApp, props);
   }
   hydrateInvokes++;
   container = !container ? document.getElementById("root") : container;
-  if (customHydrateRoot) {
-    return customHydrateRoot.render(/*#__PURE__*/React.createElement(KotiiMainApp, {
-      appWrapper: appWrapper,
-      layout: layout,
-      effectsStore: effectsStore,
-      authUser: authUser,
-      store: store,
-      goodies: goodies
-    }));
+  console.log("THE CONTAINER", container);
+
+  // const root = getOrCreateRoot(container, <KotiiMainApp {...props} />);
+  // root.render(<KotiiMainApp {...props} />);
+
+  if (!window["KOTII_APP_HYDRATED"]) {
+    console.log("CUSTOM HYDRATE.defined");
+    window["KOTII_APP_HYDRATED"] = hydrateRoot(container, /*#__PURE__*/React.createElement(KotiiMainApp, props));
   } else {
-    customHydrateRoot = hydrateRoot(container, /*#__PURE__*/React.createElement(KotiiMainApp, {
-      appWrapper: appWrapper,
-      layout: layout,
-      effectsStore: effectsStore,
-      authUser: authUser,
-      store: store,
-      goodies: goodies
-    }));
+    console.log("CUSTOM HYDRATE.undefined");
+    return window["KOTII_APP_HYDRATED"].render(/*#__PURE__*/React.createElement(KotiiMainApp, props));
   }
 };
 
@@ -358,12 +329,21 @@ const kotiiApp = function () {
 //     </StrictMode>
 //   );
 // };
+if (import.meta.webpackHot) {
+  console.log("THE META WEBPACK");
+  import.meta.webpackHot.accept("kotii-internal/dist/build.js", er => {
+    App(userWrapper, userLayout);
+  });
+}
 // if (import.meta.webpackHot) {
-//   console.log("THE META WEBPACK");
-//   import.meta.webpackHot.accept("kotii-internal/dist/build.js", (er) => {
-//     App(userWrapper, userLayout);
+//   import.meta.webpackHot.accept("kotii-internal/dist/build.js", (mod) => {
+//     const UpdatedApp = mod.default;
+//     window.__KOTII_REACT_ROOT__.render(
+//       <UpdatedApp enabled preloadState={window.__PRELOADED_STATE__} />
+//     );
 //   });
 // }
+
 export { Head, Image, Svg, useAppContext, useUniversalEffect } from "kotii-components";
 export { ServerApp };
 export default App;

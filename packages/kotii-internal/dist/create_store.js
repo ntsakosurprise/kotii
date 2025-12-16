@@ -1,35 +1,12 @@
-// import { applyMiddleware, combineReducers, createStore } from "redux";
-// import { thunk } from "redux-thunk";
-// import { reducers } from "/kotii-user-land-aliase/src/store/index";
-export default (async function () {
+export default (function () {
   let initialState = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  let isStoreCreated = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-  if (isStoreCreated) return initialState;
-  let reduxThunk;
-  let reducers;
-  let reduxFuncs;
-  try {
-    let {
-      thunk
-    } = await import("redux-thunk");
-    reduxThunk = thunk;
-  } catch (e) {
-    throw new Error('Redux Thunk is required but not installed. Please run "npm install redux-thunk".');
-  }
-  try {
-    reduxFuncs = await import("redux");
-  } catch (e) {
-    throw new Error('Redux is required but not installed. Run: "npm install redux"');
-  }
-  try {
-    ({
-      reducers
-    } = await import("/kotii-user-land-aliase/src/store/index"));
-  } catch (e) {
-    throw new Error('Redux is required but not installed. Run: "npm install redux"');
-  }
+  let reducers = arguments.length > 1 ? arguments[1] : undefined;
+  let reduxFuncs = arguments.length > 2 ? arguments[2] : undefined;
+  let reduxThunk = arguments.length > 3 ? arguments[3] : undefined;
   console.log("THE REDUX PATHS", reduxThunk);
   console.log("THE REDUCERS", reducers);
+  console.log("THE INITIAL STATE", initialState);
+  console.log("THE REDUX FUNKS", reduxFuncs);
   const {
     createStore,
     combineReducers,
