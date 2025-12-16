@@ -153,13 +153,18 @@ methods.runReactView = function (data) {
 
   // Grab the initial state from our Redux store
   return new Promise(async (resolve) => {
-    const { loadReduxServer } = await import("@kotii/_internal/land");
+    const { loadRedux } = await import("@kotii/_internal/land");
     let isRedux = true;
     // console.log("THE CREATE FUNCTION IMPORT", createReduxStore)
-    self.reduxResources = isRedux ? await loadReduxServer() : null;
+    self.reduxResources = isRedux ? await loadRedux() : null;
     self.debug("SELF.REDUX RESOURCES", self.reduxResources);
     const store = self?.reduxResources
-      ? await self.reduxResources.createReduxStore()
+      ? await self.reduxResources.createReduxStore(
+          {},
+          self.reduxResources.reducers,
+          self.reduxResources.reduxFuncs,
+          self.reduxResources.reduxThunk
+        )
       : null;
     console.log("THE CREATE RESULT STORE", store);
     let stateData = await self.getStateDataFromServer({
@@ -208,6 +213,14 @@ methods.runReactView = function (data) {
 
     const sheet = new ServerStyleSheet();
     process.env?.useLazyLoad ? await self.preloadLazyComponents(view) : null;
+
+    if (isRedux) {
+      const { OptionalDynamiceReduxWrapperLazy } = await import(
+        "@kotii/_internal/land"
+      );
+
+      await OptionalDynamiceReduxWrapperLazy.preload();
+    }
 
     let goodies = self.comps;
     // let authUser = {
