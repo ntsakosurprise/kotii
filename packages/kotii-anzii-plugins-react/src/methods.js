@@ -6,8 +6,14 @@ import fs from "fs";
 import { Router } from "kotii-router";
 import { ServerStyleSheet } from "kotii-styled";
 import path from "path";
-import { kotiiKotiiLandPath } from "@kotii/_internal/root";
-import { kotiiInternal } from "kotii-internal/internal.js";
+// import { kotiiKotiiLandPath } from "kotii-creation-time/root";
+// import { kotiiInternal } from "kotii-internal/root";
+import {
+  USER_LAND_ALIAS_START_UP,
+  USER_LAND_ALIAS_PAGES,
+  USER_LAND_ALIAS_STYLES_JSON,
+  USER_LAND_ALIASES,
+} from "kotii-internal/user";
 
 methods.init = function () {
   this.listens({
@@ -129,6 +135,7 @@ methods.runReactView = function (data) {
   const { view, staticRender = false, route = null, authUser = null } = data;
   const { app } = meta;
   const { stateVendor = "" } = app;
+  self.debug("THE PROCESS.REACT", process);
 
   // const Layout = (props) => {
   //   return (
@@ -153,7 +160,7 @@ methods.runReactView = function (data) {
 
   // Grab the initial state from our Redux store
   return new Promise(async (resolve) => {
-    const { loadRedux } = await import("@kotii/_internal/land");
+    const { loadRedux } = await import("kotii-internal");
     let isRedux = true;
     // console.log("THE CREATE FUNCTION IMPORT", createReduxStore)
     self.reduxResources = isRedux ? await loadRedux() : null;
@@ -181,20 +188,20 @@ methods.runReactView = function (data) {
       }
     }
 
-    let layoutStaticAbsolutePath =
-      process.env.NODE_ENV == "development"
-        ? `/kotii-user-land-aliase/src/components/startup/index`
-        : `/src/components/startup/index.js`;
+    let layoutStaticAbsolutePath = USER_LAND_ALIAS_START_UP;
+    // process.env.NODE_ENV == "development"
+    //   ? `/kotii-user-land-aliase/src/components/startup/index`
+    //   : `/src/components/startup/index.js`;
     let layoutRoot = await self.doImport(
       `${layoutStaticAbsolutePath}`,
       true,
       false
     );
     if (!self.comps) {
-      let compsAbsolutePath =
-        process.env.NODE_ENV == "development"
-          ? `${kotiiInternal}/pages.js`
-          : `.kotii-land/bundle-imports.js`;
+      let compsAbsolutePath = USER_LAND_ALIAS_PAGES;
+      // process.env.NODE_ENV == "development"
+      //   ? `${kotiiInternal}/pages.js`
+      //   : `.kotii-land/bundle-imports.js`;
       self.debug("THE COMPLETE ABS", compsAbsolutePath);
       self.comps = await self.doImport(`${compsAbsolutePath}`, true, false);
     }
@@ -216,7 +223,7 @@ methods.runReactView = function (data) {
 
     if (isRedux) {
       const { OptionalDynamiceReduxWrapperLazy } = await import(
-        "@kotii/_internal/land"
+        "kotii-internal"
       );
 
       await OptionalDynamiceReduxWrapperLazy.preload();
@@ -533,12 +540,14 @@ methods.doImport = function (toImport, all = false, check = true) {
 methods.doKotiiStyles = function () {
   const self = this;
 
+  self.debug("USER LAND.REACT.DOSTYLES", USER_LAND_ALIAS_STYLES_JSON);
+
   const jsonStyles = fs.existsSync(
-    `${kotiiKotiiLandPath}${path.sep}dev/styles.json`
+    `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`
   )
     ? !process?.useLinkStyleTag
       ? JSON.parse(
-          fs.readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`)
+          fs.readFileSync(`${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`)
         )
       : true
     : null;
