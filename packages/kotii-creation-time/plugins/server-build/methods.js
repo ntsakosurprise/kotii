@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const methods = {};
 import fs from "fs";
 import { isBuiltin } from "node:module";
@@ -9,6 +10,13 @@ import {
 } from "../../globals.js";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../../kotii_paths.js";
 import runNpmScript from "./runNpmScript.js";
+import {
+  USER_LAND_ALIASES,
+  USER_LAND_ALIAS_ASSETS_MANIFEST,
+  USER_LAND_ALIAS_PAGES,
+  USER_LAND_ALIAS_STYLES_JSON,
+  USER_LAND_ALIAS_STYLES_MODULES,
+} from "kotii-internal/user";
 
 const dataExtensions = [".csv", ".json", ".xml"];
 const cssExtensions = [".scss", ".styl", ".less", ".css", "sass"];
@@ -25,7 +33,7 @@ methods.handleServerBuild = function (data) {
   const saveToFile = pao.pa_saveToFile;
   self.debug("handling server build", data);
   const { payload } = data;
-  const { targetMain, destination, targetSource, routes, contextApp } = payload;
+  const { targetMain, destination, targetSource, contextApp } = payload;
   self.callback = data.callback;
 
   // const cwd = getWorkingFolder();
@@ -401,10 +409,10 @@ methods.doKotiiLandPagesFile = function (destination, options) {
     const getWorkingFolder = pao.pa_getWorkingFolder;
     // const cwd = getWorkingFolder();
     const cwd = self.kotiiScriptsPath;
-    const jsFile = readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/pages.js`);
+    const jsFile = readFileSync(`${USER_LAND_ALIASES[USER_LAND_ALIAS_PAGES]}`);
     self.debug(
       "THE SOURCE FILE PATH",
-      `${kotiiKotiiLandPath}${path.sep}dev/pages.js`
+      `${USER_LAND_ALIASES[USER_LAND_ALIAS_PAGES]}`
     );
     let ast = parser.parse(jsFile, {
       sourceType: "module",
@@ -797,7 +805,7 @@ methods.processStylesNodes = function (nodePath, state) {
 };
 methods.getStylesMap = function (kotiiAppPath) {
   const self = this;
-  let assetsPath = `${kotiiAppPath}/kotii-land/dev/styles-css-modules.json`;
+  let assetsPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_MODULES]}`;
 
   if (fs.existsSync(assetsPath)) {
     self.assetsManifestData = JSON.parse(
@@ -829,7 +837,7 @@ methods.aggregateProductionResources = function (context) {
 };
 methods.aggregateAppCss = function (context) {
   const self = this;
-  let assetsPath = `${kotiiRootPath}/kotii-land/dev/styles.json`;
+  let assetsPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`;
   // let savePath = `${context.appBuildFolder}/index.css`;
   // console.log("THE SAVE PATH", savePath);
   let cssContent = JSON.parse(
@@ -842,7 +850,7 @@ methods.aggregateAppCss = function (context) {
 methods.aggregateAppKotiiMeta = function (context) {
   const self = this;
   console.log("THE CONTEXT", context);
-  let assetsModulesPath = `${kotiiRootPath}/kotii-land/dev/styles-css-modules.json`;
+  let assetsModulesPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_MODULES]}`;
   let cssModules = JSON.parse(
     fs.readFileSync(assetsModulesPath, { encoding: "utf-8" })
   );
@@ -857,7 +865,8 @@ methods.aggregateAppKotiiMeta = function (context) {
 };
 methods.aggregateAppImages = function (context) {
   const self = this;
-  let assetsPath = `${kotiiRootPath}/kotii-land/assets.manifest.json`;
+  let assetsPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_ASSETS_MANIFEST]}`;
+  self.debug("THE ASSETS PATH", assetsPath);
   // let savePath = `${context.appBuildFolder}/index.css`;
   // console.log("THE SAVE PATH", savePath);
   let imagesMeta = JSON.parse(

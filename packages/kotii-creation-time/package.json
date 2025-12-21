@@ -9,6 +9,21 @@
       "import": "./index.js",
       "require": "./index.js",
       "default": "./index.js"
+    },
+    "./plugins": {
+      "import": "./plugins/index.js",
+      "require": "./plugins/index.js",
+      "default": "./plugins/index.js"
+    },
+    "./user": {
+      "import": "./user.js",
+      "require": "./user.js",
+      "default": "./user.js"
+    },
+    "./root": {
+      "import": "./kotii_paths.js",
+      "require": "./user.js",
+      "default": "./user.js"
     }
   },
   "scripts": {

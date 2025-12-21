@@ -9,6 +9,20 @@ let firstBuild = true;
 let rebuilding = false;
 let queued = false;
 
+import {
+  USER_LAND_PATH_CSS,
+  USER_LAND_PATH_APP,
+  USER_LAND_ALIASES,
+  USER_LAND_ALIAS_BUILD,
+  USER_LAND_PATH_ASSET,
+  USER_LAND_ALIAS_REDUX,
+  USER_LAND_ALIAS_START_UP,
+  USER_LAND_ALIAS_PAGES,
+  USER_LAND_ALIAS_MANIFEST,
+  USER_LAND_ALIAS_STYLES_JSON,
+  USER_LAND_ALIAS_STYLES_MODULES,
+} from "kotii-internal/user";
+
 import autoprefixer from "autoprefixer";
 import fs from "fs";
 import path, { resolve } from "path";
@@ -931,7 +945,7 @@ methods.addImportLineTCSSModulesJs = function () {
   const readFileSync = pao.pa_readFileSync;
   const saveToFile = pao.pa_saveToFile;
 
-  const buildPath = `${kotiiKotiiLandPath}/dev/hot-load-css-modules.js`;
+  const buildPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_BUILD]}`;
   const buildPathFile = readFileSync(buildPath);
   let buildAst = parser.parse(buildPathFile, {
     sourceType: "module",
@@ -960,7 +974,8 @@ methods.addImportLineTAppJs = function () {
   const readFileSync = pao.pa_readFileSync;
   const saveToFile = pao.pa_saveToFile;
 
-  const buildPath = `${kotiiKotiiLandPath}/dev/app_.js`;
+  const buildPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_BUILD]}`;
+
   const buildPathFile = readFileSync(buildPath);
   let buildAst = parser.parse(buildPathFile, {
     sourceType: "module",
@@ -1589,7 +1604,7 @@ methods.removeOutdatedCssFile = function (
  */
 methods.loadCssModuleDataFile = function () {
   const self = this;
-  const stylesModulesPath = `${kotiiKotiiLandPath}/dev/styles-css-modules.json`;
+  const stylesModulesPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_MODULES]}`;
   self["stylesMeta"] = JSON.parse(
     fs.readFileSync(stylesModulesPath, {
       encoding: "utf8",
@@ -1646,10 +1661,16 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
       "app.manifest.appStyles.useTag should be either a link or style value"
     );
   if (appStyles.useTag.toLowerCase() == "link") {
-    let stylesPath = `${kotiiKotiiLandPath}/dev/styles.json`;
+    let stylesPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`;
+    self.debug("THE STYLES PATH", stylesPath);
     let fileName = appStyles?.fileName ? appStyles.fileName : "style.css";
     process["useLinkStyleTag"] = true;
     process["styleSheetName"] = fileName;
+    self.debug(
+      "THE APP MANIFEST.name",
+      process.styleSheetName,
+      process.useLinkStyleTag
+    );
 
     let stylesString = JSON.parse(
       fs.readFileSync(stylesPath, { encoding: "utf-8" })
@@ -2052,8 +2073,8 @@ methods.safeInvalidate = function safeInvalidate() {
 methods.replaceKotiiJsFilesContent = function () {
   const self = this;
   const pao = self.pao;
-  const pagesFilePath = `${kotiiKotiiLandPath}/dev/pages.js`;
-  const manifestFilePath = `${kotiiKotiiLandPath}/dev/manifest.js`;
+  const pagesFilePath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_PAGES]}`;
+  const manifestFilePath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_MANIFEST]}`;
   const filesContent = self.getCentralFilesContent();
   const saveToFile = pao.pa_saveToFile;
 

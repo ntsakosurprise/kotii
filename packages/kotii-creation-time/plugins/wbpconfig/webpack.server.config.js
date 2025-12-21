@@ -6,8 +6,16 @@ import { loggas, logger } from "kotii-logger";
 import path from "path";
 import { fileURLToPath } from "url";
 import webpack from "webpack";
-import { kotiiKotiiLandPath, kotiiRootPath } from "../../kotii_paths.js";
-import { kotiiInternal } from "kotii-internal/internal.js";
+import { kotiiKotiiLandPath, kotiiRootPath } from "kotii-creation-time/root";
+
+import {
+  USER_LAND_PATH_CSS,
+  USER_LAND_ALIASES,
+  USER_LAND_ALIAS_BUILD,
+  USER_LAND_PATH_ASSET,
+  USER_LAND_ALIAS_REDUX,
+  USER_LAND_ALIAS_START_UP,
+} from "kotii-internal/user";
 import {
   BroadcastCompilationWebpackPlugin,
   CopyAssetsWebpackPlugin,
@@ -18,6 +26,7 @@ import {
   StatsPrintWebpackPlugin,
   WatchOwnFilesWebpackPlugin,
 } from "../../webpack-plugins/index.js";
+import { kotiiInternal } from "kotii-internal/root";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -46,7 +55,7 @@ export default (options) => {
   // );
   let scriptsWebpackResolve = path.resolve(
     env.appFolder,
-    "node_modules/kotii-internal/dist/app_.js"
+    "node_modules/kotii-internal/dist/app.js"
   );
   loggas.webpack.debug(
     "WEBPACK KOTII RESOLVE",
@@ -116,7 +125,7 @@ export default (options) => {
       extensions: [".js", ".jsx", ".ts", ".tsx", ".png", ".jpg"], // tell webpack to use these extenstions to resolve imported files[for importing without specifying the extension name]
       alias: {
         ...options.appManifest.aliases,
-        ...getKotiiAliasPaths(env.appFolder),
+        // ...getKotiiAliasPaths(env.appFolder),
         "react-router-dom": path.resolve(
           `${env.appFolder}/node_modules/react-router-dom`
         ),
@@ -124,11 +133,11 @@ export default (options) => {
         "react-router": path.resolve(
           `${env.appFolder}/node_modules/react-router`
         ),
-        kotii: scriptsWebpackResolve,
-        "/kotii-user-land-aliase/src/store/index": guessPathExtension(
+        // kotii: scriptsWebpackResolve,
+        [USER_LAND_ALIAS_REDUX]: guessPathExtension(
           `${env.appSrc}/store/index`
         ),
-        "/kotii-user-land-aliase/src/startup/index": guessPathExtension(
+        [USER_LAND_ALIAS_START_UP]: guessPathExtension(
           `${env.appSrc}/components/startup/index`
         ),
       }, // Alias references to files and folders inorder to use absolute paths in your file imports
@@ -146,13 +155,14 @@ export default (options) => {
 
         // "crypto": false,
       }, // Add these as polyfills for use in the browser, webpack no longer auto-polyfills them
-      modules: !isProjectPNPM
-        ? ["node_modules"]
-        : [
-            process.cwd(),
-            path.join(process.cwd(), "node_modules"),
-            path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
-          ],
+      // modules: !isProjectPNPM
+      //   ? ["node_modules"]
+      //   : [
+      //       process.cwd(),
+      //       path.join(process.cwd(), "node_modules"),
+      //       path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
+      //     ],
+      modules: ["node_modules"],
     },
     resolveLoader: {
       alias: {
@@ -191,18 +201,19 @@ export default (options) => {
       rules: [
         {
           test: /\.(?:js|mjs|cjs|jsx)$/,
-          include: !isProjectPNPM
-            ? [path.resolve(scriptsPath, "/")]
-            : [
-                process.cwd(),
-                path.join(process.cwd(), "node_modules"),
-                path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
-              ],
-          // exclude: /node_modules\/(?!(kotii)\/).*/,
-          // include: [scriptsWebpackResolve],
-          exclude: !isProjectPNPM
-            ? /node_modules\/(?!kotii).+/
-            : /node_modules\/\.pnpm\/node_modules\/(?!kotii)/,
+          // include: !isProjectPNPM
+          //   ? [path.resolve(scriptsPath, "/")]
+          //   : [
+          //       process.cwd(),
+          //       path.join(process.cwd(), "node_modules"),
+          //       path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
+          //     ],
+          // // exclude: /node_modules\/(?!(kotii)\/).*/,
+          // // include: [scriptsWebpackResolve],
+          // exclude: !isProjectPNPM
+          //   ? /node_modules\/(?!kotii).+/
+          //   : /node_modules\/\.pnpm\/node_modules\/(?!kotii)/,
+          exclude: /node_modules/,
           use: [
             {
               loader: "kotii-add-hot-loader",
@@ -243,18 +254,16 @@ export default (options) => {
         },
         {
           test: /\.(?:ts|mts|cts|tsx)$/,
-          include: !isProjectPNPM
-            ? [path.resolve(scriptsPath, "/")]
-            : [
-                process.cwd(),
-                path.join(process.cwd(), "node_modules"),
-                path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
-              ],
+          // include: !isProjectPNPM
+          //   ? [path.resolve(scriptsPath, "/")]
+          //   : [
+          //       process.cwd(),
+          //       path.join(process.cwd(), "node_modules"),
+          //       path.join(process.cwd(), "node_modules/.pnpm/node_modules"),
+          //     ],
           // exclude: /node_modules\/(?!(kotii)\/).*/,
           // include: [scriptsWebpackResolve],
-          exclude: !isProjectPNPM
-            ? /node_modules\/(?!kotii).+/
-            : /node_modules\/\.pnpm\/node_modules\/(?!kotii)/,
+          exclude: /node_modules/,
           use: [
             // {
             //   loader:"babel-loader",
@@ -297,7 +306,7 @@ export default (options) => {
             {
               loader: "sync-css-modules-loader",
               options: {
-                referenceAssetsPath: `${kotiiKotiiLandPath}/dev`,
+                referenceAssetsPath: `${USER_LAND_ALIASES[USER_LAND_PATH_CSS]}`,
                 assetsFile: "styles-css-modules.json",
                 fileFormat: "json",
               },
@@ -340,7 +349,7 @@ export default (options) => {
             {
               loader: "sync-assets-loader",
               options: {
-                referenceAssetsPath: kotiiKotiiLandPath,
+                referenceAssetsPath: USER_LAND_ALIASES[USER_LAND_PATH_ASSET],
                 assetsFile: "assets.manifest.json",
                 fileFormat: "json",
               },
@@ -420,7 +429,7 @@ export default (options) => {
       new webpack.HotModuleReplacementPlugin(),
       new RemoveImportsWebpackPlugin(
         {
-          removeFilePath: `${kotiiInternal}/build.js`,
+          removeFilePath: `${USER_LAND_ALIASES[USER_LAND_ALIAS_BUILD]}`,
           removeFileSpecifiers: ["./pages.js"],
         },
         loggas
@@ -462,7 +471,7 @@ export default (options) => {
 const getCopyFiles = (options, env) => {
   let files = [
     {
-      referenceAssetsPath: kotiiKotiiLandPath,
+      referenceAssetsPath: USER_LAND_ALIASES[USER_LAND_PATH_ASSET],
       kotiiRootPath: kotiiRootPath,
       assetsFile: "assets.manifest.json",
       fileFormat: "json",
@@ -532,7 +541,7 @@ function configureKotiiLogger() {
 }
 
 function guessPathExtension(guessPath) {
-  console.log("THE GUESS PATH", guessPath);
+  console.log("THE GUESS PATH WEBPACK", guessPath);
 
   let livingExtension = guessPath;
   for (let ext = 0; ext < guessExtensions.length; ext++) {

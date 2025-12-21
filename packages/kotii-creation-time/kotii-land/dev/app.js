@@ -1,7 +1,8 @@
 import { anzii } from "anzii";
-import plugins from "@kotii/_internal/plugins";
+import plugins from "kotii-creation-time/plugins";
+import { USER_LAND_ALIAS_PLUGINS } from "kotii-internal/user";
 
-import("/kotii-user-api/plugins").then((imported) => {
+import(`${USER_LAND_ALIAS_PLUGINS}`).then((imported) => {
   let userPlugins = imported.default;
 
   if (userPlugins?.noApi && Object.keys(userPlugins).length === 1) {
