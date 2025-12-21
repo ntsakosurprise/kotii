@@ -3,57 +3,16 @@
 /* eslint-disable react/prop-types */
 import React from "react";
 import { lazyLoad } from "kotii-lazy";
-
-// // loadReduxServer.js (ESM)
-// export async function loadReduxServer() {
-//   try {
-//     const reactRedux = await import("react-redux");
-//     const kotiiDev = await import("@kotii/_internal/land");
-
-//     return {
-//       Provider: reactRedux.Provider,
-//       createReduxStore: kotiiDev.createReduxStore,
-//     };
-//   } catch (err) {
-//     if ((err?.message || "").includes("react-redux")) {
-//       throw new Error(
-//         'React-Redux is required but not installed. Please run "npm install react-redux".'
-//       );
-//     }
-//     if ((err?.message || "").includes("@kotii/_internal/land")) {
-//       throw new Error(
-//         'Your Redux store module ("@kotii/_internal/land") could not be loaded.'
-//       );
-//     }
-//     throw err;
-//   }
-// }
-
-// function ServerReduxWrapper({
-//   preloadState,
-//   isStoreCreated,
-//   reduxResources,
-//   children,
-// }) {
-//   // Dynamic import on server, but not lazy inside React components
-//   console.log("Server Redux Wrapper", preloadState, isStoreCreated);
-//   const { Provider } = reduxResources;
-
-//   // const store = createReduxStore(preloadState, isStoreCreated);
-
-//   return <Provider store={preloadState}>{children}</Provider>;
-// }
+import { USER_LAND_ALIAS_REDUX } from "../user.js";
 const isServer = typeof window == "undefined" ? true : false;
 export async function loadRedux() {
   console.log("THE LOAD REDUX", isServer);
   try {
     const reactRedux = await import("react-redux");
-    const kotiiDev = await import("@kotii/_internal/land");
+    const kotiiDev = await import("kotii-internal");
     const { thunk } = await import("redux-thunk");
     const reduxFuncs = await import("redux");
-    const { reducers } = await import(
-      "/kotii-user-land-aliase/src/store/index"
-    );
+    const { reducers } = await import("@kotii/_user/redux");
 
     return {
       Provider: reactRedux.Provider,
@@ -70,9 +29,9 @@ export async function loadRedux() {
         'React-Redux is required but not installed. Please run "npm install react-redux".'
       );
     }
-    if ((err?.message || "").includes("@kotii/_internal/land")) {
+    if ((err?.message || "").includes(`${USER_LAND_ALIAS_REDUX}`)) {
       throw new Error(
-        'Your Redux store module ("@kotii/_internal/land") could not be loaded.'
+        `Your Redux store module (${USER_LAND_ALIAS_REDUX}) could not be loaded.`
       );
     }
     throw err;
@@ -119,7 +78,7 @@ export async function loadRedux() {
 
 export const OptionalDynamiceReduxWrapperLazy = lazyLoad(async () => {
   // const { Provider } = await import("react-redux");
-  // const { createReduxStore } = await import("@kotii/_internal/land");
+  // const { createReduxStore } = await import(`${USER_LAND_ALIAS_REDUX}`);
   const { Provider, createReduxStore, reduxThunk, reducers, reduxFuncs } =
     await loadRedux();
 

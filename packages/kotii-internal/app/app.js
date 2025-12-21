@@ -8,9 +8,10 @@ import path from "path";
 import React, { StrictMode } from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { AppProvider, useAppContext } from "kotii-components";
-import { ClientRoutes, ServerRoutes } from "@kotii/_internal/land";
+import { ClientRoutes, ServerRoutes } from "kotii-internal";
 import { AuthProvider } from "kotii-auth";
-import { OptionalDynamiceReduxWrapper } from "@kotii/_internal/land";
+import { OptionalDynamiceReduxWrapperLazy } from "./OptionalDynamiceReduxWrapperLazy.js";
+import { LazySuspense } from "kotii-lazy";
 
 logger.setNameSpaces([
   { namespace: "app:start-client", id: "appClient" },
@@ -44,7 +45,7 @@ const App = (appWrapper = null, layout = null) => {
     appWrapper,
     layout,
     store,
-    isServer: true,
+    isServer: false,
     effectsStore,
     authUser,
     reduxEnabled: stateVendor && stateVendor === "redux" ? true : false,
@@ -176,206 +177,174 @@ const KotiiMainApp = (props) => {
 
   return (
     <StrictMode>
-      <OptionalDynamiceReduxWrapper
-        enabled={reduxEnabled}
-        preloadState={store}
-        isStoreCreated={isStoreCreated}
-        reduxResources={reduxResources}
-      >
-        <AppProvider
-          appWrapper={appWrapper}
-          layout={layout}
-          effectsStore={effectsStore}
+      <LazySuspense>
+        <OptionalDynamiceReduxWrapperLazy
+          enabled={reduxEnabled}
+          preloadState={store}
+          isStoreCreated={isStoreCreated}
+          reduxResources={reduxResources}
         >
-          <AppGeneric
-            isServer={isServer}
-            goodies={goodies}
-            authUser={authUser}
-          />
-        </AppProvider>
-      </OptionalDynamiceReduxWrapper>
+          <AppProvider
+            appWrapper={appWrapper}
+            layout={layout}
+            effectsStore={effectsStore}
+          >
+            <AppGeneric
+              isServer={isServer}
+              goodies={goodies}
+              authUser={authUser}
+            />
+          </AppProvider>
+        </OptionalDynamiceReduxWrapperLazy>
+      </LazySuspense>
     </StrictMode>
   );
 };
-const kotiiApp = ({
-  appWrapper,
-  layout,
-  store,
-  isServer = false,
-  goodies = null,
-  effectsStore,
-  authUser,
-  isStoreCreated,
-  reduxEnabled,
-  reduxResources,
-} = props) => {
-  if (isServer) {
-    return (
-      <KotiiMainApp
-        appWrapper={appWrapper}
-        layout={layout}
-        effectsStore={effectsStore}
-        authUser={authUser}
-        store={store}
-        goodies={goodies}
-        reduxEnabled={reduxEnabled}
-        isStoreCreated={isStoreCreated}
-        reduxResources={reduxResources}
-        isServer={isServer}
-      />
-    );
+const kotiiApp = (props) => {
+  if (props?.isServer) {
+    return <KotiiMainApp {...props} />;
   }
   hydrateInvokes++;
   container = !container ? document.getElementById("root") : container;
 
-  if (customHydrateRoot) {
-    return customHydrateRoot.render(
-      <KotiiMainApp
-        appWrapper={appWrapper}
-        layout={layout}
-        effectsStore={effectsStore}
-        authUser={authUser}
-        store={store}
-        goodies={goodies}
-      />
+  if (!window["KOTII_APP_HYDRATED"]) {
+    window["KOTII_APP_HYDRATED"] = hydrateRoot(
+      container,
+      <KotiiMainApp {...props} />
     );
   } else {
-    customHydrateRoot = hydrateRoot(
-      container,
-      <KotiiMainApp
-        appWrapper={appWrapper}
-        layout={layout}
-        effectsStore={effectsStore}
-        authUser={authUser}
-        store={store}
-        goodies={goodies}
-      />
-    );
+    return window["KOTII_APP_HYDRATED"].render(<KotiiMainApp {...props} />);
   }
 };
 
-const appWithRedux = ({
-  appWrapper,
-  layout,
-  store,
-  isServer = false,
-  goodies = null,
-  effectsStore,
-  authUser,
-} = props) => {
-  if (isServer) {
-    return (
-      <Provider store={store}>
-        <AppProvider
-          appWrapper={appWrapper}
-          layout={layout}
-          effectsStore={effectsStore}
-        >
-          <AppGeneric isServer={true} goodies={goodies} authUser={authUser} />
-        </AppProvider>
-      </Provider>
-    );
-  }
-  hydrateInvokes++;
+// const appWithRedux = ({
+//   appWrapper,
+//   layout,
+//   store,
+//   isServer = false,
+//   goodies = null,
+//   effectsStore,
+//   authUser,
+// } = props) => {
+//   if (isServer) {
+//     return (
+//       <Provider store={store}>
+//         <AppProvider
+//           appWrapper={appWrapper}
+//           layout={layout}
+//           effectsStore={effectsStore}
+//         >
+//           <AppGeneric isServer={true} goodies={goodies} authUser={authUser} />
+//         </AppProvider>
+//       </Provider>
+//     );
+//   }
+//   hydrateInvokes++;
 
-  container = !container ? document.getElementById("root") : container;
+//   container = !container ? document.getElementById("root") : container;
 
-  if (customHydrateRoot) {
-    return customHydrateRoot.render(
-      <Provider store={store}>
-        <AppProvider
-          appWrapper={appWrapper}
-          layout={layout}
-          effectsStore={effectsStore}
-        >
-          <AppGeneric authUser={authUser} />
-        </AppProvider>
-      </Provider>
-    );
-  } else {
-    customHydrateRoot = hydrateRoot(
-      container,
-      <Provider store={store}>
-        <AppProvider
-          appWrapper={appWrapper}
-          layout={layout}
-          effectsStore={effectsStore}
-        >
-          <AppGeneric authUser={authUser} />
-        </AppProvider>
-      </Provider>
-    );
-  }
-};
+//   if (customHydrateRoot) {
+//     return customHydrateRoot.render(
+//       <Provider store={store}>
+//         <AppProvider
+//           appWrapper={appWrapper}
+//           layout={layout}
+//           effectsStore={effectsStore}
+//         >
+//           <AppGeneric authUser={authUser} />
+//         </AppProvider>
+//       </Provider>
+//     );
+//   } else {
+//     customHydrateRoot = hydrateRoot(
+//       container,
+//       <Provider store={store}>
+//         <AppProvider
+//           appWrapper={appWrapper}
+//           layout={layout}
+//           effectsStore={effectsStore}
+//         >
+//           <AppGeneric authUser={authUser} />
+//         </AppProvider>
+//       </Provider>
+//     );
+//   }
+// };
 
-const appNormal = ({
-  appWrapper,
-  layout,
-  isServer = false,
-  effectsStore,
-  authUser,
-} = props) => {
-  if (isServer) {
-    return (
-      <AppProvider
-        appWrapper={appWrapper}
-        layout={layout}
-        effectsStore={effectsStore}
-      >
-        <AppGeneric authUser={authUser} />
-      </AppProvider>
-    );
-  }
-  container = !container ? document.getElementById("root") : container;
-  hydrateRoot(
-    document.getElementById("root"),
-    <AppProvider
-      appWrapper={appWrapper}
-      layout={layout}
-      effectsStore={effectsStore}
-    >
-      <AppGeneric authUser={authUser} />
-    </AppProvider>
-  );
-};
+// const appNormal = ({
+//   appWrapper,
+//   layout,
+//   isServer = false,
+//   effectsStore,
+//   authUser,
+// } = props) => {
+//   if (isServer) {
+//     return (
+//       <AppProvider
+//         appWrapper={appWrapper}
+//         layout={layout}
+//         effectsStore={effectsStore}
+//       >
+//         <AppGeneric authUser={authUser} />
+//       </AppProvider>
+//     );
+//   }
+//   container = !container ? document.getElementById("root") : container;
+//   hydrateRoot(
+//     document.getElementById("root"),
+//     <AppProvider
+//       appWrapper={appWrapper}
+//       layout={layout}
+//       effectsStore={effectsStore}
+//     >
+//       <AppGeneric authUser={authUser} />
+//     </AppProvider>
+//   );
+// };
 
-const appSpa = ({ appWrapper, layout, effectsStore, authUser } = props) => {
-  const root = createRoot(document.getElementById("root"));
-  root.render(
-    <StrictMode>
-      <AppProvider
-        appWrapper={appWrapper}
-        layout={layout}
-        effectsStore={effectsStore}
-      >
-        <AppGeneric authUser={authUser} />
-      </AppProvider>
-    </StrictMode>
-  );
-};
+// const appSpa = ({ appWrapper, layout, effectsStore, authUser } = props) => {
+//   const root = createRoot(document.getElementById("root"));
+//   root.render(
+//     <StrictMode>
+//       <AppProvider
+//         appWrapper={appWrapper}
+//         layout={layout}
+//         effectsStore={effectsStore}
+//       >
+//         <AppGeneric authUser={authUser} />
+//       </AppProvider>
+//     </StrictMode>
+//   );
+// };
 
-const appSpaWithRedux = ({
-  appWrapper,
-  layout,
-  store,
-  effectsStore,
-  authUser,
-} = props) => {
-  const root = createRoot(document.getElementById("root"));
-  root.render(
-    <StrictMode>
-      <Provider store={store}>
-        <AppProvider
-          appWrapper={appWrapper}
-          layout={layout}
-          effectsStore={effectsStore}
-        >
-          <AppGeneric authUser={authUser} />
-        </AppProvider>
-      </Provider>
-    </StrictMode>
-  );
-};
+// const appSpaWithRedux = ({
+//   appWrapper,
+//   layout,
+//   store,
+//   effectsStore,
+//   authUser,
+// } = props) => {
+//   const root = createRoot(document.getElementById("root"));
+//   root.render(
+//     <StrictMode>
+//       <Provider store={store}>
+//         <AppProvider
+//           appWrapper={appWrapper}
+//           layout={layout}
+//           effectsStore={effectsStore}
+//         >
+//           <AppGeneric authUser={authUser} />
+//         </AppProvider>
+//       </Provider>
+//     </StrictMode>
+//   );
+// };
+// if (import.meta.webpackHot) {
+//   console.log("THE META WEBPACK");
+//   import.meta.webpackHot.accept("kotii-internal/build", (er) => {
+//     App(userWrapper, userLayout);
+//   });
+// }
 
 export {
   Head,
