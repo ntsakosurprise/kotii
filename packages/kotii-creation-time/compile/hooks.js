@@ -16,7 +16,13 @@ import {
 } from "../css/index.js";
 import { loadFile } from "../file-loader/index.js";
 import { createImportPathContext, getNodejsForeignData } from "../globals.js";
-import { kotiiKotiiLandPath, kotiiRootPath } from "../kotii_paths.js";
+import { kotiiKotiiLandPath, kotiiRootPath } from "kotii-creation-time/root";
+import {
+  USER_LAND_ALIASES,
+  USER_LAND_ALIAS_STYLES_JSON,
+  USER_LAND_ALIAS_STYLES_MODULES,
+  USER_LAND_ALIAS_ASSETS_MANIFEST,
+} from "kotii-internal/user";
 // import { kotiiInternal } from "kotii-internal";
 
 let meta = null;
@@ -27,8 +33,8 @@ let metaChecked = false;
 let workdir = `${process.cwd()}`;
 let GLOBAL_STYLES_REGEX = /global\.+/;
 let CSS_MODULES_REGEX = /\.module\./;
-let JSON_STYLES_PATH = `${kotiiKotiiLandPath}/dev/styles.json`;
-let JSON_STYLES_MAP_PATH = `${kotiiKotiiLandPath}/dev/styles-css-modules.json`;
+let JSON_STYLES_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`;
+let JSON_STYLES_MAP_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_MODULES]}`;
 let JSON_STYLES_PATH_FIRSTTIME_USE = false;
 let JSON_STYLES_PATH_MAP_FIRSTTIME_USE = false;
 let MODULES_SPECIFIERS = {};
@@ -59,8 +65,8 @@ const KOTII_INTERNAL_ALIASES = {
   //   alias: "/kotii-user-land-aliase/src/store/index",
   //   value: "/src/store/index",
   // },
-  "@kotii/_internal/land": `${workdir}/node_modules/kotii-internal/dist/index`,
-  "@kotii/_internal/app": `${workdir}/node_modules/kotii-internal/dist/app`,
+  "@kotii/_internal/land": `kotii-internal`,
+  "@kotii/_internal/app": `kotii-internal/app`,
   "@kotii/_internal/plugins": `${workdir}/node_modules/kotii-creation-time/plugins/index`,
   "@kotii/_internal/root": `${workdir}/node_modules/kotii-creation-time/kotii_paths`,
 };
@@ -325,22 +331,25 @@ export async function resolve(specifier, context, nextResolve) {
       loggas.resolve.debug("ALSO HANDLED BY LOADERS", meta);
     }
 
-    shouldTerminate = resolveKotiiInternalImports(specifier);
+    shouldTerminate = resolveUserAliase(specifier);
     if (shouldTerminate) return shouldTerminate;
-    shouldTerminate = resolveUserlandImports(specifier);
-    if (shouldTerminate) return shouldTerminate;
+
+    // shouldTerminate = resolveKotiiInternalImports(specifier);
+    // if (shouldTerminate) return shouldTerminate;
+    // shouldTerminate = resolveUserlandImports(specifier);
+    // if (shouldTerminate) return shouldTerminate;
     shouldTerminate = resolveAliasedImports(specifier);
     if (shouldTerminate) return shouldTerminate;
-    shouldTerminate = resolveKotiiLandImports(specifier);
-    if (shouldTerminate) return shouldTerminate;
+    // shouldTerminate = resolveKotiiLandImports(specifier);
+    // if (shouldTerminate) return shouldTerminate;
     shouldTerminate = resolvePagesImports(specifier);
     if (shouldTerminate) return shouldTerminate;
-    shouldTerminate = resolveKotiiScriptsImports(specifier);
-    if (shouldTerminate) return shouldTerminate;
-    shouldTerminate = resolveKotiiUserApiPlugins(specifier);
-    if (shouldTerminate) return shouldTerminate;
-    shouldTerminate = resolveKotiiScriptsInternalImports(specifier);
-    if (shouldTerminate) return shouldTerminate;
+    // shouldTerminate = resolveKotiiScriptsImports(specifier);
+    // if (shouldTerminate) return shouldTerminate;
+    // shouldTerminate = resolveKotiiUserApiPlugins(specifier);
+    // if (shouldTerminate) return shouldTerminate;
+    // shouldTerminate = resolveKotiiScriptsInternalImports(specifier);
+    // if (shouldTerminate) return shouldTerminate;
 
     return nextResolve(specifier);
   } catch (error) {
@@ -352,6 +361,84 @@ export async function resolve(specifier, context, nextResolve) {
     process.exit();
   }
 }
+
+/**
+ *
+ * @param {*} specifier
+ * @returns true/false
+ * resolveAliasedImports resolves modules/paths that are aliased as defined by the
+   user in an app_manifest.json. Aliased modules help make the user's navigation of the project
+   a lot easier.
+
+   N.B Sample app.manifest.json structure: 
+
+   "aliases": {
+    "AppGlobals": "/src/globals/index",
+    "Layouts": "/src/components/layout/index",
+    "Pages": "/src/components/pages/index",
+    "Docs": "/src/components/docs/index",
+  }
+
+  import { GlobalStyle } from "AppGlobals"; // Find GlobalStyle variable using an absolute path
+  named "AppGlobals" that should resolve to the exact location of the file/module
+ 
+ */
+export const resolveUserAliase = (specifier) => {
+  if (!isBuiltin(specifier) && /^@kotii\/_user/.test(specifier)) {
+    try {
+      let livingPath;
+      console.log("USER LAND ALIASES", USER_LAND_ALIASES, specifier);
+      if (USER_LAND_ALIASES[specifier]?.value) {
+        let basePath = getPagesBasePath(USER_LAND_ALIASES[specifier].value);
+        console.log("THE BASE PATH", basePath);
+        livingPath = guessPathExtension(
+          path.resolve(
+            basePath,
+            USER_LAND_ALIASES[specifier].value.replace(/^\/+/, "")
+          )
+        );
+        console.log("USER LAND", livingPath);
+      } else {
+        livingPath = guessPathExtension(USER_LAND_ALIASES[specifier]);
+      }
+
+      return {
+        url: pathToFileURL(`${livingPath}`).href,
+        shortCircuit: true,
+      };
+    } catch (error) {
+      console.log("THE APP HAS ERRORED", error, "THE ERRORED PATH");
+    }
+  } else {
+    return false;
+  }
+};
+
+export const resolveUserAliaseCss = (specifier) => {
+  if (!isBuiltin(specifier) && /^@kotii\/_css$/.test(specifier)) {
+    loggas.resolve.debug("THE @USER SPECIFIER CSS", specifier);
+    // let basePath = getPagesBasePath(specifier);
+
+    // let aliaseTruePath = Object.keys(KOTII_USER_LAND_ALIASES).filter(
+    //   (aliase) => KOTII_USER_LAND_ALIASES[aliase].alias === specifier
+    // );
+    let aliaseTruePathValue = USER_LAND_ALIASES[specifier];
+    // let aliasePossiblePath = `${basePath}${aliaseTruePathValue}`;
+    console.log("THE @USER IMPORTS CSS", aliaseTruePathValue);
+
+    try {
+      let livingPath = aliaseTruePathValue;
+      return {
+        url: pathToFileURL(`${livingPath}`).href,
+        shortCircuit: true,
+      };
+    } catch (error) {
+      console.log("THE APP HAS ERRORED", error, "THE ERRORED PATH");
+    }
+  } else {
+    return false;
+  }
+};
 
 /**
  *
@@ -623,7 +710,7 @@ export const resolveUserlandImports = (specifier) => {
 };
 export const resolveKotiiInternalImports = (specifier) => {
   loggas.resolve.debug("KOTII LAND USER LAND", specifier);
-  if (!isBuiltin(specifier) && /^@kotii\/_internal(\/.*)?$/.test(specifier)) {
+  if (!isBuiltin(specifier) && /^@kotii\/_il(\/.*)?$/.test(specifier)) {
     loggas.resolve.debug("THE SPECIFIER FOR INTERNAL IMPORTS", specifier);
     // let basePath = getPagesBasePath(specifier);
 
@@ -660,6 +747,7 @@ export const resolveKotiiInternalImports = (specifier) => {
 
 export const guessPathExtension = (guessPath) => {
   console.log("THE GUESSS", guessPath);
+  if (fs.existsSync(guessPath)) return guessPath;
   let livingExtension = guessPath;
   for (let ext = 0; ext < extensions.length; ext++) {
     let guessPathWithExtension = `${guessPath}${extensions[ext]}`;
@@ -732,8 +820,8 @@ export const loadMeta = () => {
 };
 
 export const saveKotiiAssetsMeta = () => {
-  let metaPath = path.resolve(kotiiKotiiLandPath, "assets.manifest.json");
-
+  let metaPath = USER_LAND_ALIASES[USER_LAND_ALIAS_ASSETS_MANIFEST];
+  console.log("SAVE ASSETS MANIFEST PATH", metaPath);
   fs.writeFileSync(metaPath, JSON.stringify(kotiiAssetsMeta, null, 2));
 
   // metaChecked = true;
