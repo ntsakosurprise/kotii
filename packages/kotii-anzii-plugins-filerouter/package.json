@@ -30,7 +30,8 @@
     "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
   },
   "peerDependencies": {
-    "anzii": "8.0.1"
+    "anzii": "8.0.1",
+    "kotii-internal": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz"
   },
   "optionalDependencies": {
     "@babel/cli": "^7.2.3",
