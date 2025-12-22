@@ -29,17 +29,17 @@
     "compile:esm": "cross-env NODE_ENV=development NODE_MODE=esm webpack",
     "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
   },
+  "dependencies": {
+    "kotii-internal": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz",
+    "glob": "^10.3.10"
+  },
   "peerDependencies": {
-    "anzii": "8.0.1",
-    "kotii-internal": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz"
+    "anzii": "8.0.1"
   },
   "optionalDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.23.2",
     "@babel/generator": "^7.23.3",
     "@babel/parser": "^7.23.3"
-  },
-  "dependencies": {
-    "glob": "^10.3.10"
   }
 }

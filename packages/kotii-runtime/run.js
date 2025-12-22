@@ -11,5 +11,5 @@ export default () => {
   process.env.NODE_ENV = "production";
   register("./compile/hooks.js", parentURL);
   getAndSetEnvironmentVariables(process.env.NODE_ENV);
-  import("./kotii-land/prod.js");
+  import("./kotii-land/app.js");
 };

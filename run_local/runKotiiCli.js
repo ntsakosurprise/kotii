@@ -27,7 +27,7 @@ const madeTarballs = createTarballs(packagesPath, [
   // "kotii-react-modules",
   // "kotii-auth",
   "kotii-creation-time",
-  // "kotii-runtime",
+  "kotii-runtime",
   // "kotii-markdown-render",
   // "kotii-components",
   // "kotii-anzii-plugins-env",

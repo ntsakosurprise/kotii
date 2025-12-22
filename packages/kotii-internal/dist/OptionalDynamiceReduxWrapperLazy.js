@@ -16,7 +16,7 @@ export async function loadRedux() {
     const reduxFuncs = await import("redux");
     const {
       reducers
-    } = await import(USER_LAND_ALIAS_REDUX);
+    } = await import("@kotii/_user/redux");
     return {
       Provider: reactRedux.Provider,
       createReduxStore: kotiiDev.createReduxStore,

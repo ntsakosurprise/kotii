@@ -34,13 +34,13 @@
     "kotii-components": "1.0.0-beta.1.0",
     "kotii-router": "1.0.0-beta.3.0",
     "kotii-styled": "1.0.0-beta.2.0",
-    "serialize-javascript": "^6.0.1"
+    "serialize-javascript": "^6.0.1",
+    "kotii-internal": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz"
   },
   "peerDependencies": {
     "anzii": "8.0.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "kotii-internal": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",

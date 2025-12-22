@@ -8,7 +8,10 @@ export const USER_LAND_ALIASES = {
   "@kotii/_user/startup": { value: `/src/components/startup/index` },
   "@kotii/_user/redux": { value: `/src/store/index` },
   "@kotii/_user/plugins": { value: "api/index" },
-  "@kotii/_user/pages": `${kotiiInternal}/pages.js`,
+  "@kotii/_user/pages":
+    process?.env?.NODE_ENV?.toLowerCase() != "production"
+      ? `${kotiiInternal}/pages.js`
+      : { value: ".kotii-land/bundle-imports.js" },
   "@kotii/_user/build": `${kotiiInternal}/build.js`,
   "@kotii/_user/manifest": `${kotiiInternal}/manifest.js`,
   "@kotii/_css/styles": `${kotiiInternalCss}/styles.json`,
