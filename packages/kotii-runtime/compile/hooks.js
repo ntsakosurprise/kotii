@@ -22,12 +22,15 @@ logger.setNameSpaces([
 
 export async function resolve(specifier, context, nextResolve) {
   const { parentURL = workdir } = context;
-
-  console.log("LOAD USER KOTII LAND BUNDLE", kotiiLandServerBundle);
-  if (fileSpecifiers.includes(path.extname(specifier))) {
-    console.log("FILE SPECIFIER IMAGE");
+  console.log("RESOLVE SPECIFIER", specifier);
+  if (specifier.startsWith("dot_")) {
+    console.log("LOAD USER.KOTII", specifier);
     let url = new URL(specifier, parentURL);
-    storeModuleSpecifier(url.pathname, specifier);
+    storeModuleSpecifier(`virtual:${specifier}`, specifier);
+    return {
+      url: `virtual:${specifier}`,
+      shortCircuit: true,
+    };
   }
   if (!kotiiLandServerBundle && !loadUserIsRunning) {
     loadUserKotiiLandBundle();
@@ -72,9 +75,13 @@ export async function load(url, context, nextLoad) {
       source: source,
     };
   }
-  if (fileSpecifiers.includes(path.extname(urlInstance))) {
-    let thisFileID = getThisFileID(urlInstance);
+  // console.log("THE URL INSTANCE", urlInstance)
+  if (url.startsWith("virtual:dot_/")) {
+    console.log("LOAD USER.KOTII load", IMAGE_FILES_SPECIFIERS, url);
+    let thisFileID = getThisFileID(url);
+    console.log("LOAD USER.KOTII thisFile", thisFileID);
     let fileJsContent = kotiiLandServerBundle.appImagesMap;
+    console.log("LOAD USER.KOTII fileJsContent", fileJsContent);
 
     let source = `export default ${JSON.stringify(fileJsContent[thisFileID])}`;
     return {
@@ -269,6 +276,7 @@ const storeModuleSpecifier = (fileUrl, specifier) => {
   };
 };
 const getThisFileID = (fileUrl) => {
+  console.log("getThisFileID", fileUrl, IMAGE_FILES_SPECIFIERS);
   return IMAGE_FILES_SPECIFIERS[fileUrl].shortName;
 };
 export const guessPathExtension = (guessPath) => {
