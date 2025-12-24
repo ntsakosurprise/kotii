@@ -124,16 +124,7 @@ methods.handleReceiveEnvVariables = function (data) {
 methods.runReactView = function (data) {
   const self = this;
 
-  const {
-    React,
-    renderToString,
-    REACTAPP,
-    // Header,
-    // Footer,
-    // GlobalStyle,
-    HeadHelmet,
-    meta,
-  } = self;
+  const { renderToString, HeadHelmet, meta } = self;
   const { view, staticRender = false, route = null, authUser = null } = data;
   const { app } = meta;
   const { stateVendor = "" } = app;
@@ -213,50 +204,7 @@ methods.runReactView = function (data) {
     try {
       html = renderToString(
         sheet.collectStyles(
-          !layoutRoot ? (
-            <Router ssrPath={view.match}>
-              {REACTAPP({
-                storeFromSource: store,
-                goodies,
-                effectsStore,
-                authUser,
-                reduxResources: self.reduxResources,
-              })}
-            </Router>
-          ) : layoutRoot.Layout && layoutRoot.Root ? (
-            <Router ssrPath={view.match}>
-              {REACTAPP({
-                appWrapper: layoutRoot.Root,
-                layout: layoutRoot.Layout,
-                storeFromSource: store,
-                goodies,
-                effectsStore,
-                authUser,
-                reduxResources: self.reduxResources,
-              })}
-            </Router>
-          ) : layoutRoot.Layout ? (
-            <Router ssrPath={view.match}>
-              {REACTAPP({
-                layout: layoutRoot.Layout,
-                storeFromSource: store,
-                goodies,
-                effectsStore,
-                authUser,
-                reduxResources: self.reduxResources,
-              })}
-            </Router>
-          ) : (
-            <Router ssrPath={view.match}>
-              {REACTAPP({
-                appWrapper: layoutRoot.Root,
-                storeFromSource: store,
-                effectsStore,
-                authUser,
-                reduxResources: self.reduxResources,
-              })}
-            </Router>
-          )
+          self.createAppElement({ store, layoutRoot, goodies, authUser, view })
         )
       );
       const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
@@ -385,16 +333,19 @@ methods.getStateDataFromServer = function ({
   // self.debug("THE FOUND", routes);
 
   return new Promise((resolve, reject) => {
-    let dataFetchPromises = routes.filter((route, i) => {
-      if (route.path === routePath && route?.requiresData) {
+    const dataFetchPromises = routes
+      .filter((route) => route.path === routePath && route?.requiresData)
+      .map((route) => {
+        self.debug("THE ROUTE REQUIRES");
         return route.requiresData(store);
-      }
-    });
+      });
 
-    Promise.all(dataFetchPromises).then((resolveData) => {
-      self.debug("THE RESOLVED DATA", resolveData);
-      resolve(resolveData);
-    });
+    Promise.all(dataFetchPromises)
+      .then((resolveData) => {
+        self.debug("THE RESOLVED DATA", resolveData);
+        resolve(resolveData);
+      })
+      .catch(reject);
   });
 };
 
@@ -710,4 +661,74 @@ methods.getProductionProcess = function () {
   return `window.process = {envs:${JSON.stringify(self.kotiiEnvs)}}`;
 };
 
+methods.createAppElement = function ({
+  store,
+  view,
+  layoutRoot,
+  effectsStore,
+  goodies,
+  authUser,
+}) {
+  const self = this;
+  const { REACTAPP, React } = self;
+  let appElement;
+
+  if (!layoutRoot) {
+    appElement = React.createElement(
+      Router,
+      { ssrPath: view.match },
+      REACTAPP({
+        storeFromSource: store,
+        goodies,
+        effectsStore,
+        authUser,
+        reduxResources: self.reduxResources,
+      })
+    );
+  } else if (layoutRoot.Layout && layoutRoot.Root) {
+    appElement = React.createElement(
+      Router,
+      { ssrPath: view.match },
+      REACTAPP({
+        appWrapper: layoutRoot.Root,
+        layout: layoutRoot.Layout,
+        storeFromSource: store,
+        goodies,
+        effectsStore,
+        authUser,
+        reduxResources: self.reduxResources,
+      })
+    );
+  } else if (layoutRoot.Layout) {
+    appElement = React.createElement(
+      Router,
+      { ssrPath: view.match },
+      REACTAPP({
+        layout: layoutRoot.Layout,
+        storeFromSource: store,
+        goodies,
+        effectsStore,
+        authUser,
+        reduxResources: self.reduxResources,
+      })
+    );
+  } else {
+    appElement = React.createElement(
+      Router,
+      { ssrPath: view.match },
+      REACTAPP({
+        appWrapper: layoutRoot.Root,
+        storeFromSource: store,
+        effectsStore,
+        authUser,
+        reduxResources: self.reduxResources,
+      })
+    );
+  }
+  return appElement;
+
+  // html = renderToString(
+  //   sheet.collectStyles(appElement)
+  // );
+};
 export default methods;

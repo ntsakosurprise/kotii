@@ -50,6 +50,7 @@ class ReactView {
     this.loaderStyles = methods.loaderStyles;
     this.handleReceiveEnvVariables = methods.handleReceiveEnvVariables;
     this.getProductionProcess = methods.getProductionProcess;
+    this.createAppElement = methods.createAppElement;
   }
 }
 
