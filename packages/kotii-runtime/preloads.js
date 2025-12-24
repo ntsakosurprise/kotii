@@ -2,21 +2,15 @@ import dotenv from "dotenv";
 import path from "path";
 import fs from "fs";
 
-export const getAndSetEnvironmentVariables = (environment = "development") => {
+export const getAndSetEnvironmentVariables = (environment = "production") => {
   setEnvironmentForFramework(environment);
   setEnvironmentForUser(environment);
 };
 
-const setEnvironmentForFramework = (environment) => {
+const setEnvironmentForFramework = () => {
   process.argv.push("cli");
   process.env.ANZII_CLI_WITH_SERVER = "true";
   process.env.ANZII_SHOW_CLI_LOGS = "true";
-
-  if (environment === "development") {
-    process.env.ANZII_OPEN_BROWSER = process.env?.CUSTOM_RESTART
-      ? "false"
-      : "true";
-  }
 };
 
 const setEnvironmentForUser = (environment) => {
