@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import fs from "node:fs";
 import path from "node:path";
 
@@ -82,18 +83,6 @@ const emitFilesInOutputDir = (options, assetsMeta) => {
       }
     });
   }
-  // let assetsPath = path.resolve(referenceAssetsPath, assetsFile);
-  // let assetsManifestData = null;
-
-  // if (fs.existsSync(assetsPath)) {
-  //   assetsManifestData = JSON.parse(
-  //     fs.readFileSync(assetsPath, {
-  //       encoding: "utf8",
-  //     })
-  //   );
-  // }
-
-  // return assetsManifestData;
 };
 
 export default CopyAssetsWebpackPlugin;

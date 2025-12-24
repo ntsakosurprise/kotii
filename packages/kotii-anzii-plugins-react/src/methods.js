@@ -13,6 +13,8 @@ import {
   USER_LAND_ALIAS_PAGES,
   USER_LAND_ALIAS_STYLES_JSON,
   USER_LAND_ALIASES,
+  ENV_PRODUCTION,
+  ENV_DEVELOPMENT,
 } from "kotii-internal/user";
 
 methods.init = function () {
@@ -137,27 +139,6 @@ methods.runReactView = function (data) {
   const { stateVendor = "" } = app;
   self.debug("THE PROCESS.REACT", process);
 
-  // const Layout = (props) => {
-  //   return (
-  //     <div
-  //       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
-  //     >
-  //       <Header />
-  //       {props.children}
-  //       <Footer />
-  //     </div>
-  //   );
-  // };
-
-  // const Root = (props) => {
-  //   return (
-  //     <div>
-  //       <GlobalStyle />
-  //       {props.children}
-  //     </div>
-  //   );
-  // };
-
   // Grab the initial state from our Redux store
   return new Promise(async (resolve) => {
     const { loadRedux } = await import("kotii-internal");
@@ -180,6 +161,7 @@ methods.runReactView = function (data) {
       staticRender,
       route,
     });
+    // This piece of code will be re-factored
     if (!staticRender) {
       await self.runComponentEffects(view.match);
     } else {
@@ -189,9 +171,6 @@ methods.runReactView = function (data) {
     }
 
     let layoutStaticAbsolutePath = USER_LAND_ALIAS_START_UP;
-    // process.env.NODE_ENV == "development"
-    //   ? `/kotii-user-land-aliase/src/components/startup/index`
-    //   : `/src/components/startup/index.js`;
     let layoutRoot = await self.doImport(
       `${layoutStaticAbsolutePath}`,
       true,
@@ -199,9 +178,6 @@ methods.runReactView = function (data) {
     );
     if (!self.comps) {
       let compsAbsolutePath = USER_LAND_ALIAS_PAGES;
-      // process.env.NODE_ENV == "development"
-      //   ? `${kotiiInternal}/pages.js`
-      //   : `.kotii-land/bundle-imports.js`;
       self.debug("THE COMPLETE ABS", compsAbsolutePath);
       self.comps = await self.doImport(`${compsAbsolutePath}`, true, false);
     }
@@ -225,7 +201,6 @@ methods.runReactView = function (data) {
       const { OptionalDynamiceReduxWrapperLazy } = await import(
         "kotii-internal"
       );
-
       await OptionalDynamiceReduxWrapperLazy.preload();
     }
 
@@ -294,13 +269,6 @@ methods.runReactView = function (data) {
       sheet.seal();
     }
 
-    // try {
-    //   html = renderToString(
-    //     <Router ssrPath={view.match}>{REACTAPP(Root, Layout, store)}</Router>
-    //   );
-    // } catch (error) {
-    //   self.debug("THE RENDER ERROR", error);
-    // }
     console.log("THE FINAL STATE", store, store.getState());
     const finalState = store.getState() || store;
     const helmetGenerated = HeadHelmet.renderStatic();
@@ -358,7 +326,7 @@ methods.renderFullPage = function ({
     ${head?.link.toString()}
     ${self?.styledTags || ""}
     ${self?.styleTags || ""}
-    ${process?.env?.NODE_ENV === "development" ? self.loaderStyles() : ""}
+    ${process?.env?.NODE_ENV === ENV_DEVELOPMENT ? self.loaderStyles() : ""}
     ${self?.pageSettings || ""}
 
 
@@ -375,7 +343,10 @@ methods.renderFullPage = function ({
 methods.includeScripts = function (preloadedState, authUser) {
   const self = this;
   const { serialize } = self;
-  let possibleExtraScripts = "";
+  let possibleExtraScripts =
+    process?.env?.NODE_ENV !== ENV_PRODUCTION
+      ? `<script src="/kotii-client.js" ></script>`
+      : "";
   self.debug("THE SELF.KOTIIENV", self.kotiiEnvs);
   if (self?.htmlPageSettings && self.htmlPageSettings?.scripts) {
     // self.htmlPageSettings.scripts.forEach((script) => {
@@ -398,7 +369,6 @@ methods.includeScripts = function (preloadedState, authUser) {
    
    </script>
    <script src="/server.js" ></script>
-   <script src="/kotii-client.js" ></script>
    ${possibleExtraScripts}
   `;
 };
@@ -542,31 +512,34 @@ methods.doKotiiStyles = function () {
 
   self.debug("USER LAND.REACT.DOSTYLES", USER_LAND_ALIAS_STYLES_JSON);
 
-  const jsonStyles = fs.existsSync(
-    `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`
-  )
-    ? !process?.useLinkStyleTag
-      ? JSON.parse(
-          fs.readFileSync(`${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`)
-        )
-      : true
-    : null;
-
-  if (process?.tailwindGenerated)
-    self.styleTags = `<link rel="stylesheet" id="tailwind-stylesheet-link" type="text/css" href="/${process.tailwindStyleSheetName}">`;
-  if (!jsonStyles) return null;
-  if (process?.useLinkStyleTag) {
-    self.styleTags = `${
-      self?.styleTags || ""
-    }<link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="/${
-      process.styleSheetName
-    }">`;
+  if (process?.env?.NODE_ENV !== ENV_PRODUCTION) {
+    const jsonStyles = fs.existsSync(
+      `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`
+    )
+      ? !process?.useLinkStyleTag
+        ? JSON.parse(
+            fs.readFileSync(`${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`)
+          )
+        : true
+      : null;
+    if (process?.tailwindGenerated)
+      self.styleTags = `<link rel="stylesheet" id="tailwind-stylesheet-link" type="text/css" href="/${process.tailwindStyleSheetName}">`;
+    if (!jsonStyles) return null;
+    if (process?.useLinkStyleTag) {
+      self.styleTags = `${
+        self?.styleTags || ""
+      }<link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="/${
+        process?.styleSheetName || "index.css"
+      }">`;
+    } else {
+      self.styleTags = `${
+        self?.styleTags || ""
+      }<style id="styles-tag">${jsonStyles
+        .toString()
+        .replaceAll(",", " ")}</style>`;
+    }
   } else {
-    self.styleTags = `${
-      self?.styleTags || ""
-    }<style id="styles-tag">${jsonStyles
-      .toString()
-      .replaceAll(",", " ")}</style>`;
+    self.styleTags = `<link rel="stylesheet" type="text/css" href="/index.css">`;
   }
 };
 
@@ -733,7 +706,7 @@ methods.loaderStyles = function () {
 
 methods.getProductionProcess = function () {
   const self = this;
-  if (process.env.NODE_ENV != "production") return "";
+  if (process.env.NODE_ENV != ENV_PRODUCTION) return "";
   return `window.process = {envs:${JSON.stringify(self.kotiiEnvs)}}`;
 };
 

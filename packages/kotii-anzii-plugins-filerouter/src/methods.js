@@ -10,6 +10,7 @@ import {
   USER_LAND_ALIAS_PAGES,
   USER_LAND_ALIAS_MANIFEST,
   USER_LAND_ALIASES,
+  ENV_DEVELOPMENT,
 } from "kotii-internal/user";
 
 methods.init = function () {
@@ -248,7 +249,7 @@ methods.getItemPathAndFile = function (item) {
       requiredPath
     );
     let absolutePathPre =
-      process.env.NODE_ENV === "development" ? "kotii-dev" : "kotii-prod";
+      process.env.NODE_ENV === ENV_DEVELOPMENT ? "kotii-dev" : "kotii-prod";
     let absSrc = `${path.sep}${absolutePathPre}${path.sep}${requiredPath}`;
 
     self.debug("THE PAGES matched", patternMatch);

@@ -10,17 +10,13 @@ let rebuilding = false;
 let queued = false;
 
 import {
-  USER_LAND_PATH_CSS,
-  USER_LAND_PATH_APP,
   USER_LAND_ALIASES,
   USER_LAND_ALIAS_BUILD,
-  USER_LAND_PATH_ASSET,
-  USER_LAND_ALIAS_REDUX,
-  USER_LAND_ALIAS_START_UP,
   USER_LAND_ALIAS_PAGES,
   USER_LAND_ALIAS_MANIFEST,
   USER_LAND_ALIAS_STYLES_JSON,
   USER_LAND_ALIAS_STYLES_MODULES,
+  ENV_DEVELOPMENT,
 } from "kotii-internal/user";
 
 import autoprefixer from "autoprefixer";
@@ -60,7 +56,7 @@ methods.handleWebpackConfig = function (data) {
     useAsDefaultPage = "/",
     appStyles = null,
   } = contextApp.appManifest;
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === ENV_DEVELOPMENT) {
     if (contextApp?.appManifest?.pages)
       self.defaultSettings.pages = contextApp.appManifest.pages;
     self.debug("WEBPACK DATA PAYLOAD", data.payload.build, activeRoute);
@@ -256,7 +252,7 @@ methods.configureWebPack = function (
       appConfigPath: `${contextApp.appConfigPath}`,
     };
     // this.runOnComplete(filesToWatch,appPathsIDS);
-    process.env?.NODE_ENV === "development"
+    process.env?.NODE_ENV === ENV_DEVELOPMENT
       ? self.startWatchingAppFiles(filesToWatch, appPathsIDS)
       : null;
     wbpCompiler = webpack(webpackConfigObject);

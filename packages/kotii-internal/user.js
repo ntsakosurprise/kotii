@@ -34,3 +34,8 @@ export const USER_LAND_ALIAS_BUILD = "@kotii/_user/build";
 export const USER_LAND_PATH_CSS = "@kotii/_path/css";
 export const USER_LAND_PATH_APP = "@kotii/_path/app";
 export const USER_LAND_PATH_ASSET = "@kotii/_path/asset";
+
+// ENVIRONMENT VARIABLES
+
+export const ENV_PRODUCTION = "production";
+export const ENV_DEVELOPMENT = "development";
