@@ -15,7 +15,7 @@ export const USER_LAND_ALIASES = {
   "@kotii/_user/build": `${kotiiInternal}/build.js`,
   "@kotii/_user/manifest": `${kotiiInternal}/manifest.js`,
   "@kotii/_css/styles": `${kotiiInternalCss}/styles.json`,
-  "kotii/_css/modules": `${kotiiInternalCss}/styles-css-modules.json`,
+  "@kotii/_css/modules": `${kotiiInternalCss}/styles-css-modules.json`,
   "@kotii/_assets/asset": `${kotiiInternalAssets}/assets.manifest.json`,
   "@kotii/_path/css": kotiiInternalCss,
   "@kotii/_path/app": kotiiInternal,
