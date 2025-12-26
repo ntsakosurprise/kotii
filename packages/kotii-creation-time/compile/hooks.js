@@ -860,12 +860,14 @@ const getCssFromSass = async (fileUrl, fName) => {
         kotiiModulesMeta,
         MODULES_SPECIFIERS[fileUrl]
       );
+
       saveCssModulesMap(MODULES_SPECIFIERS[fileUrl].shortName, {
         currentOriginalAst: modulesResult.cssAst,
         pathContext: modulesResult.pathContext,
       });
       return `export default ${JSON.stringify(fName)}`;
     }
+    loggas.load.debug("SASS TO CSSS. IS MODULES", fileUrl);
     modulesResult = await renderCssModules(
       cssFromSass,
       kotiiModulesMeta,

@@ -1751,8 +1751,11 @@ methods.runForTailwindCss = async function (options) {
     tailwindMainContent,
     sourceFile,
     toSource,
+    defaultConfigContentPath,
+    isProduction,
   } = self.tailwindCssInfo;
 
+  self.debug("RUNNING FOR TAILWIND", self.tailwindCssInfo);
   return new Promise(async (resolve) => {
     postcss([
       autoprefixer,
@@ -1760,7 +1763,7 @@ methods.runForTailwindCss = async function (options) {
       tailwindcss({
         config:
           typeof tailwindConfig == "function"
-            ? tailwindConfig()
+            ? tailwindConfig(defaultConfigContentPath)
             : tailwindConfig.default,
       }),
     ])
@@ -1769,30 +1772,37 @@ methods.runForTailwindCss = async function (options) {
         to: toSource,
       })
       .then((result) => {
-        try {
-          let tailwindStyleSheetName = !process?.tailwindStyleSheetName
-            ? `tailwind-${createRandomeName(5).toLowerCase()}.css`
-            : process.tailwindStyleSheetName;
-          process["tailwindGenerated"] = "true";
-          process["tailwindStyleSheetName"] = tailwindStyleSheetName;
-          let tailwindFilePath = `${buildFolder}/${tailwindStyleSheetName}`;
+        self.debug("RUNNING FOR TAILWIND .result", result);
+        if (!isProduction) {
+          try {
+            let tailwindStyleSheetName = !process?.tailwindStyleSheetName
+              ? `tailwind-${createRandomeName(5).toLowerCase()}.css`
+              : process.tailwindStyleSheetName;
+            process["tailwindGenerated"] = "true";
+            process["tailwindStyleSheetName"] = tailwindStyleSheetName;
+            let tailwindFilePath = `${buildFolder}/${tailwindStyleSheetName}`;
+            self.debug("THE BUILD FOLDER TAILWIND", tailwindFilePath);
 
-          if (!fs.existsSync(tailwindFilePath)) {
-            fs.writeFileSync(tailwindFilePath, result.css);
-            self.tailwindCssInfo["tailwindProcessedCss"] = result.css;
+            if (!fs.existsSync(tailwindFilePath)) {
+              fs.writeFileSync(tailwindFilePath, result.css);
+              self.tailwindCssInfo["tailwindProcessedCss"] = result.css;
 
-            return;
+              return;
+            }
+
+            let oldCss = self.tailwindCssInfo.tailwindProcessedCss;
+            let newCss = result.css;
+            // self.debug("NEW CSS", newCss);
+            // self.debug("OLD CSS", oldCss);
+
+            self.diffTailwindCss(newCss, oldCss);
+            // if(!diffResults) return
+          } catch (error) {
+            console.log("CSS SAVING ERROR", error);
           }
-
-          let oldCss = self.tailwindCssInfo.tailwindProcessedCss;
-          let newCss = result.css;
-          // self.debug("NEW CSS", newCss);
-          // self.debug("OLD CSS", oldCss);
-
-          self.diffTailwindCss(newCss, oldCss);
-          // if(!diffResults) return
-        } catch (error) {
-          console.log("CSS SAVING ERROR", error);
+        } else {
+          let tailwindFilePath = `${buildFolder}/tailwind.css`;
+          fs.writeFileSync(tailwindFilePath, result.css);
         }
       });
   });
@@ -1811,7 +1821,10 @@ methods.saveTailwindResources = async function (options) {
     tailwindTo = null,
     tailwindMainContent = null,
     buildFolder,
+    appSrc,
+    isProduction,
   } = options;
+  self.debug("TAILWIND RESOURCES", options);
 
   if (!tailwindConfig) {
     const fileExt = path.extname(tailwindConfigPath);
@@ -1838,6 +1851,8 @@ methods.saveTailwindResources = async function (options) {
     toSource: tailwindTo,
     buildFolder,
     tailwindConfig,
+    defaultConfigContentPath: appSrc,
+    isProduction,
   };
 };
 

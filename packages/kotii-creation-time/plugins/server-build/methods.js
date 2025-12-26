@@ -852,13 +852,26 @@ methods.aggregateProductionResources = function (context) {
 methods.aggregateAppCss = function (context) {
   const self = this;
   let assetsPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`;
+  let pathTailwind = `${context.staticPath}/tailwind.css`;
+  let pathRegularCss = `${context.staticPath}/kotii-styles.css`;
   // let savePath = `${context.appBuildFolder}/index.css`;
   // console.log("THE SAVE PATH", savePath);
-  let cssContent = JSON.parse(
-    fs.readFileSync(assetsPath, { encoding: "utf-8" })
-  );
-  let cssParsedContent = cssContent.toString().replaceAll(",", " ");
-  return cssParsedContent;
+  let cssContent = "";
+  if (fs.existsSync(pathRegularCss)) {
+    cssContent = fs.readFileSync(pathRegularCss, { encoding: "utf-8" });
+    fs.unlinkSync(pathRegularCss);
+  }
+
+  if (fs.existsSync(pathTailwind)) {
+    cssContent += fs.readFileSync(pathTailwind, { encoding: "utf-8" });
+    fs.unlinkSync(pathTailwind);
+  }
+
+  // cssContent = JSON.parse(
+  //   fs.readFileSync(assetsPath, { encoding: "utf-8" })
+  // );
+  // let cssParsedContent = cssContent.toString().replaceAll(",", " ");
+  return cssContent;
   // fs.writeFileSync(savePath, cssParsedContent);
 };
 methods.aggregateAppKotiiMeta = function (context) {
