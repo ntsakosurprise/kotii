@@ -328,9 +328,14 @@ export default (options) => {
                 contentPath: env.appSrc,
                 // tsConfigReaders: options.tsConfigReaders,
                 // fileReader: options.fileReader,
-                buildFolder: env.appBuildFolder,
+                buildFolder:
+                  options?.build && options.build
+                    ? options.staticFolder
+                    : `${env.appBuildFolder}`,
                 saveTailwindResources: options.saveTailwindResources,
                 mainCssFilename: "global.css",
+                appSrc: options.appSrc,
+                isProduction: options?.build ? true : false,
               },
             },
           ],
@@ -437,6 +442,7 @@ export default (options) => {
       new CopyAssetsWebpackPlugin(
         {
           files: getCopyFiles(options, env),
+          // runForTailwindCss: options.runForTailwindCss,
         },
         loggas
       ),

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const compileTailwind = require("./postcss.cjs");
 const path = require("path");
 
@@ -26,6 +27,8 @@ module.exports = async function (cssContent) {
       tailwindFrom: filePath,
       tailwindTo: filePath,
       buildFolder: options.buildFolder,
+      appSrc: options.appSrc,
+      isProduction: options.isProduction,
     });
 
     asyncCallback(null, cssContent);
