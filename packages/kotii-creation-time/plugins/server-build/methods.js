@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const methods = {};
 import fs from "fs";
 import { isBuiltin } from "node:module";
@@ -9,9 +10,18 @@ import {
 } from "../../globals.js";
 import { kotiiKotiiLandPath, kotiiRootPath } from "../../kotii_paths.js";
 import runNpmScript from "./runNpmScript.js";
+import {
+  USER_LAND_ALIASES,
+  USER_LAND_ALIAS_ASSETS_MANIFEST,
+  USER_LAND_ALIAS_PAGES,
+  USER_LAND_ALIAS_STYLES_JSON,
+  USER_LAND_ALIAS_STYLES_MODULES,
+} from "kotii-internal/user";
 
 const dataExtensions = [".csv", ".json", ".xml"];
 const cssExtensions = [".scss", ".styl", ".less", ".css", "sass"];
+const imageExtensions = [".gif", ".png", ".svg", ".jpg", ".jpeg"];
+const ESCAPE_CHARACTER = "dot_";
 const nativePath = path;
 methods.init = function () {
   this.listens({
@@ -25,12 +35,12 @@ methods.handleServerBuild = function (data) {
   const saveToFile = pao.pa_saveToFile;
   self.debug("handling server build", data);
   const { payload } = data;
-  const { targetMain, destination, targetSource, routes, contextApp } = payload;
+  const { targetMain, destination, targetSource, contextApp } = payload;
   self.callback = data.callback;
 
   // const cwd = getWorkingFolder();
   // const cwd = self.kotiiScriptsPath;
-  self.debug("KOTII SCRIPTS PATH", kotiiRootPath);
+  self.debug("KOTII SCRIPTS PATH", contextApp);
   // if (fs.existsSync(`${kotiiKotiiLandPath}/dev/styles.json`)) {
   //   fs.rmSync(`${kotiiKotiiLandPath}/dev/styles.json`);
   // }
@@ -160,6 +170,7 @@ methods.handleServerBuild = function (data) {
             cwd: kotiiRootPath,
             appBuildFolder: destination,
             pagesSourceCode,
+            staticPath: `${destination}/${contextApp.appManifest.static}`,
           });
           self.callback({ message: "Build done successfully" });
         });
@@ -401,10 +412,10 @@ methods.doKotiiLandPagesFile = function (destination, options) {
     const getWorkingFolder = pao.pa_getWorkingFolder;
     // const cwd = getWorkingFolder();
     const cwd = self.kotiiScriptsPath;
-    const jsFile = readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/pages.js`);
+    const jsFile = readFileSync(`${USER_LAND_ALIASES[USER_LAND_ALIAS_PAGES]}`);
     self.debug(
       "THE SOURCE FILE PATH",
-      `${kotiiKotiiLandPath}${path.sep}dev/pages.js`
+      `${USER_LAND_ALIASES[USER_LAND_ALIAS_PAGES]}`
     );
     let ast = parser.parse(jsFile, {
       sourceType: "module",
@@ -422,6 +433,7 @@ methods.doKotiiLandPagesFile = function (destination, options) {
       pagesPathsDestination: destination,
       replacePath: options.targetMain,
       userFolder,
+      staticPath: options.contextApp.appManifest.static,
     });
     if (updateResults) {
       const { code: genCode } = generate(ast);
@@ -795,9 +807,18 @@ methods.processStylesNodes = function (nodePath, state) {
     return;
   }
 };
+methods.processImageNodes = function (nodePath, state) {
+  const self = this;
+
+  let path = nodePath;
+
+  let importSpecifier = path.node.source.value;
+  path.node.source.value = importSpecifier.replace(/\./, ESCAPE_CHARACTER);
+  return;
+};
 methods.getStylesMap = function (kotiiAppPath) {
   const self = this;
-  let assetsPath = `${kotiiAppPath}/kotii-land/dev/styles-css-modules.json`;
+  let assetsPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_MODULES]}`;
 
   if (fs.existsSync(assetsPath)) {
     self.assetsManifestData = JSON.parse(
@@ -809,13 +830,14 @@ methods.getStylesMap = function (kotiiAppPath) {
 };
 methods.aggregateProductionResources = function (context) {
   const self = this;
-  let cssSavePath = `${context.appBuildFolder}/index.css`;
+  self.debug("THE CONTEXT AGGREGATE PRODUCTION", context);
+  let cssSavePath = `${context.staticPath}/index.css`;
   let kotiiBundleSavePath = `${context.appBuildFolder}/.kotii-land/bundle.js`;
   let kotiiBundleSaveImportsPath = `${context.appBuildFolder}/.kotii-land/bundle-imports.js`;
   let cssModulesMap = self.aggregateAppKotiiMeta(context);
   let css = self.aggregateAppCss(context);
   let images = self.aggregateAppImages(context);
-  console.log("THE IMAGES", images);
+  console.log("THE IMAGES", images, cssSavePath);
   console.log("THE CSS MODULES", cssModulesMap);
   let kotiiBundleSaveContent = `
   const appModules = ${JSON.stringify(cssModulesMap)};
@@ -829,20 +851,33 @@ methods.aggregateProductionResources = function (context) {
 };
 methods.aggregateAppCss = function (context) {
   const self = this;
-  let assetsPath = `${kotiiRootPath}/kotii-land/dev/styles.json`;
+  let assetsPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`;
+  let pathTailwind = `${context.staticPath}/tailwind.css`;
+  let pathRegularCss = `${context.staticPath}/kotii-styles.css`;
   // let savePath = `${context.appBuildFolder}/index.css`;
   // console.log("THE SAVE PATH", savePath);
-  let cssContent = JSON.parse(
-    fs.readFileSync(assetsPath, { encoding: "utf-8" })
-  );
-  let cssParsedContent = cssContent.toString().replaceAll(",", " ");
-  return cssParsedContent;
+  let cssContent = "";
+  if (fs.existsSync(pathRegularCss)) {
+    cssContent = fs.readFileSync(pathRegularCss, { encoding: "utf-8" });
+    fs.unlinkSync(pathRegularCss);
+  }
+
+  if (fs.existsSync(pathTailwind)) {
+    cssContent += fs.readFileSync(pathTailwind, { encoding: "utf-8" });
+    fs.unlinkSync(pathTailwind);
+  }
+
+  // cssContent = JSON.parse(
+  //   fs.readFileSync(assetsPath, { encoding: "utf-8" })
+  // );
+  // let cssParsedContent = cssContent.toString().replaceAll(",", " ");
+  return cssContent;
   // fs.writeFileSync(savePath, cssParsedContent);
 };
 methods.aggregateAppKotiiMeta = function (context) {
   const self = this;
   console.log("THE CONTEXT", context);
-  let assetsModulesPath = `${kotiiRootPath}/kotii-land/dev/styles-css-modules.json`;
+  let assetsModulesPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_MODULES]}`;
   let cssModules = JSON.parse(
     fs.readFileSync(assetsModulesPath, { encoding: "utf-8" })
   );
@@ -857,16 +892,20 @@ methods.aggregateAppKotiiMeta = function (context) {
 };
 methods.aggregateAppImages = function (context) {
   const self = this;
-  let assetsPath = `${kotiiRootPath}/kotii-land/assets.manifest.json`;
+  let assetsPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_ASSETS_MANIFEST]}`;
+  self.debug("THE ASSETS PATH", assetsPath);
   // let savePath = `${context.appBuildFolder}/index.css`;
   // console.log("THE SAVE PATH", savePath);
   let imagesMeta = JSON.parse(
     fs.readFileSync(assetsPath, { encoding: "utf-8" })
   );
+  self.debug("IMAGES META BUILD", imagesMeta);
+
   let simplifiedImagesMap = {};
   Object.keys(imagesMeta).forEach((imageMap) => {
     simplifiedImagesMap[imageMap] = imagesMeta[imageMap].content;
   });
+  self.debug("SIMPLIFIED IMAGES", simplifiedImagesMap);
   return simplifiedImagesMap;
 };
 
@@ -925,6 +964,16 @@ methods.replaceNoneNativeImportsExtensions = function (astPath, state) {
   }
   if (cssExtensions.includes(fileExtension)) {
     self.processStylesNodes(astPath, {
+      appFolder: state.targetMain,
+      appSrc: state.targetSource,
+      cwd: kotiiRootPath,
+      appBuildFolder: state.destination,
+    });
+    isUpdated = true;
+    return isUpdated;
+  }
+  if (imageExtensions.includes(fileExtension)) {
+    self.processImageNodes(astPath, {
       appFolder: state.targetMain,
       appSrc: state.targetSource,
       cwd: kotiiRootPath,

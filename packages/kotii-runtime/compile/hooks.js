@@ -10,6 +10,7 @@ let workdir = `${process.cwd()}`;
 let loadUserIsRunning = false;
 let sep = path.sep;
 const IMAGE_FILES_SPECIFIERS = {};
+import { USER_LAND_ALIASES } from "kotii-internal/user";
 
 let extensions = [".js", ".jsx", ".tsx", ".ts"];
 let fileSpecifiers = [".gif", ".png", ".svg", ".jpg", ".jpeg"];
@@ -21,27 +22,33 @@ logger.setNameSpaces([
 
 export async function resolve(specifier, context, nextResolve) {
   const { parentURL = workdir } = context;
-
-  if (fileSpecifiers.includes(path.extname(specifier))) {
+  console.log("RESOLVE SPECIFIER", specifier);
+  if (specifier.startsWith("dot_")) {
+    console.log("LOAD USER.KOTII", specifier);
     let url = new URL(specifier, parentURL);
-    storeModuleSpecifier(url.pathname, specifier);
+    storeModuleSpecifier(`virtual:${specifier}`, specifier);
+    return {
+      url: `virtual:${specifier}`,
+      shortCircuit: true,
+    };
   }
   if (!kotiiLandServerBundle && !loadUserIsRunning) {
     loadUserKotiiLandBundle();
   }
 
   let shouldTerminate = false;
-
+  shouldTerminate = resolveUserAliase(specifier);
+  if (shouldTerminate) return shouldTerminate;
   shouldTerminate = resolveAliasedImports(specifier);
   if (shouldTerminate) return shouldTerminate;
-  shouldTerminate = resolveKotiiLandImports(specifier);
-  if (shouldTerminate) return shouldTerminate;
+  // shouldTerminate = resolveKotiiLandImports(specifier);
+  // if (shouldTerminate) return shouldTerminate;
   shouldTerminate = resolvePagesImports(specifier);
   if (shouldTerminate) return shouldTerminate;
   shouldTerminate = resolveDevProdPages(specifier);
   if (shouldTerminate) return shouldTerminate;
-  shouldTerminate = resolveKotiiUserApiPlugins(specifier);
-  if (shouldTerminate) return shouldTerminate;
+  // shouldTerminate = resolveKotiiUserApiPlugins(specifier);
+  // if (shouldTerminate) return shouldTerminate;
 
   return nextResolve(specifier);
   // Take an `import` or `require` specifier and resolve it to a URL.
@@ -68,9 +75,13 @@ export async function load(url, context, nextLoad) {
       source: source,
     };
   }
-  if (fileSpecifiers.includes(path.extname(urlInstance))) {
-    let thisFileID = getThisFileID(urlInstance);
+  // console.log("THE URL INSTANCE", urlInstance)
+  if (url.startsWith("virtual:dot_/")) {
+    console.log("LOAD USER.KOTII load", IMAGE_FILES_SPECIFIERS, url);
+    let thisFileID = getThisFileID(url);
+    console.log("LOAD USER.KOTII thisFile", thisFileID);
     let fileJsContent = kotiiLandServerBundle.appImagesMap;
+    console.log("LOAD USER.KOTII fileJsContent", fileJsContent);
 
     let source = `export default ${JSON.stringify(fileJsContent[thisFileID])}`;
     return {
@@ -82,6 +93,36 @@ export async function load(url, context, nextLoad) {
   return nextLoad(url);
 }
 
+export const resolveUserAliase = (specifier) => {
+  if (!isBuiltin(specifier) && /^@kotii\/_user/.test(specifier)) {
+    try {
+      let livingPath;
+      console.log("USER LAND ALIASES", USER_LAND_ALIASES, specifier);
+      if (USER_LAND_ALIASES[specifier]?.value) {
+        let basePath = getPagesBasePath(USER_LAND_ALIASES[specifier].value);
+        console.log("THE BASE PATH", basePath);
+        livingPath = guessPathExtension(
+          path.resolve(
+            basePath,
+            USER_LAND_ALIASES[specifier].value.replace(/^\/+/, "")
+          )
+        );
+        console.log("USER LAND", livingPath);
+      } else {
+        livingPath = guessPathExtension(USER_LAND_ALIASES[specifier]);
+      }
+
+      return {
+        url: pathToFileURL(`${livingPath}`).href,
+        shortCircuit: true,
+      };
+    } catch (error) {
+      console.log("THE APP HAS ERRORED", error, "THE ERRORED PATH");
+    }
+  } else {
+    return false;
+  }
+};
 const resolveAliasedImports = (specifier) => {
   if (!isBuiltin(specifier) && doMeta(specifier)) {
     let specifierAlias = meta.aliases[specifier];
@@ -219,18 +260,41 @@ const doMeta = (specifier) => {
 };
 const loadUserKotiiLandBundle = () => {
   let metaPath = path.resolve(workdir, "./build/.kotii-land/bundle.js");
+  console.log("THE META PATH ", metaPath);
 
   loadUserIsRunning = true;
   import(`${metaPath}`).then((imports) => {
+    console.log("KOTII LAND RESOURCES", imports);
     kotiiLandServerBundle = imports;
     loadUserIsRunning = false;
   });
 };
 const storeModuleSpecifier = (fileUrl, specifier) => {
+  console.log("THE FILE SPECIFIER", fileUrl, specifier);
   IMAGE_FILES_SPECIFIERS[fileUrl] = {
     shortName: specifier,
   };
 };
 const getThisFileID = (fileUrl) => {
+  console.log("getThisFileID", fileUrl, IMAGE_FILES_SPECIFIERS);
   return IMAGE_FILES_SPECIFIERS[fileUrl].shortName;
+};
+export const guessPathExtension = (guessPath) => {
+  console.log("THE GUESSS", guessPath);
+  if (fs.existsSync(guessPath)) return guessPath;
+  let livingExtension = guessPath;
+  for (let ext = 0; ext < extensions.length; ext++) {
+    let guessPathWithExtension = `${guessPath}${extensions[ext]}`;
+    if (fs.existsSync(guessPathWithExtension)) {
+      livingExtension = guessPathWithExtension;
+      break;
+    }
+  }
+
+  if (livingExtension === guessPath)
+    throw new Error(
+      `Node-Kotiijs-Resolve: requested file does not exist:${livingExtension}`
+    );
+
+  return livingExtension;
 };

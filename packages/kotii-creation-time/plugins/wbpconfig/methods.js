@@ -9,6 +9,16 @@ let firstBuild = true;
 let rebuilding = false;
 let queued = false;
 
+import {
+  USER_LAND_ALIASES,
+  USER_LAND_ALIAS_BUILD,
+  USER_LAND_ALIAS_PAGES,
+  USER_LAND_ALIAS_MANIFEST,
+  USER_LAND_ALIAS_STYLES_JSON,
+  USER_LAND_ALIAS_STYLES_MODULES,
+  ENV_DEVELOPMENT,
+} from "kotii-internal/user";
+
 import autoprefixer from "autoprefixer";
 import fs from "fs";
 import path, { resolve } from "path";
@@ -46,7 +56,7 @@ methods.handleWebpackConfig = function (data) {
     useAsDefaultPage = "/",
     appStyles = null,
   } = contextApp.appManifest;
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === ENV_DEVELOPMENT) {
     if (contextApp?.appManifest?.pages)
       self.defaultSettings.pages = contextApp.appManifest.pages;
     self.debug("WEBPACK DATA PAYLOAD", data.payload.build, activeRoute);
@@ -242,7 +252,7 @@ methods.configureWebPack = function (
       appConfigPath: `${contextApp.appConfigPath}`,
     };
     // this.runOnComplete(filesToWatch,appPathsIDS);
-    process.env?.NODE_ENV === "development"
+    process.env?.NODE_ENV === ENV_DEVELOPMENT
       ? self.startWatchingAppFiles(filesToWatch, appPathsIDS)
       : null;
     wbpCompiler = webpack(webpackConfigObject);
@@ -931,7 +941,7 @@ methods.addImportLineTCSSModulesJs = function () {
   const readFileSync = pao.pa_readFileSync;
   const saveToFile = pao.pa_saveToFile;
 
-  const buildPath = `${kotiiKotiiLandPath}/dev/hot-load-css-modules.js`;
+  const buildPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_BUILD]}`;
   const buildPathFile = readFileSync(buildPath);
   let buildAst = parser.parse(buildPathFile, {
     sourceType: "module",
@@ -960,7 +970,8 @@ methods.addImportLineTAppJs = function () {
   const readFileSync = pao.pa_readFileSync;
   const saveToFile = pao.pa_saveToFile;
 
-  const buildPath = `${kotiiKotiiLandPath}/dev/app_.js`;
+  const buildPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_BUILD]}`;
+
   const buildPathFile = readFileSync(buildPath);
   let buildAst = parser.parse(buildPathFile, {
     sourceType: "module",
@@ -1589,7 +1600,7 @@ methods.removeOutdatedCssFile = function (
  */
 methods.loadCssModuleDataFile = function () {
   const self = this;
-  const stylesModulesPath = `${kotiiKotiiLandPath}/dev/styles-css-modules.json`;
+  const stylesModulesPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_MODULES]}`;
   self["stylesMeta"] = JSON.parse(
     fs.readFileSync(stylesModulesPath, {
       encoding: "utf8",
@@ -1646,10 +1657,16 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
       "app.manifest.appStyles.useTag should be either a link or style value"
     );
   if (appStyles.useTag.toLowerCase() == "link") {
-    let stylesPath = `${kotiiKotiiLandPath}/dev/styles.json`;
+    let stylesPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`;
+    self.debug("THE STYLES PATH", stylesPath);
     let fileName = appStyles?.fileName ? appStyles.fileName : "style.css";
     process["useLinkStyleTag"] = true;
     process["styleSheetName"] = fileName;
+    self.debug(
+      "THE APP MANIFEST.name",
+      process.styleSheetName,
+      process.useLinkStyleTag
+    );
 
     let stylesString = JSON.parse(
       fs.readFileSync(stylesPath, { encoding: "utf-8" })
@@ -1734,8 +1751,11 @@ methods.runForTailwindCss = async function (options) {
     tailwindMainContent,
     sourceFile,
     toSource,
+    defaultConfigContentPath,
+    isProduction,
   } = self.tailwindCssInfo;
 
+  self.debug("RUNNING FOR TAILWIND", self.tailwindCssInfo);
   return new Promise(async (resolve) => {
     postcss([
       autoprefixer,
@@ -1743,7 +1763,7 @@ methods.runForTailwindCss = async function (options) {
       tailwindcss({
         config:
           typeof tailwindConfig == "function"
-            ? tailwindConfig()
+            ? tailwindConfig(defaultConfigContentPath)
             : tailwindConfig.default,
       }),
     ])
@@ -1752,30 +1772,37 @@ methods.runForTailwindCss = async function (options) {
         to: toSource,
       })
       .then((result) => {
-        try {
-          let tailwindStyleSheetName = !process?.tailwindStyleSheetName
-            ? `tailwind-${createRandomeName(5).toLowerCase()}.css`
-            : process.tailwindStyleSheetName;
-          process["tailwindGenerated"] = "true";
-          process["tailwindStyleSheetName"] = tailwindStyleSheetName;
-          let tailwindFilePath = `${buildFolder}/${tailwindStyleSheetName}`;
+        self.debug("RUNNING FOR TAILWIND .result", result);
+        if (!isProduction) {
+          try {
+            let tailwindStyleSheetName = !process?.tailwindStyleSheetName
+              ? `tailwind-${createRandomeName(5).toLowerCase()}.css`
+              : process.tailwindStyleSheetName;
+            process["tailwindGenerated"] = "true";
+            process["tailwindStyleSheetName"] = tailwindStyleSheetName;
+            let tailwindFilePath = `${buildFolder}/${tailwindStyleSheetName}`;
+            self.debug("THE BUILD FOLDER TAILWIND", tailwindFilePath);
 
-          if (!fs.existsSync(tailwindFilePath)) {
-            fs.writeFileSync(tailwindFilePath, result.css);
-            self.tailwindCssInfo["tailwindProcessedCss"] = result.css;
+            if (!fs.existsSync(tailwindFilePath)) {
+              fs.writeFileSync(tailwindFilePath, result.css);
+              self.tailwindCssInfo["tailwindProcessedCss"] = result.css;
 
-            return;
+              return;
+            }
+
+            let oldCss = self.tailwindCssInfo.tailwindProcessedCss;
+            let newCss = result.css;
+            // self.debug("NEW CSS", newCss);
+            // self.debug("OLD CSS", oldCss);
+
+            self.diffTailwindCss(newCss, oldCss);
+            // if(!diffResults) return
+          } catch (error) {
+            console.log("CSS SAVING ERROR", error);
           }
-
-          let oldCss = self.tailwindCssInfo.tailwindProcessedCss;
-          let newCss = result.css;
-          // self.debug("NEW CSS", newCss);
-          // self.debug("OLD CSS", oldCss);
-
-          self.diffTailwindCss(newCss, oldCss);
-          // if(!diffResults) return
-        } catch (error) {
-          console.log("CSS SAVING ERROR", error);
+        } else {
+          let tailwindFilePath = `${buildFolder}/tailwind.css`;
+          fs.writeFileSync(tailwindFilePath, result.css);
         }
       });
   });
@@ -1794,7 +1821,10 @@ methods.saveTailwindResources = async function (options) {
     tailwindTo = null,
     tailwindMainContent = null,
     buildFolder,
+    appSrc,
+    isProduction,
   } = options;
+  self.debug("TAILWIND RESOURCES", options);
 
   if (!tailwindConfig) {
     const fileExt = path.extname(tailwindConfigPath);
@@ -1821,6 +1851,8 @@ methods.saveTailwindResources = async function (options) {
     toSource: tailwindTo,
     buildFolder,
     tailwindConfig,
+    defaultConfigContentPath: appSrc,
+    isProduction,
   };
 };
 
@@ -2052,8 +2084,8 @@ methods.safeInvalidate = function safeInvalidate() {
 methods.replaceKotiiJsFilesContent = function () {
   const self = this;
   const pao = self.pao;
-  const pagesFilePath = `${kotiiKotiiLandPath}/dev/pages.js`;
-  const manifestFilePath = `${kotiiKotiiLandPath}/dev/manifest.js`;
+  const pagesFilePath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_PAGES]}`;
+  const manifestFilePath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_MANIFEST]}`;
   const filesContent = self.getCentralFilesContent();
   const saveToFile = pao.pa_saveToFile;
 

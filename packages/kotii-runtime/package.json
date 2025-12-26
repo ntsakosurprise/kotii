@@ -6,7 +6,11 @@
   "type": "module",
   "exports": {
     ".": "./index.js",
-    "./kotii-land/*": "./kotii-land/*"
+    "./plugins": {
+      "import": "./plugins/index.js",
+      "require": "./plugins/index.js",
+      "default": "./plugins/index.js"
+    }
   },
   "scripts": {
     "lint": "eslint .",
@@ -37,19 +41,15 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "anzii": "8.0.1",
-    "kotii-auth": "1.0.0-beta.3.0",
-    "kotii-languages": "1.0.0-beta.3.0",
-    "kotii-lazy": "1.0.0-beta.3.0",
-    "kotii-logger": "1.0.0-beta.4.0",
-    "kotii-router": "1.0.0-beta.3.0",
+    "@kotii/anzii-plugins-env": "1.0.0-beta.1.0",
+    "@kotii/anzii-plugins-filerouter": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz",
+    "@kotii/anzii-plugins-react": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz",
+    "@kotii/anzii-plugins-viewguard": "1.0.0-beta.1.0",
+    "react-helmet": "^6.1.0"
+  },
+  "peerDependencies": {
     "react": "^18.2.0",
-    "react-helmet": "^6.1.0",
-    "react-redux": "^9.0.4",
-    "react-router-dom": "^6.25.1",
-    "redux": "^5.0.0",
-    "redux-thunk": "^3.1.0",
-    "ws": "^8.18.3"
+    "anzii": "8.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
@@ -60,11 +60,9 @@
   "readmeFilename": "README.md",
   "files": [
     "compile/",
-    "client-tools/",
     "plugins/",
     "kotii-land/",
     "start/",
-    "react-components-pruned/",
     "kotii_paths.js",
     "README.md",
     "CONTRIBUTING.md",

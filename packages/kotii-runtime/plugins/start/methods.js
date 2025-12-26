@@ -179,7 +179,7 @@ methods.getEnvVariables = function (envPath) {
         envPath: "",
         meta: "",
         callback: (envVariables) => {
-          let app_url = `http://localhost/${process.env.PORT}`;
+          let app_url = `http://localhost:${process.env.PORT}`;
           process.env["APP_URL"] = app_url;
           process.env["KOTII_APP_URL"] = app_url;
           envVariables.stringified["KOTII_APP_URL"] = app_url;

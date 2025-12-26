@@ -19,53 +19,18 @@ let options = {
       },
     ],
   ],
-  plugins: [
-    ["@babel/plugin-proposal-json-modules"],
-    [
-      "file-loader",
-      {
-        name: "[hash].[ext]",
-        extensions: ["png", "jpg", "jpeg", "gif", "svg"],
-        publicPath: "public/",
-        outputPath: null,
-      },
-      "img-file-loader-plugin",
-    ],
-  ],
+  plugins: [["@babel/plugin-proposal-json-modules"]],
 };
 let workingDir = process.cwd();
 let filesToTranspile = [
   {
-    source: `${workingDir}/kotii-land/dev/build.js`,
-    destination: `${workingDir}/kotii-land/prod/build_b.js`,
-  },
-  {
-    source: `${workingDir}/kotii-land/dev/app_.js`,
-    destination: `${workingDir}/kotii-land/prod/app_b.js`,
-  },
-  {
-    source: `${workingDir}/kotii-land/dev/public.js`,
-    destination: `${workingDir}/kotii-land/prod/public_b.js`,
-  },
-  {
-    source: `${workingDir}/plugins/react`,
-    destination: `${workingDir}/plugins/react-pruned`,
-    transpile: ["methods.js", "reactview.js"],
-    isFolder: true,
-  },
-  {
-    source: `${workingDir}/react-components`,
-    destination: `${workingDir}/react-components-pruned`,
+    source: `${workingDir}/app`,
+    destination: `${workingDir}/dist`,
     isFolder: true,
     recursive: true,
   },
 ];
-let changeList = [
-  { toPrune: "react-components", toChangeTo: "react-components-pruned" },
-  { toPrune: "public", toChangeTo: "public_b" },
-  { toPrune: "build", toChangeTo: "build_b" },
-  { toPrune: "app_", toChangeTo: "app_b" },
-];
+let changeList = [{ toPrune: "dev", toChangeTo: "dist" }];
 
 const transpileFiles = (toTranspile) => {
   loggas.transpile.debug("THE FILES TO TRANSPILE", filesToTranspile);

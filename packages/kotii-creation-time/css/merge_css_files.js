@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-async-promise-executor */
 import fs from "fs";
 import createCssAst from "./create_css_ast.js";
 

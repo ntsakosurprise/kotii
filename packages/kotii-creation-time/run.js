@@ -15,5 +15,5 @@ export default () => {
         : process.env.NODE_ENV
       : "development"
   );
-  import("./kotii-land/dev/app.js");
+  import("./kotii-land/app.js");
 };

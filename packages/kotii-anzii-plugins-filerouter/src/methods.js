@@ -4,7 +4,15 @@
 /* eslint-disable no-unused-vars */
 const methods = {};
 import path from "node:path";
-import { kotiiKotiiLandPath } from "@kotii/_internal/root";
+// import { kotiiInternal } from "kotii-internal/internal.js";
+import {
+  USER_LAND_ALIAS_BUILD,
+  USER_LAND_ALIAS_PAGES,
+  USER_LAND_ALIAS_MANIFEST,
+  USER_LAND_ALIASES,
+  ENV_DEVELOPMENT,
+} from "kotii-internal/user";
+
 methods.init = function () {
   this.listens({
     "create-file-routes": this.handleFileRoutes.bind(this),
@@ -81,7 +89,7 @@ methods.handleRemovePagesImport = async function (data) {
   const readFileSync = pao.pa_readFileSync;
   const cwd = getWorkingFolder();
 
-  const buildPath = `${kotiiKotiiLandPath}/dev/build.js`;
+  const buildPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_BUILD]}`;
 
   const buildPathFile = readFileSync(buildPath);
   const buildAst = parser.parse(buildPathFile, {
@@ -241,7 +249,7 @@ methods.getItemPathAndFile = function (item) {
       requiredPath
     );
     let absolutePathPre =
-      process.env.NODE_ENV === "development" ? "kotii-dev" : "kotii-prod";
+      process.env.NODE_ENV === ENV_DEVELOPMENT ? "kotii-dev" : "kotii-prod";
     let absSrc = `${path.sep}${absolutePathPre}${path.sep}${requiredPath}`;
 
     self.debug("THE PAGES matched", patternMatch);
@@ -520,7 +528,7 @@ methods.addToAST = function ({
   const isMarkdown = markdownRoutes ? true : false;
   self.debug("THE MARKDOWN ROUTES", markdownRoutes, isMarkdown);
 
-  const filePath = `${kotiiKotiiLandPath}/dev/pages.js`;
+  const filePath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_PAGES]}`;
 
   self.debug("THE BUILD PATH CWD", cwd, filePath);
 
@@ -537,6 +545,7 @@ methods.addToAST = function ({
   );
   // const altPath = `${cwd}/build_test.js`;
   const jsFile = readFileSync(filePath);
+  self.debug("THE DEBUG JS FILE", jsFile, filePath);
   let ast = parser.parse(jsFile, {
     sourceType: "module",
     plugins: ["jsx", "dynanmicImports"],
@@ -1158,7 +1167,7 @@ methods.addImportLineToBuildJs = function (isMarkdown = false) {
   const getWorkingFolder = pao.pa_getWorkingFolder;
   const cwd = getWorkingFolder();
 
-  const buildPath = `${kotiiKotiiLandPath}/dev/build.js`;
+  const buildPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_BUILD]}`;
   const buildPathFile = readFileSync(buildPath);
   let buildAst = parser.parse(buildPathFile, {
     sourceType: "module",
@@ -1195,7 +1204,7 @@ methods.createMetaAst = function (metaData) {
   const contains = pao.pa_contains;
   const cwd = getWorkingFolder();
 
-  const filePath = `${kotiiKotiiLandPath}/dev/manifest.js`;
+  const filePath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_MANIFEST]}`;
   const jsFile = readFileSync(filePath);
   let ast = parser.parse(jsFile, { sourceType: "module" });
 
@@ -1607,7 +1616,13 @@ methods.startAstFlow = function (options) {
         self.callback({ routes, message: "Routes configured" });
       });
   } else {
-    const filePath = `/kotii-land/dev/manifest.js`;
+    const filePath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_MANIFEST]}`;
+    self.debug(
+      "THE FILE PATH",
+      filePath,
+      USER_LAND_ALIASES,
+      USER_LAND_ALIAS_MANIFEST
+    );
     self
       .doImport(filePath, false, false)
       .then(async (imported) => {
@@ -2074,8 +2089,8 @@ methods.addItemsToExportList = function (ast, exportList) {
 methods.replaceKotiiJsFilesContent = function () {
   const self = this;
   const pao = self.pao;
-  const pagesFilePath = `${kotiiKotiiLandPath}/dev/pages.js`;
-  const manifestFilePath = `${kotiiKotiiLandPath}/dev/manifest.js`;
+  const pagesFilePath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_PAGES]}`;
+  const manifestFilePath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_MANIFEST]}`;
   const filesContent = self.getCentralFilesContent();
   const saveToFile = pao.pa_saveToFile;
 

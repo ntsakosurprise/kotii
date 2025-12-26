@@ -32,8 +32,9 @@ const config = {
       react: "react",
       "react-dom": "react-dom",
       "kotii-languages": "kotii-languages",
-      "@kotii/_internal/land": "@kotii/_internal/land",
-      "@kotii/_internal/root": "@kotii/_internal/root",
+      // "@kotii/_internal/land": "@kotii/_internal/land",
+      // "@kotii/_internal/root": "@kotii/_internal/root",
+      // "@kotii/_internal/app": "@kotii/_internal/app",
     },
   ],
 

@@ -1,11 +1,11 @@
-import FileRouter from "./filerouter/filerouter.js";
-import ReactVeiwPruned from "./react-pruned/index.js";
 import Start from "./start/index.js";
-import Env from "./env/env.js";
-import ViewGuard from "./view-guard/view-guard.js";
+import Env from "@kotii/anzii-plugins-env";
+import ReactView from "@kotii/anzii-plugins-react";
+import FileRouter from "@kotii/anzii-plugins-filerouter";
+import ViewGuard from "@kotii/anzii-plugins-viewguard";
 
 export default {
-  ReactVeiwPruned,
+  ReactView,
   Start,
   FileRouter,
   Env,

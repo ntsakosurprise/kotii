@@ -1,3 +1,7 @@
+/* eslint-disable no-redeclare */
+/* eslint-disable valid-typeof */
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 const SUKU = (function () {
   /*==============================================================================================================
 

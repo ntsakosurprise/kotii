@@ -1,0 +1,22 @@
+{
+  "dot_/img/docs_search.png": {
+    "content": "/docs_search.png",
+    "inlined": false,
+    "pathContext": {
+      "fileRelativePath": "./src/assets/img/docs_search.png",
+      "fileRoot": "/Users/surprisemashele/Documents/KOTII-TESTING-AREA/prod-test",
+      "fileUserRequest": "./img/docs_search.png",
+      "fileFullPath": "/Users/surprisemashele/Documents/KOTII-TESTING-AREA/prod-test/src/assets/img/docs_search.png"
+    }
+  },
+  "dot_/img/stones.jpg": {
+    "content": "/stones.jpg",
+    "inlined": false,
+    "pathContext": {
+      "fileRelativePath": "./src/assets/img/stones.jpg",
+      "fileRoot": "/Users/surprisemashele/Documents/KOTII-TESTING-AREA/prod-test",
+      "fileUserRequest": "./img/stones.jpg",
+      "fileFullPath": "/Users/surprisemashele/Documents/KOTII-TESTING-AREA/prod-test/src/assets/img/stones.jpg"
+    }
+  }
+}

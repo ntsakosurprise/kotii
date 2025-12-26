@@ -43,6 +43,7 @@ class ServerBuild {
       methods.replaceNoneNativeImportsExtensions;
     this.replaceNoneNativeImportsExtensionsDynamic =
       methods.replaceNoneNativeImportsExtensionsDynamic;
+    this.processImageNodes = methods.processImageNodes;
   }
 }
 export default ServerBuild;

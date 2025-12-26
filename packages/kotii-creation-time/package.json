@@ -9,12 +9,26 @@
       "import": "./index.js",
       "require": "./index.js",
       "default": "./index.js"
+    },
+    "./plugins": {
+      "import": "./plugins/index.js",
+      "require": "./plugins/index.js",
+      "default": "./plugins/index.js"
+    },
+    "./user": {
+      "import": "./user.js",
+      "require": "./user.js",
+      "default": "./user.js"
+    },
+    "./root": {
+      "import": "./kotii_paths.js",
+      "require": "./user.js",
+      "default": "./user.js"
     }
   },
   "scripts": {
     "lint": "eslint .",
     "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings=ExperimentalWarning' jest",
-    "start:dev:nodemon": "nodemon index",
     "babel-ssr": "babel --config-file /Users/surprisemashele/Documents/kotii/packages/kotii/babel.server.json  --out-dir /Users/surprisemashele/Documents/kotii/packages/kotii/build /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src",
     "build-ssr": "babel --config-file /Users/surprisemashele/Documents/kotii/packages/kotii/babel.server.build.json  --out-dir /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/build/src /Users/surprisemashele/Documents/kotii/packages/kotii-templates/javascript/ssr/src",
     "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
@@ -56,8 +70,8 @@
     "@babel/preset-react": "^7.22.15",
     "@babel/preset-typescript": "^7.26.0",
     "@kotii/anzii-plugins-env": "1.0.0-beta.1.0",
-    "@kotii/anzii-plugins-filerouter": "1.0.0-beta.1.0",
-    "@kotii/anzii-plugins-react": "1.0.0-beta.1.0",
+    "@kotii/anzii-plugins-filerouter": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz",
+    "@kotii/anzii-plugins-react": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz",
     "@kotii/anzii-plugins-viewguard": "1.0.0-beta.1.0",
     "@reduxjs/toolkit": "^2.0.1",
     "anzii": "8.0.1",
@@ -81,6 +95,7 @@
     "html-react-parser": "^4.0.0",
     "kotii-auth": "1.0.0-beta.3.0",
     "kotii-components": "1.0.0-beta.1.0",
+    "kotii-internal": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz",
     "kotii-languages": "1.0.0-beta.3.0",
     "kotii-lazy": "1.0.0-beta.3.0",
     "kotii-logger": "1.0.0-beta.4.0",

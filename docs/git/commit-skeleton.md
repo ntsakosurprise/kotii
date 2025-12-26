@@ -21,26 +21,25 @@
 </div>
 <br>
 
-# Example Commit Message
+<h2>fix(commit): enforce standard commit message format</h2>
 
-<div style="background-color: #36454F; width: 80%;border-radius: 8px; padding: 3px; padding-left: 15px; color: white">
-<h2>fix: Fix a none-standard git commit</h2>
-<h3>[#123] Refer to github issue: Git commit messages not standard</h3><br>
-<p style="width: 80%">The presentation of the commit messages in the last few commits that developers on this team have made were a little vague.</p>
+<p>
+  Recent commits lacked clarity and consistency, making it harder to
+  understand intent and track changes over time.
+</p>
 
-<p style="width: 80%">A detailed outline of the guidelines that users have to follow for future commits has been compiled. The guideline has been created to ensure that users follow standard guidlines when creating commits.</p>
-
-<p style="width: 80%">The list below outlines some of the guidlines implemented:</p>
+<p>
+  This change introduces documented commit guidelines to ensure:
+</p>
 
 <ul>
-  <li>Commit messages should be descriptive </li>
-  <li>Commit body paragraphs should be uppercased</li>
+  <li>Descriptive, meaningful subject lines</li>
+  <li>Clear commit bodies explaining the rationale</li>
+  <li>Consistent formatting across the repository</li>
 </ul>
 
 <p>
-  <strong>Fixes:</strong> <small>#123</small><br>
-  <strong>Signed-off by:</strong> <small>mashelesepru@gmail.com</small><br>
-  <strong>Tested by:</strong> <small>mashelesepru@gmail.com</small>
+  <strong>Fixes:</strong> #123<br>
+  <strong>Signed-off-by:</strong> Mashelese Pru &lt;mashelesepru@gmail.com&gt;<br>
+  <strong>Tested-by:</strong> Mashelese Pru &lt;mashelesepru@gmail.com&gt;
 </p>
-
-</div>

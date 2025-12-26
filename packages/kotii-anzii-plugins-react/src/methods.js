@@ -6,7 +6,16 @@ import fs from "fs";
 import { Router } from "kotii-router";
 import { ServerStyleSheet } from "kotii-styled";
 import path from "path";
-import { kotiiKotiiLandPath } from "@kotii/_internal/root";
+// import { kotiiKotiiLandPath } from "kotii-creation-time/root";
+// import { kotiiInternal } from "kotii-internal/root";
+import {
+  USER_LAND_ALIAS_START_UP,
+  USER_LAND_ALIAS_PAGES,
+  USER_LAND_ALIAS_STYLES_JSON,
+  USER_LAND_ALIASES,
+  ENV_PRODUCTION,
+  ENV_DEVELOPMENT,
+} from "kotii-internal/user";
 
 methods.init = function () {
   this.listens({
@@ -115,50 +124,26 @@ methods.handleReceiveEnvVariables = function (data) {
 methods.runReactView = function (data) {
   const self = this;
 
-  const {
-    React,
-    renderToString,
-    REACTAPP,
-    // Header,
-    // Footer,
-    // GlobalStyle,
-    HeadHelmet,
-    meta,
-  } = self;
+  const { renderToString, HeadHelmet, meta } = self;
   const { view, staticRender = false, route = null, authUser = null } = data;
   const { app } = meta;
   const { stateVendor = "" } = app;
-
-  // const Layout = (props) => {
-  //   return (
-  //     <div
-  //       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
-  //     >
-  //       <Header />
-  //       {props.children}
-  //       <Footer />
-  //     </div>
-  //   );
-  // };
-
-  // const Root = (props) => {
-  //   return (
-  //     <div>
-  //       <GlobalStyle />
-  //       {props.children}
-  //     </div>
-  //   );
-  // };
+  self.debug("THE PROCESS.REACT", process);
 
   // Grab the initial state from our Redux store
   return new Promise(async (resolve) => {
-    const { loadReduxServer } = await import("@kotii/_internal/land");
+    const { loadRedux } = await import("kotii-internal");
     let isRedux = true;
     // console.log("THE CREATE FUNCTION IMPORT", createReduxStore)
-    self.reduxResources = isRedux ? await loadReduxServer() : null;
+    self.reduxResources = isRedux ? await loadRedux() : null;
     self.debug("SELF.REDUX RESOURCES", self.reduxResources);
     const store = self?.reduxResources
-      ? await self.reduxResources.createReduxStore()
+      ? await self.reduxResources.createReduxStore(
+          {},
+          self.reduxResources.reducers,
+          self.reduxResources.reduxFuncs,
+          self.reduxResources.reduxThunk
+        )
       : null;
     console.log("THE CREATE RESULT STORE", store);
     let stateData = await self.getStateDataFromServer({
@@ -167,6 +152,7 @@ methods.runReactView = function (data) {
       staticRender,
       route,
     });
+    // This piece of code will be re-factored
     if (!staticRender) {
       await self.runComponentEffects(view.match);
     } else {
@@ -175,20 +161,15 @@ methods.runReactView = function (data) {
       }
     }
 
-    let layoutStaticAbsolutePath =
-      process.env.NODE_ENV == "development"
-        ? `/kotii-user-land-aliase/src/components/startup/index`
-        : `/src/components/startup/index.js`;
+    let layoutStaticAbsolutePath = USER_LAND_ALIAS_START_UP;
     let layoutRoot = await self.doImport(
       `${layoutStaticAbsolutePath}`,
       true,
       false
     );
     if (!self.comps) {
-      let compsAbsolutePath =
-        process.env.NODE_ENV == "development"
-          ? `/kotii-land/dev/pages.js`
-          : `.kotii-land/bundle-imports.js`;
+      let compsAbsolutePath = USER_LAND_ALIAS_PAGES;
+      self.debug("THE COMPLETE ABS", compsAbsolutePath);
       self.comps = await self.doImport(`${compsAbsolutePath}`, true, false);
     }
 
@@ -207,6 +188,13 @@ methods.runReactView = function (data) {
     const sheet = new ServerStyleSheet();
     process.env?.useLazyLoad ? await self.preloadLazyComponents(view) : null;
 
+    if (isRedux) {
+      const { OptionalDynamiceReduxWrapperLazy } = await import(
+        "kotii-internal"
+      );
+      await OptionalDynamiceReduxWrapperLazy.preload();
+    }
+
     let goodies = self.comps;
     // let authUser = {
     //   name: "Ntsako Surprise",
@@ -216,50 +204,7 @@ methods.runReactView = function (data) {
     try {
       html = renderToString(
         sheet.collectStyles(
-          !layoutRoot ? (
-            <Router ssrPath={view.match}>
-              {REACTAPP({
-                storeFromSource: store,
-                goodies,
-                effectsStore,
-                authUser,
-                reduxResources: self.reduxResources,
-              })}
-            </Router>
-          ) : layoutRoot.Layout && layoutRoot.Root ? (
-            <Router ssrPath={view.match}>
-              {REACTAPP({
-                appWrapper: layoutRoot.Root,
-                layout: layoutRoot.Layout,
-                storeFromSource: store,
-                goodies,
-                effectsStore,
-                authUser,
-                reduxResources: self.reduxResources,
-              })}
-            </Router>
-          ) : layoutRoot.Layout ? (
-            <Router ssrPath={view.match}>
-              {REACTAPP({
-                layout: layoutRoot.Layout,
-                storeFromSource: store,
-                goodies,
-                effectsStore,
-                authUser,
-                reduxResources: self.reduxResources,
-              })}
-            </Router>
-          ) : (
-            <Router ssrPath={view.match}>
-              {REACTAPP({
-                appWrapper: layoutRoot.Root,
-                storeFromSource: store,
-                effectsStore,
-                authUser,
-                reduxResources: self.reduxResources,
-              })}
-            </Router>
-          )
+          self.createAppElement({ store, layoutRoot, goodies, authUser, view })
         )
       );
       const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
@@ -272,13 +217,6 @@ methods.runReactView = function (data) {
       sheet.seal();
     }
 
-    // try {
-    //   html = renderToString(
-    //     <Router ssrPath={view.match}>{REACTAPP(Root, Layout, store)}</Router>
-    //   );
-    // } catch (error) {
-    //   self.debug("THE RENDER ERROR", error);
-    // }
     console.log("THE FINAL STATE", store, store.getState());
     const finalState = store.getState() || store;
     const helmetGenerated = HeadHelmet.renderStatic();
@@ -336,7 +274,7 @@ methods.renderFullPage = function ({
     ${head?.link.toString()}
     ${self?.styledTags || ""}
     ${self?.styleTags || ""}
-    ${process?.env?.NODE_ENV === "development" ? self.loaderStyles() : ""}
+    ${process?.env?.NODE_ENV === ENV_DEVELOPMENT ? self.loaderStyles() : ""}
     ${self?.pageSettings || ""}
 
 
@@ -353,7 +291,10 @@ methods.renderFullPage = function ({
 methods.includeScripts = function (preloadedState, authUser) {
   const self = this;
   const { serialize } = self;
-  let possibleExtraScripts = "";
+  let possibleExtraScripts =
+    process?.env?.NODE_ENV !== ENV_PRODUCTION
+      ? `<script src="/kotii-client.js" ></script>`
+      : "";
   self.debug("THE SELF.KOTIIENV", self.kotiiEnvs);
   if (self?.htmlPageSettings && self.htmlPageSettings?.scripts) {
     // self.htmlPageSettings.scripts.forEach((script) => {
@@ -376,7 +317,6 @@ methods.includeScripts = function (preloadedState, authUser) {
    
    </script>
    <script src="/server.js" ></script>
-   <script src="/kotii-client.js" ></script>
    ${possibleExtraScripts}
   `;
 };
@@ -393,16 +333,19 @@ methods.getStateDataFromServer = function ({
   // self.debug("THE FOUND", routes);
 
   return new Promise((resolve, reject) => {
-    let dataFetchPromises = routes.filter((route, i) => {
-      if (route.path === routePath && route?.requiresData) {
+    const dataFetchPromises = routes
+      .filter((route) => route.path === routePath && route?.requiresData)
+      .map((route) => {
+        self.debug("THE ROUTE REQUIRES");
         return route.requiresData(store);
-      }
-    });
+      });
 
-    Promise.all(dataFetchPromises).then((resolveData) => {
-      self.debug("THE RESOLVED DATA", resolveData);
-      resolve(resolveData);
-    });
+    Promise.all(dataFetchPromises)
+      .then((resolveData) => {
+        self.debug("THE RESOLVED DATA", resolveData);
+        resolve(resolveData);
+      })
+      .catch(reject);
   });
 };
 
@@ -518,31 +461,36 @@ methods.doImport = function (toImport, all = false, check = true) {
 methods.doKotiiStyles = function () {
   const self = this;
 
-  const jsonStyles = fs.existsSync(
-    `${kotiiKotiiLandPath}${path.sep}dev/styles.json`
-  )
-    ? !process?.useLinkStyleTag
-      ? JSON.parse(
-          fs.readFileSync(`${kotiiKotiiLandPath}${path.sep}dev/styles.json`)
-        )
-      : true
-    : null;
+  self.debug("USER LAND.REACT.DOSTYLES", USER_LAND_ALIAS_STYLES_JSON);
 
-  if (process?.tailwindGenerated)
-    self.styleTags = `<link rel="stylesheet" id="tailwind-stylesheet-link" type="text/css" href="/${process.tailwindStyleSheetName}">`;
-  if (!jsonStyles) return null;
-  if (process?.useLinkStyleTag) {
-    self.styleTags = `${
-      self?.styleTags || ""
-    }<link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="/${
-      process.styleSheetName
-    }">`;
+  if (process?.env?.NODE_ENV !== ENV_PRODUCTION) {
+    const jsonStyles = fs.existsSync(
+      `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`
+    )
+      ? !process?.useLinkStyleTag
+        ? JSON.parse(
+            fs.readFileSync(`${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`)
+          )
+        : true
+      : null;
+    if (process?.tailwindGenerated)
+      self.styleTags = `<link rel="stylesheet" id="tailwind-stylesheet-link" type="text/css" href="/${process.tailwindStyleSheetName}">`;
+    if (!jsonStyles) return null;
+    if (process?.useLinkStyleTag) {
+      self.styleTags = `${
+        self?.styleTags || ""
+      }<link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="/${
+        process?.styleSheetName || "index.css"
+      }">`;
+    } else {
+      self.styleTags = `${
+        self?.styleTags || ""
+      }<style id="styles-tag">${jsonStyles
+        .toString()
+        .replaceAll(",", " ")}</style>`;
+    }
   } else {
-    self.styleTags = `${
-      self?.styleTags || ""
-    }<style id="styles-tag">${jsonStyles
-      .toString()
-      .replaceAll(",", " ")}</style>`;
+    self.styleTags = `<link rel="stylesheet" type="text/css" href="/index.css">`;
   }
 };
 
@@ -709,8 +657,78 @@ methods.loaderStyles = function () {
 
 methods.getProductionProcess = function () {
   const self = this;
-  if (process.env.NODE_ENV != "production") return "";
+  if (process.env.NODE_ENV != ENV_PRODUCTION) return "";
   return `window.process = {envs:${JSON.stringify(self.kotiiEnvs)}}`;
 };
 
+methods.createAppElement = function ({
+  store,
+  view,
+  layoutRoot,
+  effectsStore,
+  goodies,
+  authUser,
+}) {
+  const self = this;
+  const { REACTAPP, React } = self;
+  let appElement;
+
+  if (!layoutRoot) {
+    appElement = React.createElement(
+      Router,
+      { ssrPath: view.match },
+      REACTAPP({
+        storeFromSource: store,
+        goodies,
+        effectsStore,
+        authUser,
+        reduxResources: self.reduxResources,
+      })
+    );
+  } else if (layoutRoot.Layout && layoutRoot.Root) {
+    appElement = React.createElement(
+      Router,
+      { ssrPath: view.match },
+      REACTAPP({
+        appWrapper: layoutRoot.Root,
+        layout: layoutRoot.Layout,
+        storeFromSource: store,
+        goodies,
+        effectsStore,
+        authUser,
+        reduxResources: self.reduxResources,
+      })
+    );
+  } else if (layoutRoot.Layout) {
+    appElement = React.createElement(
+      Router,
+      { ssrPath: view.match },
+      REACTAPP({
+        layout: layoutRoot.Layout,
+        storeFromSource: store,
+        goodies,
+        effectsStore,
+        authUser,
+        reduxResources: self.reduxResources,
+      })
+    );
+  } else {
+    appElement = React.createElement(
+      Router,
+      { ssrPath: view.match },
+      REACTAPP({
+        appWrapper: layoutRoot.Root,
+        storeFromSource: store,
+        effectsStore,
+        authUser,
+        reduxResources: self.reduxResources,
+      })
+    );
+  }
+  return appElement;
+
+  // html = renderToString(
+  //   sheet.collectStyles(appElement)
+  // );
+};
 export default methods;
