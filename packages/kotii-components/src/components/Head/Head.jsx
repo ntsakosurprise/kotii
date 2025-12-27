@@ -1,0 +1,17 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+import { useHead } from "./HeadProvider.jsx";
+
+import React from "react";
+
+const Head = ({ title }) => {
+  const headContext = useHead();
+
+  if (headContext.push) {
+    headContext.push({
+      title,
+    });
+  }
+};
+
+export default Head;
