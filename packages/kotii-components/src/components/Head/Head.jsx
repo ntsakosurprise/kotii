@@ -4,14 +4,18 @@ import { useHead } from "./HeadProvider.jsx";
 
 import React from "react";
 
-const Head = ({ title }) => {
+const Head = ({ title = "", metas = [], links = [], scripts = [] }) => {
   const headContext = useHead();
 
   if (headContext.push) {
     headContext.push({
       title,
+      metas,
+      links,
+      scripts,
     });
   }
+  return null;
 };
 
 export default Head;
