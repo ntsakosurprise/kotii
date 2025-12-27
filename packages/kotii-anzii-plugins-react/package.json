@@ -31,10 +31,11 @@
   },
   "dependencies": {
     "kotii-components": "1.0.0-beta.1.0",
+    "kotii-head": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz",
+    "kotii-internal": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz",
     "kotii-router": "1.0.0-beta.3.0",
     "kotii-styled": "1.0.0-beta.2.0",
-    "serialize-javascript": "^6.0.1",
-    "kotii-internal": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz"
+    "serialize-javascript": "^6.0.1"
   },
   "peerDependencies": {
     "anzii": "8.0.1",

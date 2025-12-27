@@ -5,6 +5,7 @@ const methods = {};
 import fs from "fs";
 import { Router } from "kotii-router";
 import { ServerStyleSheet } from "kotii-styled";
+import { HeadProvider } from "kotii-head";
 import path from "path";
 // import { kotiiKotiiLandPath } from "kotii-creation-time/root";
 // import { kotiiInternal } from "kotii-internal/root";
@@ -668,6 +669,7 @@ methods.createAppElement = function ({
   effectsStore,
   goodies,
   authUser,
+  context,
 }) {
   const self = this;
   const { REACTAPP, React } = self;
@@ -675,56 +677,73 @@ methods.createAppElement = function ({
 
   if (!layoutRoot) {
     appElement = React.createElement(
-      Router,
-      { ssrPath: view.match },
-      REACTAPP({
-        storeFromSource: store,
-        goodies,
-        effectsStore,
-        authUser,
-        reduxResources: self.reduxResources,
-      })
+      HeadProvider,
+      { context },
+      React.createElement(
+        Router,
+        { ssrPath: view.match },
+        REACTAPP({
+          storeFromSource: store,
+          goodies,
+          effectsStore,
+          authUser,
+          reduxResources: self.reduxResources,
+        })
+      )
     );
   } else if (layoutRoot.Layout && layoutRoot.Root) {
     appElement = React.createElement(
-      Router,
-      { ssrPath: view.match },
-      REACTAPP({
-        appWrapper: layoutRoot.Root,
-        layout: layoutRoot.Layout,
-        storeFromSource: store,
-        goodies,
-        effectsStore,
-        authUser,
-        reduxResources: self.reduxResources,
-      })
+      HeadProvider,
+      { context },
+      React.createElement(
+        Router,
+        { ssrPath: view.match },
+        REACTAPP({
+          appWrapper: layoutRoot.Root,
+          layout: layoutRoot.Layout,
+          storeFromSource: store,
+          goodies,
+          effectsStore,
+          authUser,
+          reduxResources: self.reduxResources,
+        })
+      )
     );
   } else if (layoutRoot.Layout) {
     appElement = React.createElement(
-      Router,
-      { ssrPath: view.match },
-      REACTAPP({
-        layout: layoutRoot.Layout,
-        storeFromSource: store,
-        goodies,
-        effectsStore,
-        authUser,
-        reduxResources: self.reduxResources,
-      })
+      HeadProvider,
+      { context },
+      React.createElement(
+        Router,
+        { ssrPath: view.match },
+        REACTAPP({
+          layout: layoutRoot.Layout,
+          storeFromSource: store,
+          goodies,
+          effectsStore,
+          authUser,
+          reduxResources: self.reduxResources,
+        })
+      )
     );
   } else {
     appElement = React.createElement(
-      Router,
-      { ssrPath: view.match },
-      REACTAPP({
-        appWrapper: layoutRoot.Root,
-        storeFromSource: store,
-        effectsStore,
-        authUser,
-        reduxResources: self.reduxResources,
-      })
+      HeadProvider,
+      { context },
+      React.createElement(
+        Router,
+        { ssrPath: view.match },
+        REACTAPP({
+          appWrapper: layoutRoot.Root,
+          storeFromSource: store,
+          effectsStore,
+          authUser,
+          reduxResources: self.reduxResources,
+        })
+      )
     );
   }
+
   return appElement;
 
   // html = renderToString(
