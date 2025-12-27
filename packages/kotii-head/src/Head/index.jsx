@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useHead } from "../hooks/useHead.jsx";
+import useHead from "../hooks/useHead.jsx";
 
 import React from "react";
 

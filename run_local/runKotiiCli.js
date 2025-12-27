@@ -35,6 +35,7 @@ const madeTarballs = createTarballs(packagesPath, [
   // "kotii-anzii-plugins-viewguard",
   "kotii-anzii-plugins-filerouter",
   "kotii-internal",
+  "kotii-head",
 ]);
 console.log("MADE TARBALLS", madeTarballs);
 // const nodeScriptPath = path.join(packagesPath, "kotii-cli");
