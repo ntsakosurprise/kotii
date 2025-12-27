@@ -1,5 +1,5 @@
 {
-  "name": "kotii-components",
+  "name": "kotii-head",
   "version": "1.0.0-beta.2.0",
   "description": "is a group of components and hooks used internally in kotii framework",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
@@ -53,8 +53,5 @@
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
-  },
-  "dependencies": {
-    "react-helmet": "6.1.0"
   }
 }

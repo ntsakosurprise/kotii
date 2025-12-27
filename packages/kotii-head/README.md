@@ -7,22 +7,22 @@
        color: inherit;
      ">
     <img src="https://raw.githubusercontent.com/ntsakosurprise/kotii/refs/heads/develop/kotii.svg" alt="kotii logo">
-    <strong>Kotii-components</strong>
+    <strong>kotii-head</strong>
   </a>
 </p>
 
 ### Convenience Components for kotii js
 
-**kotii-components** is that provides app context management, head management, hooks, and reusable components for images and SVGs.
+**kotii-head** is that provides app context management, head management, hooks, and reusable components for images and SVGs.
 
 ---
 
 ## Installation
 
 ```bash
-npm install kotii-components
+npm install kotii-head
 # or
-yarn add kotii-components
+yarn add kotii-head
 ```
 
 ## Exports
