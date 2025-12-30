@@ -1,3 +1,5 @@
+import suku from "suku";
+
 export const extractPathFromString = (pathString) => {
   if (pathString.indexOf("#") === 0) {
     return pathString.slice(1);
@@ -99,4 +101,28 @@ export const matchRoute = (routeComponentPath, currentPath) => {
     return false;
   }
   return false;
+};
+export const applyHead = (head) => {
+  console.log("SUKU OBJECT", suku);
+  if (head?.title) suku.get_document_head().title = head.title;
+};
+export const resolveHead = (headers) => {
+  console.log("THE HEADER IN RESOLVE", headers);
+  const currentHead = headers[0] ?? {
+    title: null,
+    metas: [],
+    links: {},
+  };
+
+  return currentHead;
+};
+export const generateRandomString = (length) => {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters[randomIndex];
+  }
+  return result;
 };

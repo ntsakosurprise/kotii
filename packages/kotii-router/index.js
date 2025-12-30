@@ -10,6 +10,7 @@ import {
   useRedirect,
   useRoute,
   Redirect,
+  resolveHead,
 } from "./src/index.js";
 
 export {
@@ -24,4 +25,5 @@ export {
   useRedirect,
   useRoute,
   Redirect,
+  resolveHead,
 };

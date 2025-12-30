@@ -1,4 +1,5 @@
 import { Link, Route, Router, Routes, Redirect } from "./components/index.js";
+import { resolveHead } from "./utils/index.js";
 import {
   useLocation,
   useMatch,
@@ -20,4 +21,5 @@ export {
   useMatch,
   useRedirect,
   useRoute,
+  resolveHead,
 };
