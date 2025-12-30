@@ -3,9 +3,9 @@
 /* eslint-disable no-unused-vars */
 const methods = {};
 import fs from "fs";
-import { Router } from "kotii-router";
+import { Router, resolveHead } from "kotii-router";
 import { ServerStyleSheet } from "kotii-styled";
-import { HeadProvider } from "kotii-head";
+import { HeadProvider, createHeadStore } from "kotii-head";
 import path from "path";
 // import { kotiiKotiiLandPath } from "kotii-creation-time/root";
 // import { kotiiInternal } from "kotii-internal/root";
@@ -203,14 +203,24 @@ methods.runReactView = function (data) {
     //   timeNow: new Date(),
     // };
     try {
+      const context = createHeadStore();
+      self.debug("THE HEAD STORE", context);
       html = renderToString(
         sheet.collectStyles(
-          self.createAppElement({ store, layoutRoot, goodies, authUser, view })
+          self.createAppElement({
+            store,
+            layoutRoot,
+            goodies,
+            authUser,
+            view,
+            context,
+          })
         )
       );
       const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
       self.styledTags = styleTags;
       self.debug("STYLED-COMPONENTS STYLE TAGS", styleTags);
+      self.debug("THE HEAD STORE AFTER CREATE HEAD", context.getEntries());
     } catch (error) {
       // handle error
       console.error(error);
