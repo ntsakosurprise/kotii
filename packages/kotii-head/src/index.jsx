@@ -1,6 +1,5 @@
-import HeadProvider from "./HeadProvider/index.jsx";
-import HeadContext from "./HeadContext/index.jsx";
-import useHead from "./hooks/useHead.jsx";
+import HeadProvider, { useHead } from "./HeadProvider/index.jsx";
 import Head from "./Head/index.jsx";
+import { createHeadStore } from "./store/index.jsx";
 
-export { HeadProvider, HeadContext, useHead, Head };
+export { HeadProvider, useHead, Head, createHeadStore };

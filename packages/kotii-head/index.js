@@ -1,1 +1,1 @@
-export { Head, HeadProvider, HeadContext, useHead } from "./src/index.jsx";
+export { Head, HeadProvider, useHead, createHeadStore } from "./src/index.jsx";

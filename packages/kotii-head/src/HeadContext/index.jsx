@@ -1,11 +1,5 @@
 import { createContext } from "react";
 
-export const initialHead = {
-  push: null,
-  headRouterEntries: [],
-  componentHeadEntries: [],
-};
-
-const HeadContext = createContext(initialHead);
+const HeadContext = createContext(null);
 
 export default HeadContext;
