@@ -45,31 +45,11 @@ let FILE_LOADER_DEFAULT = {
   // inlinePngs: true,
 };
 const ESCAPE_CHARACTER = "dot_";
-const KOTII_USER_LAND_ALIASES = {
-  layout: {
-    alias: "/kotii-user-land-aliase/src/components/startup/index",
-    value: "/src/components/startup/index",
-  },
-  redux: {
-    alias: "/kotii-user-land-aliase/src/store/index",
-    value: "/src/store/index",
-  },
-};
 
-const KOTII_INTERNAL_ALIASES = {
-  // layout: {
-  //   alias: "/kotii-user-land-aliase/src/components/startup/index",
-  //   value: "/src/components/startup/index",
-  // },
-  // redux: {
-  //   alias: "/kotii-user-land-aliase/src/store/index",
-  //   value: "/src/store/index",
-  // },
-  "@kotii/_internal/land": `kotii-internal`,
-  "@kotii/_internal/app": `kotii-internal/app`,
-  "@kotii/_internal/plugins": `${workdir}/node_modules/kotii-creation-time/plugins/index`,
-  "@kotii/_internal/root": `${workdir}/node_modules/kotii-creation-time/kotii_paths`,
-};
+const FONT_FACE_BLOCK_REGEX = /@font-face\s*{[^}]*}/gi;
+const URL_REGEX = /url\(\s*(["']?)([^"')]+)\1\s*\)/g;
+const RELATIVE_URLS_PATH_LEVELS_REGEX = /^(\.\.\/)+/;
+const FONTS_META = [];
 
 let cssSpecifiers = [".css", ".scss", ".sass", ".less", ".styl"];
 let fileSpecifiers = [".gif", ".png", ".svg", ".jpg", ".jpeg"];
@@ -678,72 +658,72 @@ export const resolveKotiiUserApiPlugins = (specifier) => {
   }
 };
 
-export const resolveUserlandImports = (specifier) => {
-  loggas.resolve.debug("KOTII LAND USER LAND", specifier);
-  if (!isBuiltin(specifier) && /^\/kotii-user-land-aliase\//.test(specifier)) {
-    loggas.resolve.debug("THE SPECIFIER FOR PAGES PATH", specifier);
-    let basePath = getPagesBasePath(specifier);
+// export const resolveUserlandImports = (specifier) => {
+//   loggas.resolve.debug("KOTII LAND USER LAND", specifier);
+//   if (!isBuiltin(specifier) && /^\/kotii-user-land-aliase\//.test(specifier)) {
+//     loggas.resolve.debug("THE SPECIFIER FOR PAGES PATH", specifier);
+//     let basePath = getPagesBasePath(specifier);
 
-    let aliaseTruePath = Object.keys(KOTII_USER_LAND_ALIASES).filter(
-      (aliase) => KOTII_USER_LAND_ALIASES[aliase].alias === specifier
-    );
-    let aliaseTruePathValue = KOTII_USER_LAND_ALIASES[aliaseTruePath[0]].value;
-    let aliasePossiblePath = `${basePath}${aliaseTruePathValue}`;
+//     let aliaseTruePath = Object.keys(KOTII_USER_LAND_ALIASES).filter(
+//       (aliase) => KOTII_USER_LAND_ALIASES[aliase].alias === specifier
+//     );
+//     let aliaseTruePathValue = KOTII_USER_LAND_ALIASES[aliaseTruePath[0]].value;
+//     let aliasePossiblePath = `${basePath}${aliaseTruePathValue}`;
 
-    try {
-      let livingPath = guessPathExtension(aliasePossiblePath);
-      return {
-        url: pathToFileURL(`${livingPath}`).href,
-        shortCircuit: true,
-      };
-    } catch (error) {
-      console.log(
-        "THE APP HAS ERRORED",
-        error,
-        "THE ERRORED PATH",
-        aliasePossiblePath
-      );
-    }
-  } else {
-    return false;
-  }
-};
-export const resolveKotiiInternalImports = (specifier) => {
-  loggas.resolve.debug("KOTII LAND USER LAND", specifier);
-  if (!isBuiltin(specifier) && /^@kotii\/_il(\/.*)?$/.test(specifier)) {
-    loggas.resolve.debug("THE SPECIFIER FOR INTERNAL IMPORTS", specifier);
-    // let basePath = getPagesBasePath(specifier);
+//     try {
+//       let livingPath = guessPathExtension(aliasePossiblePath);
+//       return {
+//         url: pathToFileURL(`${livingPath}`).href,
+//         shortCircuit: true,
+//       };
+//     } catch (error) {
+//       console.log(
+//         "THE APP HAS ERRORED",
+//         error,
+//         "THE ERRORED PATH",
+//         aliasePossiblePath
+//       );
+//     }
+//   } else {
+//     return false;
+//   }
+// };
+// export const resolveKotiiInternalImports = (specifier) => {
+//   loggas.resolve.debug("KOTII LAND USER LAND", specifier);
+//   if (!isBuiltin(specifier) && /^@kotii\/_il(\/.*)?$/.test(specifier)) {
+//     loggas.resolve.debug("THE SPECIFIER FOR INTERNAL IMPORTS", specifier);
+//     // let basePath = getPagesBasePath(specifier);
 
-    // let aliaseTruePath = Object.keys(KOTII_USER_LAND_ALIASES).filter(
-    //   (aliase) => KOTII_USER_LAND_ALIASES[aliase].alias === specifier
-    // );
-    // let aliaseTruePathValue = KOTII_USER_LAND_ALIASES[aliaseTruePath[0]].value;
+//     // let aliaseTruePath = Object.keys(KOTII_USER_LAND_ALIASES).filter(
+//     //   (aliase) => KOTII_USER_LAND_ALIASES[aliase].alias === specifier
+//     // );
+//     // let aliaseTruePathValue = KOTII_USER_LAND_ALIASES[aliaseTruePath[0]].value;
 
-    let aliasePossiblePath = `${KOTII_INTERNAL_ALIASES[specifier]}`;
-    loggas.resolve.debug(
-      "THE SPECIFIER FOR INTERNAL IMPORTS: FULL PATH",
-      aliasePossiblePath
-    );
-    console.log("THE POSSIBLE PATH", aliasePossiblePath);
+//     let aliasePossiblePath = `${KOTII_INTERNAL_ALIASES[specifier]}`;
+//     loggas.resolve.debug(
+//       "THE SPECIFIER FOR INTERNAL IMPORTS: FULL PATH",
+//       aliasePossiblePath
+//     );
+//     console.log("THE POSSIBLE PATH", aliasePossiblePath);
 
-    try {
-      let livingPath = guessPathExtension(aliasePossiblePath);
-      return {
-        url: pathToFileURL(`${livingPath}`).href,
-        shortCircuit: true,
-      };
-    } catch (error) {
-      console.log(
-        "THE APP HAS ERRORED",
-        error,
-        "WITH PATH",
-        aliasePossiblePath
-      );
-    }
-  } else {
-    return false;
-  }
-};
+//     try {
+//       let livingPath = guessPathExtension(aliasePossiblePath);
+//       return {
+//         url: pathToFileURL(`${livingPath}`).href,
+//         shortCircuit: true,
+//       };
+//     } catch (error) {
+//       console.log(
+//         "THE APP HAS ERRORED",
+//         error,
+//         "WITH PATH",
+//         aliasePossiblePath
+//       );
+//     }
+//   } else {
+//     return false;
+//   }
+// };
 
 export const guessPathExtension = (guessPath) => {
   console.log("THE GUESSS", guessPath);
