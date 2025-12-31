@@ -1287,6 +1287,7 @@ const createFontsMeta = ({
     fontPath: fontFullPath,
     relativePath: relativePath,
     folderTo: "fonts",
+    fileName: fontFileName,
   });
   return {
     absoluteUrl: absoluteUrl,
