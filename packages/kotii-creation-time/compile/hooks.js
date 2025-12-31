@@ -1270,7 +1270,7 @@ const createFontsMeta = ({
   } else {
     let topLevelPosition = fontFileParentUrlPieces.length - (foldersUp + 2);
     let relativePathTopLevelFolder = fontFileParentUrlPieces[topLevelPosition];
-    let fontFullPath = `/${fontFileParentUrlPieces
+    fontFullPath = `/${fontFileParentUrlPieces
       .splice(0, topLevelPosition + 1)
       .join("/")}${absoluteFromRelativePath}`;
     console.log(
@@ -1312,7 +1312,7 @@ const storeFontMeta = () => {
   if (!newJson || newJson.length === 0) {
     newJson = FONTS_META;
   } else {
-    newJson.push(FONTS_META);
+    newJson = [...newJson, ...FONTS_META];
   }
   fs.writeFileSync(JSON_STYLES_FONTS_PATH, JSON.stringify(newJson), {
     encoding: "utf8",
