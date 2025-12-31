@@ -20,6 +20,7 @@ export const USER_LAND_ALIASES = {
   "@kotii/_path/css": kotiiInternalCss,
   "@kotii/_path/app": kotiiInternal,
   "@kotii/_path/asset": kotiiInternalAssets,
+  "@kotii/_css/fonts": `${kotiiInternalCss}/styles-css-fonts.json`,
 };
 
 export const USER_LAND_ALIAS_PLUGINS = "@kotii/_user/plugins";
@@ -31,6 +32,7 @@ export const USER_LAND_ALIAS_STYLES_MODULES = "@kotii/_css/modules";
 export const USER_LAND_ALIAS_ASSETS_MANIFEST = "@kotii/_assets/asset";
 export const USER_LAND_ALIAS_MANIFEST = "@kotii/_user/manifest";
 export const USER_LAND_ALIAS_BUILD = "@kotii/_user/build";
+export const USER_LAND_ALIAS_STYLES_FONTS = "@kotii/_css/fonts";
 export const USER_LAND_PATH_CSS = "@kotii/_path/css";
 export const USER_LAND_PATH_APP = "@kotii/_path/app";
 export const USER_LAND_PATH_ASSET = "@kotii/_path/asset";
