@@ -49,7 +49,7 @@ const ESCAPE_CHARACTER = "dot_";
 const FONT_FACE_BLOCK_REGEX = /@font-face\s*{[^}]*}/gi;
 const URL_REGEX = /url\(\s*(["']?)([^"')]+)\1\s*\)/g;
 const RELATIVE_URLS_PATH_LEVELS_REGEX = /^(\.\.\/)+/;
-const FONTS_META = [];
+let FONTS_META = [];
 
 let cssSpecifiers = [".css", ".scss", ".sass", ".less", ".styl"];
 let fileSpecifiers = [".gif", ".png", ".svg", ".jpg", ".jpeg"];
@@ -1184,3 +1184,96 @@ export function showCodeSnippet(file, line, context = 2) {
     })
     .join("\n");
 }
+
+const replaceRelativeFontFaceUrlsToAbsolute = (css, basePath) => {
+  console.log("THE MATCHES.font base", basePath);
+  return css.replace(FONT_FACE_BLOCK_REGEX, (block) => {
+    console.log("THE MATCHES.font @replace block", block);
+    return block.replace(URL_REGEX, (match, quote, url) => {
+      console.log("THE MATCHES.CSS @replace block.replace", match, quote, url);
+      let foldersUp = pathLevelsUp(url);
+      let absoluteFromRelativePath = `/${replaceRelativeUrlsLevels(url)}`;
+      let fontFileParentUrlPieces = basePath.trim().split("/").filter(Boolean);
+      const { absoluteUrl } = createFontsMeta({
+        foldersUp,
+        absoluteFromRelativePath,
+        fontFileParentUrlPieces,
+        relativePath: match,
+        parenPath: basePath,
+      });
+
+      // Ignore already-absolute URLs (http, https, data, blob, protocol-relative)
+      if (/^(?:[a-z]+:|\/\/)/i.test(url)) {
+        return match;
+      }
+
+      // const absoluteUrl = path.resolve(basePath,url)
+      console.log("THE ABSOLUTE PATH", absoluteUrl);
+      return `url(${quote}${absoluteUrl}${quote})`;
+    });
+  });
+};
+
+const pathLevelsUp = (relativeUrl) =>
+  relativeUrl.split("/").filter((segment) => segment === "..").length;
+const replaceRelativeUrlsLevels = (relativeUrl) => {
+  return relativeUrl.replace(RELATIVE_URLS_PATH_LEVELS_REGEX, "");
+};
+
+const createFontsMeta = ({
+  foldersUp,
+  absoluteFromRelativePath,
+  fontFileParentUrlPieces,
+  relativePath,
+  parenPath,
+}) => {
+  console.log(
+    "THE MATCHES.font foldersUp",
+    foldersUp,
+    absoluteFromRelativePath,
+    fontFileParentUrlPieces
+  );
+  let absRelPathPieces = absoluteFromRelativePath.split("/");
+  let fontFileName = absRelPathPieces[absRelPathPieces.length - 1];
+
+  let absoluteUrl,
+    fontFullPath,
+    errorMessage = `The @Font-face url contained in file: ${parenPath} as: ${relativePath} Does not exist`;
+
+  if (!foldersUp) {
+    fontFileParentUrlPieces.pop();
+    fontFileParentUrlPieces.push(fontFileName);
+    fontFullPath = fontFileParentUrlPieces.join("/");
+    if (!fs.existsSync(fontFullPath)) {
+      console.log("THE ERROR MESSAGE", errorMessage);
+      throw new Error(errorMessage);
+    }
+    absoluteUrl = `/fonts/${fontFileName}`;
+  } else {
+    let topLevelPosition = fontFileParentUrlPieces.length - (foldersUp + 2);
+    let relativePathTopLevelFolder = fontFileParentUrlPieces[topLevelPosition];
+    let fontFullPath = `/${fontFileParentUrlPieces
+      .splice(0, topLevelPosition + 1)
+      .join("/")}${absoluteFromRelativePath}`;
+    console.log(
+      "THE RELATIVE TOP LEVEL",
+      relativePathTopLevelFolder,
+      topLevelPosition,
+      fontFullPath
+    );
+    if (!fs.existsSync(fontFullPath)) throw new Error(errorMessage);
+    absoluteUrl = `/fonts/${fontFileName}`;
+  }
+
+  FONTS_META.push({
+    fontPath: fontFullPath,
+    relativePath: relativePath,
+    folderTo: "fonts",
+  });
+  return {
+    absoluteUrl: absoluteUrl,
+  };
+};
+const storeFontMeta = () => {
+  FONTS_META = [];
+};
