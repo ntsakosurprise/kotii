@@ -22,6 +22,7 @@ import {
   USER_LAND_ALIAS_STYLES_JSON,
   USER_LAND_ALIAS_STYLES_MODULES,
   USER_LAND_ALIAS_ASSETS_MANIFEST,
+  USER_LAND_ALIAS_STYLES_FONTS,
 } from "kotii-internal/user";
 // import { kotiiInternal } from "kotii-internal";
 
@@ -35,8 +36,10 @@ let GLOBAL_STYLES_REGEX = /global\.+/;
 let CSS_MODULES_REGEX = /\.module\./;
 let JSON_STYLES_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`;
 let JSON_STYLES_MAP_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_MODULES]}`;
+let JSON_STYLES_FONTS_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_FONTS]}`;
 let JSON_STYLES_PATH_FIRSTTIME_USE = false;
 let JSON_STYLES_PATH_MAP_FIRSTTIME_USE = false;
+let JSON_STYLES_FONTS_PATH_FIRSTTIME_USE = false;
 let MODULES_SPECIFIERS = {};
 let MODULES_FILE_SPECIFIER = {};
 let FILE_LOADER_DEFAULT = {
@@ -834,7 +837,8 @@ const getCssFromSass = async (fileUrl, fName) => {
   let modulesResult = "";
   if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
     if (!CSS_MODULES_REGEX.test(fileUrl)) {
-      saveStyles(cssFromSass);
+      // saveStyles(cssFromSass);
+      runFontsCheck(cssFromSass, fileUrl);
       modulesResult = await renderCssModules(
         cssFromSass,
         kotiiModulesMeta,
@@ -853,13 +857,14 @@ const getCssFromSass = async (fileUrl, fName) => {
       kotiiModulesMeta,
       MODULES_SPECIFIERS[fileUrl]
     );
-    saveStyles(modulesResult.css);
+    // saveStyles(modulesResult.css);
+    runFontsCheck(modulesResult.css, fileUrl);
     saveCssModulesMap(
       MODULES_SPECIFIERS[fileUrl].shortName,
       modulesResult.cssModules
     );
   } else {
-    saveStyles(cssFromSass);
+    runFontsCheck(cssFromSass, fileUrl);
     return `export default ${JSON.stringify(fName)}`;
   }
 
@@ -874,7 +879,8 @@ const getCssFromLess = async (fileUrl, fName) => {
 
   if (!GLOBAL_STYLES_REGEX.test(fileUrl)) {
     if (!CSS_MODULES_REGEX.test(fileUrl)) {
-      saveStyles(cssFromLess);
+      // saveStyles(cssFromLess);
+      runFontsCheck(cssFromLess, fileUrl);
       modulesResult = await renderCssModules(
         cssFromLess,
         kotiiModulesMeta,
@@ -892,13 +898,14 @@ const getCssFromLess = async (fileUrl, fName) => {
       MODULES_SPECIFIERS[fileUrl],
       true
     );
-    saveStyles(modulesResult.css);
+    // saveStyles(modulesResult.css);
+    runFontsCheck(modulesResult.css, fileUrl);
     saveCssModulesMap(MODULES_SPECIFIERS[fileUrl].shortName, {
       ...modulesResult.cssModules,
       currentOriginalAst: modulesResult.cssAst,
     });
   } else {
-    saveStyles(cssFromLess);
+    runFontsCheck(cssFromLess, fileUrl);
     return `export default ${JSON.stringify(fName)}`;
   }
 
@@ -1185,6 +1192,17 @@ export function showCodeSnippet(file, line, context = 2) {
     .join("\n");
 }
 
+const runFontsCheck = (css, fileUrl) => {
+  if (FONT_FACE_BLOCK_REGEX.test(css, fileUrl)) {
+    console.log("THE MATCHES.font font-face");
+    css = replaceRelativeFontFaceUrlsToAbsolute(css, fileUrl);
+    if (FONTS_META.length > 0) storeFontMeta();
+    saveStyles(css);
+  } else {
+    saveStyles(css);
+  }
+};
+
 const replaceRelativeFontFaceUrlsToAbsolute = (css, basePath) => {
   console.log("THE MATCHES.font base", basePath);
   return css.replace(FONT_FACE_BLOCK_REGEX, (block) => {
@@ -1275,5 +1293,29 @@ const createFontsMeta = ({
   };
 };
 const storeFontMeta = () => {
+  let json = null;
+  if (
+    !JSON_STYLES_FONTS_PATH_FIRSTTIME_USE &&
+    fs.existsSync(JSON_STYLES_FONTS_PATH)
+  ) {
+    JSON_STYLES_FONTS_PATH_FIRSTTIME_USE = true;
+    json = json;
+  } else if (fs.existsSync(JSON_STYLES_FONTS_PATH)) {
+    json = fs.readFileSync(JSON_STYLES_FONTS_PATH, {
+      encoding: "utf8",
+    });
+  }
+  if (!JSON_STYLES_FONTS_PATH_FIRSTTIME_USE) {
+    JSON_STYLES_FONTS_PATH_FIRSTTIME_USE = true;
+  }
+  let newJson = !json ? json : JSON.parse(json);
+  if (!newJson || newJson.length === 0) {
+    newJson = FONTS_META;
+  } else {
+    newJson.push(FONTS_META);
+  }
+  fs.writeFileSync(JSON_STYLES_FONTS_PATH, JSON.stringify(newJson), {
+    encoding: "utf8",
+  });
   FONTS_META = [];
 };
