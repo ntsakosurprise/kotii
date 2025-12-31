@@ -12,6 +12,7 @@ import { ClientRoutes, ServerRoutes } from "kotii-internal";
 import { AuthProvider } from "kotii-auth";
 import { OptionalDynamiceReduxWrapperLazy } from "./OptionalDynamiceReduxWrapperLazy.js";
 import { LazySuspense } from "kotii-lazy";
+import { Head } from "kotii-head";
 
 logger.setNameSpaces([
   { namespace: "app:start-client", id: "appClient" },
@@ -347,11 +348,10 @@ const kotiiApp = (props) => {
 // }
 
 export {
-  Head,
   Image,
   Svg,
   useAppContext,
   useUniversalEffect,
 } from "kotii-components";
-export { ServerApp };
+export { ServerApp, Head };
 export default App;

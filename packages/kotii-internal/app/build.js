@@ -5,6 +5,7 @@ import React from "react";
 import { LazySuspense } from "kotii-lazy";
 import { Router, Routes } from "kotii-router";
 import { useAppContext } from "kotii-components";
+import { HeadProvider } from "kotii-head";
 const Wrapper = (props) => {
   //const Component = props.component;
   return (
@@ -70,15 +71,17 @@ const ClientRoutes = (props) => {
     });
   }
   return (
-    <Router>
-      <Layout>
-        <Routes
-          routes={refinedRoutes}
-          // suspense={process.env?.KOTII_USE_LAZY ? LazySuspense : null}
-          suspense={LazySuspense}
-        />
-      </Layout>
-    </Router>
+    <HeadProvider>
+      <Router>
+        <Layout>
+          <Routes
+            routes={refinedRoutes}
+            // suspense={process.env?.KOTII_USE_LAZY ? LazySuspense : null}
+            suspense={LazySuspense}
+          />
+        </Layout>
+      </Router>
+    </HeadProvider>
   );
 };
 const ServerRoutes = (props) => {

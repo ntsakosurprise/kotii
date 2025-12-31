@@ -5,6 +5,7 @@ import React from "react";
 import { LazySuspense } from "kotii-lazy";
 import { Router, Routes } from "kotii-router";
 import { useAppContext } from "kotii-components";
+import { HeadProvider } from "kotii-head";
 const Wrapper = props => {
   //const Component = props.component;
   return /*#__PURE__*/React.createElement("div", {
@@ -58,13 +59,13 @@ const ClientRoutes = props => {
       });
     });
   }
-  return /*#__PURE__*/React.createElement(Router, null, /*#__PURE__*/React.createElement(Layout, null, /*#__PURE__*/React.createElement(Routes, {
+  return /*#__PURE__*/React.createElement(HeadProvider, null, /*#__PURE__*/React.createElement(Router, null, /*#__PURE__*/React.createElement(Layout, null, /*#__PURE__*/React.createElement(Routes, {
     routes: refinedRoutes
     // suspense={process.env?.KOTII_USE_LAZY ? LazySuspense : null}
     ,
 
     suspense: LazySuspense
-  })));
+  }))));
 };
 const ServerRoutes = props => {
   const {

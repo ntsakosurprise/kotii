@@ -21,7 +21,7 @@ const madeTarballs = createTarballs(packagesPath, [
   // "kotii-languages",
   // "kotii-theme",
   // "kotii-utils",
-  // "kotii-router",
+  "kotii-router",
   // "kotii-lazy",
   // "kotii-markdown-loader",
   // "kotii-react-modules",
@@ -29,12 +29,13 @@ const madeTarballs = createTarballs(packagesPath, [
   "kotii-creation-time",
   "kotii-runtime",
   // "kotii-markdown-render",
-  // "kotii-components",
+  "kotii-components",
   // "kotii-anzii-plugins-env",
   "kotii-anzii-plugins-react",
   // "kotii-anzii-plugins-viewguard",
   "kotii-anzii-plugins-filerouter",
   "kotii-internal",
+  "kotii-head",
 ]);
 console.log("MADE TARBALLS", madeTarballs);
 // const nodeScriptPath = path.join(packagesPath, "kotii-cli");
