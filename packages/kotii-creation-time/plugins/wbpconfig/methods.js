@@ -37,6 +37,7 @@ import {
 import { kotiiKotiiLandPath } from "../../kotii_paths.js";
 import createRandomeName from "./createRandomName.js";
 import mime from "mime-types";
+import { USER_LAND_ALIAS_STYLES_FONTS } from "../../../kotii-internal/user.js";
 
 methods.init = function () {
   this.listens({
@@ -1691,6 +1692,31 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
     });
 
     fs.writeFileSync(`${appBuildFolder}/${fileName}`, stylesString);
+  }
+  let appFontsPath = USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_FONTS];
+  if (fs.existsSync(appFontsPath)) {
+    let appFonts = JSON.parse(
+      fs.readFileSync(appFontsPath, {
+        encoding: "utf8",
+      })
+    );
+    self.debug("THE APP FONTS", appFonts);
+    if (appFonts.length > 0) {
+      appFonts.forEach((font) => {
+        let fontsFolder = `${appBuildFolder}/${font.folderTo}`;
+        let fontFilePath = `${fontsFolder}/${font.fileName}`;
+        // let fileContents = fs.readFileSync(font.fontPath, {
+        //   encoding: "utf-8",
+        // });
+        if (!fs.existsSync(fontsFolder)) {
+          fs.mkdirSync(fontsFolder);
+          // fs.writeFileSync(fontFilePath, fileContents, { encoding: "utf-8" });
+          fs.copyFileSync(font.fontPath, fontFilePath);
+        } else {
+          fs.copyFileSync(font.fontPath, fontFilePath);
+        }
+      });
+    }
   }
 };
 
