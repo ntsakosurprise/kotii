@@ -5,12 +5,9 @@ class SsgInteractive {
     this.pao = pao;
     this.init = methods.init;
     this.React = React;
-    this.handleStaticGeneration = methods.handleStaticGeneration;
-    this.renderApp = methods.renderApp;
-    this.cleanBuildFolder = methods.cleanBuildFolder;
-    this.copyPublicToDist = methods.copyPublicToDist;
-    this.createDistFolder = methods.createDistFolder;
-    this.savePageToFile = methods.savePageToFile;
+    this.handleStaticInteractivity = methods.handleStaticInteractivity;
+    this.extractPageInteractiveParts = methods.extractPageInteractiveParts;
+    this.generatePageJs = methods.generatePageJs;
   }
 }
 export default SsgInteractive;
