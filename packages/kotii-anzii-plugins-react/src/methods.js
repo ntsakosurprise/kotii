@@ -197,12 +197,12 @@ methods.runReactView = function (data) {
     }
 
     let goodies = self.comps;
-    // let authUser = {
-    //   name: "Ntsako Surprise",
-    //   age: "Grown man",
-    //   timeNow: new Date(),
-    // };
+
     try {
+      let staticJavascripts = await self.generatePageStaticParts(
+        self.getCurrentRouteComponent(view)
+      );
+      self.debug("THE STATIC PART JS FROM SSG", staticJavascripts);
       const context = createHeadStore();
       self.debug("THE HEAD STORE", context);
       html = renderToString(
@@ -759,5 +759,37 @@ methods.createAppElement = function ({
   // html = renderToString(
   //   sheet.collectStyles(appElement)
   // );
+};
+methods.generatePageStaticParts = function (Component) {
+  const self = this;
+  self.debug("THE STATIC PART PAGE", Component);
+
+  new Promise((reject, resolve) => {
+    self.emit({
+      type: "generate-ssg-interactivity",
+      data: {
+        payload: { type: "react", Page: Component },
+        callback: (err, pageJs) => {
+          self.debug("THE STATIC PART PAGE RESULTS", err, pageJs);
+          if (!err) return resolve(pageJs);
+          reject(err);
+        },
+      },
+    });
+  });
+};
+methods.getCurrentRouteComponent = function (view) {
+  const self = this;
+  self.debug("THE STATIC PART ROUTE", view);
+  let RouteComponent = "";
+  let compsList = Object.keys(self.comps.comps);
+  self.debug("THE COMPONENTS LIST", compsList);
+  for (let i = 0; i < self.comps.routes.length; i++) {
+    if (self.comps.routes[i].path === view.match) {
+      RouteComponent = self.comps.routes[i].component;
+      break;
+    }
+  }
+  return RouteComponent;
 };
 export default methods;
