@@ -3,7 +3,7 @@ import React from "react";
 const methods = {};
 import fs from "fs";
 import path from "path";
-import { elementAt } from "rxjs-compat/operator/elementAt";
+
 methods.init = function () {
   this.listens({
     "generate-ssg-interactivity": this.handleStaticInteractivity.bind(this),
@@ -17,7 +17,7 @@ methods.handleStaticInteractivity = function (data) {
 
   self
     .extractPageInteractiveParts(Page, type)
-    .then((extracedInteractivePats) => {
+    .then(function (extracedInteractivePats) {
       self.generatePageJs(extracedInteractivePats).then((pageJs) => {
         data.callback(null, {
           pageJs,
@@ -26,6 +26,7 @@ methods.handleStaticInteractivity = function (data) {
     })
     .catch((err) => {
       self.debug("RENDERAPP REJECTED", err);
+      data.callback(err);
     });
 };
 methods.generatePageJs = function (views) {
@@ -65,15 +66,22 @@ methods.generatePageJs = function (views) {
 
 methods.extractPageInteractiveParts = function (Page, vendorType) {
   const self = this;
-  if (vendorType === "react") {
-    self.extractForReactPage(<Page />);
-  }
+
+  return new Promise((resolve, rejects) => {
+    if (vendorType === "react") {
+      let props = self.extractForReactPage(React.createElement(Page));
+      resolve(props);
+    }
+  });
 };
 
 methods.extractForReactPage = function (element) {
   const self = this;
 
   if (!React.isValidElement(element)) return null;
+
+  const elementProps = { ...element.props };
+  self.debug("THE ELEMENT PROPS", elementProps);
 };
 
 export default methods;

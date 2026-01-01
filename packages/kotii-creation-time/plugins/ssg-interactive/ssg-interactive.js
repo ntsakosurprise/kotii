@@ -7,6 +7,7 @@ class SsgInteractive {
     this.handleStaticInteractivity = methods.handleStaticInteractivity;
     this.extractPageInteractiveParts = methods.extractPageInteractiveParts;
     this.generatePageJs = methods.generatePageJs;
+    this.extractForReactPage = methods.extractForReactPage;
   }
 }
 export default SsgInteractive;
