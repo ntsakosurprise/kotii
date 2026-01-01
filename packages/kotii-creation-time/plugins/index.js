@@ -12,6 +12,7 @@ import Init from "./init/index.js";
 import Interpreter from "./interpreter/index.js";
 import Markdownr from "./markdownr/index.js";
 // import ReactView from "./react/reactview.js";
+import SsgInteractive from "./ssg-interactive/ssg-interactive.js";
 
 import ScriptsUtils from "./scripts-util/scripts-util.js";
 import ServerBuild from "./server-build/index.js";
@@ -42,6 +43,7 @@ export {
   Static,
   WebpackConfig,
   ViewGuard,
+  SsgInteractive,
 };
 export default {
   Interpreter,
@@ -65,4 +67,5 @@ export default {
   KotiiCatchAll,
   Markdownr,
   ViewGuard,
+  SsgInteractive,
 };
