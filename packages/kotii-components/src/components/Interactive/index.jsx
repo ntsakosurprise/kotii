@@ -1,5 +1,6 @@
 import React from "react";
 
-export const Interactive = (children, props) => {
-  return React.cloneElement(children, { ...props, "data-interactive": true });
+export const Interactive = ({ children }) => {
+  console.log("THE INTERACTIVE CHILDREN", children);
+  return React.cloneElement(children, { "data-interactive": true });
 };

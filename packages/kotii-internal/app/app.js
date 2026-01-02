@@ -352,6 +352,7 @@ export {
   Svg,
   useAppContext,
   useUniversalEffect,
+  Interactive,
 } from "kotii-components";
 export { ServerApp, Head };
 export default App;

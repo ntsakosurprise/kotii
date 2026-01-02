@@ -68,7 +68,7 @@ importers:
         version: 8.57.1
       eslint-plugin-jest:
         specifier: ^27.9.0
-        version: 27.9.0(eslint@8.57.1)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5)
+        version: 27.9.0(eslint@8.57.1)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5)))(typescript@4.9.5)
       eslint-plugin-react:
         specifier: ^7.30.1
         version: 7.37.5(eslint@8.57.1)
@@ -92,7 +92,7 @@ importers:
         version: 2.8.8
       ts-jest:
         specifier: ^29.1.1
-        version: 29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5)
+        version: 29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(esbuild@0.18.20)(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5)))(typescript@4.9.5)
       typescript:
         specifier: ^4.9.4
         version: 4.9.5
@@ -105,6 +105,9 @@ importers:
       arg:
         specifier: ^4.1.3
         version: 4.1.3
+      kotii-components:
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz
+        version: file:packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-head:
         specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz
         version: file:packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -337,7 +340,7 @@ importers:
         version: 10.9.2(@types/node@24.10.1)(typescript@4.9.5)
       webpack:
         specifier: ^5.69.1
-        version: 5.103.0(webpack-cli@4.10.0)
+        version: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
       webpack-cli:
         specifier: ^4.9.2
         version: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
@@ -880,8 +883,8 @@ importers:
         specifier: 1.0.0-beta.3.0
         version: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-components:
-        specifier: 1.0.0-beta.1.0
-        version: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz
+        version: file:packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-head:
         specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz
         version: file:packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1143,7 +1146,7 @@ importers:
         version: 4.0.2(webpack@5.103.0)
       ts-jest:
         specifier: ^29.1.1
-        version: 29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5)
+        version: 29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(esbuild@0.18.20)(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5)))(typescript@4.9.5)
       webpack:
         specifier: ^5.69.1
         version: 5.103.0(webpack-cli@4.10.0)
@@ -1686,7 +1689,7 @@ importers:
         version: 10.9.2(@types/node@24.10.1)(typescript@4.9.5)
       webpack:
         specifier: ^5.69.1
-        version: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+        version: 5.103.0(webpack-cli@4.10.0)
       webpack-cli:
         specifier: ^4.9.2
         version: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
@@ -3713,7 +3716,7 @@ packages:
       anzii: 8.0.1
 
   '@kotii/anzii-plugins-react@file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz':
-    resolution: {integrity: sha512-HbpnW6BqHbnRZ21fckY7+WdL+sojHdMab356Ajeu6exAnf28V8eq67Arua3eYvcSB1dH5TVeTJsIrIMqdOAFyw==, tarball: file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz}
+    resolution: {integrity: sha512-qBfIVWWHWTz58My9OZz/TQ3PkZGgbOlVk/2Z9NzjS0TNIAPy4deNUkg+JnEMCjAC+54baQqZ0mj5IMqKngn2Eg==, tarball: file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz}
     version: 1.0.0-beta.1.0
     peerDependencies:
       anzii: 8.0.1
@@ -8952,19 +8955,33 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
 
+  kotii-components@file:packages/kotii-components/kotii-components-1.0.0-beta.1.0.tgz:
+    resolution: {integrity: sha512-h7f6OF0TpLmo8ZmPq9z8F0YVYNn9Od6mq16rvXy+EIWsQqMxlsobUqpBh7nQGirOjwDfgy3jwhSjc8YmdwS84w==, tarball: file:packages/kotii-components/kotii-components-1.0.0-beta.1.0.tgz}
+    version: 1.0.0-beta.1.0
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
+
+  kotii-components@file:packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz:
+    resolution: {integrity: sha512-96uItmjl8ms0xy6IhghZSxy7LiLkNB/kmlcbxS5eHT7UZqSisrMXgGo/IEVD80wmV4c650WCcQgQOIIesBm2hQ==, tarball: file:packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz}
+    version: 1.0.0-beta.2.0
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
+
   kotii-creation-time@file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.2.0.tgz:
-    resolution: {integrity: sha512-Edl9khBGE0+2AUKABmkvvO1YsH9570hujS5qipRblj4r3SoHp7wmPiuaFG7BWLtgBfB74Hi/FTQi6SequQ5sMQ==, tarball: file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.2.0.tgz}
+    resolution: {integrity: sha512-n0F7ikaHPUpIMtboL1lazNHrFmF+a+JOQVnPXGlTD6EqBqpGfDKSoIZl1Dfo39ZbjZL+Ybd9dAR1Kddc5IPRsA==, tarball: file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.2.0.tgz}
     version: 1.0.0-beta.2.0
 
   kotii-head@file:packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz:
-    resolution: {integrity: sha512-qluSd1iUggohz9qH83HyV2CeA78FVpdIGgw7rwHpfiQJls9qSg+a0xNFddJSL7kwGwPADO9kBd+mkDA1+bqPbQ==, tarball: file:packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz}
+    resolution: {integrity: sha512-g+H332FKFw+lb2MhHmNjLlKOp2t4gVP9U3DrMgUrKPd6BrdmNimXzgi3FvbOtw4Z/8beijWWMXvf0akpIrxGYw==, tarball: file:packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz}
     version: 1.0.0-beta.1.0
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
 
   kotii-internal@file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz:
-    resolution: {integrity: sha512-8gPGz6Kqo4Dcbj95FKoaSuiaJOfP/C12zWDCmEC32t0oIZRufK8ieSsCe13txfM6oqxgwOl5KtGkNjRLvCWaHg==, tarball: file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz}
+    resolution: {integrity: sha512-QDbE4phHUvY8w4ZUTUI8OLavbGI3x9rSmXwtMfhszJWLlF9mprXtUaRfm6FCglb8WeiiPvwLRpjKFbHCeVvaUw==, tarball: file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz}
     version: 1.0.0-beta.1.0
     peerDependencies:
       react: ^18.2.0
@@ -17065,7 +17082,7 @@ snapshots:
 
   '@webpack-cli/configtest@1.2.0(webpack-cli@4.10.0)(webpack@5.103.0)':
     dependencies:
-      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+      webpack: 5.103.0(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
 
   '@webpack-cli/configtest@2.1.1(webpack-cli@5.1.4)(webpack@5.103.0)':
@@ -17091,7 +17108,7 @@ snapshots:
     dependencies:
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
     optionalDependencies:
-      webpack-dev-server: 4.15.2(debug@4.4.3)(webpack-cli@4.10.0)(webpack@5.103.0)
+      webpack-dev-server: 4.15.2(webpack-cli@4.10.0)(webpack@5.103.0)
 
   '@webpack-cli/serve@2.0.5(webpack-cli@5.1.4)(webpack@5.103.0)':
     dependencies:
@@ -17626,7 +17643,7 @@ snapshots:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+      webpack: 5.103.0(webpack-cli@4.10.0)
 
   babel-loader@9.2.1(@babel/core@7.28.5)(webpack@5.103.0):
     dependencies:
@@ -19475,7 +19492,7 @@ snapshots:
     optionalDependencies:
       source-map: 0.6.1
 
-  eslint-plugin-jest@27.9.0(eslint@8.57.1)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5):
+  eslint-plugin-jest@27.9.0(eslint@8.57.1)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5)))(typescript@4.9.5):
     dependencies:
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.1)(typescript@4.9.5)
       eslint: 8.57.1
@@ -21927,6 +21944,18 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       react-helmet: 6.1.0(react@18.3.1)
 
+  kotii-components@file:packages/kotii-components/kotii-components-1.0.0-beta.1.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-helmet: 6.1.0(react@18.3.1)
+
+  kotii-components@file:packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-helmet: 6.1.0(react@18.3.1)
+
   kotii-creation-time@file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.2.0.tgz(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:
       '@babel/cli': 7.28.3(@babel/core@7.28.5)
@@ -22034,7 +22063,7 @@ snapshots:
       anzii: 8.0.1
       arg: 4.1.3
       kotii-auth: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-components: 1.0.0-beta.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      kotii-components: file:packages/kotii-components/kotii-components-1.0.0-beta.1.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-head: file:packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-runtime: 1.0.0-beta.1.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))
       react: 18.3.1
@@ -26147,26 +26176,6 @@ snapshots:
       esbuild: 0.18.20
       jest-util: 30.2.0
 
-  ts-jest@29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5):
-    dependencies:
-      bs-logger: 0.2.6
-      fast-json-stable-stringify: 2.1.0
-      handlebars: 4.7.8
-      jest: 29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5))
-      json5: 2.2.3
-      lodash.memoize: 4.1.2
-      make-error: 1.3.6
-      semver: 7.7.3
-      type-fest: 4.41.0
-      typescript: 4.9.5
-      yargs-parser: 21.1.1
-    optionalDependencies:
-      '@babel/core': 7.28.5
-      '@jest/transform': 29.7.0
-      '@jest/types': 30.2.0
-      babel-jest: 29.7.0(@babel/core@7.28.5)
-      jest-util: 30.2.0
-
   ts-loader@9.5.4(typescript@4.9.5)(webpack@5.103.0):
     dependencies:
       chalk: 4.1.2
@@ -26592,10 +26601,10 @@ snapshots:
       import-local: 3.2.0
       interpret: 2.2.0
       rechoir: 0.7.1
-      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+      webpack: 5.103.0(webpack-cli@4.10.0)
       webpack-merge: 5.10.0
     optionalDependencies:
-      webpack-dev-server: 4.15.2(debug@4.4.3)(webpack-cli@4.10.0)(webpack@5.103.0)
+      webpack-dev-server: 4.15.2(webpack-cli@4.10.0)(webpack@5.103.0)
 
   webpack-cli@4.10.0(webpack@5.103.0):
     dependencies:
@@ -26637,7 +26646,7 @@ snapshots:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.3.3
-      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+      webpack: 5.103.0(webpack-cli@4.10.0)
 
   webpack-dev-server@4.15.2(debug@4.4.3)(webpack-cli@4.10.0)(webpack@5.103.0):
     dependencies:
