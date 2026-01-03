@@ -2,7 +2,9 @@
 import React from "react";
 const methods = {};
 import fs from "fs";
-import path from "path";
+import path, { resolve } from "path";
+import { rejects } from "assert";
+import { renderToStaticMarkup } from "react-dom/server";
 
 methods.init = function () {
   this.listens({
@@ -14,14 +16,14 @@ methods.handleStaticInteractivity = function (data) {
   const pao = self.pao;
   const { payload } = data;
   const { type = "react", Page } = payload;
+  console.log("HANDLE STATIC INTERACTIVE", data);
 
   self
     .extractPageInteractiveParts(Page, type)
     .then(function (extracedInteractivePats) {
-      self.generatePageJs(extracedInteractivePats).then((pageJs) => {
-        data.callback(null, {
-          pageJs,
-        });
+      let pageJs = self.generatePageJs(extracedInteractivePats);
+      data.callback(null, {
+        pageJs,
       });
     })
     .catch((err) => {
@@ -31,19 +33,11 @@ methods.handleStaticInteractivity = function (data) {
 };
 methods.generatePageJs = function (views) {
   const self = this;
+  return "THE PAGE JS";
 
-  return new Promise((resolve) => {
-    self.emit({
-      type: "handle-react-static",
-      data: {
-        views: views,
-        staticRender: true,
-        callback: (data) => {
-          resolve(data);
-        },
-      },
-    });
-  });
+  // return new Promise((resolve) => {
+  //  resolve("THE PAGE JS")
+  // });
 
   // {
   //   view: {
@@ -67,21 +61,75 @@ methods.generatePageJs = function (views) {
 methods.extractPageInteractiveParts = function (Page, vendorType) {
   const self = this;
 
+  console.log("THE EXTRACT TREE PAGE", Page, typeof Page);
   return new Promise((resolve, rejects) => {
     if (vendorType === "react") {
-      let props = self.extractForReactPage(React.createElement(Page));
-      resolve(props);
+      // let jsxTree = React.createElement(Page)
+      // let treeFromPage = jsxTree()
+      // console.log("THE EXTRACT TREE JSX", treeFromPage)
+      let ReactRenderTimeInterceptor =
+        self.reactRenderTimeInterceptor.bind(self);
+
+      let pageElement;
+      try {
+        pageElement = self.normalizeToReactElement(Page);
+      } catch (err) {
+        console.log("THE PAGE ELEMENT CHECK ERROR", err);
+      }
+      // let tree = self.extractForReactPage();
+      console.log("THE EXTRACT TREE", ReactRenderTimeInterceptor);
+      let html = renderToStaticMarkup(
+        <ReactRenderTimeInterceptor>{pageElement}</ReactRenderTimeInterceptor>
+      );
+      console.log("THE EXTRACT HTMLE", html);
+      resolve(html);
     }
   });
+};
+methods.reactRenderTimeInterceptor = function ({ children }) {
+  const self = this;
+
+  return self.interactionsExtractor(children);
+};
+methods.interactionsExtractor = function (element) {
+  const self = this;
+
+  // Handle arrays (React.Children.map may produce them)
+  if (Array.isArray(element)) {
+    return element.map((el) => self.interactionsExtractor(el));
+  }
+
+  // Not a React element → return as-is (string, number, null)
+  if (!React.isValidElement(element)) return element;
+
+  const elementProps = { ...element.props };
+
+  if (elementProps.children) {
+    elementProps.children = React.Children.map(elementProps.children, (child) =>
+      self.interactionsExtractor(child)
+    );
+  }
+
+  return React.cloneElement(element, elementProps);
 };
 
 methods.extractForReactPage = function (element) {
   const self = this;
+};
+methods.normalizeToReactElement = function (input) {
+  // Already a React element → use as-is
+  if (React.isValidElement(input)) {
+    return input;
+  }
 
-  if (!React.isValidElement(element)) return null;
+  // Component function → create element
+  if (typeof input === "function") {
+    return React.createElement(input);
+  }
 
-  const elementProps = { ...element.props };
-  self.debug("THE ELEMENT PROPS", elementProps);
+  throw new Error(
+    "extractPageInteractiveParts expected a React element or component function"
+  );
 };
 
 export default methods;
