@@ -11,6 +11,9 @@ class Ssg {
     this.copyPublicToDist = methods.copyPublicToDist;
     this.createDistFolder = methods.createDistFolder;
     this.savePageToFile = methods.savePageToFile;
+    this.readFiles = methods.readFiles;
+    this.postBuildStaticResources = methods.postBuildStaticResources;
+    this.copyImageFilesSync = methods.copyImageFilesSync;
   }
 }
 export default Ssg;
