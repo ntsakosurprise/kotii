@@ -53,6 +53,8 @@ class ReactView {
     this.createAppElement = methods.createAppElement;
     this.generatePageStaticParts = methods.generatePageStaticParts;
     this.getCurrentRouteComponent = methods.getCurrentRouteComponent;
+    this.doStyledSheets = methods.doStyledSheets;
+    this.renderStaticFullPage = methods.renderStaticFullPage;
   }
 }
 

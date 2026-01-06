@@ -85,19 +85,20 @@ methods.handleReactStaticViews = function (data) {
   self.effectsData = {};
 
   self.debug("THE VIEW DATA", data);
-  const { views } = data;
+  const { views, info } = data;
   let mappedPromises = views.map(async (view) => {
     let gotHtmlView = await self.runReactView({
       view: { match: view.path },
       route: view,
       staticRender: true,
+      info: info,
     });
-    // self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
+    self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
     return { content: gotHtmlView, name: view.name };
   });
   Promise.all(mappedPromises).then((htmlViews) => {
-    // self.debug("ALL VIEWS PROMISES MAPPED", htmlViews);
-    self.callback(htmlViews);
+    self.debug("ALL VIEWS PROMISES MAPPED", self.styledTags);
+    self.callback({ htmlViews, styles: self.styledTags });
   });
 };
 methods.handleReactSpa = function (data) {
@@ -124,9 +125,16 @@ methods.handleReceiveEnvVariables = function (data) {
 };
 methods.runReactView = function (data) {
   const self = this;
+  const { REACTAPP, React } = self;
 
   const { renderToString, HeadHelmet, meta } = self;
-  const { view, staticRender = false, route = null, authUser = null } = data;
+  const {
+    view,
+    staticRender = false,
+    route = null,
+    authUser = null,
+    info = null,
+  } = data;
   const { app } = meta;
   const { stateVendor = "" } = app;
   self.debug("THE PROCESS.REACT", process);
@@ -199,28 +207,55 @@ methods.runReactView = function (data) {
     let goodies = self.comps;
 
     try {
-      let staticJavascripts = await self.generatePageStaticParts(
-        self.getCurrentRouteComponent(view)
-      );
-      self.debug("THE STATIC PART JS FROM SSG", staticJavascripts);
       const context = createHeadStore();
       self.debug("THE HEAD STORE", context);
-      html = renderToString(
-        sheet.collectStyles(
-          self.createAppElement({
-            store,
-            layoutRoot,
-            goodies,
-            authUser,
-            view,
-            context,
-          })
-        )
+      let staticJavascripts;
+      let CurrentRouteComp = self.getCurrentRouteComponent(view);
+      self.debug("THE REACT COMPONENT FROM GENERATE");
+      let Page = sheet.collectStyles(
+        self.createAppElement({
+          store,
+          layoutRoot,
+          goodies,
+          authUser,
+          view,
+          context,
+        })
       );
-      const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
-      self.styledTags = styleTags;
-      self.debug("STYLED-COMPONENTS STYLE TAGS", styleTags);
-      self.debug("THE HEAD STORE AFTER CREATE HEAD", context.getEntries());
+      html = await self.generatePageStaticParts(Page);
+      self.debug("THE STATIC PART JS FROM SSG", html.extracedInteractivePats);
+      console.log("THE FINAL STATE", store, store.getState());
+      const finalState = store.getState() || store;
+      const helmetGenerated = HeadHelmet.renderStatic();
+      self.doStyledSheets(sheet);
+
+      // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
+      const fullPage = self.renderStaticFullPage({
+        html: html.extracedInteractivePats,
+        head: helmetGenerated,
+        info,
+      });
+      self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
+      resolve(fullPage);
+
+      // const context = createHeadStore();
+      // self.debug("THE HEAD STORE", context);
+      // html = renderToString(
+      //   sheet.collectStyles(
+      //     self.createAppElement({
+      //       store,
+      //       layoutRoot,
+      //       goodies,
+      //       authUser,
+      //       view,
+      //       context,
+      //     })
+      //   )
+      // );
+      // const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
+      // self.styledTags = styleTags;
+      // self.debug("STYLED-COMPONENTS STYLE TAGS", styleTags);
+      // self.debug("THE HEAD STORE AFTER CREATE HEAD", context.getEntries());
     } catch (error) {
       // handle error
       console.error(error);
@@ -228,20 +263,20 @@ methods.runReactView = function (data) {
       sheet.seal();
     }
 
-    console.log("THE FINAL STATE", store, store.getState());
-    const finalState = store.getState() || store;
-    const helmetGenerated = HeadHelmet.renderStatic();
-    // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
-    const fullPage = self.renderFullPage({
-      html,
-      preloadedState: finalState,
-      staticRender,
-      view,
-      head: helmetGenerated,
-      authUser,
-    });
-    self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
-    resolve(fullPage);
+    // console.log("THE FINAL STATE", store, store.getState());
+    // const finalState = store.getState() || store;
+    // const helmetGenerated = HeadHelmet.renderStatic();
+    // // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
+    // const fullPage = self.renderFullPage({
+    //   html,
+    //   preloadedState: finalState,
+    //   staticRender,
+    //   view,
+    //   head: helmetGenerated,
+    //   authUser,
+    // });
+    // self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
+    // resolve(fullPage);
   });
 };
 
@@ -274,6 +309,7 @@ methods.renderFullPage = function ({
   const self = this;
   if (!self.styleTags) self.doKotiiStyles();
   if (self?.htmlPageSettings) self.doPageSettings();
+  self.debug("THE HTML IN RENDER FULL", html);
 
   self.debug("THE PRELOADED STATE", preloadedState);
   return `
@@ -292,13 +328,48 @@ methods.renderFullPage = function ({
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
-			${!staticRender ? self.includeScripts(preloadedState, authUser) : null}
+			${
+        !staticRender
+          ? self.includeScripts(preloadedState, authUser)
+          : self.includeScripts(preloadedState, authUser)
+      }
 			
 		</body>
 		</html>
     `;
 };
+methods.renderStaticFullPage = function ({
+  html,
+  info,
+  head,
+  pageJs = "test.js",
+} = props) {
+  const self = this;
 
+  if (self?.htmlPageSettings) self.doPageSettings();
+  self.debug("THE HTML IN RENDER FULL", html);
+
+  return `
+		<!doctype html>
+		<html ${head.htmlAttributes.toString()}> 
+    <head>
+    ${head?.title.toString()}
+    ${head?.meta.toString()}
+
+    ${self?.pageSettings || ""}
+    <link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="css/${
+      info.css
+    }" />
+    </head>
+		<body ${head.bodyAttributes.toString()}>
+		 <div id="root">${html}</div>
+		 <script src="js/${info.js}" ></script>
+     <script src="js/${pageJs}" ></script>
+			
+		</body>
+		</html>
+    `;
+};
 methods.includeScripts = function (preloadedState, authUser) {
   const self = this;
   const { serialize } = self;
@@ -322,10 +393,7 @@ methods.includeScripts = function (preloadedState, authUser) {
     window.__KOTII_AUTH_USER__ = ${serialize(JSON.stringify(authUser))}
     window.__KOTII_APP_URL__ = ${JSON.stringify(process?.env?.KOTII_APP_URL)}
     ${self.getProductionProcess()}
-   
-    
-     
-   
+  
    </script>
    <script src="/server.js" ></script>
    ${possibleExtraScripts}
@@ -485,14 +553,14 @@ methods.doKotiiStyles = function () {
         : true
       : null;
     if (process?.tailwindGenerated)
-      self.styleTags = `<link rel="stylesheet" id="tailwind-stylesheet-link" type="text/css" href="/${process.tailwindStyleSheetName}">`;
+      self.styleTags = `<link rel="stylesheet" id="tailwind-stylesheet-link" type="text/css" href="/${process.tailwindStyleSheetName}" />`;
     if (!jsonStyles) return null;
     if (process?.useLinkStyleTag) {
       self.styleTags = `${
         self?.styleTags || ""
       }<link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="/${
         process?.styleSheetName || "index.css"
-      }">`;
+      }" />`;
     } else {
       self.styleTags = `${
         self?.styleTags || ""
@@ -520,7 +588,7 @@ methods.doPageSettings = function () {
   if (self.htmlPageSettings?.links) {
     const links = self.htmlPageSettings.links;
     links.forEach((link) => {
-      possibleLinks = `${possibleLinks} <link rel="stylesheet" href="${link.href}"`;
+      possibleLinks = `${possibleLinks} <link rel="stylesheet" href="${link.href}"/>`;
     });
   }
 
@@ -764,7 +832,7 @@ methods.generatePageStaticParts = function (Component) {
   const self = this;
   self.debug("THE STATIC PART PAGE", Component);
 
-  new Promise((reject, resolve) => {
+  return new Promise((resolve, reject) => {
     self.emit({
       type: "generate-ssg-interactivity",
       data: {
@@ -790,6 +858,24 @@ methods.getCurrentRouteComponent = function (view) {
       break;
     }
   }
-  return RouteComponent;
+  self.debug("THE STATIC ROUTE", self.comps.comps[RouteComponent]);
+  return self.comps.comps[RouteComponent];
 };
+methods.doStyledSheets = function (sheet, isStatic = false) {
+  const self = this;
+
+  if (!isStatic) {
+    const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
+    self.styledTags = styleTags;
+  } else {
+    const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
+    self.styleTags += styleTags;
+  }
+};
+// methods.addStyledCssToFile = function(){
+
+//   const self = this
+
+// }
+
 export default methods;
