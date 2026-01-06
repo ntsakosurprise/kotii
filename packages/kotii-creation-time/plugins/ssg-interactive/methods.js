@@ -23,7 +23,7 @@ methods.handleStaticInteractivity = function (data) {
     .then(function (extracedInteractivePats) {
       let pageJs = self.generatePageJs(extracedInteractivePats);
       data.callback(null, {
-        pageJs,
+        extracedInteractivePats,
       });
     })
     .catch((err) => {

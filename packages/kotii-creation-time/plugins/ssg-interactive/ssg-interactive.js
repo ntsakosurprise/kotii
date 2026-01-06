@@ -10,6 +10,8 @@ class SsgInteractive {
     this.extractForReactPage = methods.extractForReactPage;
     this.reactRenderTimeInterceptor = methods.reactRenderTimeInterceptor;
     this.interactionsExtractor = methods.interactionsExtractor;
+    this.withInterceptor = methods.withInterceptor;
+    this.normalizeToReactElement = methods.normalizeToReactElement;
   }
 }
 export default SsgInteractive;
