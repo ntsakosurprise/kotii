@@ -88,13 +88,18 @@ methods.handleReactStaticViews = function (data) {
   const { views, info } = data;
   let mappedPromises = views.map(async (view) => {
     let gotHtmlView = await self.runReactView({
-      view: { match: view.path },
+      view: { match: view.path, htmlPath: view.htmlPath },
       route: view,
       staticRender: true,
       info: info,
     });
     self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
-    return { content: gotHtmlView, name: view.name };
+    return {
+      content: gotHtmlView,
+      name: view.name,
+      staticPath: view?.staticPath || "",
+      htmlPath: view?.htmlPath || "",
+    };
   });
   Promise.all(mappedPromises).then((htmlViews) => {
     self.debug("ALL VIEWS PROMISES MAPPED", self.styledTags);
@@ -137,7 +142,8 @@ methods.runReactView = function (data) {
   } = data;
   const { app } = meta;
   const { stateVendor = "" } = app;
-  self.debug("THE PROCESS.REACT", process);
+
+  self.debug("THE PROCESS.REACT");
 
   // Grab the initial state from our Redux store
   return new Promise(async (resolve) => {
@@ -209,9 +215,9 @@ methods.runReactView = function (data) {
     try {
       const context = createHeadStore();
       self.debug("THE HEAD STORE", context);
-      let staticJavascripts;
+      let generatedPage;
       let CurrentRouteComp = self.getCurrentRouteComponent(view);
-      self.debug("THE REACT COMPONENT FROM GENERATE");
+      self.debug("THE REACT COMPONENT FROM GENERATE", view);
       let Page = sheet.collectStyles(
         self.createAppElement({
           store,
@@ -222,8 +228,10 @@ methods.runReactView = function (data) {
           context,
         })
       );
-      html = await self.generatePageStaticParts(Page);
-      self.debug("THE STATIC PART JS FROM SSG", html.extracedInteractivePats);
+      generatedPage = await self.generatePageStaticParts(Page);
+      const { html, pageJs = "" } = generatedPage;
+
+      self.debug("THE STATIC PART JS FROM SSG", pageJs);
       console.log("THE FINAL STATE", store, store.getState());
       const finalState = store.getState() || store;
       const helmetGenerated = HeadHelmet.renderStatic();
@@ -231,7 +239,8 @@ methods.runReactView = function (data) {
 
       // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
       const fullPage = self.renderStaticFullPage({
-        html: html.extracedInteractivePats,
+        html,
+        pageJs,
         head: helmetGenerated,
         info,
       });
@@ -301,6 +310,7 @@ methods.renderFullPage = function ({
   html,
   preloadedState,
   staticRender,
+
   view,
   head,
   scripts = [],
@@ -341,6 +351,7 @@ methods.renderFullPage = function ({
 methods.renderStaticFullPage = function ({
   html,
   info,
+
   head,
   pageJs = "test.js",
 } = props) {
@@ -364,7 +375,7 @@ methods.renderStaticFullPage = function ({
 		<body ${head.bodyAttributes.toString()}>
 		 <div id="root">${html}</div>
 		 <script src="js/${info.js}" ></script>
-     <script src="js/${pageJs}" ></script>
+     <script >${pageJs}</script>
 			
 		</body>
 		</html>
@@ -569,7 +580,7 @@ methods.doKotiiStyles = function () {
         .replaceAll(",", " ")}</style>`;
     }
   } else {
-    self.styleTags = `<link rel="stylesheet" type="text/css" href="/index.css">`;
+    self.styleTags = `<link rel="stylesheet" type="text/css" href="/css/index.css">`;
   }
 };
 
@@ -752,6 +763,7 @@ methods.createAppElement = function ({
   const self = this;
   const { REACTAPP, React } = self;
   let appElement;
+  console.log("THE LAYOUT IN", layoutRoot);
 
   if (!layoutRoot) {
     appElement = React.createElement(
