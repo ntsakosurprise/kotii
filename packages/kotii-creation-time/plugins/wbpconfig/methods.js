@@ -203,10 +203,11 @@ methods.configureWebPack = function (
       contextApp.appFolder,
       contextApp.appManifest.build
     )}`,
-    staticFolder: `${path.resolve(
+    assetsFolder: `${path.resolve(
       contextApp.appFolder,
-      contextApp.appManifest.static
+      contextApp.appManifest.assets
     )}`,
+    appAssetsPublic: contextApp.appAssetsPublic,
     pagesFolder: contextApp.appPagesFolder,
     appSrc: contextApp.appSrc,
     runOnComplete: self.startWatchingAppFiles.bind(self),
@@ -1669,11 +1670,14 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
       process.useLinkStyleTag
     );
 
-    let stylesString = JSON.parse(
+    let stylesJson = JSON.parse(
       fs.readFileSync(stylesPath, { encoding: "utf-8" })
-    )
-      .toString()
-      .replaceAll(",", " ");
+    );
+    console.log("JSON STYLES STRING AS JSON", stylesJson);
+
+    let stylesString = stylesJson.toString().replaceAll(",", " ");
+    console.log("THE STRING ITS SELF", stylesString);
+
     let styleAst = createCssAst([stylesString]);
 
     self.stylesObject = {};
@@ -1691,10 +1695,12 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
       }
     });
 
-    fs.writeFileSync(`${appBuildFolder}/${fileName}`, stylesString);
+    fs.mkdirSync(`${appBuildFolder}/app/css`);
+    fs.writeFileSync(`${appBuildFolder}/app/css/${fileName}`, stylesString);
   }
   let appFontsPath = USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_FONTS];
-  if (fs.existsSync(appFontsPath)) {
+  console.log("THE APP FONTS PATH", appFontsPath);
+  if (fs.existsSync(appFontsPath) && fs.statSync(appFontsPath)?.size > 0) {
     let appFonts = JSON.parse(
       fs.readFileSync(appFontsPath, {
         encoding: "utf8",
@@ -1703,11 +1709,17 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
     self.debug("THE APP FONTS", appFonts);
     if (appFonts.length > 0) {
       appFonts.forEach((font) => {
-        let fontsFolder = `${appBuildFolder}/${font.folderTo}`;
+        let assetsFolder = `${appBuildFolder}/assets`;
+        let fontsFolder = `${assetsFolder}/${font.folderTo}`;
         let fontFilePath = `${fontsFolder}/${font.fileName}`;
+
         // let fileContents = fs.readFileSync(font.fontPath, {
         //   encoding: "utf-8",
         // });
+        if (!fs.existsSync(assetsFolder)) {
+          console.log("THE ASSETS FOLDER DOES NOT");
+          fs.mkdirSync(assetsFolder);
+        }
         if (!fs.existsSync(fontsFolder)) {
           fs.mkdirSync(fontsFolder);
           // fs.writeFileSync(fontFilePath, fileContents, { encoding: "utf-8" });
@@ -1806,7 +1818,11 @@ methods.runForTailwindCss = async function (options) {
               : process.tailwindStyleSheetName;
             process["tailwindGenerated"] = "true";
             process["tailwindStyleSheetName"] = tailwindStyleSheetName;
-            let tailwindFilePath = `${buildFolder}/${tailwindStyleSheetName}`;
+            if (!fs.existsSync(`${buildFolder}/app/css`)) {
+              fs.mkdirSync(`${buildFolder}/app/css`);
+            }
+
+            let tailwindFilePath = `${buildFolder}/app/css/${tailwindStyleSheetName}`;
             self.debug("THE BUILD FOLDER TAILWIND", tailwindFilePath);
 
             if (!fs.existsSync(tailwindFilePath)) {
@@ -1827,7 +1843,7 @@ methods.runForTailwindCss = async function (options) {
             console.log("CSS SAVING ERROR", error);
           }
         } else {
-          let tailwindFilePath = `${buildFolder}/tailwind.css`;
+          let tailwindFilePath = `${buildFolder}/app/css/tailwind.css`;
           fs.writeFileSync(tailwindFilePath, result.css);
         }
       });
