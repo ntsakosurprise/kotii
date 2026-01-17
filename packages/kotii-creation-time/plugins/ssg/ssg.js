@@ -14,6 +14,19 @@ class Ssg {
     this.readFiles = methods.readFiles;
     this.postBuildStaticResources = methods.postBuildStaticResources;
     this.copyImageFilesSync = methods.copyImageFilesSync;
+    this.handleIgnores = methods.handleIgnores;
+    this.getDepthFromHtmlPath = methods.getDepthFromHtmlPath;
+    this.shouldUrlLocalized = methods.shouldUrlLocalized;
+    this.localizeUrl = methods.localizeUrl;
+    this.attrRegex = methods.attrRegex;
+    this.normalizeRootPath = methods.normalizeRootPath;
+    this.toRootPath = methods.toRootPath;
+    this.validateAsset = methods.validateAsset;
+    this.rewriteHtmlString = methods.rewriteHtmlString;
+    this.normalizeLinkHref = methods.normalizeLinkHref;
+    this.hasExtension = methods.hasExtension;
+    this.shouldAppendHtml = methods.shouldAppendHtml;
+    this.localizeHrefUrl = methods.localizeHrefUrl;
   }
 }
 export default Ssg;
