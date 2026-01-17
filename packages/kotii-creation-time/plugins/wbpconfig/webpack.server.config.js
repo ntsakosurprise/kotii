@@ -91,11 +91,13 @@ export default (options) => {
     stats: "errors-only",
     devtool: "eval",
     output: {
-      filename: "server.js",
-      path:
-        options?.build && options.build
-          ? options.staticFolder
-          : `${env.appBuildFolder}`, // save emitted bundle to this path or folder
+      filename: "app/server.js",
+      path: options.buildFolder,
+      chunkFilename: "lazy/[name].lazy.js",
+
+      // options?.build && options.build
+      //   ? options.staticFolder
+      //   : `${env.appBuildFolder}`, // save emitted bundle to this path or folder
       clean: true, // Clean build folder before emitting new bundle
       publicPath: "/",
       assetModuleFilename: (pathData, assetInfo) => {
@@ -328,10 +330,10 @@ export default (options) => {
                 contentPath: env.appSrc,
                 // tsConfigReaders: options.tsConfigReaders,
                 // fileReader: options.fileReader,
-                buildFolder:
-                  options?.build && options.build
-                    ? options.staticFolder
-                    : `${env.appBuildFolder}`,
+                buildFolder: options.buildFolder,
+                // options?.build && options.build
+                //   ? options.staticFolder
+                //   : `${env.appBuildFolder}`,
                 saveTailwindResources: options.saveTailwindResources,
                 mainCssFilename: "global.css",
                 appSrc: options.appSrc,
@@ -442,6 +444,11 @@ export default (options) => {
       new CopyAssetsWebpackPlugin(
         {
           files: getCopyFiles(options, env),
+          assetsPath: options.assetsFolder,
+          assetsFolderName: options.appManifest.assets,
+          appAssetsPublic: options.appAssetsPublic,
+          buildFolder: options.buildFolder,
+
           // runForTailwindCss: options.runForTailwindCss,
         },
         loggas
@@ -475,6 +482,7 @@ export default (options) => {
 };
 
 const getCopyFiles = (options, env) => {
+  console.log("GET COPY FILES OPTIONS", options);
   let files = [
     {
       referenceAssetsPath: USER_LAND_ALIASES[USER_LAND_PATH_ASSET],
@@ -484,10 +492,12 @@ const getCopyFiles = (options, env) => {
       extra: {
         inline: options.inline,
         emitFile: true,
-        emitPath:
-          options?.build && options.build
-            ? options.staticFolder
-            : `${env.appBuildFolder}`,
+        emitPath: options.buildFolder,
+        assetsFolder: options.assetsFolder,
+        // emitPath:
+        //   options?.build && options.build
+        //     ? options.staticFolder
+        //     : `${env.appBuildFolder}`,
       },
     },
   ];
@@ -496,10 +506,11 @@ const getCopyFiles = (options, env) => {
     files.push({
       fileEmitter: options.createCssStyles,
       extra: {
-        build:
-          options?.build && options.build
-            ? options.staticFolder
-            : `${env.appBuildFolder}`,
+        build: options.buildFolder,
+        assetsFolder: options.assetsFolder,
+        // options?.build && options.build
+        //   ? options.staticFolder
+        //   : `${env.appBuildFolder}`,
         appStyles: options?.appManifest?.appStyles || null,
       },
     });
