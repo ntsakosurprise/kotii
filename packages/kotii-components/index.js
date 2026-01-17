@@ -5,6 +5,7 @@ import {
   useAppContext,
   useUniversalEffect,
   Interactive,
+  InteractionProvider,
 } from "./src/components/index.js";
 export {
   AppProvider,
@@ -13,4 +14,5 @@ export {
   useAppContext,
   useUniversalEffect,
   Interactive,
+  InteractionProvider,
 };
