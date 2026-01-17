@@ -5,6 +5,7 @@ import fs from "fs";
 import path, { resolve } from "path";
 import { rejects } from "assert";
 import { renderToStaticMarkup } from "react-dom/server";
+import { InteractionProvider } from "kotii-components";
 
 methods.init = function () {
   this.listens({
@@ -20,10 +21,14 @@ methods.handleStaticInteractivity = function (data) {
 
   self
     .extractPageInteractiveParts(Page, type)
-    .then(function (extracedInteractivePats) {
-      let pageJs = self.generatePageJs(extracedInteractivePats);
+    .then(function (parts) {
+      if (!parts?.interactions)
+        return data.callback(null, { html: parts.html });
+
+      let pageJs = self.generatePageJs(parts.interactions);
       data.callback(null, {
-        extracedInteractivePats,
+        html: parts.html,
+        pageJs,
       });
     })
     .catch((err) => {
@@ -31,31 +36,20 @@ methods.handleStaticInteractivity = function (data) {
       data.callback(err);
     });
 };
-methods.generatePageJs = function (views) {
+methods.generatePageJs = function (interactions) {
   const self = this;
-  return "THE PAGE JS";
 
-  // return new Promise((resolve) => {
-  //  resolve("THE PAGE JS")
-  // });
+  let processedInteractions = interactions.map((interaction) => {
+    const { id, events } = interaction;
+    let processedEvents = events.map((event) => {
+      return `
+    document.querySelector('[data-interactive-id="${id}"]').addEventListener('${event.name}', ${event.code});
+  `;
+    });
+    return processedEvents.join("\n");
+  });
 
-  // {
-  //   view: {
-  //     match: '/',
-  //     vHandler: 'react',
-  //     title: 'REACT SERVE-SIDE RENDERING COMPONENT'
-  //   },
-  //   payload: {
-  //     parsed: { url: '/', handler: '' },
-  //     handler: '/home',
-  //     request: {
-  //       req: [IncomingMessage],
-  //       res: [ServerResponse],
-  //       next: [Function: next]
-  //     }
-  //   },
-  //   callback: [Function: bound viewHandler]
-  // }
+  return processedInteractions.join("\n");
 };
 
 methods.extractPageInteractiveParts = function (Page, vendorType) {
@@ -67,8 +61,8 @@ methods.extractPageInteractiveParts = function (Page, vendorType) {
       // let jsxTree = React.createElement(Page)
       // let treeFromPage = jsxTree()
       // console.log("THE EXTRACT TREE JSX", treeFromPage)
-      let ReactRenderTimeInterceptor =
-        self.reactRenderTimeInterceptor.bind(self);
+
+      self.thisPageInteractions = [];
 
       let pageElement;
       try {
@@ -77,37 +71,95 @@ methods.extractPageInteractiveParts = function (Page, vendorType) {
         console.log("THE PAGE ELEMENT CHECK ERROR", err);
       }
       // let tree = self.extractForReactPage();
-      console.log("THE EXTRACT TREE", ReactRenderTimeInterceptor);
+      // console.log("THE EXTRACT TREE", ReactRenderTimeInterceptor);
+      // let html = renderToStaticMarkup(
+      //   <ReactRenderTimeInterceptor>{pageElement}</ReactRenderTimeInterceptor>
+      // );
+      // console.log("THIS ELEMENT INTERACTIONS", self.thisPageInteractions);
+      // console.log("THE EXTRACT HTMLE", html);
+      // resolve(html);
+
+      // console.log("THE EXTRACT TREE", ReactRenderTimeInterceptor);
       let html = renderToStaticMarkup(
-        <ReactRenderTimeInterceptor>{pageElement}</ReactRenderTimeInterceptor>
+        <InteractionProvider interactions={self.thisPageInteractions}>
+          {pageElement}
+        </InteractionProvider>
       );
+      console.log("THIS ELEMENT INTERACTIONS", self.thisPageInteractions);
       console.log("THE EXTRACT HTMLE", html);
-      resolve(html);
+      if (self.thisPageInteractions.length > 0) {
+        resolve({ html, interactions: self.thisPageInteractions });
+      } else {
+        resolve({ html });
+      }
     }
   });
 };
 methods.reactRenderTimeInterceptor = function ({ children }) {
   const self = this;
+  console.log("REACT RENDER TIME", self.thisPageInteractions);
 
-  return self.interactionsExtractor(children);
+  return self.interactionsExtractor(children, self.thisPageInteractions);
 };
-methods.interactionsExtractor = function (element) {
+methods.interactionsExtractor = function (
+  element,
+  idCounter = 0,
+  interactions = []
+) {
   const self = this;
 
   // Handle arrays (React.Children.map may produce them)
   if (Array.isArray(element)) {
-    return element.map((el) => self.interactionsExtractor(el));
+    console.log("COMPONENT IS ARRAY", element);
+    return element.map((el) =>
+      self.interactionsExtractor(el, idCounter, interactions)
+    );
   }
 
   // Not a React element → return as-is (string, number, null)
-  if (!React.isValidElement(element)) return element;
+  if (!React.isValidElement(element)) {
+    console.log("IS NOT A VALID ELEMENT");
+    return element;
+  }
+
+  if (typeof element.type === "function") {
+    console.log("FUNCTION ELEMENT PROPS", element.props);
+    return React.cloneElement(
+      element,
+      element.props,
+      React.Children.map(element.props.children, (child) =>
+        self.interactionsExtractor(child, idCounter, interactions)
+      )
+    );
+  }
 
   const elementProps = { ...element.props };
+  console.log("THE ELEMENT PROPS", elementProps);
 
   if (elementProps.children) {
-    elementProps.children = React.Children.map(elementProps.children, (child) =>
-      self.interactionsExtractor(child)
+    elementProps.children = React.Children.map(
+      elementProps.children,
+      (child) => {
+        console.log("THE ELEMENT CHILD", child, "props", child?.props);
+        return self.interactionsExtractor(child, idCounter, interactions);
+      }
     );
+  }
+  console.log("THE DATA INTERACTIVE", elementProps["data-interactive"]);
+
+  if (elementProps["data-interactive"]) {
+    console.log("MATCH.INTER");
+    const elId = `interactive-${idCounter++}`;
+    Object.keys(elementProps).forEach((key) => {
+      if (key.startsWith("on")) {
+        const event = key.slice(2).toLowerCase();
+        const code = elementProps[key].toString();
+        interactions.push({ id: elId, event, code });
+        delete elementProps[key]; // Remove React event
+      }
+    });
+    elementProps["data-interactive-id"] = elId;
+    delete elementProps["data-interactive"];
   }
 
   return React.cloneElement(element, elementProps);
