@@ -6,6 +6,12 @@ import path, { resolve } from "path";
 import { rejects } from "assert";
 import { renderToStaticMarkup } from "react-dom/server";
 import { InteractionProvider } from "kotii-components";
+import babel from "@babel/core";
+import generate from "@babel/generator";
+import parser from "@babel/parser";
+import template from "@babel/template";
+import traverse from "@babel/traverse";
+import * as t from "@babel/types";
 
 methods.init = function () {
   this.listens({
@@ -109,7 +115,6 @@ methods.createReactProxy = function () {
   self.REACT_PROXIED = true;
 };
 
-methods.monkePatchReact = function () {};
 methods.ReactStateCapture = function () {
   const self = this;
 
@@ -117,6 +122,48 @@ methods.ReactStateCapture = function () {
     self.__STATIC_RUNTIME_STATE[stateName] = state;
     return [state, () => {}];
   };
+};
+methods.eventsSourceAst = function () {
+  const self = this;
+
+  return (state, stateName) => {
+    self.__STATIC_RUNTIME_STATE[stateName] = state;
+    return [state, () => {}];
+  };
+};
+methods.dataToHtmlConnection = function () {
+  const self = this;
+};
+methods.modifyUseStateCallsAst = function (componentAst) {
+  const self = this;
+
+  traverse(componentAst, {
+    VariableDeclarator(path) {
+      const id = path.node.id;
+      const init = path.node.init;
+
+      if (
+        t.isArrayPattern(id) &&
+        id.elements.length === 2 &&
+        t.isCallExpression(init) &&
+        t.isIdentifier(init.callee, { name: "useState" })
+      ) {
+        const stateName = id.elements[0].name;
+
+        path
+          .get("init")
+          .replaceWith(
+            t.callExpression(t.identifier("useState"), [
+              init.arguments[0],
+              t.stringLiteral(stateName),
+            ])
+          );
+      }
+    },
+  });
+};
+methods.getJsxDataBindingsFromAst = function (componentAst) {
+  const self = this;
 };
 methods.reactRenderTimeInterceptor = function ({ children }) {
   const self = this;
