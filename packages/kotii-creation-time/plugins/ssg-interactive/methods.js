@@ -19,6 +19,7 @@ methods.handleStaticInteractivity = function (data) {
   const { type = "react", Page } = payload;
   console.log("HANDLE STATIC INTERACTIVE", data);
 
+  if (!self?.REACT_PROXIED) self.createReactProxy();
   self
     .extractPageInteractiveParts(Page, type)
     .then(function (parts) {
@@ -95,8 +96,9 @@ methods.generatePageJs = function (interactions) {
   return processedInteractions.join("\n");
 };
 
-methods.createReactProxy = function (useState) {
+methods.createReactProxy = function () {
   const self = this;
+  const useState = self.ReactStateCapture();
 
   const ReactProxy = React;
 
@@ -104,8 +106,18 @@ methods.createReactProxy = function (useState) {
     ...ReactProxy,
     useState: useState,
   };
+  self.REACT_PROXIED = true;
 };
 
+methods.monkePatchReact = function () {};
+methods.ReactStateCapture = function () {
+  const self = this;
+
+  return (state, stateName) => {
+    self.__STATIC_RUNTIME_STATE[stateName] = state;
+    return [state, () => {}];
+  };
+};
 methods.reactRenderTimeInterceptor = function ({ children }) {
   const self = this;
   console.log("REACT RENDER TIME", self.thisPageInteractions);
