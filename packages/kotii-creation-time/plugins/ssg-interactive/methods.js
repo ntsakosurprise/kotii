@@ -164,6 +164,36 @@ methods.modifyUseStateCallsAst = function (componentAst) {
 };
 methods.getJsxDataBindingsFromAst = function (componentAst) {
   const self = this;
+
+  self.bindings = [];
+
+  traverse(componentAst, {
+    JSXExpressionContainer(path) {
+      const expr = path.node.expression;
+
+      if (t.isIdentifier(expr)) {
+        self.binding.push({ type: "state", name: expr.name, path });
+      }
+
+      if (t.isBinaryExpression(expr)) {
+        self.binding.push({ type: "expression", code: expr, path });
+      }
+
+      if (t.isCallExpression(expr)) {
+        self.binding.push({ type: "array-map", code: expr, path });
+      }
+
+      if (t.isLogicalExpression(expr)) {
+        self.binding.push({ type: "conditional", code: expr, path });
+      }
+    },
+  });
+};
+
+methods.createBindElementsFromBindList = function (bindList = []) {
+  const self = this;
+
+  self.bindings = [];
 };
 methods.reactRenderTimeInterceptor = function ({ children }) {
   const self = this;
