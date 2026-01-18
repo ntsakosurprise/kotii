@@ -36,22 +36,6 @@ methods.handleStaticInteractivity = function (data) {
       data.callback(err);
     });
 };
-methods.generatePageJs = function (interactions) {
-  const self = this;
-
-  let processedInteractions = interactions.map((interaction) => {
-    const { id, events } = interaction;
-    let processedEvents = events.map((event) => {
-      return `
-    document.querySelector('[data-interactive-id="${id}"]').addEventListener('${event.name}', ${event.code});
-  `;
-    });
-    return processedEvents.join("\n");
-  });
-
-  return processedInteractions.join("\n");
-};
-
 methods.extractPageInteractiveParts = function (Page, vendorType) {
   const self = this;
 
@@ -95,6 +79,33 @@ methods.extractPageInteractiveParts = function (Page, vendorType) {
     }
   });
 };
+methods.generatePageJs = function (interactions) {
+  const self = this;
+
+  let processedInteractions = interactions.map((interaction) => {
+    const { id, events } = interaction;
+    let processedEvents = events.map((event) => {
+      return `
+    document.querySelector('[data-interactive-id="${id}"]').addEventListener('${event.name}', ${event.code});
+  `;
+    });
+    return processedEvents.join("\n");
+  });
+
+  return processedInteractions.join("\n");
+};
+
+methods.createReactProxy = function (useState) {
+  const self = this;
+
+  const ReactProxy = React;
+
+  global.React = {
+    ...ReactProxy,
+    useState: useState,
+  };
+};
+
 methods.reactRenderTimeInterceptor = function ({ children }) {
   const self = this;
   console.log("REACT RENDER TIME", self.thisPageInteractions);
