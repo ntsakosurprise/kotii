@@ -193,7 +193,25 @@ methods.getJsxDataBindingsFromAst = function (componentAst) {
 methods.createBindElementsFromBindList = function (bindList = []) {
   const self = this;
 
-  self.bindings = [];
+  bindList.forEach((b) => {
+    if (b.type === "expression") {
+      const span = t.jsxElement(
+        t.jsxOpeningElement(
+          t.jsxIdentifier("span"),
+          [
+            t.jsxAttribute(
+              t.jsxIdentifier("data-bind"),
+              t.stringLiteral(self.__STATIC_RUNTIME_STATE)
+            ),
+          ],
+          false
+        ),
+        t.jsxClosingElement(t.jsxIdentifier("span")),
+        [t.jsxText(self.__STATIC_RUNTIME_STATE[b.name])]
+      );
+      b.path.replaceWith(span);
+    }
+  });
 };
 methods.reactRenderTimeInterceptor = function ({ children }) {
   const self = this;
