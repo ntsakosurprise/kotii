@@ -25,6 +25,7 @@ export const Interactive = ({ children }) => {
   const events = [];
 
   Object.keys(props).forEach((key) => {
+    console.log("THE EVENT EXTRACTION");
     if (EVENT_REGEX.test(key) && typeof props[key] === "function") {
       const event = key.slice(2).toLowerCase();
 
@@ -33,7 +34,7 @@ export const Interactive = ({ children }) => {
         name: event,
         code,
       });
-      delete props[key]; // 🔥 remove handler from HTML
+      delete props[key];
     }
   });
 
@@ -41,6 +42,10 @@ export const Interactive = ({ children }) => {
     id: elId,
     events,
   });
+
+  //   if (child.props?.["data-interactive"]) {
+  //   return child;
+  // }
 
   return React.cloneElement(child, {
     ...props,
