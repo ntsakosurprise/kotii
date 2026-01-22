@@ -90,7 +90,10 @@ let fileLoaderExts = [
 ];
 let extensions = [".js", ".jsx", ".tsx", ".ts"];
 let nodeModulesRegex = /node_modules/;
-
+global.__useState = function (initial, name) {
+  __STATIC_RUNTIME_STATE[name] = initial;
+  return [initial, () => {}];
+};
 export async function load(url, context, nextLoad) {
   const { format, parentURL = "" } = context;
 
@@ -138,7 +141,17 @@ export async function load(url, context, nextLoad) {
             ],
           ],
         };
-        loggas.load.debug("READING FILE", fileExtension, url);
+        if (
+          process.env?.KOTII_MODE &&
+          process.env?.KOTII_MODE?.toLowerCase() === "ssg"
+        )
+          options.plugins.push(
+            `${path.join(
+              kotiiRootPath,
+              "./babel-plugins/transform-react-state-plugin/index.cjs"
+            )}`
+          );
+        loggas.load.debug("READING FILE", fileExtension, url, options.plugins);
         let urlInstance = new URL(url).pathname;
         if (url.indexOf("/api/") >= 0) {
           if (!fs.existsSync(urlInstance)) {
@@ -244,12 +257,17 @@ export async function load(url, context, nextLoad) {
 
       let result = fileLoaderExts.includes(fileExtension)
         ? babel.transformFileSync(source, options)
-        : babel.transform(rawSource, {
+        : fileExtension === extJsx
+        ? babel.transform(rawSource, {
             filename: url,
             presets: options.presets,
-          });
+            plugins: options.plugins,
+          })
+        : { code: rawSource };
       if (fileLoaderExts.includes(fileExtension)) {
-        loggas.load.debug("TRANSFORM RESULT", result);
+        loggas.load.debug("TRANSFORM WITHOUT JSX", fileExtension, result?.code);
+      } else {
+        loggas.load.debug("TRANSFORM WITH JSX", fileExtension, result?.code);
       }
 
       return {
@@ -289,6 +307,7 @@ export async function load(url, context, nextLoad) {
 export async function resolve(specifier, context, nextResolve) {
   const { parentURL = "" } = context;
   loggas.resolve.debug("RESOLVE specifier", specifier, parentURL);
+  loggas.resolve.debug("PROCESS CONTENT IN LOADER", process.env);
 
   try {
     let shouldTerminate = false;
