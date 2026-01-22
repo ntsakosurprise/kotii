@@ -12,6 +12,17 @@ class SsgInteractive {
     this.interactionsExtractor = methods.interactionsExtractor;
     this.withInterceptor = methods.withInterceptor;
     this.normalizeToReactElement = methods.normalizeToReactElement;
+    this.startPreRenderWork = methods.startPreRenderWork;
+    this.createReactProxy = methods.createReactProxy;
+    this.ReactStateCapture = methods.ReactStateCapture;
+    this.eventsSourceAst = methods.eventsSourceAst;
+    this.modifyUseStateCallsAst = methods.modifyUseStateCallsAst;
+    this.getJsxDataBindingsFromAst = methods.getJsxDataBindingsFromAst;
+    this.getStateUpdater = methods.getStateUpdater;
+    this.createBindElementsFromBindList =
+      methods.createBindElementsFromBindList;
+    this.getComponentFileContentsAst = methods.getComponentFileContentsAst;
+    this.startPreRenderWork = methods.startPreRenderWork;
   }
 }
 export default SsgInteractive;

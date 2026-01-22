@@ -271,8 +271,8 @@ methods.readFiles = async function (directoryPath) {
     for (const file of cssFiles) {
       const filePath = path.join(directoryPath, file);
       const content = fs.readFileSync(filePath, "utf8");
-      console.log(`--- Content of ${file} ---`);
-      console.log(content);
+      // console.log(`--- Content of ${file} ---`);
+      // console.log(content);
       contents.push(content);
     }
     return contents;

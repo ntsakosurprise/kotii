@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import React from "react";
 const methods = {};
@@ -7,11 +8,16 @@ import { rejects } from "assert";
 import { renderToStaticMarkup } from "react-dom/server";
 import { InteractionProvider } from "kotii-components";
 import babel from "@babel/core";
-import generate from "@babel/generator";
+import babelGenerate from "@babel/generator";
 import parser from "@babel/parser";
 import template from "@babel/template";
-import traverse from "@babel/traverse";
+
+import babelTraverse from "@babel/traverse";
 import * as t from "@babel/types";
+const traverse = babelTraverse.default;
+const generate = babelGenerate.default;
+const setTestVar = () => {};
+import { parseExpression } from "@babel/parser";
 
 methods.init = function () {
   this.listens({
@@ -22,21 +28,31 @@ methods.handleStaticInteractivity = function (data) {
   const self = this;
   const pao = self.pao;
   const { payload } = data;
-  const { type = "react", Page } = payload;
+  const { type = "react", Page, view } = payload;
   console.log("HANDLE STATIC INTERACTIVE", data);
 
   if (!self?.REACT_PROXIED) self.createReactProxy();
+
+  // self.startPreRenderWork(view);
   self
     .extractPageInteractiveParts(Page, type)
     .then(function (parts) {
+      self.debug("THE GENERATE PAGE JS", parts, self.__STATIC_RUNTIME_STATE);
       if (!parts?.interactions)
         return data.callback(null, { html: parts.html });
 
-      let pageJs = self.generatePageJs(parts.interactions);
-      data.callback(null, {
-        html: parts.html,
-        pageJs,
-      });
+      self
+        .generatePageJs(parts.interactions)
+        .then((results) => {
+          self.__STATIC_RUNTIME_STATE = {};
+          data.callback(null, {
+            html: parts.html,
+            pageJs: results.pageJs,
+          });
+        })
+        .catch((error) => {
+          self.debug("ERROR GENRATING JS", error);
+        });
     })
     .catch((err) => {
       self.debug("RENDERAPP REJECTED", err);
@@ -75,6 +91,11 @@ methods.extractPageInteractiveParts = function (Page, vendorType) {
         <InteractionProvider interactions={self.thisPageInteractions}>
           {pageElement}
         </InteractionProvider>
+        // React.createElement(
+        //   InteractionProvider,
+        //   { interactions: self.thisPageInteractions },
+        //   pageElement
+        // )
       );
       console.log("THIS ELEMENT INTERACTIONS", self.thisPageInteractions);
       console.log("THE EXTRACT HTMLE", html);
@@ -89,53 +110,103 @@ methods.extractPageInteractiveParts = function (Page, vendorType) {
 methods.generatePageJs = function (interactions) {
   const self = this;
 
-  let processedInteractions = interactions.map((interaction) => {
-    const { id, events } = interaction;
-    let processedEvents = events.map((event) => {
-      return `
-    document.querySelector('[data-interactive-id="${id}"]').addEventListener('${event.name}', ${event.code});
-  `;
-    });
-    return processedEvents.join("\n");
-  });
+  return new Promise((resolve, reject) => {
+    let processedInteractions = interactions.map((interaction) => {
+      const { id, events } = interaction;
+      let processedEvents = events.map((event) => {
+        self.debug("THE EVENT RAW STRING", event.code);
+        let sourceAst = parser.parse(event.code, {
+          sourceType: "module",
+        });
+        self.eventsSourceAst(sourceAst);
 
-  return processedInteractions.join("\n");
+        let changedSource = generate(sourceAst).code;
+        console.log("THE CHANGED SOURCE", changedSource);
+        return `document.querySelector('[data-interactive-id="${id}"]').addEventListener('${event.name}', ${changedSource});`;
+      });
+      return processedEvents.join("\n");
+    });
+
+    resolve({ pageJs: processedInteractions.join("\n") });
+  });
 };
 
 methods.createReactProxy = function () {
   const self = this;
   const useState = self.ReactStateCapture();
 
-  const ReactProxy = React;
+  // const ReactProxy = React;
 
-  global.React = {
-    ...ReactProxy,
-    useState: useState,
-  };
+  // global.React = {
+  //   ...ReactProxy,
+  //   useState: useState.bind(self),
+  // };
+  global.__useState = useState.bind(self);
   self.REACT_PROXIED = true;
 };
 
 methods.ReactStateCapture = function () {
   const self = this;
-
+  console.log("REACT STATE CAPTURE");
+  self.__STATIC_RUNTIME_STATE = {};
   return (state, stateName) => {
-    self.__STATIC_RUNTIME_STATE[stateName] = state;
+    console.log(
+      "THE REACT STATE",
+      state,
+      stateName,
+      self,
+      self.__STATIC_RUNTIME_STATE
+    );
+    self.__STATIC_RUNTIME_STATE[`${stateName}`] = state;
+    console.log("SELF STATIC", self.__STATIC_RUNTIME_STATE);
     return [state, () => {}];
   };
 };
-methods.eventsSourceAst = function () {
+
+methods.eventsSourceAst = function (eventAst) {
   const self = this;
 
-  return (state, stateName) => {
-    self.__STATIC_RUNTIME_STATE[stateName] = state;
-    return [state, () => {}];
-  };
+  self.debug("THE EVENTS SOURCE", self.__STATIC_RUNTIME_STATE);
+
+  // traverse(eventAst, {
+
+  //   Identifier(path) {
+  //     self.debug("Identfier",path.node.name)
+  //     if (self.__STATIC_RUNTIME_STATE[path.node.name]) {
+  //       path.replaceWith(
+  //         t.memberExpression(
+  //           t.identifier("__STATE__"),
+  //           t.identifier(self.__STATIC_RUNTIME_STATE[path.node.name])
+  //         )
+  //       );
+  //     }
+  //   },
+  //   CallExpression(path) {
+  //      self.debug("CallExpression",path.node.name)
+  //     const name = path.node.callee.name;
+  //     if (self.__STATIC_RUNTIME_STATE[name]) {
+  //       path.replaceWith(
+  //         t.assignmentExpression(
+  //           "=",
+  //           t.memberExpression(
+  //             t.identifier("__STATE__"),
+  //             t.identifier(self.__STATIC_RUNTIME_STATE[name])
+  //           ),
+  //           path.node.arguments[0]
+  //         )
+  //       );
+  //     }
+  //   },
+  // });
 };
+
 methods.dataToHtmlConnection = function () {
   const self = this;
 };
 methods.modifyUseStateCallsAst = function (componentAst) {
   const self = this;
+
+  self.debug("MODIFY RUNNING");
 
   traverse(componentAst, {
     VariableDeclarator(path) {
@@ -167,27 +238,61 @@ methods.getJsxDataBindingsFromAst = function (componentAst) {
 
   self.bindings = [];
 
+  self.debug("GET JSX DATA RUNNING");
+
   traverse(componentAst, {
     JSXExpressionContainer(path) {
       const expr = path.node.expression;
 
       if (t.isIdentifier(expr)) {
-        self.binding.push({ type: "state", name: expr.name, path });
+        self.bindings.push({ type: "state", name: expr.name, path });
+      }
+      if (t.isMemberExpression(expr)) {
+        self.bindings.push({
+          type: "member",
+          object: expr.object.name,
+          property: expr.property.name,
+          path,
+        });
       }
 
       if (t.isBinaryExpression(expr)) {
-        self.binding.push({ type: "expression", code: expr, path });
+        self.bindings.push({ type: "expression", code: expr, path });
       }
 
       if (t.isCallExpression(expr)) {
-        self.binding.push({ type: "array-map", code: expr, path });
+        self.bindings.push({ type: "array-map", code: expr, path });
       }
 
       if (t.isLogicalExpression(expr)) {
-        self.binding.push({ type: "conditional", code: expr, path });
+        self.bindings.push({ type: "conditional", code: expr, path });
       }
     },
   });
+  self.debug("GET BINDIINGS", self.bindings);
+};
+
+methods.getStateUpdater = function () {
+  const self = this;
+
+  self.bindings = [];
+
+  return function (updateState) {
+    console.log("Updater executes", updateState);
+    if (updateState) return "";
+    document.querySelectorAll(`[data-bind^="${updateState}"]`).forEach((el) => {
+      const path = el.dataset.bind.split(".");
+      let value = __STATE__;
+      path.forEach((k) => (value = value[k]));
+
+      if ("value" in el) el.value = value;
+      else el.textContent = value;
+    });
+
+    document.querySelectorAll("[data-cond]").forEach((el) => {
+      el.style.display = eval(el.dataset.if) ? "" : "none";
+    });
+  };
 };
 
 methods.createBindElementsFromBindList = function (bindList = []) {
@@ -212,6 +317,28 @@ methods.createBindElementsFromBindList = function (bindList = []) {
       b.path.replaceWith(span);
     }
   });
+};
+methods.getComponentFileContentsAst = function (componentFilePath) {
+  const self = this;
+  const pao = self.pao;
+  const readFileSync = pao.pa_readFileSync;
+
+  const fileContents = readFileSync(componentFilePath);
+  let ast = parser.parse(fileContents, {
+    sourceType: "module",
+    plugins: ["jsx", "dynamicImports"],
+  });
+  return ast;
+};
+methods.startPreRenderWork = function (view) {
+  const self = this;
+  const { componenentSourcePath } = view;
+  let ast = self.getComponentFileContentsAst(
+    `/Users/surprisemashele/Documents/KOTII-TESTING-AREA/prod-test/src/pages/index.jsx`
+  );
+  self.modifyUseStateCallsAst(ast);
+  self.getJsxDataBindingsFromAst(ast);
+  self.createBindElementsFromBindList();
 };
 methods.reactRenderTimeInterceptor = function ({ children }) {
   const self = this;
