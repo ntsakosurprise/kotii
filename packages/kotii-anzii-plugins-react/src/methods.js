@@ -88,7 +88,11 @@ methods.handleReactStaticViews = function (data) {
   const { views, info } = data;
   let mappedPromises = views.map(async (view) => {
     let gotHtmlView = await self.runReactView({
-      view: { match: view.path, htmlPath: view.htmlPath },
+      view: {
+        match: view.path,
+        htmlPath: view.htmlPath,
+        componentSourcePath: view.componentSourcePath,
+      },
       route: view,
       staticRender: true,
       info: info,
@@ -228,7 +232,7 @@ methods.runReactView = function (data) {
           context,
         })
       );
-      generatedPage = await self.generatePageStaticParts(Page);
+      generatedPage = await self.generatePageStaticParts(Page, view);
       const { html, pageJs = "" } = generatedPage;
 
       self.debug("THE STATIC PART JS FROM SSG", pageJs);
@@ -840,7 +844,7 @@ methods.createAppElement = function ({
   //   sheet.collectStyles(appElement)
   // );
 };
-methods.generatePageStaticParts = function (Component) {
+methods.generatePageStaticParts = function (Component, view) {
   const self = this;
   self.debug("THE STATIC PART PAGE", Component);
 
@@ -848,7 +852,7 @@ methods.generatePageStaticParts = function (Component) {
     self.emit({
       type: "generate-ssg-interactivity",
       data: {
-        payload: { type: "react", Page: Component },
+        payload: { type: "react", Page: Component, view },
         callback: (err, pageJs) => {
           self.debug("THE STATIC PART PAGE RESULTS", err, pageJs);
           if (!err) return resolve(pageJs);

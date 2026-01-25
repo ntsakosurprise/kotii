@@ -293,6 +293,7 @@ methods.getItemPathAndFile = function (item) {
         isPrivate,
         staticPath,
         htmlPath,
+        componentFullPath: item,
       });
     });
   });
@@ -1470,6 +1471,7 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
       effectsToRun: route.universalEffects,
       staticPath: route?.staticPath || "",
       htmlPath: route?.htmlPath || "",
+      componentSourcePath: route?.componentFullPath,
     };
   });
   // self.debug("ROUTES BUILT", builtRoutes);
