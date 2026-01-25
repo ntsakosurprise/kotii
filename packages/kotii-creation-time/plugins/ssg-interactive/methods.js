@@ -18,36 +18,64 @@ const traverse = babelTraverse.default;
 const generate = babelGenerate.default;
 const setTestVar = () => {};
 import { parseExpression } from "@babel/parser";
+import { pathToFileURL } from "url";
+let MODULE_GRAPH_FOR_STATIC_GENERATION = null;
+
+// console.log("THE MODULE GRAPH FOR STATIC", MODULE_GRAPH_FOR_STATIC_GENERATION)
 
 methods.init = function () {
   this.listens({
     "generate-ssg-interactivity": this.handleStaticInteractivity.bind(this),
   });
 };
-methods.handleStaticInteractivity = function (data) {
+methods.handleStaticInteractivity = async function (data) {
   const self = this;
   const pao = self.pao;
   const { payload } = data;
   const { type = "react", Page, view } = payload;
-  console.log("HANDLE STATIC INTERACTIVE", data);
+  console.log("HANDLE STATIC INTERACTIVE", view);
 
   if (!self?.REACT_PROXIED) self.createReactProxy();
+  self.__STATIC_RUNTIME_STATE = {};
+  self.__STATE_SETTERS = {};
+
+  self.debug("THE GLOBAL STATIC MODULE GRAPH");
+  self.debug("THE GLOBAL TEST", global.TEST_GLOBAL_USE);
+
+  if (!MODULE_GRAPH_FOR_STATIC_GENERATION) {
+    MODULE_GRAPH_FOR_STATIC_GENERATION = await self.loadPagesModuleGraph(
+      "virtual:static-module-graph"
+    );
+  }
+
+  console.log("THE ABSOLUTE PATH.SSG", view.componentSourcePath, view);
+  const url = view.componentSourcePath;
+  console.log("THE URL", url);
+  const fileUrl = pathToFileURL(url).href;
+  console.log("THE FILE URL", fileUrl);
+  const { externals } = self.getThisPageResourcesGraph(fileUrl);
+  self.__STATIC_EXTERNALS_STATE = externals;
+  self.debug("MODULE EXTERNALS FOR STATIC", self.__STATIC_EXTERNALS_STATE);
+  self.createExternalsState();
 
   // self.startPreRenderWork(view);
   self
     .extractPageInteractiveParts(Page, type)
     .then(function (parts) {
-      self.debug("THE GENERATE PAGE JS", parts, self.__STATIC_RUNTIME_STATE);
+      self.debug("THE GENERATE PAGE JS", self.__EXTERNALS__);
       if (!parts?.interactions)
         return data.callback(null, { html: parts.html });
 
       self
         .generatePageJs(parts.interactions)
         .then((results) => {
-          self.__STATIC_RUNTIME_STATE = {};
           data.callback(null, {
             html: parts.html,
-            pageJs: results.pageJs,
+            pageJs: `var __STATE__=${JSON.stringify(
+              self.__STATIC_RUNTIME_STATE
+            )}\n var __EXTERNALS__= {}\n ${self.normalizeExternalsForBrowser(
+              self.restoreFunctionsForRuntime(self.__EXTERNALS__)
+            )}\n ${self.getStateUpdater()} \n ${results.pageJs}`,
           });
         })
         .catch((error) => {
@@ -88,14 +116,14 @@ methods.extractPageInteractiveParts = function (Page, vendorType) {
 
       // console.log("THE EXTRACT TREE", ReactRenderTimeInterceptor);
       let html = renderToStaticMarkup(
-        <InteractionProvider interactions={self.thisPageInteractions}>
-          {pageElement}
-        </InteractionProvider>
-        // React.createElement(
-        //   InteractionProvider,
-        //   { interactions: self.thisPageInteractions },
-        //   pageElement
-        // )
+        // <InteractionProvider interactions={self.thisPageInteractions}>
+        //   {pageElement}
+        // </InteractionProvider>
+        React.createElement(
+          InteractionProvider,
+          { interactions: self.thisPageInteractions },
+          pageElement
+        )
       );
       console.log("THIS ELEMENT INTERACTIONS", self.thisPageInteractions);
       console.log("THE EXTRACT HTMLE", html);
@@ -122,7 +150,9 @@ methods.generatePageJs = function (interactions) {
 
         let changedSource = generate(sourceAst).code;
         console.log("THE CHANGED SOURCE", changedSource);
-        return `document.querySelector('[data-interactive-id="${id}"]').addEventListener('${event.name}', ${changedSource});`;
+        return `document.querySelector('[data-interactive-id="${id}"]').addEventListener('${
+          event.name
+        }', ${changedSource.replace(/;/g, "")})`;
       });
       return processedEvents.join("\n");
     });
@@ -149,7 +179,8 @@ methods.ReactStateCapture = function () {
   const self = this;
   console.log("REACT STATE CAPTURE");
   self.__STATIC_RUNTIME_STATE = {};
-  return (state, stateName) => {
+  self.__STATE_SETTERS = {};
+  return (state, stateName, stateSetter) => {
     console.log(
       "THE REACT STATE",
       state,
@@ -158,6 +189,7 @@ methods.ReactStateCapture = function () {
       self.__STATIC_RUNTIME_STATE
     );
     self.__STATIC_RUNTIME_STATE[`${stateName}`] = state;
+    self.__STATE_SETTERS[stateSetter] = stateName;
     console.log("SELF STATIC", self.__STATIC_RUNTIME_STATE);
     return [state, () => {}];
   };
@@ -168,36 +200,77 @@ methods.eventsSourceAst = function (eventAst) {
 
   self.debug("THE EVENTS SOURCE", self.__STATIC_RUNTIME_STATE);
 
-  // traverse(eventAst, {
+  traverse(eventAst, {
+    Identifier(path) {
+      const name = path.node.name;
 
-  //   Identifier(path) {
-  //     self.debug("Identfier",path.node.name)
-  //     if (self.__STATIC_RUNTIME_STATE[path.node.name]) {
-  //       path.replaceWith(
-  //         t.memberExpression(
-  //           t.identifier("__STATE__"),
-  //           t.identifier(self.__STATIC_RUNTIME_STATE[path.node.name])
-  //         )
-  //       );
-  //     }
-  //   },
-  //   CallExpression(path) {
-  //      self.debug("CallExpression",path.node.name)
-  //     const name = path.node.callee.name;
-  //     if (self.__STATIC_RUNTIME_STATE[name]) {
-  //       path.replaceWith(
-  //         t.assignmentExpression(
-  //           "=",
-  //           t.memberExpression(
-  //             t.identifier("__STATE__"),
-  //             t.identifier(self.__STATIC_RUNTIME_STATE[name])
-  //           ),
-  //           path.node.arguments[0]
-  //         )
-  //       );
-  //     }
-  //   },
-  // });
+      // Not a tracked state variable
+      console.log("THE CURRENT NAME", name, self.__STATIC_EXTERNALS_STATE);
+      if (
+        !self.__STATIC_RUNTIME_STATE[name] &&
+        !self.__STATIC_EXTERNALS_STATE[name]
+      )
+        return;
+
+      //  Skip identifiers inside __STATE__.x (prevents double rewrite)
+      if (
+        path.parentPath.isMemberExpression() &&
+        path.parentPath.get("object").isIdentifier({ name: "__STATE__" })
+      ) {
+        return;
+      }
+
+      // Skip declaration site
+      const binding = path.scope.getBinding(name);
+      if (binding && binding.identifier === path.node) return;
+
+      // Skip property keys: obj.foo
+      if (
+        path.parentPath.isMemberExpression() &&
+        path.parentKey === "property" && // ✅ CORRECT
+        !path.parent.computed
+      ) {
+        return;
+      }
+
+      if (self.__STATIC_RUNTIME_STATE[name]) {
+        self.replaceIdentifier(path, "__STATE__", name);
+      } else if (self.__STATIC_EXTERNALS_STATE) {
+        self.replaceIdentifier(path, "__EXTERNALS__", name);
+      }
+    },
+
+    CallExpression(path) {
+      const callee = path.node.callee;
+      if (!t.isIdentifier(callee)) return;
+      self.debug("THE CALL EXPRESSION", callee);
+
+      if (self.__STATE_SETTERS[callee.name]) {
+        const newAssignment = t.assignmentExpression(
+          "=",
+          t.memberExpression(
+            t.identifier("__STATE__"),
+            t.identifier(self.__STATE_SETTERS[callee.name])
+          ),
+          path.node.arguments[0]
+        );
+
+        const updateCall = t.expressionStatement(
+          t.callExpression(t.identifier("stateUpdater"), [
+            t.stringLiteral(self.__STATE_SETTERS[callee.name]),
+          ])
+        );
+
+        // Replace original setter call with two statements
+        path.replaceWithMultiple([
+          t.expressionStatement(newAssignment),
+          updateCall,
+        ]);
+
+        return;
+      }
+    },
+  });
 };
 
 methods.dataToHtmlConnection = function () {
@@ -277,7 +350,7 @@ methods.getStateUpdater = function () {
 
   self.bindings = [];
 
-  return function (updateState) {
+  return function stateUpdater(updateState) {
     console.log("Updater executes", updateState);
     if (updateState) return "";
     document.querySelectorAll(`[data-bind^="${updateState}"]`).forEach((el) => {
@@ -340,6 +413,47 @@ methods.startPreRenderWork = function (view) {
   self.getJsxDataBindingsFromAst(ast);
   self.createBindElementsFromBindList();
 };
+
+methods.getThisPageResourcesGraph = function (entryFile) {
+  const self = this;
+  const visited = new Set();
+  const externals = {};
+  const imports = {};
+
+  self.debug("THE ENTRY FILE", entryFile, MODULE_GRAPH_FOR_STATIC_GENERATION);
+
+  function walk(file) {
+    if (visited.has(file)) return;
+    visited.add(file);
+
+    const mod = MODULE_GRAPH_FOR_STATIC_GENERATION.get(file);
+    if (!mod) return;
+
+    Object.entries(mod.externals).forEach(([key, value]) => {
+      console.log("THE EXTERNAL ENTRY", key, value);
+
+      if (!(key in externals)) {
+        externals[key] = value;
+      }
+    });
+
+    Object.entries(mod.imports).forEach(([key, value]) => {
+      if (!(key in imports)) imports[key] = value;
+    });
+
+    mod.deps.forEach(walk);
+  }
+
+  walk(entryFile);
+
+  return { externals, imports };
+};
+
+// const homePageGraph = buildPageGraph("Home.jsx");
+
+// console.log("Merged externals:", Object.keys(homePageGraph.externals));
+// console.log("Merged imports:", homePageGraph.imports);
+
 methods.reactRenderTimeInterceptor = function ({ children }) {
   const self = this;
   console.log("REACT RENDER TIME", self.thisPageInteractions);
@@ -427,6 +541,91 @@ methods.normalizeToReactElement = function (input) {
   throw new Error(
     "extractPageInteractiveParts expected a React element or component function"
   );
+};
+methods.loadPagesModuleGraph = function (toImport, all = false, check = false) {
+  const self = this;
+  const pao = self.pao;
+  const loadFile = pao.pa_loadFile;
+  const loadFileSync = pao.pa_loadFileSync;
+  // self.debug("TIIMPORT", toImport);
+  return new Promise((resolve, reject) => {
+    loadFile(toImport, all, check)
+      .then((imported) => {
+        // self.debug("VIRTUAL Module has successfully been imported:", imported);
+        resolve(imported);
+      })
+      .catch((err) => {
+        self.debug(
+          `importing VIRTUAL module:${toImport}, has failed with an error:${err}`
+        );
+        reject(err);
+      });
+  });
+};
+methods.replaceIdentifier = function (path, jsStateID, state) {
+  console.log("REPLACE ID", jsStateID, state);
+  path.replaceWith(
+    t.memberExpression(t.identifier(jsStateID), t.identifier(state))
+  );
+};
+methods.createExternalsState = function (externals) {
+  const self = this;
+
+  self.__EXTERNALS__ = {};
+
+  Object.entries(self.__STATIC_EXTERNALS_STATE).forEach(([key, valueAsAst]) => {
+    const { code } = generate(valueAsAst);
+    self.__EXTERNALS__[key] = code;
+  });
+};
+methods.restoreFunctionsForRuntime = function (externals) {
+  const runtimeExternals = {};
+  console.log("THE RESTORE FUNCTION", externals);
+
+  for (const [key, value] of Object.entries(externals)) {
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+
+      // crude check: if it starts with () => or function, treat as a function
+      if (trimmed.startsWith("() =>") || trimmed.startsWith("function")) {
+        // convert string to real function
+        runtimeExternals[key] = eval(`(${trimmed})`);
+        continue;
+      }
+
+      // check if it's a serialized array/object
+      if (
+        (trimmed.startsWith("[") && trimmed.endsWith("]")) ||
+        (trimmed.startsWith("{") && trimmed.endsWith("}"))
+      ) {
+        runtimeExternals[key] = JSON.parse(trimmed);
+        continue;
+      }
+
+      // otherwise keep as string (remove extra quotes)
+      runtimeExternals[key] = trimmed.replace(/^"|"$/g, "");
+    } else {
+      // non-string values (rare) just copy
+      runtimeExternals[key] = value;
+    }
+  }
+
+  console.log("THE RUNTIME EXTERNALS", runtimeExternals);
+  return runtimeExternals;
+};
+methods.normalizeExternalsForBrowser = function (runtimeExternals) {
+  const self = this;
+
+  const externalsCode = Object.entries(runtimeExternals)
+    .map(([key, value]) => {
+      if (typeof value === "function") {
+        return `__EXTERNALS__.${key} = ${value.toString()};`;
+      } else {
+        return `__EXTERNALS__.${key} = ${JSON.stringify(value)};`;
+      }
+    })
+    .join("\n");
+  return externalsCode;
 };
 
 export default methods;

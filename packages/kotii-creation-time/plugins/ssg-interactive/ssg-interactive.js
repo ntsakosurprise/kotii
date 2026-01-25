@@ -23,6 +23,12 @@ class SsgInteractive {
       methods.createBindElementsFromBindList;
     this.getComponentFileContentsAst = methods.getComponentFileContentsAst;
     this.startPreRenderWork = methods.startPreRenderWork;
+    this.getThisPageResourcesGraph = methods.getThisPageResourcesGraph;
+    this.loadPagesModuleGraph = methods.loadPagesModuleGraph;
+    this.replaceIdentifier = methods.replaceIdentifier;
+    this.createExternalsState = methods.createExternalsState;
+    this.restoreFunctionsForRuntime = methods.restoreFunctionsForRuntime;
+    this.normalizeExternalsForBrowser = methods.normalizeExternalsForBrowser;
   }
 }
 export default SsgInteractive;
