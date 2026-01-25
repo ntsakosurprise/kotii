@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-self-assign */
 /* eslint-disable no-unused-vars */
 import babel from "@babel/core";
@@ -53,6 +54,7 @@ const FONT_FACE_BLOCK_REGEX = /@font-face\s*{[^}]*}/gi;
 const URL_REGEX = /url\(\s*(["']?)([^"')]+)\1\s*\)/g;
 const RELATIVE_URLS_PATH_LEVELS_REGEX = /^(\.\.\/)+/;
 let FONTS_META = [];
+let STATIC_GLOBALS_CREATED = false;
 
 let cssSpecifiers = [".css", ".scss", ".sass", ".less", ".styl"];
 let fileSpecifiers = [".gif", ".png", ".svg", ".jpg", ".jpeg"];
@@ -90,10 +92,7 @@ let fileLoaderExts = [
 ];
 let extensions = [".js", ".jsx", ".tsx", ".ts"];
 let nodeModulesRegex = /node_modules/;
-global.__useState = function (initial, name) {
-  __STATIC_RUNTIME_STATE[name] = initial;
-  return [initial, () => {}];
-};
+
 export async function load(url, context, nextLoad) {
   const { format, parentURL = "" } = context;
 
@@ -109,6 +108,10 @@ export async function load(url, context, nextLoad) {
     )}`,
     fileExtension
   );
+
+  if (url === "virtual:static-module-graph") {
+    return loadVirtualModule();
+  }
 
   try {
     if (
@@ -133,12 +136,12 @@ export async function load(url, context, nextLoad) {
         options = {
           presets: ["@babel/preset-react", "@babel/preset-typescript"],
           plugins: [
-            "@babel/plugin-syntax-import-assertions",
-            "@babel/plugin-transform-typescript",
-            [
-              "babel-plugin-styled-components",
-              { ssr: true, displayName: true },
-            ],
+            // "@babel/plugin-syntax-import-assertions",
+            // "@babel/plugin-transform-typescript",
+            // [
+            //   "babel-plugin-styled-components",
+            //   { ssr: true, displayName: true },
+            // ],
           ],
         };
         if (
@@ -267,7 +270,23 @@ export async function load(url, context, nextLoad) {
       if (fileLoaderExts.includes(fileExtension)) {
         loggas.load.debug("TRANSFORM WITHOUT JSX", fileExtension, result?.code);
       } else {
-        loggas.load.debug("TRANSFORM WITH JSX", fileExtension, result?.code);
+        if (fileExtension === extJsx) {
+          loggas.load.debug("TRANSFORM WITH JSX", fileExtension, result?.code);
+        }
+      }
+      if (process?.env?.KOTII_MODE) {
+        if (result?.metadata?.__STATIC_META__) {
+          console.log("RESULT.METADATA", result.metadata.__STATIC_META__);
+          MODULE_GRAPH_FOR_STATIC_GENERATION.set(url, {
+            externals: result.metadata.__STATIC_META__.externals,
+            deps: new Set(result.metadata.__STATIC_META__.deps),
+            imports: result.metadata.__STATIC_META__.imports,
+          });
+          console.log(
+            "MODULE GRAPH EXTERNALS",
+            MODULE_GRAPH_FOR_STATIC_GENERATION
+          );
+        }
       }
 
       return {
@@ -307,7 +326,15 @@ export async function load(url, context, nextLoad) {
 export async function resolve(specifier, context, nextResolve) {
   const { parentURL = "" } = context;
   loggas.resolve.debug("RESOLVE specifier", specifier, parentURL);
-  loggas.resolve.debug("PROCESS CONTENT IN LOADER", process.env);
+  // loggas.resolve.debug("PROCESS CONTENT IN LOADER", MODULE_GRAPH_FOR_STATIC_GENERATION);
+
+  if (
+    process.env?.KOTII_MODE &&
+    process.env?.KOTII_MODE?.toLowerCase() === "ssg" &&
+    !STATIC_GLOBALS_CREATED
+  ) {
+    createStaticGenerationGlobals();
+  }
 
   try {
     let shouldTerminate = false;
@@ -331,6 +358,11 @@ export async function resolve(specifier, context, nextResolve) {
 
     if (specifier.indexOf("../kotii-land/dev") >= 0) {
       loggas.resolve.debug("ALSO HANDLED BY LOADERS", meta);
+    }
+
+    if (process?.env?.KOTII_MODE === "ssg") {
+      shouldTerminate = resolveVirtualModule(specifier);
+      if (shouldTerminate) return shouldTerminate;
     }
 
     shouldTerminate = resolveUserAliase(specifier);
@@ -765,6 +797,17 @@ export const guessPathExtension = (guessPath) => {
     );
 
   return livingExtension;
+};
+
+export const resolveVirtualModule = (specifier) => {
+  if (specifier === "virtual:static-module-graph") {
+    return {
+      url: "virtual:static-module-graph",
+      shortCircuit: true,
+    };
+  } else {
+    return false;
+  }
 };
 
 /**
@@ -1338,4 +1381,37 @@ const storeFontMeta = () => {
     encoding: "utf8",
   });
   FONTS_META = [];
+};
+
+const createStaticGenerationGlobals = () => {
+  global.MODULE_GRAPH_FOR_STATIC_GENERATION = new Map();
+  // global.REGISTER_MODULE = function (file, fileMetaData) {
+  //   MODULE_GRAPH_FOR_STATIC_GENERATION.set(file, {
+  //     externals: new Set(fileMetaData.externals || []),
+  //     deps: new Set(fileMetaData.deps || []),
+  //     imports: fileMetaData.imports || {},
+  //   });
+  // };
+};
+
+const loadVirtualModule = () => {
+  const serialized = JSON.stringify(
+    [...MODULE_GRAPH_FOR_STATIC_GENERATION.entries()].map(([url, data]) => [
+      url,
+      {
+        externals: data.externals,
+        deps: [...data.deps],
+        imports: data.imports,
+      },
+    ])
+  );
+
+  return {
+    format: "module",
+    shortCircuit: true,
+    source: `
+        const  MODULE_GRAPH_FOR_STATIC_GENERATION = new Map(${serialized});
+        export default MODULE_GRAPH_FOR_STATIC_GENERATION;
+      `,
+  };
 };

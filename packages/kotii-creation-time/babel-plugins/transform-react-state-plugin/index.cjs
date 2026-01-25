@@ -98,31 +98,9 @@ const transformReactStatePlugin = () => {
           } else if (t.isImportNamespaceSpecifier(s)) {
             imports[s.local.name] = source;
           }
-
-          // externals.add(s.local.name);
         });
       },
 
-      // Identifier(path) {
-      //    if (
-      //       t.isMemberExpression(path.parent) &&
-      //       path.parent.property === path.node &&
-      //       !path.parent.computed
-      //     ) {
-      //       return;
-      //     }
-
-      //   if (
-      //     t.isJSXIdentifier(path.node) &&
-      //     /^[a-z]/.test(path.node.name)
-      //   ) {
-      //     return;
-      //   }
-
-      //   const name = path.node.name;
-      //   if (path.scope.hasBinding(name) || name === "undefined" ||  BUILTINS.has(name)) return;
-      //   externals.add(name);
-      // },
       JSXAttribute(path, state) {
         collectInteractiveExternals(path, externals, reactStateIdentifiers);
       },
