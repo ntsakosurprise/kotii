@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 // const path = require("path");
 // const fs = require("fs");
+
 const t = require("@babel/types");
 const BUILTINS = new Set([
   "Math",
@@ -21,12 +22,14 @@ const BUILTINS = new Set([
   "BigInt",
   "Intl",
 ]);
+const REACT_OPT_HOOKS = new Set(["useMemo", "useCallback"]);
 
-const ExtractImports = (path, state) => {
+const ExtractImports = (path, state, options) => {
   const source = path.node.source.value;
+  console.log("IMPORTS EXTRACT SOURCE", path.node.source);
 
-  if (source.startsWith(".")) {
-    state.deps.add(source);
+  if (source.startsWith(".") || options.aliases[source]) {
+    state.deps.add(options.staticDepsResolver(source));
   }
 
   path.node.specifiers.forEach((s) => {
@@ -34,8 +37,17 @@ const ExtractImports = (path, state) => {
   });
 };
 const ExtractVariables = (path, state) => {
-  const { id, init } = path.node;
-  if (!t.isIdentifier(id)) return;
+  const { init } = path.node;
+  if (
+    t.isCallExpression(init) &&
+    t.isIdentifier(init.callee) &&
+    REACT_OPT_HOOKS.has(init.callee.name)
+  ) {
+    const fnArg = init.arguments[0];
+    if (t.isFunction(fnArg)) {
+      collectInteractiveExternals(path.get("init.arguments.0"), state);
+    }
+  }
 
   // useState
   VariablesGetState(path, state);
@@ -43,7 +55,7 @@ const ExtractVariables = (path, state) => {
   // Top-level statics
   VariablesGetFileLevelIdentifiers(path, state);
 
-  // Component-scoped binding (🔥 ALWAYS track)
+  // Component-scoped binding ( ALWAYS track)
   VariablesGetComponentLevelIdentifiers(path, state);
 };
 const ExtractJSX = (path, state) => {
@@ -63,7 +75,7 @@ const ExtractJSX = (path, state) => {
   const source = binding.path.parent.source.value;
   if (!source.includes("Interactive")) return;
 
-  // 🔥 Traverse ALL children
+  //  Traverse ALL children
   path.traverse({
     JSXAttribute(attrPath) {
       collectInteractiveExternals(attrPath, state);
@@ -78,9 +90,12 @@ const ProgramEnter = (path, state) => {
   state.topLevelStatics = new Map();
   state.componentStatics = new Map();
   state.componentBindings = new Set();
+  state.derivedStatics = new Map();
+  console.log("PROGRAM ENTER FILE NAME", state.filename);
 };
 const ProgramExiter = (path, state) => {
   const refinedExternals = {};
+  console.log("EXITER PROGRAM", state.filename, state.externals);
 
   for (const name of state.externals) {
     if (state.topLevelStatics.has(name)) {
@@ -99,12 +114,23 @@ const ProgramExiter = (path, state) => {
       continue;
     }
 
+    //  ADD THIS BLOCK
+    if (state.derivedStatics.has(name)) {
+      refinedExternals[name] = {
+        type: "runtime",
+        factory: state.derivedStatics.get(name),
+      };
+      continue;
+    }
+
     if (state.componentBindings.has(name)) {
       refinedExternals[name] = {
         type: "runtime",
       };
     }
   }
+
+  console.log("THE DERIVED STATICS", state.derivedStatics);
 
   state.file.metadata.__STATIC_META__ = {
     externals: refinedExternals,
@@ -119,99 +145,167 @@ const MatchJSXElement = (path, state) => {
   if (openingType.toLowerCase() !== "jsxidentifier") return false;
   if (jsxName.toLowerCase() !== "interactive") return false;
   console.log("THIS IS INTERACTIVE JSX ELEMENT", openingType, jsxName);
-  const elementChildren = path.node.children;
+  const elementChildren = path.get("children");
+  if (!elementChildren) return false;
+  handleInteractiveChildren(elementChildren, path, state);
+};
+
+// Local Helpers
+function handleInteractiveChildren(elementChildren, path, state) {
   if (!elementChildren) return false;
 
   elementChildren.forEach((child) => {
     if (child?.type?.toLowerCase() === "jsxelement") {
-      if (child?.attributes?.length > 0) {
-        child.attributes.forEach((attribute) => {
-          if (!/^on[A-Z]/.test(attribute)) {
-            console.log("THIS IS AN EVEN ATTRIBUTE", attribute);
+      child.traverse({
+        JSXAttribute(attribute) {
+          const name = attribute.get("name");
+
+          if (!name.isJSXIdentifier() || !/^on[A-Z]/.test(name.node.name)) {
+            return;
           }
-        });
-      }
+
+          const valuePath = attribute.get("value");
+          if (!valuePath.isJSXExpressionContainer()) return;
+
+          const expr = valuePath.get("expression");
+
+          console.log(
+            "handler:",
+            expr.node.type,
+            expr.isArrowFunctionExpression()
+          );
+          if (!isEventHandlerExpression(expr)) return;
+
+          collectInteractiveExternals(expr, state);
+        },
+      });
       if (child?.children) {
-        console.log("CHILD OF INTERACTIVE HAS CHILDREN");
+        handleInteractiveChildren(child.get("children"), path, state);
       }
+    } else if (child?.children) {
+      handleInteractiveChildren(child.get("children"), path, state);
     }
   });
-  // const localName = opening;
-  // if (!localName) return;
+}
+function collectFromIdentifierBinding(idPath, state, visited = new Set()) {
+  const name = idPath.node.name;
+  if (visited.has(name)) return;
+  visited.add(name);
 
-  // const binding = path.scope.getBinding(localName);
-  // if (!binding) return;
+  const binding = idPath.scope.getBinding(name);
+  if (!binding) return;
 
-  // if (
-  //   !binding.path.isImportSpecifier() &&
-  //   !binding.path.isImportDefaultSpecifier()
-  // )
-  //   return;
+  const init = binding.path.node.init;
+  if (!init) return;
 
-  // const source = binding.path.parent.source.value;
-  // if (!source.includes("Interactive")) return;
+  // Store the function if needed
+  if (t.isFunctionExpression(init) || t.isArrowFunctionExpression(init)) {
+    state.componentStatics.set(name, init);
 
-  // // 🔥 Traverse ALL children
-  // path.traverse({
-  //   JSXAttribute(attrPath) {
-  //     collectInteractiveExternals(attrPath, state);
-  //   },
-  // });
-};
+    collectInteractiveExternals(binding.path.get("init"), state, visited);
+  }
+}
 
-// Local Helpers
+function collectInteractiveExternals(path, state, visited = new Set()) {
+  // 1️ Inline function handlers
+  if (path.isFunction()) {
+    const localBindings = new Set();
 
-function collectInteractiveExternals(path, state) {
-  if (!path.isJSXAttribute()) return;
-  if (!/^on[A-Z]/.test(path.node.name.name)) return;
-
-  const value = path.node.value;
-  if (!t.isJSXExpressionContainer(value)) return;
-
-  const fn = value.expression;
-  if (!t.isFunctionExpression(fn) && !t.isArrowFunctionExpression(fn)) return;
-
-  // Local bindings
-  const localBindings = new Set(fn.params.map((p) => p.name));
-
-  path.get("value.expression").traverse({
-    VariableDeclarator(p) {
-      if (t.isIdentifier(p.node.id)) {
-        localBindings.add(p.node.id.name);
+    // params
+    for (const param of path.node.params) {
+      if (t.isIdentifier(param)) {
+        localBindings.add(param.name);
       }
-    },
-    FunctionDeclaration(p) {
-      if (p.node.id) localBindings.add(p.node.id.name);
-    },
-  });
+    }
 
-  // Free identifiers
-  path.get("value.expression").traverse({
-    Identifier(p) {
-      const name = p.node.name;
+    // locals inside body
+    path.traverse({
+      VariableDeclarator(p) {
+        if (t.isIdentifier(p.node.id)) {
+          localBindings.add(p.node.id.name);
+        }
+      },
+      FunctionDeclaration(p) {
+        if (p.node.id) {
+          localBindings.add(p.node.id.name);
+        }
+      },
+    });
 
-      if (
-        localBindings.has(name) ||
-        state.reactStateIdentifiers.has(name) ||
-        BUILTINS.has(name) ||
-        name === "undefined"
-      )
-        return;
+    console.log("THE LOCAL BINDINGS", localBindings);
 
-      if (
-        t.isMemberExpression(p.parent) &&
-        p.parent.property === p.node &&
-        !p.parent.computed
-      )
-        return;
+    // free identifiers
+    path.traverse({
+      Identifier(p) {
+        const name = p.node.name;
 
-      state.externals.add(name);
-    },
-  });
+        if (
+          localBindings.has(name) ||
+          state.reactStateIdentifiers.has(name) ||
+          BUILTINS.has(name) ||
+          name === "undefined"
+        ) {
+          return;
+        }
+
+        if (
+          t.isMemberExpression(p.parent) &&
+          p.parent.property === p.node &&
+          !p.parent.computed
+        ) {
+          return;
+        }
+
+        state.externals.add(name);
+
+        //  NEW: follow binding if function
+        collectFromIdentifierBinding(p, state, visited);
+      },
+    });
+    console.log("THE STATE.AFTER BINDING", state.externals);
+
+    return;
+  }
+
+  // 2️ Referenced handlers: onClick={handleClick}
+  if (path.isIdentifier() || path.isMemberExpression()) {
+    if (path.isIdentifier()) {
+      collectFromIdentifierBinding(path, state);
+    }
+
+    return;
+  }
+
+  // 3️ Logical handlers: cond && handleClick
+  if (path.isLogicalExpression()) {
+    collectInteractiveExternals(path.get("left"), state);
+    collectInteractiveExternals(path.get("right"), state);
+    return;
+  }
+
+  // 4 Conditional handlers: cond ? a : b
+  if (path.isConditionalExpression()) {
+    collectInteractiveExternals(path.get("consequent"), state);
+    collectInteractiveExternals(path.get("alternate"), state);
+    return;
+  }
+}
+
+function isEventHandlerExpression(expr) {
+  return (
+    expr.isFunction() || // function () {}, () => {}
+    expr.isIdentifier() || // handleClick
+    expr.isMemberExpression() || // this.handleClick
+    expr.isLogicalExpression() || // cond && handleClick
+    expr.isConditionalExpression() || // cond ? foo : bar
+    expr.isSequenceExpression() || // foo, bar
+    expr.isCallExpression() // onClick={foo()}
+  );
 }
 
 const VariablesGetState = (path, state) => {
   const { init } = path.node;
+
   if (
     t.isCallExpression(init) &&
     t.isIdentifier(init.callee, { name: "useState" }) &&
@@ -248,13 +342,15 @@ const VariablesGetFileLevelIdentifiers = (path, state) => {
 };
 const VariablesGetComponentLevelIdentifiers = (path, state) => {
   const { init, id } = path.node;
+
   if (
     path.scope.block.type === "ArrowFunctionExpression" ||
     path.scope.block.type === "FunctionDeclaration"
   ) {
+    // 1️Always track component bindings
     state.componentBindings.add(id.name);
 
-    // Only statics go here
+    // 2️True component statics (unchanged)
     if (
       t.isLiteral(init) ||
       t.isArrayExpression(init) ||
@@ -263,6 +359,23 @@ const VariablesGetComponentLevelIdentifiers = (path, state) => {
       t.isArrowFunctionExpression(init)
     ) {
       state.componentStatics.set(id.name, init);
+    }
+
+    // 3 ADD: React optimisation hooks
+    if (
+      t.isCallExpression(init) &&
+      t.isIdentifier(init.callee) &&
+      REACT_OPT_HOOKS.has(init.callee.name)
+    ) {
+      const fnArg = init.arguments[0];
+
+      if (t.isFunction(fnArg)) {
+        // This function *defines* the runtime value
+        state.derivedStatics.set(id.name, fnArg);
+
+        // Traverse the factory function
+        collectInteractiveExternals(path.get("init.arguments.0"), state);
+      }
     }
   }
 };

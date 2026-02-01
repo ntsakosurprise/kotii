@@ -5,7 +5,8 @@ const fs = require("fs");
 const { BUILTINS, TRAVERSERS } = require("./pluginUtils.cjs");
 /* eslint-disable no-unused-vars */
 
-const transformReactStatePlugin = () => {
+const transformReactStatePlugin = (babel, options) => {
+  console.log("PLUGIN OPTIONS", options);
   return {
     visitor: {
       Program: {
@@ -18,19 +19,19 @@ const transformReactStatePlugin = () => {
         },
       },
 
-      // // -----------------------------
-      // // Variable tracking
-      // // -----------------------------
-      // VariableDeclarator(path, state) {
-      //   TRAVERSERS.ExtractVariables(path, state);
-      // },
+      // -----------------------------
+      // Variable tracking
+      // -----------------------------
+      VariableDeclarator(path, state) {
+        TRAVERSERS.ExtractVariables(path, state);
+      },
 
       // -----------------------------
       // Imports
       // -----------------------------
-      // ImportDeclaration(path, state) {
-      //   TRAVERSERS.ExtractImports(path, state);
-      // },
+      ImportDeclaration(path, state) {
+        TRAVERSERS.ExtractImports(path, state, options);
+      },
 
       // -----------------------------
       // Interactive detection
