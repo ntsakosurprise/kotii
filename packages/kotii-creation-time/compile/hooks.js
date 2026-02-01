@@ -93,6 +93,20 @@ let fileLoaderExts = [
 let extensions = [".js", ".jsx", ".tsx", ".ts"];
 let nodeModulesRegex = /node_modules/;
 
+global.MODULE_GRAPH_FOR_STATIC_GENERATION = new Map();
+global.TEST_GLOBAL_USE = "THE GLOBAL USE";
+
+const RESOLVE_SPECIFIER_TO_URL = {};
+let isStaticMode = false;
+
+// global.REGISTER_MODULE = function (file, meta) {
+//   MODULE_GRAPH_FOR_STATIC_GENERATION.set(file, {
+//     externals: new Set(meta.externals || []),
+//     deps: new Set(meta.deps || []),
+//     imports: meta.imports || {},
+//   });
+// };
+
 export async function load(url, context, nextLoad) {
   const { format, parentURL = "" } = context;
 
@@ -148,12 +162,17 @@ export async function load(url, context, nextLoad) {
           process.env?.KOTII_MODE &&
           process.env?.KOTII_MODE?.toLowerCase() === "ssg"
         )
-          options.plugins.push(
+          options.plugins.push([
             `${path.join(
               kotiiRootPath,
               "./babel-plugins/transform-react-state-plugin/index.cjs"
-            )}`
-          );
+            )}`,
+            {
+              aliases: meta.aliases,
+              fileName: url,
+              staticDepsResolver: staticDepsResolver,
+            },
+          ]);
         loggas.load.debug("READING FILE", fileExtension, url, options.plugins);
         let urlInstance = new URL(url).pathname;
         if (url.indexOf("/api/") >= 0) {
@@ -274,19 +293,19 @@ export async function load(url, context, nextLoad) {
           loggas.load.debug("TRANSFORM WITH JSX", fileExtension, result?.code);
         }
       }
-      if (process?.env?.KOTII_MODE) {
-        if (result?.metadata?.__STATIC_META__) {
-          console.log("RESULT.METADATA", result.metadata.__STATIC_META__);
-          MODULE_GRAPH_FOR_STATIC_GENERATION.set(url, {
-            externals: result.metadata.__STATIC_META__.externals,
-            deps: new Set(result.metadata.__STATIC_META__.deps),
-            imports: result.metadata.__STATIC_META__.imports,
-          });
-          console.log(
-            "MODULE GRAPH EXTERNALS",
-            MODULE_GRAPH_FOR_STATIC_GENERATION
-          );
-        }
+      if (result?.metadata?.__STATIC_META__) {
+        console.log("RESULT.METADATA", result.metadata.__STATIC_META__);
+        MODULE_GRAPH_FOR_STATIC_GENERATION.set(url, {
+          externals: result.metadata.__STATIC_META__.externals,
+          deps: new Set(result.metadata.__STATIC_META__.deps),
+          imports: result.metadata.__STATIC_META__.imports,
+        });
+        console.log(
+          "MODULE GRAPH EXTERNALS",
+          MODULE_GRAPH_FOR_STATIC_GENERATION,
+          "Specifiers Resolves",
+          RESOLVE_SPECIFIER_TO_URL
+        );
       }
 
       return {
@@ -328,12 +347,14 @@ export async function resolve(specifier, context, nextResolve) {
   loggas.resolve.debug("RESOLVE specifier", specifier, parentURL);
   // loggas.resolve.debug("PROCESS CONTENT IN LOADER", MODULE_GRAPH_FOR_STATIC_GENERATION);
 
-  if (
-    process.env?.KOTII_MODE &&
-    process.env?.KOTII_MODE?.toLowerCase() === "ssg" &&
-    !STATIC_GLOBALS_CREATED
-  ) {
-    createStaticGenerationGlobals();
+  // if(
+  //   process.env?.KOTII_MODE &&
+  //   process.env?.KOTII_MODE?.toLowerCase() === "ssg" && !STATIC_GLOBALS_CREATED
+  // ){
+  //   createStaticGenerationGlobals()
+  // }
+  if (!isStaticMode && process?.env?.KOTII_MODE) {
+    initiateStaticStatus();
   }
 
   try {
@@ -360,24 +381,57 @@ export async function resolve(specifier, context, nextResolve) {
       loggas.resolve.debug("ALSO HANDLED BY LOADERS", meta);
     }
 
-    if (process?.env?.KOTII_MODE === "ssg") {
+    if (isStaticMode) {
       shouldTerminate = resolveVirtualModule(specifier);
       if (shouldTerminate) return shouldTerminate;
     }
 
     shouldTerminate = resolveUserAliase(specifier);
-    if (shouldTerminate) return shouldTerminate;
+    if (shouldTerminate) {
+      if (isStaticMode && isJsxFile(shouldTerminate.url)) {
+        if (!isNotInResolveList(specifier)) {
+          RESOLVE_SPECIFIER_TO_URL[specifier] = {
+            url: shouldTerminate.url,
+            parentURL,
+          };
+        }
+      }
+
+      return shouldTerminate;
+    }
 
     // shouldTerminate = resolveKotiiInternalImports(specifier);
     // if (shouldTerminate) return shouldTerminate;
     // shouldTerminate = resolveUserlandImports(specifier);
     // if (shouldTerminate) return shouldTerminate;
     shouldTerminate = resolveAliasedImports(specifier);
-    if (shouldTerminate) return shouldTerminate;
+    if (shouldTerminate) {
+      if (isStaticMode && isJsxFile(shouldTerminate.url)) {
+        if (!isNotInResolveList(specifier)) {
+          RESOLVE_SPECIFIER_TO_URL[specifier] = {
+            url: shouldTerminate.url,
+            parentURL,
+          };
+        }
+      }
+
+      return shouldTerminate;
+    }
     // shouldTerminate = resolveKotiiLandImports(specifier);
     // if (shouldTerminate) return shouldTerminate;
     shouldTerminate = resolvePagesImports(specifier);
-    if (shouldTerminate) return shouldTerminate;
+    if (shouldTerminate) {
+      if (isStaticMode && isJsxFile(shouldTerminate.url)) {
+        if (!isNotInResolveList(specifier)) {
+          RESOLVE_SPECIFIER_TO_URL[specifier] = {
+            url: shouldTerminate.url,
+            parentURL,
+          };
+        }
+      }
+
+      return shouldTerminate;
+    }
     // shouldTerminate = resolveKotiiScriptsImports(specifier);
     // if (shouldTerminate) return shouldTerminate;
     // shouldTerminate = resolveKotiiUserApiPlugins(specifier);
@@ -385,7 +439,18 @@ export async function resolve(specifier, context, nextResolve) {
     // shouldTerminate = resolveKotiiScriptsInternalImports(specifier);
     // if (shouldTerminate) return shouldTerminate;
 
-    return nextResolve(specifier);
+    let resolveResult = await nextResolve(specifier);
+
+    if (isStaticMode && isJsxFile(resolveResult.url)) {
+      if (!isNotInResolveList(specifier)) {
+        RESOLVE_SPECIFIER_TO_URL[specifier] = {
+          url: resolveResult.url,
+          parentURL,
+        };
+      }
+    }
+
+    return resolveResult;
   } catch (error) {
     const parsed = parseLoaderError(error);
 
@@ -1384,14 +1449,15 @@ const storeFontMeta = () => {
 };
 
 const createStaticGenerationGlobals = () => {
-  global.MODULE_GRAPH_FOR_STATIC_GENERATION = new Map();
-  // global.REGISTER_MODULE = function (file, fileMetaData) {
-  //   MODULE_GRAPH_FOR_STATIC_GENERATION.set(file, {
-  //     externals: new Set(fileMetaData.externals || []),
-  //     deps: new Set(fileMetaData.deps || []),
-  //     imports: fileMetaData.imports || {},
-  //   });
-  // };
+  loggas.resolve.debug("CREATE STATIC GLOBALS");
+  global.MODULE_GRAPH_FOR_STATIC_GENERATION__ = new Map();
+  global.REGISTER_MODULE = function (file, fileMetaData) {
+    MODULE_GRAPH_FOR_STATIC_GENERATION.set(file, {
+      externals: new Set(fileMetaData.externals || []),
+      deps: new Set(fileMetaData.deps || []),
+      imports: fileMetaData.imports || {},
+    });
+  };
 };
 
 const loadVirtualModule = () => {
@@ -1405,13 +1471,44 @@ const loadVirtualModule = () => {
       },
     ])
   );
+  const resolvesSerialized = JSON.stringify(RESOLVE_SPECIFIER_TO_URL);
 
   return {
     format: "module",
     shortCircuit: true,
     source: `
         const  MODULE_GRAPH_FOR_STATIC_GENERATION = new Map(${serialized});
-        export default MODULE_GRAPH_FOR_STATIC_GENERATION;
+        const  RESOLVED_JSX_MODULES = new Object(${resolvesSerialized})
+        export {RESOLVED_JSX_MODULES,MODULE_GRAPH_FOR_STATIC_GENERATION}
+        
       `,
   };
+};
+
+const staticDepsResolver = (specifier) => {
+  if (specifier.startsWith(".")) {
+    let checkResults = resolvePagesImports(specifier);
+    console.log("THE STATIC RESOLVER", checkResults);
+    return specifier;
+  } else {
+    let checkResults = resolveAliasedImports(specifier);
+    console.log("THE STATIC RESOLVER absolute", checkResults);
+    return specifier;
+  }
+};
+
+const initiateStaticStatus = () => {
+  if (
+    process?.env?.KOTII_MODE &&
+    process.env.KOTII_MODE.toLowerCase() === "ssg"
+  )
+    isStaticMode = true;
+};
+const isJsxFile = (url) => {
+  if (path.extname(url) === extJsx) return true;
+  return false;
+};
+const isNotInResolveList = (specifier) => {
+  if (RESOLVE_SPECIFIER_TO_URL[specifier]) return true;
+  return false;
 };
