@@ -110,7 +110,10 @@ methods.handleWebpackConfig = function (data) {
 
                 self.getEnvVariables(appEnv).then((envs) => {
                   self.debug("THE ENVS", config);
-                  self.configureWebPack(data.payload, envs, server);
+                  self.getVendorModulesFromVirutal().then(() => {
+                    self.configureWebPack(data.payload, envs, server);
+                  });
+                  // self.configureWebPack(data.payload, envs, server);
                 });
               });
           });
@@ -150,7 +153,9 @@ methods.handleWebpackConfig = function (data) {
 
     self.getEnvVariables(appEnv).then((envs) => {
       self.debug("THE ENVS", envs);
-      self.configureWebPack(data.payload, envs, server);
+      self.getVendorModulesFromVirutal().then(() => {
+        self.configureWebPack(data.payload, envs, server);
+      });
     });
   }
 
@@ -2230,6 +2235,44 @@ methods.sendReloadSignaOnRestart = function () {
       clientData["page"] = { pageUrl: self.newPageRoute?.path };
     self.notifyClient(clientData);
   }
+};
+
+methods.getVendorModulesFromVirutal = async function () {
+  const self = this;
+  try {
+    let STATIC_RESOURCES = await self.doImport(
+      "virtual:static-module-graph",
+      false,
+      false
+    );
+    console.log("STATIC VIRTUALS IN WEBPACK", STATIC_RESOURCES);
+    return STATIC_RESOURCES;
+  } catch (error) {
+    console.log("THE IMPOR ERROR.VENDOR", error);
+  }
+};
+
+methods.doImport = function (toImport, all = false, check = true) {
+  const self = this;
+  const pao = self.pao;
+  const loadFile = pao.pa_loadFile;
+  const loadFileSync = pao.pa_loadFileSync;
+  // self.debug("TIIMPORT", toImport);
+  return new Promise((resolve, reject) => {
+    // const manifestFile = loadFileSync(toImport);
+    // resolve({ module: imported.meta });
+    loadFile(toImport, all, check)
+      .then((imported) => {
+        self.debug("Module has successfully been imported:", imported);
+        resolve(imported);
+      })
+      .catch((err) => {
+        self.debug(
+          `importing module:${toImport}, has failed with an error:${err}`
+        );
+        reject(err);
+      });
+  });
 };
 
 export default methods;
