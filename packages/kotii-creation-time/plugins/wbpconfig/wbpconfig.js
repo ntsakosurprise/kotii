@@ -98,6 +98,8 @@ class WebpackConfig {
     this.getCentralFilesContent = methods.getCentralFilesContent;
     this.closeWatcherAndRestart = methods.closeWatcherAndRestart;
     this.sendReloadSignaOnRestart = methods.sendReloadSignaOnRestart;
+    this.getVendorModulesFromVirutal = methods.getVendorModulesFromVirutal;
+    this.doImport = methods.doImport;
   }
 }
 export default WebpackConfig;
