@@ -13,42 +13,51 @@ const EVENT_REGEX = /^on[A-Z]/;
 export const Interactive = ({ children }) => {
   const interactions = useContext(InteractionContext);
 
-  // Not in SSG mode → pass through
+  // Not in SSG mode → pass through untouched
   if (!interactions) {
     return children;
   }
 
-  const child = React.Children.only(children);
-  const props = { ...child.props };
-
-  const elId = `interactive-${interactions.length}`;
-  const events = [];
-
-  Object.keys(props).forEach((key) => {
-    console.log("THE EVENT EXTRACTION");
-    if (EVENT_REGEX.test(key) && typeof props[key] === "function") {
-      const event = key.slice(2).toLowerCase();
-
-      let code = props[key].toString();
-      events.push({
-        name: event,
-        code,
-      });
-      delete props[key];
+  function processElement(element) {
+    if (!React.isValidElement(element)) {
+      return element;
     }
-  });
 
-  interactions.push({
-    id: elId,
-    events,
-  });
+    const props = { ...element.props };
+    const events = [];
 
-  //   if (child.props?.["data-interactive"]) {
-  //   return child;
-  // }
+    Object.keys(props).forEach((key) => {
+      if (EVENT_REGEX.test(key) && typeof props[key] === "function") {
+        const event = key.slice(2).toLowerCase();
 
-  return React.cloneElement(child, {
-    ...props,
-    "data-interactive-id": elId,
-  });
+        events.push({
+          name: event,
+          code: props[key].toString(),
+        });
+
+        delete props[key];
+      }
+    });
+
+    // Recurse into children
+    if (props.children) {
+      props.children = React.Children.map(props.children, processElement);
+    }
+
+    // Only assign an interactive id if events were found
+    if (events.length > 0) {
+      const elId = `interactive-${interactions.length}`;
+
+      interactions.push({
+        id: elId,
+        events,
+      });
+
+      props["data-interactive-id"] = elId;
+    }
+
+    return React.cloneElement(element, props);
+  }
+
+  return React.Children.map(children, processElement);
 };
