@@ -20,6 +20,7 @@ const setTestVar = () => {};
 import { parseExpression } from "@babel/parser";
 import { pathToFileURL } from "url";
 let MODULE_GRAPH_FOR_STATIC_GENERATION = null;
+let RESOLVED_JSX_MODULES = null;
 
 // console.log("THE MODULE GRAPH FOR STATIC", MODULE_GRAPH_FOR_STATIC_GENERATION)
 
@@ -43,12 +44,19 @@ methods.handleStaticInteractivity = async function (data) {
   self.debug("THE GLOBAL TEST", global.TEST_GLOBAL_USE);
 
   if (!MODULE_GRAPH_FOR_STATIC_GENERATION) {
-    MODULE_GRAPH_FOR_STATIC_GENERATION = await self.loadPagesModuleGraph(
+    let STATIC_RESOURCES = await self.loadPagesModuleGraph(
       "virtual:static-module-graph"
     );
+    MODULE_GRAPH_FOR_STATIC_GENERATION =
+      STATIC_RESOURCES.MODULE_GRAPH_FOR_STATIC_GENERATION;
+    RESOLVED_JSX_MODULES = STATIC_RESOURCES.RESOLVED_JSX_MODULES;
   }
 
-  console.log("THE ABSOLUTE PATH.SSG", view.componentSourcePath, view);
+  console.log(
+    "THE ABSOLUTE PATH.SSG",
+    MODULE_GRAPH_FOR_STATIC_GENERATION,
+    RESOLVED_JSX_MODULES
+  );
   const url = view.componentSourcePath;
   console.log("THE URL", url);
   const fileUrl = pathToFileURL(url).href;
@@ -57,6 +65,7 @@ methods.handleStaticInteractivity = async function (data) {
   self.__STATIC_EXTERNALS_STATE = externals;
   self.debug("MODULE EXTERNALS FOR STATIC", self.__STATIC_EXTERNALS_STATE);
   self.createExternalsState();
+  self.debug("THE APP EVENT EXTERNALS", self.__EXTERNALS__);
 
   // self.startPreRenderWork(view);
   self
@@ -205,7 +214,7 @@ methods.eventsSourceAst = function (eventAst) {
       const name = path.node.name;
 
       // Not a tracked state variable
-      console.log("THE CURRENT NAME", name, self.__STATIC_EXTERNALS_STATE);
+      // console.log("THE CURRENT NAME",name)
       if (
         !self.__STATIC_RUNTIME_STATE[name] &&
         !self.__STATIC_EXTERNALS_STATE[name]
@@ -441,7 +450,31 @@ methods.getThisPageResourcesGraph = function (entryFile) {
       if (!(key in imports)) imports[key] = value;
     });
 
-    mod.deps.forEach(walk);
+    mod.deps.forEach((dep) => {
+      if (RESOLVED_JSX_MODULES[dep]) {
+        let dependencyBySpecifier = RESOLVED_JSX_MODULES[dep];
+
+        let dependencyUrl = dependencyBySpecifier.url;
+        let dependencyExternals =
+          MODULE_GRAPH_FOR_STATIC_GENERATION[dependencyUrl]?.externals || null;
+        console.log(
+          "DepByS",
+          dependencyBySpecifier,
+          "DepUrl",
+          dependencyUrl,
+          "DepExternals",
+          dependencyExternals
+        );
+        if (
+          dependencyExternals &&
+          Object.keys(dependencyExternals).length > 0
+        ) {
+          console.log("PING");
+        } else {
+          walk(dependencyUrl);
+        }
+      }
+    });
   }
 
   walk(entryFile);
@@ -568,63 +601,78 @@ methods.replaceIdentifier = function (path, jsStateID, state) {
     t.memberExpression(t.identifier(jsStateID), t.identifier(state))
   );
 };
-methods.createExternalsState = function (externals) {
+methods.createExternalsState = function () {
   const self = this;
-
   self.__EXTERNALS__ = {};
 
-  Object.entries(self.__STATIC_EXTERNALS_STATE).forEach(([key, valueAsAst]) => {
-    const { code } = generate(valueAsAst);
-    self.__EXTERNALS__[key] = code;
+  Object.entries(this.__STATIC_EXTERNALS_STATE).forEach(([key, wrapper]) => {
+    const ast = wrapper?.value || wrapper?.factory; // ← IMPORTANT
+    const { code } = generate(ast);
+    this.__EXTERNALS__[key] = code;
   });
 };
 methods.restoreFunctionsForRuntime = function (externals) {
   const runtimeExternals = {};
-  console.log("THE RESTORE FUNCTION", externals);
 
   for (const [key, value] of Object.entries(externals)) {
-    if (typeof value === "string") {
-      const trimmed = value.trim();
-
-      // crude check: if it starts with () => or function, treat as a function
-      if (trimmed.startsWith("() =>") || trimmed.startsWith("function")) {
-        // convert string to real function
-        runtimeExternals[key] = eval(`(${trimmed})`);
-        continue;
-      }
-
-      // check if it's a serialized array/object
-      if (
-        (trimmed.startsWith("[") && trimmed.endsWith("]")) ||
-        (trimmed.startsWith("{") && trimmed.endsWith("}"))
-      ) {
-        runtimeExternals[key] = JSON.parse(trimmed);
-        continue;
-      }
-
-      // otherwise keep as string (remove extra quotes)
-      runtimeExternals[key] = trimmed.replace(/^"|"$/g, "");
-    } else {
-      // non-string values (rare) just copy
+    if (typeof value !== "string") {
       runtimeExternals[key] = value;
+      continue;
     }
+
+    const trimmed = value.trim();
+
+    // FACTORY — DO NOT EVAL
+    if (
+      trimmed.startsWith("() =>") ||
+      trimmed.startsWith("((") || // defensive
+      trimmed.startsWith("function")
+    ) {
+      runtimeExternals[key] = {
+        __factory__: true,
+        source: trimmed,
+      };
+      continue;
+    }
+
+    // JS literals (object/array)
+    if (
+      (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
+      (trimmed.startsWith("[") && trimmed.endsWith("]"))
+    ) {
+      runtimeExternals[key] = eval(`(${trimmed})`);
+      continue;
+    }
+
+    // primitive
+    runtimeExternals[key] = trimmed.replace(/^"|"$/g, "");
   }
 
-  console.log("THE RUNTIME EXTERNALS", runtimeExternals);
   return runtimeExternals;
 };
+
 methods.normalizeExternalsForBrowser = function (runtimeExternals) {
   const self = this;
 
   const externalsCode = Object.entries(runtimeExternals)
     .map(([key, value]) => {
+      console.log("KEY, VALUE.EXTERNALS", key, value);
+      if (value?.factory) {
+        return `
+          __EXTERNALS__.${key} = (function() {
+            return (${value.factory});
+          })();
+          `;
+      }
+
       if (typeof value === "function") {
         return `__EXTERNALS__.${key} = ${value.toString()};`;
-      } else {
-        return `__EXTERNALS__.${key} = ${JSON.stringify(value)};`;
       }
+
+      return `__EXTERNALS__.${key} = ${JSON.stringify(value)};`;
     })
     .join("\n");
+
   return externalsCode;
 };
 
