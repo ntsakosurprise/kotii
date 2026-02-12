@@ -97,6 +97,7 @@ global.MODULE_GRAPH_FOR_STATIC_GENERATION = new Map();
 global.TEST_GLOBAL_USE = "THE GLOBAL USE";
 
 const RESOLVE_SPECIFIER_TO_URL = {};
+const PACKAGE_FILES = new Map();
 let isStaticMode = false;
 
 // global.REGISTER_MODULE = function (file, meta) {
@@ -126,6 +127,8 @@ export async function load(url, context, nextLoad) {
   if (url === "virtual:static-module-graph") {
     return loadVirtualModule();
   }
+
+  addDependencyFromLoad(url);
 
   try {
     if (
@@ -345,7 +348,7 @@ export async function load(url, context, nextLoad) {
 export async function resolve(specifier, context, nextResolve) {
   const { parentURL = "" } = context;
   loggas.resolve.debug("RESOLVE specifier", specifier, parentURL);
-  // loggas.resolve.debug("PROCESS CONTENT IN LOADER", MODULE_GRAPH_FOR_STATIC_GENERATION);
+  loggas.resolve.debug("PACKAGES FILES LIST", PACKAGE_FILES);
 
   // if(
   //   process.env?.KOTII_MODE &&
@@ -388,15 +391,7 @@ export async function resolve(specifier, context, nextResolve) {
 
     shouldTerminate = resolveUserAliase(specifier);
     if (shouldTerminate) {
-      if (isStaticMode && isJsxFile(shouldTerminate.url)) {
-        if (!isNotInResolveList(specifier)) {
-          RESOLVE_SPECIFIER_TO_URL[specifier] = {
-            url: shouldTerminate.url,
-            parentURL,
-          };
-        }
-      }
-
+      saveTargetSpecifier(specifier, shouldTerminate, parentURL);
       return shouldTerminate;
     }
 
@@ -406,29 +401,14 @@ export async function resolve(specifier, context, nextResolve) {
     // if (shouldTerminate) return shouldTerminate;
     shouldTerminate = resolveAliasedImports(specifier);
     if (shouldTerminate) {
-      if (isStaticMode && isJsxFile(shouldTerminate.url)) {
-        if (!isNotInResolveList(specifier)) {
-          RESOLVE_SPECIFIER_TO_URL[specifier] = {
-            url: shouldTerminate.url,
-            parentURL,
-          };
-        }
-      }
-
+      saveTargetSpecifier(specifier, shouldTerminate, parentURL);
       return shouldTerminate;
     }
     // shouldTerminate = resolveKotiiLandImports(specifier);
     // if (shouldTerminate) return shouldTerminate;
     shouldTerminate = resolvePagesImports(specifier);
     if (shouldTerminate) {
-      if (isStaticMode && isJsxFile(shouldTerminate.url)) {
-        if (!isNotInResolveList(specifier)) {
-          RESOLVE_SPECIFIER_TO_URL[specifier] = {
-            url: shouldTerminate.url,
-            parentURL,
-          };
-        }
-      }
+      saveTargetSpecifier(specifier, shouldTerminate, parentURL);
 
       return shouldTerminate;
     }
@@ -440,15 +420,7 @@ export async function resolve(specifier, context, nextResolve) {
     // if (shouldTerminate) return shouldTerminate;
 
     let resolveResult = await nextResolve(specifier);
-
-    if (isStaticMode && isJsxFile(resolveResult.url)) {
-      if (!isNotInResolveList(specifier)) {
-        RESOLVE_SPECIFIER_TO_URL[specifier] = {
-          url: resolveResult.url,
-          parentURL,
-        };
-      }
-    }
+    saveTargetSpecifier(specifier, resolveResult, parentURL);
 
     return resolveResult;
   } catch (error) {
@@ -1511,4 +1483,74 @@ const isJsxFile = (url) => {
 const isNotInResolveList = (specifier) => {
   if (RESOLVE_SPECIFIER_TO_URL[specifier]) return true;
   return false;
+};
+
+const saveTargetSpecifier = (specifier, shouldTerminate, parentURL) => {
+  if (!isStaticMode) return;
+  addFileAsPackageDep(specifier, shouldTerminate.url, parentURL);
+  if (isJsxFile(shouldTerminate.url)) {
+    if (!isNotInResolveList(specifier)) {
+      RESOLVE_SPECIFIER_TO_URL[specifier] = {
+        url: shouldTerminate.url,
+        parentURL,
+      };
+    }
+  }
+};
+
+const addFileAsPackageDep = (specifier, url, parentURL) => {
+  const owner = findOwningPackage(parentURL);
+  if (owner) {
+    PACKAGE_FILES.get(owner).add(url);
+  }
+
+  if (!specifier.startsWith(".") && !specifier.startsWith("/")) {
+    if (!PACKAGE_FILES.has(specifier)) {
+      PACKAGE_FILES.set(specifier, new Set());
+    }
+
+    PACKAGE_FILES.get(specifier).add(url);
+  }
+};
+
+const addDependencyFromLoad = (url) => {
+  console.log("ADD DEP FROM LOAD", url);
+  if (!isStaticMode) return;
+  for (const files of PACKAGE_FILES.values()) {
+    console.log("PACKAGES LIST FILE", files);
+    if (files.has(url)) {
+      // this file belongs to that package
+      files.add(url);
+    }
+  }
+};
+
+const findOwningPackage = (url) => {
+  const targetPath = path.normalize(new URL(url).pathname);
+
+  let bestMatch = null;
+  let bestDepth = -1;
+
+  for (const [pkg, files] of PACKAGE_FILES) {
+    for (const f of files) {
+      const dir = path.dirname(path.normalize(new URL(f).pathname));
+
+      const relative = path.relative(dir, targetPath);
+
+      if (
+        relative &&
+        !relative.startsWith("..") &&
+        !path.isAbsolute(relative)
+      ) {
+        const depth = dir.split(path.sep).length;
+
+        if (depth > bestDepth) {
+          bestDepth = depth;
+          bestMatch = pkg;
+        }
+      }
+    }
+  }
+
+  return bestMatch;
 };
