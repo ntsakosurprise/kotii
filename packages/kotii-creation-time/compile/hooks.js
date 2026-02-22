@@ -301,6 +301,7 @@ export async function load(url, context, nextLoad) {
           externals: result.metadata.__STATIC_META__.externals,
           deps: new Set(result.metadata.__STATIC_META__.deps),
           imports: result.metadata.__STATIC_META__.imports,
+          reactOptHooks: result.metadata.__STATIC_META__.reactOptHooks,
         });
         console.log(
           "MODULE GRAPH EXTERNALS",
@@ -1439,6 +1440,7 @@ const loadVirtualModule = () => {
         externals: data.externals,
         deps: [...data.deps],
         imports: data.imports,
+        reactOptHooks: data.reactOptHooks,
       },
     ])
   );
