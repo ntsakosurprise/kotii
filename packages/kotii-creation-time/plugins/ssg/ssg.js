@@ -27,6 +27,7 @@ class Ssg {
     this.hasExtension = methods.hasExtension;
     this.shouldAppendHtml = methods.shouldAppendHtml;
     this.localizeHrefUrl = methods.localizeHrefUrl;
+    this.formatAndSaveHtml = methods.formatAndSaveHtml;
   }
 }
 export default Ssg;

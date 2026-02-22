@@ -112,7 +112,7 @@ methods.handleStaticGeneration = function (data) {
         } else {
           self.savePageToFile(
             `${DIST}${path.sep}${html.name.toLowerCase()}.html`,
-            html.content
+            self.formatAndSaveHtml(html.content)
           );
         }
 
