@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /* eslint-disable no-self-assign */
 /* eslint-disable no-unused-vars */
 import babel from "@babel/core";
@@ -1444,6 +1443,13 @@ const loadVirtualModule = () => {
     ])
   );
   const resolvesSerialized = JSON.stringify(RESOLVE_SPECIFIER_TO_URL);
+  let packagesFilesSerialized = {};
+  JSON.stringify(
+    [...PACKAGE_FILES.entries()].map((packageAsDep) => {
+      packagesFilesSerialized[packageAsDep[0]] = [...packageAsDep[1]];
+    })
+  );
+  console.log("THE PACKAGES FILES", packagesFilesSerialized);
 
   return {
     format: "module",
@@ -1451,8 +1457,8 @@ const loadVirtualModule = () => {
     source: `
         const  MODULE_GRAPH_FOR_STATIC_GENERATION = new Map(${serialized});
         const  RESOLVED_JSX_MODULES = new Object(${resolvesSerialized})
-        export {RESOLVED_JSX_MODULES,MODULE_GRAPH_FOR_STATIC_GENERATION}
-        
+        const PACKAGES_FILES = ${JSON.stringify(packagesFilesSerialized)}
+        export {RESOLVED_JSX_MODULES,MODULE_GRAPH_FOR_STATIC_GENERATION, PACKAGES_FILES}       
       `,
   };
 };
