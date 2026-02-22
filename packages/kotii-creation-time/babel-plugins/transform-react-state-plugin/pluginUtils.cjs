@@ -96,6 +96,7 @@ const ProgramEnter = (path, state) => {
   state.componentStatics = new Map();
   state.componentBindings = new Set();
   state.derivedStatics = new Map();
+  state.reactOptHooks = [];
   console.log("PROGRAM ENTER FILE NAME", state.filename);
 };
 const ProgramExiter = (path, state) => {
@@ -119,7 +120,6 @@ const ProgramExiter = (path, state) => {
       continue;
     }
 
-    // 🔥 ADD THIS BLOCK
     if (state.derivedStatics.has(name)) {
       refinedExternals[name] = {
         type: "runtime",
@@ -143,6 +143,7 @@ const ProgramExiter = (path, state) => {
     externals: refinedExternals,
     deps: [...state.deps],
     imports: state.imports,
+    reactOptHooks: state.reactOptHooks,
   };
 };
 const MatchJSXElement = (path, state) => {
@@ -217,7 +218,12 @@ function collectFromIdentifierBinding(idPath, state, visited = new Set()) {
   }
 }
 
-function collectInteractiveExternals(path, state, visited = new Set()) {
+function collectInteractiveExternals(
+  path,
+  state,
+  visited = new Set(),
+  isReactOptHook = false
+) {
   // 1️⃣ Inline function handlers
   if (path.isFunction()) {
     const localBindings = new Set();
@@ -262,6 +268,14 @@ function collectInteractiveExternals(path, state, visited = new Set()) {
         if (
           t.isMemberExpression(p.parent) &&
           p.parent.property === p.node &&
+          !p.parent.computed
+        ) {
+          return;
+        }
+
+        if (
+          t.isObjectProperty(p.parent) &&
+          p.parent.key === p.node &&
           !p.parent.computed
         ) {
           return;
@@ -385,9 +399,10 @@ const VariablesGetComponentLevelIdentifiers = (path, state) => {
       if (t.isFunction(fnArg)) {
         // This function *defines* the runtime value
         state.derivedStatics.set(id.name, fnArg);
+        state.reactOptHooks.push(id.name);
 
         // Traverse the factory function
-        collectInteractiveExternals(path.get("init.arguments.0"), state, true);
+        collectInteractiveExternals(path.get("init.arguments.0"), state);
       }
     }
   }
