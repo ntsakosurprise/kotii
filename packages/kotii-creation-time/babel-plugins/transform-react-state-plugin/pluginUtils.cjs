@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 // const path = require("path");
 // const fs = require("fs");
-
+const { jSXAttribute } = require("@babel/types");
 const t = require("@babel/types");
 const BUILTINS = new Set([
   "Math",
@@ -26,7 +26,12 @@ const REACT_OPT_HOOKS = new Set(["useMemo", "useCallback"]);
 
 const ExtractImports = (path, state, options) => {
   const source = path.node.source.value;
-  console.log("IMPORTS EXTRACT SOURCE", path.node.source);
+  console.log(
+    "IMPORTS EXTRACT SOURCE",
+    path.node.source,
+    "NODE SPECIFIERS",
+    path.node.specifiers
+  );
 
   if (source.startsWith(".") || options.aliases[source]) {
     state.deps.add(options.staticDepsResolver(source));
@@ -55,7 +60,7 @@ const ExtractVariables = (path, state) => {
   // Top-level statics
   VariablesGetFileLevelIdentifiers(path, state);
 
-  // Component-scoped binding ( ALWAYS track)
+  // Component-scoped binding (🔥 ALWAYS track)
   VariablesGetComponentLevelIdentifiers(path, state);
 };
 const ExtractJSX = (path, state) => {
@@ -75,7 +80,7 @@ const ExtractJSX = (path, state) => {
   const source = binding.path.parent.source.value;
   if (!source.includes("Interactive")) return;
 
-  //  Traverse ALL children
+  // 🔥 Traverse ALL children
   path.traverse({
     JSXAttribute(attrPath) {
       collectInteractiveExternals(attrPath, state);
@@ -114,7 +119,7 @@ const ProgramExiter = (path, state) => {
       continue;
     }
 
-    //  ADD THIS BLOCK
+    // 🔥 ADD THIS BLOCK
     if (state.derivedStatics.has(name)) {
       refinedExternals[name] = {
         type: "runtime",
@@ -128,6 +133,8 @@ const ProgramExiter = (path, state) => {
         type: "runtime",
       };
     }
+
+    if (!refinedExternals[name]) refinedExternals[name] = name;
   }
 
   console.log("THE DERIVED STATICS", state.derivedStatics);
@@ -193,13 +200,17 @@ function collectFromIdentifierBinding(idPath, state, visited = new Set()) {
   visited.add(name);
 
   const binding = idPath.scope.getBinding(name);
+  console.log("THE ID BINDING", binding);
   if (!binding) return;
 
   const init = binding.path.node.init;
+  console.log("INIT BINDING BEFORE", name);
   if (!init) return;
+  console.log("INIT BINDING AFTER", name, t.isCallExpression(init));
 
   // Store the function if needed
   if (t.isFunctionExpression(init) || t.isArrowFunctionExpression(init)) {
+    console.log("THE INIT FUNCTION EXPRESSION", name);
     state.componentStatics.set(name, init);
 
     collectInteractiveExternals(binding.path.get("init"), state, visited);
@@ -207,7 +218,7 @@ function collectFromIdentifierBinding(idPath, state, visited = new Set()) {
 }
 
 function collectInteractiveExternals(path, state, visited = new Set()) {
-  // 1️ Inline function handlers
+  // 1️⃣ Inline function handlers
   if (path.isFunction()) {
     const localBindings = new Set();
 
@@ -257,17 +268,19 @@ function collectInteractiveExternals(path, state, visited = new Set()) {
         }
 
         state.externals.add(name);
+        console.log("THE CURRENT FREE IDENTIFIER", name);
 
-        //  NEW: follow binding if function
+        // 🔥 NEW: follow binding if function
         collectFromIdentifierBinding(p, state, visited);
       },
     });
     console.log("THE STATE.AFTER BINDING", state.externals);
+    console.log("THE LOCAL BINDING", localBindings);
 
     return;
   }
 
-  // 2️ Referenced handlers: onClick={handleClick}
+  // 2️⃣ Referenced handlers: onClick={handleClick}
   if (path.isIdentifier() || path.isMemberExpression()) {
     if (path.isIdentifier()) {
       collectFromIdentifierBinding(path, state);
@@ -276,14 +289,14 @@ function collectInteractiveExternals(path, state, visited = new Set()) {
     return;
   }
 
-  // 3️ Logical handlers: cond && handleClick
+  // 3️⃣ Logical handlers: cond && handleClick
   if (path.isLogicalExpression()) {
     collectInteractiveExternals(path.get("left"), state);
     collectInteractiveExternals(path.get("right"), state);
     return;
   }
 
-  // 4 Conditional handlers: cond ? a : b
+  // 4️⃣ Conditional handlers: cond ? a : b
   if (path.isConditionalExpression()) {
     collectInteractiveExternals(path.get("consequent"), state);
     collectInteractiveExternals(path.get("alternate"), state);
@@ -347,10 +360,10 @@ const VariablesGetComponentLevelIdentifiers = (path, state) => {
     path.scope.block.type === "ArrowFunctionExpression" ||
     path.scope.block.type === "FunctionDeclaration"
   ) {
-    // 1️Always track component bindings
+    // 1️⃣ Always track component bindings
     state.componentBindings.add(id.name);
 
-    // 2️True component statics (unchanged)
+    // 2️⃣ True component statics (unchanged)
     if (
       t.isLiteral(init) ||
       t.isArrayExpression(init) ||
@@ -361,7 +374,7 @@ const VariablesGetComponentLevelIdentifiers = (path, state) => {
       state.componentStatics.set(id.name, init);
     }
 
-    // 3 ADD: React optimisation hooks
+    // 3️⃣ 🔥 ADD: React optimisation hooks
     if (
       t.isCallExpression(init) &&
       t.isIdentifier(init.callee) &&
@@ -374,7 +387,7 @@ const VariablesGetComponentLevelIdentifiers = (path, state) => {
         state.derivedStatics.set(id.name, fnArg);
 
         // Traverse the factory function
-        collectInteractiveExternals(path.get("init.arguments.0"), state);
+        collectInteractiveExternals(path.get("init.arguments.0"), state, true);
       }
     }
   }
