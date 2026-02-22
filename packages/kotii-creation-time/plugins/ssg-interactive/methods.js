@@ -64,11 +64,14 @@ methods.handleStaticInteractivity = async function (data) {
   console.log("THE URL", url);
   const fileUrl = pathToFileURL(url).href;
   console.log("THE FILE URL", fileUrl);
-  const { externals, imports } = self.getThisPageResourcesGraph(fileUrl);
+  const { externals, imports, reactOptHooks } =
+    self.getThisPageResourcesGraph(fileUrl);
   self.__STATIC_EXTERNALS_STATE = externals;
   self.__IMPORTS__ = imports;
+  self.__REACT_OPT_HOOKS__ = reactOptHooks;
   self.debug("MODULE EXTERNALS FOR STATIC", self.__STATIC_EXTERNALS_STATE);
   self.debug("THE APP IMPORTS", self.__IMPORTS__);
+  self.debug("THE APP OPTS", self.__REACT_OPT_HOOKS__);
   self.createExternalsState();
   self.debug("THE APP EVENT EXTERNALS", self.__EXTERNALS__);
 
@@ -89,7 +92,14 @@ methods.handleStaticInteractivity = async function (data) {
               self.__STATIC_RUNTIME_STATE
             )}\n var __EXTERNALS__= {}\n ${self.normalizeExternalsForBrowser(
               self.restoreFunctionsForRuntime(self.__EXTERNALS__)
-            )}\n ${self.getStateUpdater()} \n ${results.pageJs}`,
+            )}\n var __REACT_OPT_HOOKS__ = ${JSON.stringify(
+              self.__REACT_OPT_HOOKS__
+            )}\n
+             ${self.getStateUpdater()} \n ${results.pageJs}\n
+             ${self.getFactoryCreator()}\n
+             ${self.getFactoriesRunner()}\n
+             runFactories()
+            `,
           });
         })
         .catch((error) => {
@@ -212,14 +222,35 @@ methods.ReactStateCapture = function () {
 methods.eventsSourceAst = function (eventAst) {
   const self = this;
 
-  self.debug("THE EVENTS SOURCE", self.__STATIC_RUNTIME_STATE);
+  self.debug(
+    "THE EVENTS SOURCE",
+    self.__STATIC_RUNTIME_STATE,
+    "THE SETTERS",
+    self.__STATE_SETTERS
+  );
 
   traverse(eventAst, {
     Identifier(path) {
       const name = path.node.name;
 
       // Not a tracked state variable
-      // console.log("THE CURRENT NAME",name)
+      console.log("THE CURRENT NAME", name);
+      if (self.__STATE_SETTERS[name]) {
+        const { newAssignment, updateCall } = self.createUpdaterFromReactSetter(
+          path,
+          name,
+          true
+        );
+        console.log("WRAPPED BELLOW");
+        const wrappedFunction = t.functionExpression(
+          null, // anonymous
+          [t.identifier("param")], // no params
+          t.blockStatement([newAssignment, updateCall])
+        );
+        path.replaceWith(wrappedFunction);
+        path.skip();
+        return;
+      }
       if (
         !self.__STATIC_RUNTIME_STATE[name] &&
         !self.__STATIC_EXTERNALS_STATE[name]
@@ -235,21 +266,27 @@ methods.eventsSourceAst = function (eventAst) {
       }
 
       // Skip declaration site
-      const binding = path.scope.getBinding(name);
-      if (binding && binding.identifier === path.node) return;
 
+      const binding = path.scope.getBinding(name);
+      // if (binding && binding.identifier === path.node) return;
+      if (binding) {
+        return;
+      }
+      console.log("ID WITH BIND", name);
       // Skip property keys: obj.foo
       if (
         path.parentPath.isMemberExpression() &&
         path.parentKey === "property" && // ✅ CORRECT
         !path.parent.computed
       ) {
+        console.log("ID IN PROPERTY", name);
         return;
       }
+      console.log("IDENTIFIER IN QUESTION", name);
 
       if (self.__STATIC_RUNTIME_STATE[name]) {
         self.replaceIdentifier(path, "__STATE__", name);
-      } else if (self.__STATIC_EXTERNALS_STATE) {
+      } else if (self.__STATIC_EXTERNALS_STATE && !self.__IMPORTS__[name]) {
         self.replaceIdentifier(path, "__EXTERNALS__", name);
       }
     },
@@ -260,19 +297,9 @@ methods.eventsSourceAst = function (eventAst) {
       self.debug("THE CALL EXPRESSION", callee);
 
       if (self.__STATE_SETTERS[callee.name]) {
-        const newAssignment = t.assignmentExpression(
-          "=",
-          t.memberExpression(
-            t.identifier("__STATE__"),
-            t.identifier(self.__STATE_SETTERS[callee.name])
-          ),
-          path.node.arguments[0]
-        );
-
-        const updateCall = t.expressionStatement(
-          t.callExpression(t.identifier("stateUpdater"), [
-            t.stringLiteral(self.__STATE_SETTERS[callee.name]),
-          ])
+        const { newAssignment, updateCall } = self.createUpdaterFromReactSetter(
+          path,
+          callee.name
         );
 
         // Replace original setter call with two statements
@@ -280,6 +307,7 @@ methods.eventsSourceAst = function (eventAst) {
           t.expressionStatement(newAssignment),
           updateCall,
         ]);
+        console.log("Replaced CALL EXPRESSION OF NAME", callee.name);
 
         return;
       }
@@ -433,6 +461,7 @@ methods.getThisPageResourcesGraph = function (entryFile) {
   const visited = new Set();
   const externals = {};
   const imports = {};
+  const reactOptHooks = [];
 
   self.debug("THE ENTRY FILE", entryFile, MODULE_GRAPH_FOR_STATIC_GENERATION);
 
@@ -453,6 +482,10 @@ methods.getThisPageResourcesGraph = function (entryFile) {
 
     Object.entries(mod.imports).forEach(([key, value]) => {
       if (!(key in imports)) imports[key] = value;
+    });
+
+    mod?.reactOptHooks.forEach((hoodIdName) => {
+      if (!reactOptHooks.includes(hoodIdName)) reactOptHooks.push(hoodIdName);
     });
 
     mod.deps.forEach((dep) => {
@@ -486,7 +519,7 @@ methods.getThisPageResourcesGraph = function (entryFile) {
 
   walk(entryFile);
 
-  return { externals, imports };
+  return { externals, imports, reactOptHooks };
 };
 
 // const homePageGraph = buildPageGraph("Home.jsx");
@@ -628,6 +661,7 @@ methods.createExternalsState = function () {
   });
 };
 methods.restoreFunctionsForRuntime = function (externals) {
+  const self = this;
   const runtimeExternals = {};
 
   for (const [key, value] of Object.entries(externals)) {
@@ -638,18 +672,53 @@ methods.restoreFunctionsForRuntime = function (externals) {
 
     const trimmed = value.trim();
 
-    // 🔥 FACTORY — DO NOT EVAL
-    if (
-      trimmed.startsWith("() =>") ||
-      trimmed.startsWith("((") || // defensive
-      trimmed.startsWith("function")
-    ) {
+    const isArrowFunction =
+      /^\s*(async\s*)?(\([^)]*\)|[a-zA-Z_$][\w$]*)\s*=>/.test(trimmed);
+
+    const isFunctionDeclaration = /^\s*(async\s*)?function\b/.test(trimmed);
+
+    if (isArrowFunction || isFunctionDeclaration) {
+      let sourceAst = parser.parse(trimmed, {
+        sourceType: "module",
+      });
+
+      console.log("FACTORY SOURCE AST", sourceAst);
+
+      self.eventsSourceAst(sourceAst);
+
+      let changedSource = generate(sourceAst).code;
+      console.log("CHANGED FACTORY SOURCE", changedSource);
+
       runtimeExternals[key] = {
         __factory__: true,
-        source: trimmed,
+        source: changedSource,
       };
+
       continue;
     }
+
+    // if (
+    //   trimmed.startsWith("() =>") ||
+    //   trimmed.startsWith("((") || // defensive
+    //   trimmed.startsWith("function")
+    // ) {
+    //   let sourceAst = parser.parse(trimmed, {
+    //       sourceType: "module",
+    //     });
+
+    //   console.log("FACTORY SOURCE AST", sourceAst)
+
+    //   self.eventsSourceAst(sourceAst)
+
+    //   let changedSource = generate(sourceAst).code
+    //   console.log("CHANGED FACTORY SOURCE", changedSource)
+
+    //   runtimeExternals[key] = {
+    //     __factory__: true,
+    //     source: changedSource
+    //   };
+    //   continue;
+    // }
 
     // 🔥 JS literals (object/array)
     if (
@@ -701,6 +770,119 @@ methods.normalizeExternalsForBrowser = function (runtimeExternals) {
     .join("\n");
 
   return externalsCode;
+};
+methods.createUpdaterFromReactSetter = function (
+  path,
+  name,
+  isSetterReference = false
+) {
+  const self = this;
+
+  const valueNode =
+    path.node.arguments && path.node.arguments.length > 0
+      ? path.node.arguments[0]
+      : t.identifier("param");
+  const newAssignment = t.assignmentExpression(
+    "=",
+    t.memberExpression(
+      t.identifier("__STATE__"),
+      t.identifier(self.__STATE_SETTERS[name])
+    ),
+    valueNode
+  );
+
+  const updateCall = t.expressionStatement(
+    t.callExpression(t.identifier("stateUpdater"), [
+      t.stringLiteral(self.__STATE_SETTERS[name]),
+    ])
+  );
+
+  return {
+    newAssignment: isSetterReference
+      ? t.expressionStatement(newAssignment)
+      : newAssignment,
+    updateCall,
+  };
+};
+
+methods.beginVendorCodeGeneration = function (vendors) {
+  const self = this;
+  const vendorCodeSource = null;
+
+  vendors.forEach(() => {});
+};
+methods.combineVendorCode = function (vendors) {
+  const self = this;
+  const vendorCodeSource = null;
+
+  vendors.forEach(() => {});
+};
+
+methods.vendorCodeTreeShaking = function (vendors) {
+  const self = this;
+  const vendorCodeSource = null;
+
+  vendors.forEach(() => {});
+};
+
+methods.combileAllPackages = function (vendors) {
+  const self = this;
+  const vendorCodeSource = null;
+
+  vendors.forEach(() => {});
+};
+
+methods.getFactoryCreator = function () {
+  return function createFunctionFromString(fnString) {
+    const cleaned = fnString.trim().replace(/;$/, "");
+    return new Function(`return (${cleaned})`)();
+  };
+};
+
+methods.getFactoriesRunner = function () {
+  return function runFactories() {
+    //  Object.entries(__EXTERNALS__).forEach((entry)=>{
+    //   let ID  = entry[0]
+    //   console.log("THE ENTRIES ENTRY",ID)
+    //   if(__EXTERNALS__[ID]["__factory__"]){
+    //     console.log("THE FUNCTION VALUE", __EXTERNALS__[ID].source)
+    //     __EXTERNALS__[ID] = createFunctionFromString(__EXTERNALS__[ID].source)()
+    //     console.log("EXTERNALS AFTER ADD",__EXTERNALS__)
+    //   }
+    //  })
+
+    const priorityMap = new Map(
+      __REACT_OPT_HOOKS__.map((id, index) => [id, index])
+    );
+
+    Object.entries(__EXTERNALS__)
+      .sort(([idA], [idB]) => {
+        const hasA = priorityMap.has(idA);
+        const hasB = priorityMap.has(idB);
+
+        // 1️⃣ Non-priority first
+        if (hasA !== hasB) {
+          return hasA ? 1 : -1;
+        }
+
+        // 2️⃣ If both are priority, preserve hook order
+        if (hasA && hasB) {
+          return priorityMap.get(idA) - priorityMap.get(idB);
+        }
+
+        // 3️⃣ Otherwise keep original relative order
+        return 0;
+      })
+      .forEach(([ID, value]) => {
+        console.log("THE ENTRIES ENTRY", ID);
+
+        if (value["__factory__"]) {
+          console.log("THE FUNCTION VALUE", value.source);
+          __EXTERNALS__[ID] = createFunctionFromString(value.source)();
+          console.log("EXTERNALS AFTER ADD", __EXTERNALS__);
+        }
+      });
+  };
 };
 
 export default methods;
