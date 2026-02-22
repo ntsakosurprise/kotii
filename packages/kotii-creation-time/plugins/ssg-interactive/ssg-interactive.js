@@ -29,6 +29,9 @@ class SsgInteractive {
     this.createExternalsState = methods.createExternalsState;
     this.restoreFunctionsForRuntime = methods.restoreFunctionsForRuntime;
     this.normalizeExternalsForBrowser = methods.normalizeExternalsForBrowser;
+    this.createUpdaterFromReactSetter = methods.createUpdaterFromReactSetter;
+    this.getFactoryCreator = methods.getFactoryCreator;
+    this.getFactoriesRunner = methods.getFactoriesRunner;
   }
 }
 export default SsgInteractive;
