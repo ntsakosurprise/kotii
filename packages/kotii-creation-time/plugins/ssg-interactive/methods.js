@@ -21,6 +21,7 @@ import { parseExpression } from "@babel/parser";
 import { pathToFileURL } from "url";
 let MODULE_GRAPH_FOR_STATIC_GENERATION = null;
 let RESOLVED_JSX_MODULES = null;
+let PACKAGES_FILES = null;
 
 // console.log("THE MODULE GRAPH FOR STATIC", MODULE_GRAPH_FOR_STATIC_GENERATION)
 
@@ -50,20 +51,24 @@ methods.handleStaticInteractivity = async function (data) {
     MODULE_GRAPH_FOR_STATIC_GENERATION =
       STATIC_RESOURCES.MODULE_GRAPH_FOR_STATIC_GENERATION;
     RESOLVED_JSX_MODULES = STATIC_RESOURCES.RESOLVED_JSX_MODULES;
+    PACKAGES_FILES = STATIC_RESOURCES.PACKAGES_FILES;
   }
 
   console.log(
     "THE ABSOLUTE PATH.SSG",
     MODULE_GRAPH_FOR_STATIC_GENERATION,
-    RESOLVED_JSX_MODULES
+    RESOLVED_JSX_MODULES,
+    PACKAGES_FILES
   );
   const url = view.componentSourcePath;
   console.log("THE URL", url);
   const fileUrl = pathToFileURL(url).href;
   console.log("THE FILE URL", fileUrl);
-  const { externals } = self.getThisPageResourcesGraph(fileUrl);
+  const { externals, imports } = self.getThisPageResourcesGraph(fileUrl);
   self.__STATIC_EXTERNALS_STATE = externals;
+  self.__IMPORTS__ = imports;
   self.debug("MODULE EXTERNALS FOR STATIC", self.__STATIC_EXTERNALS_STATE);
+  self.debug("THE APP IMPORTS", self.__IMPORTS__);
   self.createExternalsState();
   self.debug("THE APP EVENT EXTERNALS", self.__EXTERNALS__);
 
@@ -455,24 +460,26 @@ methods.getThisPageResourcesGraph = function (entryFile) {
         let dependencyBySpecifier = RESOLVED_JSX_MODULES[dep];
 
         let dependencyUrl = dependencyBySpecifier.url;
-        let dependencyExternals =
-          MODULE_GRAPH_FOR_STATIC_GENERATION[dependencyUrl]?.externals || null;
-        console.log(
-          "DepByS",
-          dependencyBySpecifier,
-          "DepUrl",
-          dependencyUrl,
-          "DepExternals",
-          dependencyExternals
-        );
-        if (
-          dependencyExternals &&
-          Object.keys(dependencyExternals).length > 0
-        ) {
-          console.log("PING");
-        } else {
-          walk(dependencyUrl);
-        }
+        walk(dependencyUrl);
+        // let dependencyExternals =
+        //   MODULE_GRAPH_FOR_STATIC_GENERATION.get(dependencyUrl)?.externals || null;
+        // console.log(
+        //   "DepByS",
+        //   dependencyBySpecifier,
+        //   "DepUrl",
+        //   dependencyUrl,
+        //   "DepExternals",
+        //   dependencyExternals
+        // );
+        // if (
+        //   dependencyExternals &&
+        //   Object.keys(dependencyExternals).length > 0
+        // ) {
+        //   console.log("PING");
+        //   walk(dependencyUrl);
+        // } else {
+        //   walk(dependencyUrl);
+        // }
       }
     });
   }
@@ -605,10 +612,19 @@ methods.createExternalsState = function () {
   const self = this;
   self.__EXTERNALS__ = {};
 
-  Object.entries(this.__STATIC_EXTERNALS_STATE).forEach(([key, wrapper]) => {
-    const ast = wrapper?.value || wrapper?.factory; // ← IMPORTANT
-    const { code } = generate(ast);
-    this.__EXTERNALS__[key] = code;
+  Object.entries(self.__STATIC_EXTERNALS_STATE).forEach(([key, wrapper]) => {
+    console.log("KEY.WRAPER", key, wrapper);
+    if (typeof wrapper == "object") {
+      const ast = wrapper?.value || wrapper?.factory; // ← IMPORTANT
+      const { code } = generate(ast);
+      self.__EXTERNALS__[key] = code;
+    } else {
+      if (self.__IMPORTS__[key]) {
+        console.log("THE EXTERNAL IS IMPORTS", key, self.__IMPORTS__[key]);
+        let importedOwningPackage = PACKAGES_FILES[self.__IMPORTS__[key]];
+        console.log("THE OWNING PACKAGE", importedOwningPackage);
+      }
+    }
   });
 };
 methods.restoreFunctionsForRuntime = function (externals) {
@@ -622,7 +638,7 @@ methods.restoreFunctionsForRuntime = function (externals) {
 
     const trimmed = value.trim();
 
-    // FACTORY — DO NOT EVAL
+    // 🔥 FACTORY — DO NOT EVAL
     if (
       trimmed.startsWith("() =>") ||
       trimmed.startsWith("((") || // defensive
@@ -635,7 +651,7 @@ methods.restoreFunctionsForRuntime = function (externals) {
       continue;
     }
 
-    // JS literals (object/array)
+    // 🔥 JS literals (object/array)
     if (
       (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
       (trimmed.startsWith("[") && trimmed.endsWith("]"))
@@ -644,7 +660,7 @@ methods.restoreFunctionsForRuntime = function (externals) {
       continue;
     }
 
-    // primitive
+    // 🔥 primitive
     runtimeExternals[key] = trimmed.replace(/^"|"$/g, "");
   }
 
@@ -653,6 +669,17 @@ methods.restoreFunctionsForRuntime = function (externals) {
 
 methods.normalizeExternalsForBrowser = function (runtimeExternals) {
   const self = this;
+
+  // const externalsCode = Object.entries(runtimeExternals)
+  // .map(([key, value]) => {
+  //   if (typeof value === "function") {
+  //     return `__EXTERNALS__.${key} = ${value.toString()};`;
+  //   } else {
+  //     return `__EXTERNALS__.${key} = ${JSON.stringify(value)};`;
+  //   }
+  // })
+  // .join("\n");
+  // return externalsCode
 
   const externalsCode = Object.entries(runtimeExternals)
     .map(([key, value]) => {
