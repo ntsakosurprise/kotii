@@ -3,6 +3,7 @@ const methods = {};
 import fs from "fs";
 import path from "path";
 import { Builder } from "xml2js";
+import beautify from "js-beautify";
 const ASSETS_FOLDERS = {
   css: "css",
   fonts: "fonts",
@@ -504,6 +505,31 @@ methods.rewriteHtmlString = function (html, page, routesTable) {
   // })
 
   return out;
+};
+
+methods.formatAndSaveHtml = function (htmlContent) {
+  if (typeof htmlContent !== "string") {
+    throw new TypeError("htmlContent must be a string");
+  }
+
+  // Beautify options
+  const options = {
+    indent_size: 2,
+    preserve_newlines: true,
+    max_preserve_newlines: 2,
+    indent_inner_html: true,
+    end_with_newline: true,
+    wrap_line_length: 120,
+    indent_scripts: "normal", // keep | normal | separate
+    js: {
+      indent_size: 2,
+      space_in_empty_paren: true,
+    },
+  };
+
+  // Format HTML
+  const formattedHtml = beautify.html(htmlContent, options);
+  return formattedHtml;
 };
 
 export default methods;
