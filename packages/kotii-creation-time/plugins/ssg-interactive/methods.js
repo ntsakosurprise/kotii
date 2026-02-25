@@ -884,5 +884,201 @@ methods.getFactoriesRunner = function () {
       });
   };
 };
+methods.convertESMToCommonJS = function (ast) {
+  const state = { exportNames: new Set() };
 
+  traverse(ast, {
+    Program: {
+      enter(path) {
+        state.exportNames = new Set();
+      },
+      exit(path) {
+        path.unshiftContainer(
+          "body",
+          t.expressionStatement(
+            t.callExpression(
+              t.memberExpression(
+                t.identifier("Object"),
+                t.identifier("defineProperty")
+              ),
+              [
+                t.identifier("exports"),
+                t.stringLiteral("__esModule"),
+                t.objectExpression([
+                  t.objectProperty(
+                    t.identifier("value"),
+                    t.booleanLiteral(true)
+                  ),
+                ]),
+              ]
+            )
+          )
+        );
+      },
+    },
+
+    ImportDeclaration(path) {
+      const source = path.node.source.value;
+      const requireCall = t.callExpression(t.identifier("__require__"), [
+        t.stringLiteral(source),
+      ]);
+      const declarations = [];
+
+      path.node.specifiers.forEach((spec) => {
+        if (t.isImportDefaultSpecifier(spec)) {
+          declarations.push(
+            t.variableDeclarator(
+              spec.local,
+              t.memberExpression(requireCall, t.identifier("default"))
+            )
+          );
+        } else if (t.isImportSpecifier(spec)) {
+          declarations.push(
+            t.variableDeclarator(
+              spec.local,
+              t.memberExpression(requireCall, spec.imported)
+            )
+          );
+        } else if (t.isImportNamespaceSpecifier(spec)) {
+          declarations.push(t.variableDeclarator(spec.local, requireCall));
+        }
+      });
+
+      path.replaceWith(t.variableDeclaration("const", declarations));
+    },
+
+    ExportNamedDeclaration(path) {
+      const { node } = path;
+
+      if (node.declaration) {
+        const decl = node.declaration;
+
+        if (t.isVariableDeclaration(decl)) {
+          decl.declarations.forEach((d) => {
+            const name = d.id.name;
+            state.exportNames.add(name);
+            path.insertAfter(
+              t.expressionStatement(
+                t.assignmentExpression(
+                  "=",
+                  t.memberExpression(
+                    t.identifier("exports"),
+                    t.identifier(name)
+                  ),
+                  t.identifier(name)
+                )
+              )
+            );
+          });
+        }
+
+        if (t.isFunctionDeclaration(decl) || t.isClassDeclaration(decl)) {
+          const name = decl.id.name;
+          state.exportNames.add(name);
+          path.insertAfter(
+            t.expressionStatement(
+              t.assignmentExpression(
+                "=",
+                t.memberExpression(t.identifier("exports"), t.identifier(name)),
+                t.identifier(name)
+              )
+            )
+          );
+        }
+
+        path.replaceWith(decl);
+        return;
+      }
+
+      node.specifiers.forEach((spec) => {
+        const local = spec.local.name;
+        const exported = spec.exported.name;
+        path.insertAfter(
+          t.expressionStatement(
+            t.assignmentExpression(
+              "=",
+              t.memberExpression(
+                t.identifier("exports"),
+                t.identifier(exported)
+              ),
+              t.identifier(local)
+            )
+          )
+        );
+      });
+
+      path.remove();
+    },
+
+    ExportDefaultDeclaration(path) {
+      const decl = path.node.declaration;
+
+      if (t.isFunctionDeclaration(decl) || t.isClassDeclaration(decl)) {
+        const id = decl.id || path.scope.generateUidIdentifier("default");
+        if (!decl.id) decl.id = id;
+
+        path.replaceWithMultiple([
+          decl,
+          t.expressionStatement(
+            t.assignmentExpression(
+              "=",
+              t.memberExpression(
+                t.identifier("exports"),
+                t.identifier("default")
+              ),
+              id
+            )
+          ),
+        ]);
+      } else {
+        path.replaceWith(
+          t.expressionStatement(
+            t.assignmentExpression(
+              "=",
+              t.memberExpression(
+                t.identifier("exports"),
+                t.identifier("default")
+              ),
+              decl
+            )
+          )
+        );
+      }
+    },
+
+    ExportAllDeclaration(path) {
+      const source = path.node.source.value;
+      const requireCall = t.callExpression(t.identifier("__require__"), [
+        t.stringLiteral(source),
+      ]);
+      const temp = path.scope.generateUidIdentifier("reexp");
+
+      path.replaceWithMultiple([
+        t.variableDeclaration("const", [
+          t.variableDeclarator(temp, requireCall),
+        ]),
+
+        t.forInStatement(
+          t.variableDeclaration("const", [
+            t.variableDeclarator(t.identifier("key")),
+          ]),
+          temp,
+          t.blockStatement([
+            t.expressionStatement(
+              t.assignmentExpression(
+                "=",
+                t.memberExpression(
+                  t.identifier("exports"),
+                  t.identifier("key"),
+                  true
+                ),
+                t.memberExpression(temp, t.identifier("key"), true)
+              )
+            ),
+          ])
+        ),
+      ]);
+    },
+  });
+};
 export default methods;
