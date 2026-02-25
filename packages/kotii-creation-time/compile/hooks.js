@@ -1448,7 +1448,7 @@ const loadVirtualModule = () => {
   let packagesFilesSerialized = {};
   JSON.stringify(
     [...PACKAGE_FILES.entries()].map((packageAsDep) => {
-      packagesFilesSerialized[packageAsDep[0]] = [...packageAsDep[1]];
+      packagesFilesSerialized[packageAsDep[0]] = { ...packageAsDep[1] };
     })
   );
   console.log("THE PACKAGES FILES", packagesFilesSerialized);
@@ -1509,15 +1509,15 @@ const saveTargetSpecifier = (specifier, shouldTerminate, parentURL) => {
 const addFileAsPackageDep = (specifier, url, parentURL) => {
   const owner = findOwningPackage(parentURL);
   if (owner) {
-    PACKAGE_FILES.get(owner).add(url);
+    PACKAGE_FILES.get(owner)[specifier] = url;
   }
 
   if (!specifier.startsWith(".") && !specifier.startsWith("/")) {
     if (!PACKAGE_FILES.has(specifier)) {
-      PACKAGE_FILES.set(specifier, new Set());
+      PACKAGE_FILES.set(specifier, {});
     }
 
-    PACKAGE_FILES.get(specifier).add(url);
+    PACKAGE_FILES.get(specifier)[specifier] = url;
   }
 };
 
@@ -1525,25 +1525,34 @@ const addDependencyFromLoad = (url) => {
   console.log("ADD DEP FROM LOAD", url);
   if (!isStaticMode) return;
   for (const files of PACKAGE_FILES.values()) {
-    console.log("PACKAGES LIST FILE", files);
-    if (files.has(url)) {
+    console.log("PACKAGES LIST FILE...", files);
+    if (files[url]) {
       // this file belongs to that package
-      files.add(url);
+      files[url] = url;
     }
   }
 };
 
 const findOwningPackage = (url) => {
+  // console.log("PROCESSING PACKAGE", url)
   const targetPath = path.normalize(new URL(url).pathname);
 
   let bestMatch = null;
   let bestDepth = -1;
 
   for (const [pkg, files] of PACKAGE_FILES) {
-    for (const f of files) {
-      const dir = path.dirname(path.normalize(new URL(f).pathname));
+    console.log("THE VALUE OF FILES", files);
+    for (const f of Object.keys(files)) {
+      console.log("THE F FROM MAP", f);
 
+      let fileUrl = files[f];
+
+      const dir = path.dirname(path.normalize(new URL(fileUrl).pathname));
+
+      // console.log("TARGET PATH",targetPath)
+      // console.log("CURRENT PATH DIR",dir)
       const relative = path.relative(dir, targetPath);
+      // console.log("RELATIVE WITH TARGET",relative)
 
       if (
         relative &&
