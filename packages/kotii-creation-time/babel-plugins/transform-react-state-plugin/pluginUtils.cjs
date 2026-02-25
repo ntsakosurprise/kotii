@@ -33,12 +33,17 @@ const ExtractImports = (path, state, options) => {
     path.node.specifiers
   );
 
+  // Resolve relative / aliased paths
   if (source.startsWith(".") || options.aliases[source]) {
     state.deps.add(options.staticDepsResolver(source));
   }
 
   path.node.specifiers.forEach((s) => {
-    state.imports[s.local.name] = source;
+    // Store both the local alias and the original imported name
+    state.imports[s.local.name] = {
+      importedName: s.imported ? s.imported.name : "default", // fallback to "default" for default imports
+      source,
+    };
   });
 };
 const ExtractVariables = (path, state) => {
