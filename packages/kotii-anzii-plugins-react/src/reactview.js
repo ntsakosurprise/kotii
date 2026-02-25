@@ -55,6 +55,7 @@ class ReactView {
     this.getCurrentRouteComponent = methods.getCurrentRouteComponent;
     this.doStyledSheets = methods.doStyledSheets;
     this.renderStaticFullPage = methods.renderStaticFullPage;
+    this.doPageJsPackages = methods.doPageJsPackages;
   }
 }
 

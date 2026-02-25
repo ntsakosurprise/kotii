@@ -107,7 +107,11 @@ methods.handleReactStaticViews = function (data) {
   });
   Promise.all(mappedPromises).then((htmlViews) => {
     self.debug("ALL VIEWS PROMISES MAPPED", self.styledTags);
-    self.callback({ htmlViews, styles: self.styledTags });
+    self.callback({
+      htmlViews,
+      styles: self.styledTags,
+      jsStaticFilesToSave: self.pageJsPackages,
+    });
   });
 };
 methods.handleReactSpa = function (data) {
@@ -233,7 +237,7 @@ methods.runReactView = function (data) {
         })
       );
       generatedPage = await self.generatePageStaticParts(Page, view);
-      const { html, pageJs = "" } = generatedPage;
+      const { html, pageJs = "", pageJsPackages } = generatedPage;
 
       self.debug("THE STATIC PART JS FROM SSG", pageJs);
       console.log("THE FINAL STATE", store, store.getState());
@@ -242,11 +246,13 @@ methods.runReactView = function (data) {
       self.doStyledSheets(sheet);
 
       // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
+      self["pageJsPackages"] = pageJsPackages;
       const fullPage = self.renderStaticFullPage({
         html,
         pageJs,
         head: helmetGenerated,
         info,
+        pageJsPackages,
       });
       self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
       resolve(fullPage);
@@ -355,9 +361,9 @@ methods.renderFullPage = function ({
 methods.renderStaticFullPage = function ({
   html,
   info,
-
   head,
   pageJs = "test.js",
+  pageJsPackages,
 } = props) {
   const self = this;
 
@@ -379,6 +385,7 @@ methods.renderStaticFullPage = function ({
 		<body ${head.bodyAttributes.toString()}>
 		 <div id="root">${html}</div>
 		 <script src="js/${info.js}" ></script>
+     ${self.doPageJsPackages(pageJsPackages)}
      <script >${pageJs}</script>
 			
 		</body>
@@ -893,5 +900,12 @@ methods.doStyledSheets = function (sheet, isStatic = false) {
 //   const self = this
 
 // }
+methods.doPageJsPackages = function (pageJsPackages) {
+  let packagesCode = ``;
+  pageJsPackages.forEach((currentPackage) => {
+    packagesCode += `\n<script src="./assets/vendor/${currentPackage.fileName}" ></script>`;
+  });
+  return packagesCode;
+};
 
 export default methods;
