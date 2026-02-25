@@ -50,7 +50,7 @@ methods.handleStaticGeneration = function (data) {
   self
     .renderApp(routes)
     // eslint-disable-next-line no-undef
-    .then(({ htmlViews, styles } = rendered) => {
+    .then(({ htmlViews, styles, jsStaticFilesToSave = null } = rendered) => {
       self.debug("THE HTML on render app", htmlViews);
 
       const DIST = self.createDistFolder(
@@ -66,6 +66,7 @@ methods.handleStaticGeneration = function (data) {
         buildFolder: BUILD,
         distFolder: DIST,
         styles,
+        jsStaticFilesToSave,
       });
       htmlViews.forEach((html) => {
         // let pagesFolder =  `${DIST}${path.sep}pages`
@@ -234,9 +235,11 @@ methods.postBuildStaticResources = async function (context) {
   const self = this;
   self.debug("THE CONTEXT AGGREGATE PRODUCTION", context);
   let cssSavePath = `${context.distFolder}/css/index.css`;
+  let jsPackagesPath = `${context.distFolder}/assets/vendor`;
   let files = await self.readFiles(`${context.buildFolder}/app/css`);
   let cssJoined = files.join(" ");
   cssJoined += context.styles;
+  let jsPackages = context.jsStaticFilesToSave;
   // let kotiiBundleSavePath = `${context.appBuildFolder}/.kotii-land/bundle.js`;
   // let kotiiBundleSaveImportsPath = `${context.appBuildFolder}/.kotii-land/bundle-imports.js`;
   // let cssModulesMap = self.aggregateAppKotiiMeta(context);
@@ -250,11 +253,15 @@ methods.postBuildStaticResources = async function (context) {
   // export {appModules, appImagesMap};
   // `;
   self.createDistFolder(`${context.distFolder}${path.sep}css`);
+  self.createDistFolder(`${jsPackagesPath}`);
   // self.createDistFolder(
   //       `${context.distFolder}${path.sep}img`
   //     );
   // self.copyImageFilesSync(context.buildFolder,`${context.distFolder}/img`,['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'])
   fs.writeFileSync(cssSavePath, cssJoined);
+  jsPackages.forEach((jsPackage) => {
+    fs.writeFileSync(`${jsPackagesPath}/${jsPackage.fileName}`, jsPackage.code);
+  });
   // fs.writeFileSync(kotiiBundleSavePath, kotiiBundleSaveContent);
   // fs.writeFileSync(kotiiBundleSaveImportsPath, `${context.pagesSourceCode}`);
 };
