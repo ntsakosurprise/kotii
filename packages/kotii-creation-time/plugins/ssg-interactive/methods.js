@@ -11,6 +11,7 @@ import babel from "@babel/core";
 import babelGenerate from "@babel/generator";
 import parser from "@babel/parser";
 import template from "@babel/template";
+import crypto from "crypto";
 
 import babelTraverse from "@babel/traverse";
 import * as t from "@babel/types";
@@ -18,7 +19,9 @@ const traverse = babelTraverse.default;
 const generate = babelGenerate.default;
 const setTestVar = () => {};
 import { parseExpression } from "@babel/parser";
-import { pathToFileURL } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
+import { exportDefaultDeclaration } from "@babel/types";
+import { program } from "@babel/types";
 let MODULE_GRAPH_FOR_STATIC_GENERATION = null;
 let RESOLVED_JSX_MODULES = null;
 let PACKAGES_FILES = null;
@@ -95,11 +98,13 @@ methods.handleStaticInteractivity = async function (data) {
             )}\n var __REACT_OPT_HOOKS__ = ${JSON.stringify(
               self.__REACT_OPT_HOOKS__
             )}\n
+             ${self.createPackagesRequires()}
              ${self.getStateUpdater()} \n ${results.pageJs}\n
              ${self.getFactoryCreator()}\n
              ${self.getFactoriesRunner()}\n
              runFactories()
             `,
+            pageJsPackages: self.__PACKAGES_CODE__,
           });
         })
         .catch((error) => {
@@ -643,7 +648,10 @@ methods.replaceIdentifier = function (path, jsStateID, state) {
 };
 methods.createExternalsState = function () {
   const self = this;
+  const vendorScripts = null;
   self.__EXTERNALS__ = {};
+  self.__PACKAGES_CODE__ = [];
+  self.__NEEDED_IMPORTS__ = [];
 
   Object.entries(self.__STATIC_EXTERNALS_STATE).forEach(([key, wrapper]) => {
     console.log("KEY.WRAPER", key, wrapper);
@@ -654,8 +662,24 @@ methods.createExternalsState = function () {
     } else {
       if (self.__IMPORTS__[key]) {
         console.log("THE EXTERNAL IS IMPORTS", key, self.__IMPORTS__[key]);
-        let importedOwningPackage = PACKAGES_FILES[self.__IMPORTS__[key]];
+        let importedOwningPackage =
+          PACKAGES_FILES[self.__IMPORTS__[key].source];
         console.log("THE OWNING PACKAGE", importedOwningPackage);
+        let currentPackageBrowserCode = self.processPackageForBrowser(
+          self.__IMPORTS__[key].source,
+          importedOwningPackage,
+          [key]
+        );
+        self.__NEEDED_IMPORTS__.push({
+          importSpecifier: key,
+          moduleSpecifier: currentPackageBrowserCode.name,
+          importedName: self.__IMPORTS__[key].importedName,
+        });
+        self.__PACKAGES_CODE__.push({
+          code: currentPackageBrowserCode.code,
+          packageName: self.__IMPORTS__[key].source,
+          fileName: `${self.__IMPORTS__[key].source}.js`,
+        });
       }
     }
   });
@@ -805,6 +829,217 @@ methods.createUpdaterFromReactSetter = function (
   };
 };
 
+methods.processPackageForBrowser = function (
+  packageName,
+  packageFiles,
+  entryRequiredImports
+) {
+  const self = this;
+  console.log("THE PACKAGE FILES", packageName, packageFiles);
+  const packageContext = {
+    name: packageName,
+    entry: packageFiles[packageName],
+    modules: new Map(),
+    entryRequiredImports,
+  };
+  let standingTree = self.collectPackageResourcesForTreeShake(
+    packageContext.entry,
+    packageContext,
+    packageFiles
+  );
+  if (standingTree) {
+    let browserModulesWrapper = self.modulesBrowserSkeleton();
+    let mainFileName = null;
+
+    for (let [moduleID, module] of packageContext.modules) {
+      self.convertESMToCommonJS(module.ast);
+      let updatedSource = generate(module.ast).code;
+      let uniqueFileID = self.createUniqueModuleId(
+        packageContext.name,
+        updatedSource
+      );
+      //  let uniqueFileID = self.createUniqueModuleId(packageContext.name, module.source)
+      if (!mainFileName) mainFileName = uniqueFileID;
+
+      browserModulesWrapper += `
+     __modules__["${uniqueFileID}"] = function(module, exports, __require__) {
+       ${updatedSource}
+      }`;
+    }
+    browserModulesWrapper += `\nwindow.__modules__ = __modules__\n window.__require__ = __require__`;
+    //  browserModulesWrapper += `\n const __entry__ = __require__("${mainFileName}")\n export const ${entryRequiredImports[0]} = __entry__.Chain`
+
+    console.log("THE BROWSER READY CODE", browserModulesWrapper);
+    return { code: browserModulesWrapper, name: mainFileName };
+  }
+};
+
+methods.collectPackageResourcesForTreeShake = function (
+  fileUrl,
+  packageContext,
+  packageFiles
+) {
+  const self = this;
+
+  if (packageContext.modules.has(fileUrl)) return;
+  const fileSource = fs.readFileSync(fileURLToPath(fileUrl), {
+    encoding: "utf-8",
+  });
+  console.log("THE FILE SOURCE");
+  const fileSourceAst = parser.parse(fileSource, {
+    sourceType: "module",
+  });
+  const moduleInfo = {
+    id: fileUrl,
+    source: fileSource,
+    ast: fileSourceAst,
+    imports: new Map(),
+    exports: new Map(),
+    sideEffects: false,
+  };
+
+  packageContext.modules.set(fileUrl, moduleInfo);
+
+  traverse(fileSourceAst, {
+    ImportDeclaration(path) {
+      console.log("IMPORT PATH", path.source.value);
+      let importedFileUrl = packageFiles[path.source.value];
+
+      let importedIds = new Set();
+
+      path.node.spicifiers.forEach((specifier) => {
+        if (t.isImportSpecifier(specifier)) {
+          importedIds.add(specifier.imported.name);
+        }
+        if (t.isImportDefaultSpecifier(specifier)) {
+          importedIds.add("default");
+        }
+        if (t.isImportNamespaceSpecifier) {
+          importedIds.add("*");
+        }
+      });
+      moduleInfo.imports.set(importedFileUrl, importedIds);
+      self.collectPackageResourcesForTreeShake(
+        importedFileUrl,
+        packageContext,
+        packageFiles
+      );
+    },
+
+    ExportNamedDeclaration(path) {
+      if (path.node.declaration) {
+        let declaration = path.node.declaration;
+        if (declaration.id) {
+          moduleInfo.exports.set(declaration.id.name, declaration);
+        }
+      }
+      path.node.specifiers.forEach((specifier) => {
+        moduleInfo.exports.set(specifier.exported.name, specifier);
+      });
+    },
+    ExportDefaultDeclaration(path) {
+      moduleInfo.exports.set("default", path.node.declaration);
+    },
+    Program(path) {
+      moduleInfo.sideEffects = path.node.body.some((node) =>
+        t.isExpressionStatement(node)
+      );
+    },
+  });
+
+  console.log("THE COLLECT", packageContext.modules);
+  self.treeShakeModule(packageContext);
+  return true;
+};
+
+methods.treeShakeModule = function (packageContext) {
+  const self = this;
+  const usedExports = new Map();
+  console.log("TREE SHAKE", packageContext);
+
+  usedExports.set(packageContext.entry, packageContext.entryRequiredImports);
+
+  let shouldShakeExports = true;
+
+  while (shouldShakeExports) {
+    shouldShakeExports = false;
+
+    for (let [moduleId, module] of packageContext.modules) {
+      console.log("MODULE ID", moduleId, module);
+      let neededExports = usedExports.get(moduleId);
+      if (!neededExports) continue;
+
+      for ([importedModuleId, importsList] of module.imports) {
+        let importsNeeded = new Set();
+
+        for (let neededExport of neededExports) {
+          if (importsList.has(neededExport) || importsList.has("*"))
+            importsNeeded.add(neededExport);
+        }
+
+        if (importsNeeded.size) {
+          if (!usedExports.has(importedModuleId)) {
+            usedExports.set(importedModuleId, new Set());
+          }
+
+          let target = usedExports.get(importedModuleId);
+          console.log("THE NEEDED", target);
+          for (let needed of importsNeeded) {
+            if (!target.has(needed)) {
+              target.add(needed);
+              shouldShakeExports = true;
+            }
+          }
+        }
+      }
+    }
+  }
+  for (let [moduleId, module] of packageContext.modules) {
+    if (module.sideEffects) {
+      usedExports.set(moduleId, new Set(["*"]));
+    }
+  }
+};
+
+methods.modulesBrowserSkeleton = function () {
+  const wrapper = `
+   const __modules__ = {}
+   const __cache__ = {}
+   function __require__(id){
+      if(__cache__[id]) return __cache__[id].exports
+
+      const module = { exports: {} }
+      __modules__[id](module, module.exports, __require__)
+      __cache__[id] = module
+      return module.exports
+    }
+  `;
+  return wrapper;
+};
+
+methods.createUniqueModuleId = function (packageName, packageContent) {
+  const hash = crypto
+    .createHash("sha256")
+    .update(packageContent)
+    .digest("hex")
+    .slice(0, 8);
+
+  const safeName = packageName.toLowerCase().replace(/[^a-z0-9_\-@/]/g, "");
+
+  return `pkg:${safeName}:${hash}`;
+};
+methods.createPackagesRequires = function () {
+  const self = this;
+
+  let requires = ``;
+  self.__NEEDED_IMPORTS__.forEach((currentPackage) => {
+    requires += `\n const ${currentPackage.importSpecifier} = __require__("${currentPackage.moduleSpecifier}").${currentPackage.importedName}\n`;
+  });
+
+  console.log("THE MODULE REQUIRES", requires);
+  return requires;
+};
+
 methods.beginVendorCodeGeneration = function (vendors) {
   const self = this;
   const vendorCodeSource = null;
@@ -878,7 +1113,9 @@ methods.getFactoriesRunner = function () {
 
         if (value["__factory__"]) {
           console.log("THE FUNCTION VALUE", value.source);
-          __EXTERNALS__[ID] = createFunctionFromString(value.source)();
+          __EXTERNALS__[ID] = __REACT_OPT_HOOKS__.includes(ID)
+            ? createFunctionFromString(value.source)()
+            : createFunctionFromString(value.source);
           console.log("EXTERNALS AFTER ADD", __EXTERNALS__);
         }
       });
@@ -1081,4 +1318,5 @@ methods.convertESMToCommonJS = function (ast) {
     },
   });
 };
+
 export default methods;

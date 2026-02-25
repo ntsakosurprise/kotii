@@ -32,6 +32,14 @@ class SsgInteractive {
     this.createUpdaterFromReactSetter = methods.createUpdaterFromReactSetter;
     this.getFactoryCreator = methods.getFactoryCreator;
     this.getFactoriesRunner = methods.getFactoriesRunner;
+    this.processPackageForBrowser = methods.processPackageForBrowser;
+    this.collectPackageResourcesForTreeShake =
+      methods.collectPackageResourcesForTreeShake;
+    this.treeShakeModule = methods.treeShakeModule;
+    this.modulesBrowserSkeleton = methods.modulesBrowserSkeleton;
+    this.createUniqueModuleId = methods.createUniqueModuleId;
+    this.createPackagesRequires = methods.createPackagesRequires;
+    this.convertESMToCommonJS = methods.convertESMToCommonJS;
   }
 }
 export default SsgInteractive;
