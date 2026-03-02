@@ -399,14 +399,28 @@ methods.getStateUpdater = function () {
 
   return function stateUpdater(updateState) {
     console.log("Updater executes", updateState);
-    if (updateState) return "";
+    // if (updateState) return "";
     document.querySelectorAll(`[data-bind^="${updateState}"]`).forEach((el) => {
       const path = el.dataset.bind.split(".");
-      let value = __STATE__;
-      path.forEach((k) => (value = value[k]));
 
-      if ("value" in el) el.value = value;
-      else el.textContent = value;
+      let value = __STATE__;
+      let shouldUpdate = true;
+      path.forEach((k) => {
+        console.log("THE CURRENT KEY VALUE", k, value[k]);
+        console.log("THE VALUE BEFORE", value);
+
+        if (!value[k]) {
+          shouldUpdate = false;
+        } else {
+          value = value[k];
+        }
+        console.log("THE VALUE AFTER", value);
+      });
+
+      if (shouldUpdate) {
+        if ("value" in el) el.value = value;
+        else el.textContent = value;
+      }
     });
 
     document.querySelectorAll("[data-cond]").forEach((el) => {
