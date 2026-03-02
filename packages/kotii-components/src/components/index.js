@@ -5,6 +5,7 @@ import Image from "./Image/index.jsx";
 import Svg from "./Svg/index.jsx";
 import { Interactive } from "./Interactive/index.jsx";
 import { InteractionProvider } from "./InteractionContext/index.jsx";
+import { VisibleWrapper } from "./VisibleWrapper/index.jsx";
 export {
   AppProvider,
   Image,
@@ -13,4 +14,5 @@ export {
   useUniversalEffect,
   Interactive,
   InteractionProvider,
+  VisibleWrapper,
 };

@@ -330,6 +330,6 @@ const kotiiApp = props => {
 //   });
 // }
 
-export { Image, Svg, useAppContext, useUniversalEffect, Interactive } from "kotii-components";
+export { Image, Svg, useAppContext, useUniversalEffect, Interactive, VisibleWrapper } from "kotii-components";
 export { ServerApp, Head };
 export default App;

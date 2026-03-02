@@ -6,6 +6,7 @@ import {
   useUniversalEffect,
   Interactive,
   InteractionProvider,
+  VisibleWrapper,
 } from "./src/components/index.js";
 export {
   AppProvider,
@@ -15,4 +16,5 @@ export {
   useUniversalEffect,
   Interactive,
   InteractionProvider,
+  VisibleWrapper,
 };
