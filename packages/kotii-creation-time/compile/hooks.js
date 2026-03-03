@@ -107,6 +107,7 @@ let isStaticMode = false;
 //   });
 // };
 
+let madeDir = null;
 export async function load(url, context, nextLoad) {
   const { format, parentURL = "" } = context;
 
@@ -288,13 +289,7 @@ export async function load(url, context, nextLoad) {
             plugins: options.plugins,
           })
         : { code: rawSource };
-      if (fileLoaderExts.includes(fileExtension)) {
-        loggas.load.debug("TRANSFORM WITHOUT JSX", fileExtension, result?.code);
-      } else {
-        if (fileExtension === extJsx) {
-          loggas.load.debug("TRANSFORM WITH JSX", fileExtension, result?.code);
-        }
-      }
+
       if (result?.metadata?.__STATIC_META__) {
         console.log("RESULT.METADATA", result.metadata.__STATIC_META__);
         MODULE_GRAPH_FOR_STATIC_GENERATION.set(url, {
@@ -320,6 +315,7 @@ export async function load(url, context, nextLoad) {
 
     return nextLoad(url);
   } catch (error) {
+    console.log("LOAD IS FAILING", error);
     const parsed = parseLoaderError(error);
     const { file } = parsed;
     const matchPartialPagesPathPattern = `/kotii-land/dev/pages.js`;

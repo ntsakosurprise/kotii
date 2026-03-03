@@ -3,6 +3,7 @@
 // const fs = require("fs");
 const { jSXAttribute } = require("@babel/types");
 const t = require("@babel/types");
+const generate = require("@babel/generator").default;
 const BUILTINS = new Set([
   "Math",
   "console",
@@ -69,28 +70,7 @@ const ExtractVariables = (path, state) => {
   VariablesGetComponentLevelIdentifiers(path, state);
 };
 const ExtractJSX = (path, state) => {
-  const opening = path.node.openingElement;
-  const localName = opening;
-  if (!localName) return;
-
-  const binding = path.scope.getBinding(localName);
-  if (!binding) return;
-
-  if (
-    !binding.path.isImportSpecifier() &&
-    !binding.path.isImportDefaultSpecifier()
-  )
-    return;
-
-  const source = binding.path.parent.source.value;
-  if (!source.includes("Interactive")) return;
-
-  // 🔥 Traverse ALL children
-  path.traverse({
-    JSXAttribute(attrPath) {
-      collectInteractiveExternals(attrPath, state);
-    },
-  });
+  TransformConditionalRender(path, state);
 };
 const ProgramEnter = (path, state) => {
   state.externals = new Set();
@@ -152,15 +132,32 @@ const ProgramExiter = (path, state) => {
   };
 };
 const MatchJSXElement = (path, state) => {
+  // const opening = path.node.openingElement;
+  // const openingType = opening?.name?.type;
+  // const jsxName = opening?.name?.name;
+  // if (openingType.toLowerCase() !== "jsxidentifier") return false;
+  // if (jsxName.toLowerCase() !== "interactive") return false;
+  // console.log("THIS IS INTERACTIVE JSX ELEMENT", openingType, jsxName);
+  // const elementChildren = path.get("children");
+  // if (!elementChildren) return false;
+  // handleInteractiveChildren(elementChildren, path, state);
+
   const opening = path.node.openingElement;
   const openingType = opening?.name?.type;
   const jsxName = opening?.name?.name;
-  if (openingType.toLowerCase() !== "jsxidentifier") return false;
-  if (jsxName.toLowerCase() !== "interactive") return false;
-  console.log("THIS IS INTERACTIVE JSX ELEMENT", openingType, jsxName);
-  const elementChildren = path.get("children");
-  if (!elementChildren) return false;
-  handleInteractiveChildren(elementChildren, path, state);
+
+  if (openingType?.toLowerCase() !== "jsxidentifier") return false;
+
+  // 1️⃣ If Interactive → collect event externals
+  if (jsxName?.toLowerCase() === "interactive") {
+    const elementChildren = path.get("children");
+    if (elementChildren) {
+      handleInteractiveChildren(elementChildren, path, state);
+    }
+  }
+
+  // 2️⃣ ALWAYS attach state bindings
+  attachStateBindings(path, state);
 };
 
 // Local Helpers
@@ -412,6 +409,222 @@ const VariablesGetComponentLevelIdentifiers = (path, state) => {
     }
   }
 };
+
+const TransformConditionalRender = (path, state) => {
+  const exprPath = path.get("expression");
+  console.log("AFTER GET EXPRESSION", exprPath.isLogicalExpression());
+  if (!t.isLogicalExpression(exprPath.node, { operator: "&&" })) return;
+  console.log("LOGICAL EXPRESSION CHECK PASSES");
+
+  // Flatten nested && expressions
+  const parts = flattenLogical(exprPath.node);
+
+  if (parts.length < 2) return;
+
+  const lastPart = parts[parts.length - 1];
+
+  //  Only transform if final operand is JSX
+  if (!t.isJSXElement(lastPart) && !t.isJSXFragment(lastPart)) return;
+
+  const jsxNode = t.cloneNode(lastPart, true);
+  const conditionNodes = parts.slice(0, -1);
+
+  //  Generate condition string safely
+  const combinedCondition = conditionNodes
+    .map((node) => generate(node).code)
+    .join(" && ");
+
+  //  Inject data-visible attribute
+  const openingEl = jsxNode.openingElement;
+
+  const existingAttrIndex = openingEl.attributes.findIndex(
+    (a) =>
+      t.isJSXAttribute(a) && t.isJSXIdentifier(a.name, { name: "data-visible" })
+  );
+
+  const visibleAttr = t.jsxAttribute(
+    t.jsxIdentifier("data-visible"),
+    t.stringLiteral(combinedCondition)
+  );
+
+  if (existingAttrIndex >= 0) {
+    openingEl.attributes[existingAttrIndex] = visibleAttr;
+  } else {
+    openingEl.attributes.push(visibleAttr);
+  }
+
+  //  Collect externals BEFORE replacement
+  conditionNodes.forEach((node) => {
+    collectRenderExternalsFromNode(node, state, path);
+  });
+
+  //  Replace entire JSXExpressionContainer
+  path.replaceWith(jsxNode);
+};
+
+function collectRenderExternalsFromNode(node, state, parentPath) {
+  const tempPath = parentPath.scope.path;
+
+  tempPath.traverse({
+    Identifier(p) {
+      if (p.node !== node && !nodeContains(node, p.node)) return;
+
+      const name = p.node.name;
+
+      if (
+        BUILTINS.has(name) ||
+        state.reactStateIdentifiers.has(name) ||
+        state.componentBindings.has(name) ||
+        name === "undefined"
+      ) {
+        return;
+      }
+
+      if (
+        t.isMemberExpression(p.parent) &&
+        p.parent.property === p.node &&
+        !p.parent.computed
+      ) {
+        return;
+      }
+
+      state.externals.add(name);
+    },
+  });
+}
+function flattenLogical(node, parts = []) {
+  if (t.isLogicalExpression(node, { operator: "&&" })) {
+    flattenLogical(node.left, parts);
+    flattenLogical(node.right, parts);
+  } else {
+    parts.push(node);
+  }
+  return parts;
+}
+/**
+ * Checks if a child node exists somewhere inside a parent node
+ * @param {Node} parent - AST node to search in
+ * @param {Node} child - AST node to check
+ * @returns {boolean}
+ */
+function nodeContains(parent, child) {
+  let found = false;
+
+  // traverseFast visits every node recursively
+  t.traverseFast(parent, (n) => {
+    if (n === child) {
+      found = true;
+    }
+  });
+
+  return found;
+}
+function attachStateBindings(path, state) {
+  const openingEl = path.node.openingElement;
+  if (!openingEl) return;
+
+  const bindings = new Set();
+
+  // Attributes
+  openingEl.attributes.forEach((attr) => {
+    if (!t.isJSXAttribute(attr)) return;
+    if (!t.isJSXExpressionContainer(attr.value)) return;
+
+    if (t.isJSXIdentifier(attr.name) && /^on[A-Z]/.test(attr.name.name)) {
+      return;
+    }
+
+    collectStateFromExpression(attr.value.expression, state, bindings);
+  });
+
+  // Direct children only
+  path.node.children.forEach((child) => {
+    if (!t.isJSXExpressionContainer(child)) return;
+
+    collectStateFromExpression(child.expression, state, bindings);
+  });
+
+  if (bindings.size === 0) return;
+
+  openingEl.attributes.push(
+    t.jsxAttribute(
+      t.jsxIdentifier("data-bind"),
+      t.stringLiteral([...bindings].join("."))
+    )
+  );
+}
+
+function collectStateFromExpression(node, state, bindings) {
+  if (!node) return;
+
+  // Direct identifier: {username}
+  if (t.isIdentifier(node)) {
+    if (state.reactStateIdentifiers.has(node.name)) {
+      bindings.add(node.name);
+    }
+    return;
+  }
+
+  // Member expression: errors.username.message
+  if (
+    t.isMemberExpression(node) ||
+    (t.isOptionalMemberExpression && t.isOptionalMemberExpression(node))
+  ) {
+    const root = getRootIdentifier(node);
+
+    if (root && state.reactStateIdentifiers.has(root.name)) {
+      bindings.add(buildMemberPath(node));
+    }
+
+    return; // 🚨 STOP HERE — do not traverse deeper
+  }
+
+  // Logical expressions etc (rare for bind)
+  if (t.isLogicalExpression(node)) {
+    // If this is a conditional render (right side JSX),
+    // skip binding at this level — it belongs to the JSX child.
+    if (t.isJSXElement(node.right) || t.isJSXFragment(node.right)) {
+      return;
+    }
+
+    collectStateFromExpression(node.left, state, bindings);
+    collectStateFromExpression(node.right, state, bindings);
+    return;
+  }
+}
+function getRootIdentifier(node) {
+  let current = node;
+
+  while (
+    t.isMemberExpression(current) ||
+    (t.isOptionalMemberExpression && t.isOptionalMemberExpression(current))
+  ) {
+    current = current.object;
+  }
+
+  return t.isIdentifier(current) ? current : null;
+}
+
+function buildMemberPath(node) {
+  const parts = [];
+  let current = node;
+
+  while (
+    t.isMemberExpression(current) ||
+    (t.isOptionalMemberExpression && t.isOptionalMemberExpression(current))
+  ) {
+    if (t.isIdentifier(current.property)) {
+      parts.unshift(current.property.name);
+    }
+    current = current.object;
+  }
+
+  if (t.isIdentifier(current)) {
+    parts.unshift(current.name);
+  }
+
+  return parts.join(".");
+}
 
 const TRAVERSERS = {
   ExtractImports,

@@ -3,6 +3,7 @@ const t = require("@babel/types");
 const path = require("path");
 const fs = require("fs");
 const { BUILTINS, TRAVERSERS } = require("./pluginUtils.cjs");
+
 /* eslint-disable no-unused-vars */
 
 const transformReactStatePlugin = (babel, options) => {
@@ -31,6 +32,14 @@ const transformReactStatePlugin = (babel, options) => {
       // -----------------------------
       ImportDeclaration(path, state) {
         TRAVERSERS.ExtractImports(path, state, options);
+      },
+
+      JSXExpressionContainer(path, state) {
+        try {
+          TRAVERSERS.ExtractJSX(path, state);
+        } catch (error) {
+          console.log("TRAVERSE EXPRESSION CONTAINER ERROR", error);
+        }
       },
 
       // -----------------------------
