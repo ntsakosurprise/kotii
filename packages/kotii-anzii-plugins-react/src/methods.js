@@ -384,9 +384,12 @@ methods.renderStaticFullPage = function ({
     </head>
 		<body ${head.bodyAttributes.toString()}>
 		 <div id="root">${html}</div>
-		 <script src="js/${info.js}" ></script>
-     ${self.doPageJsPackages(pageJsPackages)}
-     <script >${pageJs}</script>
+		<script> window.process = {env:${process.env.APP_ENVS}} </script>
+    <script src="./assets/vendor/bootstrap.js"></script>
+    <script src="./assets/vendor/packages.js"></script>
+    <script >${pageJs}</script>
+    
+     
 			
 		</body>
 		</html>
