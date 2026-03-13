@@ -166,6 +166,7 @@ methods.extractPageInteractiveParts = function (Page, vendorType) {
 };
 methods.generatePageJs = function (interactions) {
   const self = this;
+  console.log("THE INTERACTIONS", interactions);
 
   return new Promise((resolve, reject) => {
     let processedInteractions = interactions.map((interaction) => {
@@ -231,7 +232,9 @@ methods.eventsSourceAst = function (eventAst) {
     "THE EVENTS SOURCE",
     self.__STATIC_RUNTIME_STATE,
     "THE SETTERS",
-    self.__STATE_SETTERS
+    self.__STATE_SETTERS,
+    "STATIC EXTERNALS",
+    self.__STATIC_EXTERNALS_STATE
   );
 
   traverse(eventAst, {
@@ -239,14 +242,14 @@ methods.eventsSourceAst = function (eventAst) {
       const name = path.node.name;
 
       // Not a tracked state variable
-      console.log("THE CURRENT NAME", name);
+      // console.log("THE CURRENT NAME",name)
       if (self.__STATE_SETTERS[name]) {
         const { newAssignment, updateCall } = self.createUpdaterFromReactSetter(
           path,
           name,
           true
         );
-        console.log("WRAPPED BELLOW");
+        //  console.log("WRAPPED BELLOW")
         const wrappedFunction = t.functionExpression(
           null, // anonymous
           [t.identifier("param")], // no params
@@ -277,21 +280,22 @@ methods.eventsSourceAst = function (eventAst) {
       if (binding) {
         return;
       }
-      console.log("ID WITH BIND", name);
+      // console.log("ID WITH BIND",name)
       // Skip property keys: obj.foo
       if (
         path.parentPath.isMemberExpression() &&
         path.parentKey === "property" && // ✅ CORRECT
         !path.parent.computed
       ) {
-        console.log("ID IN PROPERTY", name);
+        // console.log("ID IN PROPERTY",name)
         return;
       }
-      console.log("IDENTIFIER IN QUESTION", name);
+      // console.log("IDENTIFIER IN QUESTION", name)
 
       if (self.__STATIC_RUNTIME_STATE[name]) {
         self.replaceIdentifier(path, "__STATE__", name);
       } else if (self.__STATIC_EXTERNALS_STATE && !self.__IMPORTS__[name]) {
+        console.log("REPLACING FOR NAME:EXTERNAL", name);
         self.replaceIdentifier(path, "__EXTERNALS__", name);
       }
     },
@@ -299,7 +303,7 @@ methods.eventsSourceAst = function (eventAst) {
     CallExpression(path) {
       const callee = path.node.callee;
       if (!t.isIdentifier(callee)) return;
-      self.debug("THE CALL EXPRESSION", callee);
+      // self.debug("THE CALL EXPRESSION", callee);
 
       if (self.__STATE_SETTERS[callee.name]) {
         const { newAssignment, updateCall } = self.createUpdaterFromReactSetter(
@@ -312,7 +316,7 @@ methods.eventsSourceAst = function (eventAst) {
           t.expressionStatement(newAssignment),
           updateCall,
         ]);
-        console.log("Replaced CALL EXPRESSION OF NAME", callee.name);
+        // console.log("Replaced CALL EXPRESSION OF NAME", callee.name)
 
         return;
       }
@@ -666,6 +670,8 @@ methods.createExternalsState = function () {
   self.__EXTERNALS__ = {};
   self.__PACKAGES_CODE__ = [];
   self.__NEEDED_IMPORTS__ = [];
+  self.__MODULES_IMPORTS_MAP__ = {};
+  self.info("THE STATIC EXTERNALS", self.__IMPORTS__);
 
   Object.entries(self.__STATIC_EXTERNALS_STATE).forEach(([key, wrapper]) => {
     console.log("KEY.WRAPER", key, wrapper);
@@ -695,8 +701,15 @@ methods.createExternalsState = function () {
           fileName: `${self.__IMPORTS__[key].source}.js`,
         });
       }
+
+      self.__MODULES_IMPORTS_MAP__ = {};
     }
   });
+
+  self.__PACKAGES_CODE__ = [
+    { code: self.modulesBrowserSkeleton() },
+    ...self.__PACKAGES_CODE__,
+  ];
 };
 methods.restoreFunctionsForRuntime = function (externals) {
   const self = this;
@@ -708,6 +721,7 @@ methods.restoreFunctionsForRuntime = function (externals) {
       continue;
     }
 
+    console.log("THE RESTOR FUNCTION FOR RUN TIME VALUE", value);
     const trimmed = value.trim();
 
     const isArrowFunction =
@@ -716,11 +730,12 @@ methods.restoreFunctionsForRuntime = function (externals) {
     const isFunctionDeclaration = /^\s*(async\s*)?function\b/.test(trimmed);
 
     if (isArrowFunction || isFunctionDeclaration) {
+      console.log("THE VALUE ARROW FUNCTION");
       let sourceAst = parser.parse(trimmed, {
         sourceType: "module",
       });
 
-      console.log("FACTORY SOURCE AST", sourceAst);
+      console.log("FACTORY SOURCE AST restore", sourceAst);
 
       self.eventsSourceAst(sourceAst);
 
@@ -849,41 +864,52 @@ methods.processPackageForBrowser = function (
   entryRequiredImports
 ) {
   const self = this;
+
   console.log("THE PACKAGE FILES", packageName, packageFiles);
+
   const packageContext = {
     name: packageName,
     entry: packageFiles[packageName],
     modules: new Map(),
     entryRequiredImports,
   };
+
+  // const moduleType = self.detectModuleTypeSync(packageContext.entry)
+
   let standingTree = self.collectPackageResourcesForTreeShake(
     packageContext.entry,
     packageContext,
-    packageFiles
+    packageFiles,
+    packageName
   );
   if (standingTree) {
-    let browserModulesWrapper = self.modulesBrowserSkeleton();
+    let browserModulesWrapper = "";
     let mainFileName = null;
 
     for (let [moduleID, module] of packageContext.modules) {
+      console.log(
+        "MODULE ID IN CONTEXT",
+        module.id,
+        "SPECIFIER",
+        module.moduleSpecifier
+      );
       self.convertESMToCommonJS(module.ast);
       let updatedSource = generate(module.ast).code;
-      let uniqueFileID = self.createUniqueModuleId(
-        packageContext.name,
-        updatedSource
-      );
+      //  let uniqueFileID = self.createUniqueModuleId(packageContext.name, updatedSource)
       //  let uniqueFileID = self.createUniqueModuleId(packageContext.name, module.source)
-      if (!mainFileName) mainFileName = uniqueFileID;
+
+      if (!mainFileName) mainFileName = module.moduleSpecifier;
 
       browserModulesWrapper += `
-     __modules__["${uniqueFileID}"] = function(module, exports, __require__) {
+     __modules__["${module.moduleSpecifier}"] = function(module, exports, __require__) {
        ${updatedSource}
       }`;
     }
-    browserModulesWrapper += `\nwindow.__modules__ = __modules__\n window.__require__ = __require__`;
+    //  browserModulesWrapper += `\nwindow.__modules__ = __modules__\n window.__require__ = __require__`
     //  browserModulesWrapper += `\n const __entry__ = __require__("${mainFileName}")\n export const ${entryRequiredImports[0]} = __entry__.Chain`
 
     console.log("THE BROWSER READY CODE", browserModulesWrapper);
+
     return { code: browserModulesWrapper, name: mainFileName };
   }
 };
@@ -891,37 +917,56 @@ methods.processPackageForBrowser = function (
 methods.collectPackageResourcesForTreeShake = function (
   fileUrl,
   packageContext,
-  packageFiles
+  packageFiles,
+  moduleSpecifier
 ) {
   const self = this;
 
-  if (packageContext.modules.has(fileUrl)) return;
+  if (packageContext.modules.has(fileUrl)) {
+    self.__MODULES_IMPORTS_MAP__[moduleSpecifier] =
+      packageContext.modules.get(fileUrl).moduleSpecifier;
+    return;
+  }
   const fileSource = fs.readFileSync(fileURLToPath(fileUrl), {
     encoding: "utf-8",
   });
-  console.log("THE FILE SOURCE");
+  console.log("THE FILE SOURCE", "File url", fileUrl, fileSource);
   const fileSourceAst = parser.parse(fileSource, {
     sourceType: "module",
   });
+
+  let modifiedModuleSpecifier = self.createUniqueModuleId(moduleSpecifier);
   const moduleInfo = {
     id: fileUrl,
+    moduleSpecifier: modifiedModuleSpecifier,
     source: fileSource,
     ast: fileSourceAst,
     imports: new Map(),
     exports: new Map(),
     sideEffects: false,
   };
+  self.__MODULES_IMPORTS_MAP__[moduleSpecifier] = modifiedModuleSpecifier;
+  console.log("THE MODULE IMPORTS AFTER SET", self.__MODULES_IMPORTS_MAP__);
 
+  console.log("THE PACKAGE CONTEXT", fileUrl, moduleInfo);
   packageContext.modules.set(fileUrl, moduleInfo);
 
   traverse(fileSourceAst, {
     ImportDeclaration(path) {
-      console.log("IMPORT PATH", path.source.value);
-      let importedFileUrl = packageFiles[path.source.value];
+      console.log("IMPORT PATH", path.node.source.value);
+      let importString = path.node.source.value;
+      console.log("THE IMPORT STRING", importString);
 
+      //  !moduleInfo.moduleSpecifier ? moduleInfo.moduleSpecifier = importString : ""
+      console.log(
+        "THE CURRENT FILE COLLECT IMPORT FILE",
+        moduleInfo.id,
+        "Specifier",
+        moduleInfo.moduleSpecifier
+      );
       let importedIds = new Set();
 
-      path.node.spicifiers.forEach((specifier) => {
+      path.node.specifiers.forEach((specifier) => {
         if (t.isImportSpecifier(specifier)) {
           importedIds.add(specifier.imported.name);
         }
@@ -932,12 +977,39 @@ methods.collectPackageResourcesForTreeShake = function (
           importedIds.add("*");
         }
       });
-      moduleInfo.imports.set(importedFileUrl, importedIds);
-      self.collectPackageResourcesForTreeShake(
-        importedFileUrl,
-        packageContext,
-        packageFiles
-      );
+      let importedFileUrl = packageFiles[importString];
+      if (!importedFileUrl) {
+        let importedFileUrl = PACKAGES_FILES[importString];
+        let packageImportedPackageCode = self.processPackageForBrowser(
+          importString,
+          PACKAGES_FILES[importString],
+          Array.from(importedIds)
+        );
+        console.log("THE PACKAGE IMPORTED PACKAGE CODE", importString);
+        self.__PACKAGES_CODE__.push({
+          code: packageImportedPackageCode.code,
+          packageName: importString,
+          fileName: `${packageImportedPackageCode.name}.js`,
+        });
+        moduleInfo.imports.set(importedFileUrl, importedIds);
+        // self.collectPackageResourcesForTreeShake(importedFileUrl,packageContext,PACKAGES_FILES[importString])
+        // importedFileUrl = PACKAGES_FILES[importString][importString]
+      } else {
+        console.log(
+          "THE IMPORTED URL",
+          importedFileUrl,
+          packageFiles,
+          Array.from(importedIds)
+        );
+
+        moduleInfo.imports.set(importedFileUrl, importedIds);
+        self.collectPackageResourcesForTreeShake(
+          importedFileUrl,
+          packageContext,
+          packageFiles,
+          importString
+        );
+      }
     },
 
     ExportNamedDeclaration(path) {
@@ -982,8 +1054,9 @@ methods.treeShakeModule = function (packageContext) {
       console.log("MODULE ID", moduleId, module);
       let neededExports = usedExports.get(moduleId);
       if (!neededExports) continue;
+      console.log("THE MODULE IMPORTS", module.id, module.imports);
 
-      for ([importedModuleId, importsList] of module.imports) {
+      for (let [importedModuleId, importsList] of module.imports) {
         let importsNeeded = new Set();
 
         for (let neededExport of neededExports) {
@@ -1017,14 +1090,23 @@ methods.treeShakeModule = function (packageContext) {
 
 methods.modulesBrowserSkeleton = function () {
   const wrapper = `
-   const __modules__ = {}
+     const __modules__ = {}
    const __cache__ = {}
    function __require__(id){
+       console.log("Module ID", id)
+       console.log("THE MODULES",__modules__)
       if(__cache__[id]) return __cache__[id].exports
 
+      if(!__modules__[id]){
+        throw new Error("Module id not found")
+      }
+
       const module = { exports: {} }
-      __modules__[id](module, module.exports, __require__)
+
       __cache__[id] = module
+
+      __modules__[id](module, module.exports, __require__)
+
       return module.exports
     }
   `;
@@ -1032,15 +1114,33 @@ methods.modulesBrowserSkeleton = function () {
 };
 
 methods.createUniqueModuleId = function (packageName, packageContent) {
-  const hash = crypto
-    .createHash("sha256")
-    .update(packageContent)
-    .digest("hex")
-    .slice(0, 8);
+  // console.log("UNIQUE NAME PACKAGE", packageName)
+  //   const hash = crypto
+  //     .createHash("sha256")
+  //     .update(packageContent)
+  //     .digest("hex")
+  //     .slice(0, 8)
 
-  const safeName = packageName.toLowerCase().replace(/[^a-z0-9_\-@/]/g, "");
+  //   const safeName = packageName
+  //     .toLowerCase()
+  //     .replace(/[^a-z0-9_\-@/]/g, "")
 
-  return `pkg:${safeName}:${hash}`;
+  //   return `pkg:${safeName}:${hash}`
+
+  const parts = packageName.split("/");
+  const stack = [];
+
+  for (const part of parts) {
+    if (!part || part === ".") continue;
+
+    if (part === "..") {
+      stack.pop();
+    } else {
+      stack.push(part);
+    }
+  }
+
+  return stack.join("/");
 };
 methods.createPackagesRequires = function () {
   const self = this;
@@ -1135,14 +1235,220 @@ methods.getFactoriesRunner = function () {
       });
   };
 };
+// methods.convertESMToCommonJS = function(ast) {
+
+//   const self = this
+//   console.log("THE CURRENT PACKAGE MAPS", self.__MODULES_IMPORTS_MAP__)
+//   const state = { exportNames: new Set() };
+
+//   traverse(ast, {
+//     Program: {
+//       enter(path) {
+//         state.exportNames = new Set();
+//       },
+//       exit(path) {
+//         path.unshiftContainer(
+//           "body",
+//           t.expressionStatement(
+//             t.callExpression(
+//               t.memberExpression(t.identifier("Object"), t.identifier("defineProperty")),
+//               [
+//                 t.identifier("exports"),
+//                 t.stringLiteral("__esModule"),
+//                 t.objectExpression([t.objectProperty(t.identifier("value"), t.booleanLiteral(true))]),
+//               ]
+//             )
+//           )
+//         );
+//       },
+//     },
+
+//     ImportDeclaration(path) {
+//       const source = path.node.source.value;
+//       console.log("CONVERT SOURCE ID",source)
+//       let modifiedSource = self.__MODULES_IMPORTS_MAP__[source] ? self.__MODULES_IMPORTS_MAP__[source] : source
+//       const requireCall = t.callExpression(t.identifier("__require__"), [t.stringLiteral(modifiedSource)]);
+//       // const declarations = [];
+
+//       // path.node.specifiers.forEach((spec) => {
+//       //   if (t.isImportDefaultSpecifier(spec)) {
+//       //     declarations.push(
+//       //       t.variableDeclarator(spec.local, t.memberExpression(requireCall, t.identifier("default")))
+//       //     );
+//       //   } else if (t.isImportSpecifier(spec)) {
+//       //     declarations.push(t.variableDeclarator(spec.local, t.memberExpression(requireCall, spec.imported)));
+//       //   } else if (t.isImportNamespaceSpecifier(spec)) {
+//       //     declarations.push(t.variableDeclarator(spec.local, requireCall));
+//       //   }
+//       // });
+
+//       // path.replaceWith(t.variableDeclaration("const", declarations));
+
+//       const mod = path.scope.generateUidIdentifierBasedOnNode(
+//         t.identifier(modifiedSource.replace(/[^a-zA-Z]/g, ""))
+//       );
+
+//       const requireDecl = t.variableDeclaration("const", [
+//         t.variableDeclarator(mod, requireCall),
+//       ]);
+
+//       const declarations = [];
+
+//       path.node.specifiers.forEach((spec) => {
+//         if (t.isImportDefaultSpecifier(spec)) {
+//           declarations.push(
+//             t.variableDeclarator(
+//               spec.local,
+//               t.memberExpression(mod, t.identifier("default"))
+//             )
+//           );
+//         } else if (t.isImportSpecifier(spec)) {
+//           declarations.push(
+//             t.variableDeclarator(
+//               spec.local,
+//               t.memberExpression(mod, spec.imported)
+//             )
+//           );
+//         } else if (t.isImportNamespaceSpecifier(spec)) {
+//           declarations.push(
+//             t.variableDeclarator(spec.local, mod)
+//           );
+//         }
+//       });
+
+//       path.replaceWithMultiple([
+//         requireDecl,
+//         t.variableDeclaration("const", declarations),
+//       ]);
+//     },
+
+//     ExportNamedDeclaration(path) {
+//       const { node } = path;
+
+//       if (node.declaration) {
+//         const decl = node.declaration;
+
+//         if (t.isVariableDeclaration(decl)) {
+//           decl.declarations.forEach((d) => {
+//             const name = d.id.name;
+//             state.exportNames.add(name);
+//             path.insertAfter(
+//               t.expressionStatement(
+//                 t.assignmentExpression(
+//                   "=",
+//                   t.memberExpression(t.identifier("exports"), t.identifier(name)),
+//                   t.identifier(name)
+//                 )
+//               )
+//             );
+//           });
+//         }
+
+//         if (t.isFunctionDeclaration(decl) || t.isClassDeclaration(decl)) {
+//           const name = decl.id.name;
+//           state.exportNames.add(name);
+//           path.insertAfter(
+//             t.expressionStatement(
+//               t.assignmentExpression(
+//                 "=",
+//                 t.memberExpression(t.identifier("exports"), t.identifier(name)),
+//                 t.identifier(name)
+//               )
+//             )
+//           );
+//         }
+
+//         path.replaceWith(decl);
+//         return;
+//       }
+
+//       node.specifiers.forEach((spec) => {
+//         const local = spec.local.name;
+//         const exported = spec.exported.name;
+//         path.insertAfter(
+//           t.expressionStatement(
+//             t.assignmentExpression(
+//               "=",
+//               t.memberExpression(t.identifier("exports"), t.identifier(exported)),
+//               t.identifier(local)
+//             )
+//           )
+//         );
+//       });
+
+//       path.remove();
+//     },
+
+//     ExportDefaultDeclaration(path) {
+//       const decl = path.node.declaration;
+
+//       if (t.isFunctionDeclaration(decl) || t.isClassDeclaration(decl)) {
+//         const id = decl.id || path.scope.generateUidIdentifier("default");
+//         if (!decl.id) decl.id = id;
+
+//         path.replaceWithMultiple([
+//           decl,
+//           t.expressionStatement(
+//             t.assignmentExpression(
+//               "=",
+//               t.memberExpression(t.identifier("exports"), t.identifier("default")),
+//               id
+//             )
+//           ),
+//         ]);
+//       } else {
+//         path.replaceWith(
+//           t.expressionStatement(
+//             t.assignmentExpression(
+//               "=",
+//               t.memberExpression(t.identifier("exports"), t.identifier("default")),
+//               decl
+//             )
+//           )
+//         );
+//       }
+//     },
+
+//     ExportAllDeclaration(path) {
+//       const source = path.node.source.value;
+//       const requireCall = t.callExpression(t.identifier("__require__"), [t.stringLiteral(source)]);
+//       const temp = path.scope.generateUidIdentifier("reexp");
+
+//       path.replaceWithMultiple([
+//         t.variableDeclaration("const", [t.variableDeclarator(temp, requireCall)]),
+
+//         t.forInStatement(
+//           t.variableDeclaration("const", [t.variableDeclarator(t.identifier("key"))]),
+//           temp,
+//           t.blockStatement([
+//             t.expressionStatement(
+//               t.assignmentExpression(
+//                 "=",
+//                 t.memberExpression(t.identifier("exports"), t.identifier("key"), true),
+//                 t.memberExpression(temp, t.identifier("key"), true)
+//               )
+//             ),
+//           ])
+//         ),
+//       ]);
+//     },
+//   });
+
+// }
+
 methods.convertESMToCommonJS = function (ast) {
-  const state = { exportNames: new Set() };
+  const self = this;
+
+  const state = {
+    moduleIdentifiers: new Map(),
+  };
 
   traverse(ast, {
     Program: {
-      enter(path) {
-        state.exportNames = new Set();
+      enter() {
+        state.moduleIdentifiers = new Map();
       },
+
       exit(path) {
         path.unshiftContainer(
           "body",
@@ -1168,47 +1474,93 @@ methods.convertESMToCommonJS = function (ast) {
       },
     },
 
+    /*
+    -----------------------------
+    IMPORT TRANSFORM (SAFE)
+    -----------------------------
+    */
     ImportDeclaration(path) {
       const source = path.node.source.value;
-      const requireCall = t.callExpression(t.identifier("__require__"), [
-        t.stringLiteral(source),
-      ]);
+
+      const modifiedSource = self.__MODULES_IMPORTS_MAP__[source]
+        ? self.__MODULES_IMPORTS_MAP__[source]
+        : source;
+
+      let moduleId = state.moduleIdentifiers.get(modifiedSource);
+
+      if (!moduleId) {
+        moduleId = path.scope.generateUidIdentifier(
+          modifiedSource.replace(/[^a-zA-Z]/g, "")
+        );
+
+        state.moduleIdentifiers.set(modifiedSource, moduleId);
+
+        const requireDecl = t.variableDeclaration("const", [
+          t.variableDeclarator(
+            moduleId,
+            t.callExpression(t.identifier("__require__"), [
+              t.stringLiteral(modifiedSource),
+            ])
+          ),
+        ]);
+
+        path.insertBefore(requireDecl);
+      }
+
       const declarations = [];
 
       path.node.specifiers.forEach((spec) => {
+        // named import
+        if (t.isImportSpecifier(spec)) {
+          declarations.push(
+            t.variableDeclarator(
+              spec.local,
+              t.memberExpression(moduleId, spec.imported)
+            )
+          );
+        }
+
+        // default import
         if (t.isImportDefaultSpecifier(spec)) {
           declarations.push(
             t.variableDeclarator(
               spec.local,
-              t.memberExpression(requireCall, t.identifier("default"))
+              t.memberExpression(moduleId, t.identifier("default"))
             )
           );
-        } else if (t.isImportSpecifier(spec)) {
-          declarations.push(
-            t.variableDeclarator(
-              spec.local,
-              t.memberExpression(requireCall, spec.imported)
-            )
-          );
-        } else if (t.isImportNamespaceSpecifier(spec)) {
-          declarations.push(t.variableDeclarator(spec.local, requireCall));
+        }
+
+        // namespace import
+        if (t.isImportNamespaceSpecifier(spec)) {
+          declarations.push(t.variableDeclarator(spec.local, moduleId));
         }
       });
 
-      path.replaceWith(t.variableDeclaration("const", declarations));
+      if (declarations.length) {
+        path.insertBefore(t.variableDeclaration("const", declarations));
+      }
+
+      path.remove();
     },
 
+    /*
+    -------------------------
+    EXPORT NAMED DECLARATION
+    -------------------------
+    */
     ExportNamedDeclaration(path) {
       const { node } = path;
 
       if (node.declaration) {
         const decl = node.declaration;
 
+        const statements = [decl];
+
         if (t.isVariableDeclaration(decl)) {
           decl.declarations.forEach((d) => {
             const name = d.id.name;
-            state.exportNames.add(name);
-            path.insertAfter(
+
+            statements.push(
               t.expressionStatement(
                 t.assignmentExpression(
                   "=",
@@ -1225,8 +1577,8 @@ methods.convertESMToCommonJS = function (ast) {
 
         if (t.isFunctionDeclaration(decl) || t.isClassDeclaration(decl)) {
           const name = decl.id.name;
-          state.exportNames.add(name);
-          path.insertAfter(
+
+          statements.push(
             t.expressionStatement(
               t.assignmentExpression(
                 "=",
@@ -1237,14 +1589,17 @@ methods.convertESMToCommonJS = function (ast) {
           );
         }
 
-        path.replaceWith(decl);
+        path.replaceWithMultiple(statements);
         return;
       }
+
+      const statements = [];
 
       node.specifiers.forEach((spec) => {
         const local = spec.local.name;
         const exported = spec.exported.name;
-        path.insertAfter(
+
+        statements.push(
           t.expressionStatement(
             t.assignmentExpression(
               "=",
@@ -1258,14 +1613,20 @@ methods.convertESMToCommonJS = function (ast) {
         );
       });
 
-      path.remove();
+      path.replaceWithMultiple(statements);
     },
 
+    /*
+    -------------------------
+    EXPORT DEFAULT
+    -------------------------
+    */
     ExportDefaultDeclaration(path) {
       const decl = path.node.declaration;
 
       if (t.isFunctionDeclaration(decl) || t.isClassDeclaration(decl)) {
         const id = decl.id || path.scope.generateUidIdentifier("default");
+
         if (!decl.id) decl.id = id;
 
         path.replaceWithMultiple([
@@ -1297,11 +1658,22 @@ methods.convertESMToCommonJS = function (ast) {
       }
     },
 
+    /*
+    -------------------------
+    EXPORT ALL
+    -------------------------
+    */
     ExportAllDeclaration(path) {
       const source = path.node.source.value;
+
+      const modifiedSource = self.__MODULES_IMPORTS_MAP__[source]
+        ? self.__MODULES_IMPORTS_MAP__[source]
+        : source;
+
       const requireCall = t.callExpression(t.identifier("__require__"), [
-        t.stringLiteral(source),
+        t.stringLiteral(modifiedSource),
       ]);
+
       const temp = path.scope.generateUidIdentifier("reexp");
 
       path.replaceWithMultiple([
@@ -1331,6 +1703,47 @@ methods.convertESMToCommonJS = function (ast) {
       ]);
     },
   });
+};
+
+methods.findPackageJson = function (fileUrlOrPath) {
+  let current = fileUrlOrPath.startsWith("file:")
+    ? fileURLToPath(fileUrlOrPath)
+    : fileUrlOrPath;
+
+  current = path.dirname(current);
+
+  while (current !== path.parse(current).root) {
+    const pkgPath = path.join(current, "package.json");
+    if (fs.existsSync(pkgPath)) {
+      return pkgPath;
+    }
+    current = path.dirname(current);
+  }
+
+  return null;
+};
+
+methods.detectModuleTypeSync = function (resolvedPath) {
+  const self = this;
+
+  if (resolvedPath.endsWith(".mjs")) return "esm";
+  if (resolvedPath.endsWith(".cjs")) return "commonjs";
+
+  // 2️⃣ .js depends on nearest package.json
+  if (resolvedPath.endsWith(".js")) {
+    const pkgPath = self.findPackageJson(resolvedPath);
+
+    if (!pkgPath) return "commonjs"; // Node default
+
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+      return pkg.type === "module" ? "esm" : "commonjs";
+    } catch {
+      return "commonjs";
+    }
+  }
+
+  return "commonjs";
 };
 
 export default methods;

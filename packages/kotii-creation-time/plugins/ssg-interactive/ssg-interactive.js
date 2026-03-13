@@ -40,6 +40,8 @@ class SsgInteractive {
     this.createUniqueModuleId = methods.createUniqueModuleId;
     this.createPackagesRequires = methods.createPackagesRequires;
     this.convertESMToCommonJS = methods.convertESMToCommonJS;
+    this.findPackageJson = methods.findPackageJson;
+    this.detectModuleTypeSync = methods.detectModuleTypeSync;
   }
 }
 export default SsgInteractive;
