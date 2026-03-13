@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-self-assign */
 /* eslint-disable no-unused-vars */
 import babel from "@babel/core";
@@ -1491,6 +1492,7 @@ const isNotInResolveList = (specifier) => {
 
 const saveTargetSpecifier = (specifier, shouldTerminate, parentURL) => {
   if (!isStaticMode) return;
+  console.log("SPECIFIER.PARENT URL", specifier, "parent", parentURL);
   addFileAsPackageDep(specifier, shouldTerminate.url, parentURL);
   if (isJsxFile(shouldTerminate.url)) {
     if (!isNotInResolveList(specifier)) {
@@ -1503,18 +1505,24 @@ const saveTargetSpecifier = (specifier, shouldTerminate, parentURL) => {
 };
 
 const addFileAsPackageDep = (specifier, url, parentURL) => {
-  const owner = findOwningPackage(parentURL);
-  if (owner) {
-    PACKAGE_FILES.get(owner)[specifier] = url;
-  }
+  if (isBuiltin(specifier)) return;
+  console.log("SPECIFIER", specifier, "url", url, "parent url", parentURL);
+  const owner = findOwningPackage(specifier, url);
+  const files = ensurePackage(owner);
 
-  if (!specifier.startsWith(".") && !specifier.startsWith("/")) {
-    if (!PACKAGE_FILES.has(specifier)) {
-      PACKAGE_FILES.set(specifier, {});
-    }
+  files[specifier] = url;
+  console.log("THE PARENT OWNER", owner);
+  // if (owner) {
+  //   PACKAGE_FILES.get(owner)[specifier] = url;
+  // }
 
-    PACKAGE_FILES.get(specifier)[specifier] = url;
-  }
+  // if (!specifier.startsWith(".") && !specifier.startsWith("/")) {
+  //     if (!PACKAGE_FILES.has(specifier)) {
+  //       PACKAGE_FILES.set(specifier, {});
+  //     }
+
+  //     PACKAGE_FILES.get(specifier)[specifier] = url;
+  // }
 };
 
 const addDependencyFromLoad = (url) => {
@@ -1529,41 +1537,45 @@ const addDependencyFromLoad = (url) => {
   }
 };
 
-const findOwningPackage = (url) => {
-  // console.log("PROCESSING PACKAGE", url)
-  const targetPath = path.normalize(new URL(url).pathname);
+const findOwningPackage = (specifier, url) => {
+  const filePath = path.normalize(new URL(url).pathname);
 
-  let bestMatch = null;
-  let bestDepth = -1;
+  const nmIndex = filePath.lastIndexOf("node_modules");
 
-  for (const [pkg, files] of PACKAGE_FILES) {
-    console.log("THE VALUE OF FILES", files);
-    for (const f of Object.keys(files)) {
-      console.log("THE F FROM MAP", f);
+  // External dependency
+  if (nmIndex !== -1) {
+    const afterNodeModules = filePath.slice(
+      nmIndex + "node_modules".length + 1
+    );
 
-      let fileUrl = files[f];
+    const parts = afterNodeModules.split(path.sep);
 
-      const dir = path.dirname(path.normalize(new URL(fileUrl).pathname));
-
-      // console.log("TARGET PATH",targetPath)
-      // console.log("CURRENT PATH DIR",dir)
-      const relative = path.relative(dir, targetPath);
-      // console.log("RELATIVE WITH TARGET",relative)
-
-      if (
-        relative &&
-        !relative.startsWith("..") &&
-        !path.isAbsolute(relative)
-      ) {
-        const depth = dir.split(path.sep).length;
-
-        if (depth > bestDepth) {
-          bestDepth = depth;
-          bestMatch = pkg;
-        }
-      }
+    if (parts[0].startsWith("@")) {
+      return `${parts[0]}/${parts[1]}`;
     }
+
+    return parts[0];
   }
 
-  return bestMatch;
+  // Local package (derived from specifier)
+  if (specifier.startsWith(".")) {
+    const dir = path.dirname(specifier);
+
+    if (dir === ".") {
+      return specifier;
+    }
+
+    return dir;
+  }
+
+  // fallback for unusual imports
+  return specifier;
+};
+
+const ensurePackage = (pkg) => {
+  if (!PACKAGE_FILES.has(pkg)) {
+    PACKAGE_FILES.set(pkg, {});
+  }
+
+  return PACKAGE_FILES.get(pkg);
 };
