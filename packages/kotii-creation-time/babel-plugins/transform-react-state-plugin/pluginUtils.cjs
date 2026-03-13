@@ -249,6 +249,16 @@ function collectInteractiveExternals(
           localBindings.add(p.node.id.name);
         }
       },
+      CatchClause(p) {
+        console.log("THE CATCH CLAUSE", p.node.param);
+        const param = p.node.param;
+
+        if (param && param.type === "Identifier") {
+          console.log("PARAM TYPE ID");
+          const name = param.name;
+          localBindings.add(name);
+        }
+      },
     });
 
     console.log("THE LOCAL BINDINGS", localBindings);
