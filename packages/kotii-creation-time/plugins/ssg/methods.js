@@ -235,7 +235,11 @@ methods.postBuildStaticResources = async function (context) {
   const self = this;
   self.debug("THE CONTEXT AGGREGATE PRODUCTION", context);
   let cssSavePath = `${context.distFolder}/css/index.css`;
-  let jsPackagesPath = `${context.distFolder}/assets/vendor`;
+  let vendorFolder = `${context.distFolder}/assets/vendor`;
+  let appBootstrapPath = `${context.distFolder}/assets/vendor/bootstrap.js`;
+  let jsPackagesPath = `${context.distFolder}/assets/vendor/packages.js`;
+  let combinedJsFiles = "";
+  let bootStrapCode = null;
   let files = await self.readFiles(`${context.buildFolder}/app/css`);
   let cssJoined = files.join(" ");
   cssJoined += context.styles;
@@ -253,15 +257,21 @@ methods.postBuildStaticResources = async function (context) {
   // export {appModules, appImagesMap};
   // `;
   self.createDistFolder(`${context.distFolder}${path.sep}css`);
-  self.createDistFolder(`${jsPackagesPath}`);
+  self.createDistFolder(`${vendorFolder}`);
   // self.createDistFolder(
   //       `${context.distFolder}${path.sep}img`
   //     );
   // self.copyImageFilesSync(context.buildFolder,`${context.distFolder}/img`,['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'])
   fs.writeFileSync(cssSavePath, cssJoined);
   jsPackages.forEach((jsPackage) => {
-    fs.writeFileSync(`${jsPackagesPath}/${jsPackage.fileName}`, jsPackage.code);
+    jsPackage?.packageName
+      ? (combinedJsFiles += `\n${jsPackage.code}\n`)
+      : (bootStrapCode = jsPackage.code);
   });
+  console.log("BOOTSTRAP JS", appBootstrapPath, bootStrapCode);
+  console.log("PACKAGES JS", jsPackagesPath, combinedJsFiles);
+  if (bootStrapCode) fs.writeFileSync(`${appBootstrapPath}`, bootStrapCode);
+  fs.writeFileSync(`${jsPackagesPath}`, combinedJsFiles);
   // fs.writeFileSync(kotiiBundleSavePath, kotiiBundleSaveContent);
   // fs.writeFileSync(kotiiBundleSaveImportsPath, `${context.pagesSourceCode}`);
 };
