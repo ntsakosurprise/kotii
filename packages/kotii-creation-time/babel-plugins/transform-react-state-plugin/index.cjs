@@ -3,7 +3,7 @@ const t = require("@babel/types");
 const path = require("path");
 const fs = require("fs");
 const { BUILTINS, TRAVERSERS } = require("./pluginUtils.cjs");
-
+const { jSXExpressionContainer } = require("@babel/types");
 /* eslint-disable no-unused-vars */
 
 const transformReactStatePlugin = (babel, options) => {
