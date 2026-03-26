@@ -47,29 +47,35 @@ methods.handleStaticInteractivity = async function (data) {
   self.debug("THE GLOBAL STATIC MODULE GRAPH");
   self.debug("THE GLOBAL TEST", global.TEST_GLOBAL_USE);
 
-  if (!MODULE_GRAPH_FOR_STATIC_GENERATION) {
-    let STATIC_RESOURCES = await self.loadPagesModuleGraph(
-      "virtual:static-module-graph"
-    );
-    MODULE_GRAPH_FOR_STATIC_GENERATION =
-      STATIC_RESOURCES.MODULE_GRAPH_FOR_STATIC_GENERATION;
-    RESOLVED_JSX_MODULES = STATIC_RESOURCES.RESOLVED_JSX_MODULES;
-    PACKAGES_FILES = STATIC_RESOURCES.PACKAGES_FILES;
-  }
+  // if (!MODULE_GRAPH_FOR_STATIC_GENERATION) {
+  //   let STATIC_RESOURCES = await self.loadPagesModuleGraph(
+  //     "virtual:static-module-graph"
+  //   );
+  //   MODULE_GRAPH_FOR_STATIC_GENERATION =
+  //     STATIC_RESOURCES.MODULE_GRAPH_FOR_STATIC_GENERATION;
+  //   RESOLVED_JSX_MODULES = STATIC_RESOURCES.RESOLVED_JSX_MODULES;
+  //   PACKAGES_FILES = STATIC_RESOURCES.PACKAGES_FILES
+  // }
+  await self.onDemandVirtualLoad();
 
   console.log(
     "THE ABSOLUTE PATH.SSG",
+    "MODULES GRAPH",
     MODULE_GRAPH_FOR_STATIC_GENERATION,
+    "RESOLVED JS MODULES",
     RESOLVED_JSX_MODULES,
+    "PACKAGES FILE",
     PACKAGES_FILES
   );
-  if (view?.componenentSourcePath) {
+  if (view?.componentSourcePath) {
     const url = view.componentSourcePath;
+
     console.log("THE URL", url);
-    const fileUrl = pathToFileURL(url).href;
-    console.log("THE FILE URL", fileUrl);
+
+    // console.log("THE FILE URL", fileUrl);
     const { externals, imports, reactOptHooks } =
-      self.getThisPageResourcesGraph(fileUrl);
+      self.getThisPageResourcesGraph(self.getPagesToExtract(url));
+
     self.__STATIC_EXTERNALS_STATE = externals;
     self.__IMPORTS__ = imports;
     self.__REACT_OPT_HOOKS__ = reactOptHooks;
@@ -84,34 +90,35 @@ methods.handleStaticInteractivity = async function (data) {
   self
     .extractPageInteractiveParts(Page, type)
     .then(function (parts) {
-      self.debug("THE GENERATE PAGE JS", self?.__EXTERNALS__);
+      self.debug(
+        "THE GENERATE PAGE JS",
+        parts?.interactions,
+        view,
+        self.__EXTERNALS__
+      );
       if (!parts?.interactions)
         return data.callback(null, { html: parts.html });
 
-      self
-        .generatePageJs(parts.interactions)
-        .then((results) => {
-          data.callback(null, {
-            html: parts.html,
-            pageJs: `var __STATE__=${JSON.stringify(
-              self.__STATIC_RUNTIME_STATE
-            )}\n var __EXTERNALS__= {}\n ${self.normalizeExternalsForBrowser(
-              self.restoreFunctionsForRuntime(self.__EXTERNALS__)
-            )}\n var __REACT_OPT_HOOKS__ = ${JSON.stringify(
-              self.__REACT_OPT_HOOKS__
-            )}\n
+      self.generatePageJs(parts.interactions).then((results) => {
+        console.log("THE GENERATE PAGE RESULTS", results);
+        data.callback(null, {
+          html: parts.html,
+          pageJs: `var __STATE__=${JSON.stringify(
+            self.__STATIC_RUNTIME_STATE
+          )}\n var __EXTERNALS__= {}\n ${self.normalizeExternalsForBrowser(
+            self.restoreFunctionsForRuntime(self.__EXTERNALS__)
+          )}\n var __REACT_OPT_HOOKS__ = ${JSON.stringify(
+            self.__REACT_OPT_HOOKS__
+          )}\n
              ${self.createPackagesRequires()}
              ${self.getStateUpdater()} \n ${results.pageJs}\n
              ${self.getFactoryCreator()}\n
              ${self.getFactoriesRunner()}\n
              runFactories()
             `,
-            pageJsPackages: self.__PACKAGES_CODE__,
-          });
-        })
-        .catch((error) => {
-          self.debug("ERROR GENRATING JS", error);
+          pageJsPackages: self.__PACKAGES_CODE__,
         });
+      });
     })
     .catch((err) => {
       self.debug("RENDERAPP REJECTED", err);
@@ -298,7 +305,8 @@ methods.eventsSourceAst = function (eventAst) {
         self.replaceIdentifier(path, "__STATE__", name);
       } else if (self.__STATIC_EXTERNALS_STATE && !self.__IMPORTS__[name]) {
         console.log("REPLACING FOR NAME:EXTERNAL", name);
-        self.replaceIdentifier(path, "__EXTERNALS__", name);
+        if (!self.__NEEDED_IMPORTS__CALLERS[name])
+          self.replaceIdentifier(path, "__EXTERNALS__", name);
       }
     },
 
@@ -481,20 +489,21 @@ methods.startPreRenderWork = function (view) {
   self.createBindElementsFromBindList();
 };
 
-methods.getThisPageResourcesGraph = function (entryFile) {
+methods.getThisPageResourcesGraph = function (filesToWalk) {
   const self = this;
   const visited = new Set();
   const externals = {};
   const imports = {};
   const reactOptHooks = [];
 
-  self.debug("THE ENTRY FILE", entryFile, MODULE_GRAPH_FOR_STATIC_GENERATION);
+  self.debug("THE ENTRY FILE", filesToWalk, MODULE_GRAPH_FOR_STATIC_GENERATION);
 
   function walk(file) {
     if (visited.has(file)) return;
     visited.add(file);
 
     const mod = MODULE_GRAPH_FOR_STATIC_GENERATION.get(file);
+    console.log("THE MODULE FILE ID-ED", mod);
     if (!mod) return;
 
     Object.entries(mod.externals).forEach(([key, value]) => {
@@ -541,9 +550,20 @@ methods.getThisPageResourcesGraph = function (entryFile) {
       }
     });
   }
+  filesToWalk.forEach((walkFile) => {
+    walk(walkFile);
+  });
 
-  walk(entryFile);
-
+  console.log(
+    "THE EXTERNALS GOING FOR FILE[S]",
+    filesToWalk,
+    "externals",
+    externals,
+    "Imports",
+    imports,
+    "REACT HOOKS",
+    reactOptHooks
+  );
   return { externals, imports, reactOptHooks };
 };
 
@@ -672,15 +692,29 @@ methods.createExternalsState = function () {
   self.__EXTERNALS__ = {};
   self.__PACKAGES_CODE__ = [];
   self.__NEEDED_IMPORTS__ = [];
+  self.__NEEDED_IMPORTS__CALLERS = {};
   self.__MODULES_IMPORTS_MAP__ = {};
   self.info("THE STATIC EXTERNALS", self.__IMPORTS__);
 
   Object.entries(self.__STATIC_EXTERNALS_STATE).forEach(([key, wrapper]) => {
-    console.log("KEY.WRAPER", key, wrapper);
-    if (typeof wrapper == "object") {
+    console.log("KEY.WRAPER", key, wrapper, typeof wrapper);
+    let isWrapperObject = typeof wrapper == "object";
+    if ((isWrapperObject && wrapper?.value) || wrapper?.factory) {
+      console.log("IN WRAPPER");
       const ast = wrapper?.value || wrapper?.factory; // ← IMPORTANT
       const { code } = generate(ast);
       self.__EXTERNALS__[key] = code;
+    } else if (isWrapperObject && wrapper?.call) {
+      let callerInfo = {
+        ID: key,
+        value: wrapper.call.callee,
+      };
+      wrapper.call?.args?.length > 0
+        ? (callerInfo["arguments"] = wrapper.call.args.map(
+            (argAst) => generate(argAst).code
+          ))
+        : null;
+      self.__NEEDED_IMPORTS__CALLERS[key] = callerInfo;
     } else {
       if (self.__IMPORTS__[key]) {
         console.log("THE EXTERNAL IS IMPORTS", key, self.__IMPORTS__[key]);
@@ -1151,9 +1185,29 @@ methods.createPackagesRequires = function () {
   self.__NEEDED_IMPORTS__.forEach((currentPackage) => {
     requires += `\n const ${currentPackage.importSpecifier} = __require__("${currentPackage.moduleSpecifier}").${currentPackage.importedName}\n`;
   });
+  let callers = ``;
+
+  Object.keys(self.__NEEDED_IMPORTS__CALLERS).forEach((callKey) => {
+    let currentCaller = self.__NEEDED_IMPORTS__CALLERS[callKey];
+    console.log("THE CURRENT PACKAGE CALLER", currentCaller);
+    let callerArguments = [];
+    if (currentCaller?.arguments) {
+      currentCaller.arguments.forEach((callerArg) => {
+        if (!self?.__STATIC_EXTERNALS_STATE[callerArg]) {
+          callerArguments.push(callerArg);
+        } else {
+          callerArguments.push(`__EXTERNALS__.${callerArg}`);
+        }
+      });
+      callerArguments = callerArguments.join(",");
+    } else {
+      callerArguments = "";
+    }
+    callers += `\n const ${currentCaller.ID} = ${currentCaller.value}(${callerArguments})\n`;
+  });
 
   console.log("THE MODULE REQUIRES", requires);
-  return requires;
+  return requires + callers;
 };
 
 methods.beginVendorCodeGeneration = function (vendors) {
@@ -1746,6 +1800,45 @@ methods.detectModuleTypeSync = function (resolvedPath) {
   }
 
   return "commonjs";
+};
+
+methods.getPagesToExtract = function (componentSource) {
+  const self = this;
+  if (typeof componentSource === "string" && !componentSource.startsWith("{")) {
+    return [pathToFileURL(componentSource).href];
+  }
+
+  let parsedSource = JSON.parse(componentSource);
+  console.log("THE PARSED SOURCE", parsedSource);
+  let sourceKeys = Object.keys(parsedSource);
+  let filesUrls = [];
+
+  sourceKeys.forEach((key) => {
+    console.log("THE SOURCE KEY", key);
+    let specialPage = parsedSource[key];
+    console.log("THE SPECIAL PAGE", specialPage);
+    console.log("THE SPECIAL PAGE: VALUE", specialPage?.value);
+    filesUrls.push(pathToFileURL(specialPage.value).href);
+  });
+  console.log("FILES TO PROCESS", filesUrls);
+  return filesUrls;
+};
+
+methods.onDemandVirtualLoad = async function () {
+  const self = this;
+  let STATIC_RESOURCES = await self.loadPagesModuleGraph(
+    `virtual:static-module-graph?ts=${Date.now()}`
+  );
+  MODULE_GRAPH_FOR_STATIC_GENERATION =
+    STATIC_RESOURCES.MODULE_GRAPH_FOR_STATIC_GENERATION;
+  RESOLVED_JSX_MODULES = STATIC_RESOURCES.RESOLVED_JSX_MODULES;
+  PACKAGES_FILES = STATIC_RESOURCES.PACKAGES_FILES;
+};
+
+methods.saveMarkdownExternalsResults = async function (markdownExternal) {
+  const self = this;
+  if (!self?.MARKDOWN_EXTERNALS) self.MARKDOWN_EXTERNALS = {};
+  self.MARKDOWN_EXTERNALS[markdownExternal.component] = markdownExternal.data;
 };
 
 export default methods;
