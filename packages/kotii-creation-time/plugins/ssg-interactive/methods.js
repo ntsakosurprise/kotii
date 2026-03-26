@@ -63,26 +63,28 @@ methods.handleStaticInteractivity = async function (data) {
     RESOLVED_JSX_MODULES,
     PACKAGES_FILES
   );
-  const url = view.componentSourcePath;
-  console.log("THE URL", url);
-  const fileUrl = pathToFileURL(url).href;
-  console.log("THE FILE URL", fileUrl);
-  const { externals, imports, reactOptHooks } =
-    self.getThisPageResourcesGraph(fileUrl);
-  self.__STATIC_EXTERNALS_STATE = externals;
-  self.__IMPORTS__ = imports;
-  self.__REACT_OPT_HOOKS__ = reactOptHooks;
-  self.debug("MODULE EXTERNALS FOR STATIC", self.__STATIC_EXTERNALS_STATE);
-  self.debug("THE APP IMPORTS", self.__IMPORTS__);
-  self.debug("THE APP OPTS", self.__REACT_OPT_HOOKS__);
-  self.createExternalsState();
-  self.debug("THE APP EVENT EXTERNALS", self.__EXTERNALS__);
+  if (view?.componenentSourcePath) {
+    const url = view.componentSourcePath;
+    console.log("THE URL", url);
+    const fileUrl = pathToFileURL(url).href;
+    console.log("THE FILE URL", fileUrl);
+    const { externals, imports, reactOptHooks } =
+      self.getThisPageResourcesGraph(fileUrl);
+    self.__STATIC_EXTERNALS_STATE = externals;
+    self.__IMPORTS__ = imports;
+    self.__REACT_OPT_HOOKS__ = reactOptHooks;
+    self.debug("MODULE EXTERNALS FOR STATIC", self.__STATIC_EXTERNALS_STATE);
+    self.debug("THE APP IMPORTS", self.__IMPORTS__);
+    self.debug("THE APP OPTS", self.__REACT_OPT_HOOKS__);
+    self.createExternalsState();
+    self.debug("THE APP EVENT EXTERNALS", self.__EXTERNALS__);
+  }
 
   // self.startPreRenderWork(view);
   self
     .extractPageInteractiveParts(Page, type)
     .then(function (parts) {
-      self.debug("THE GENERATE PAGE JS", self.__EXTERNALS__);
+      self.debug("THE GENERATE PAGE JS", self?.__EXTERNALS__);
       if (!parts?.interactions)
         return data.callback(null, { html: parts.html });
 
