@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-self-assign */
 /* eslint-disable no-unused-vars */
 import babel from "@babel/core";
@@ -53,6 +54,7 @@ const FONT_FACE_BLOCK_REGEX = /@font-face\s*{[^}]*}/gi;
 const URL_REGEX = /url\(\s*(["']?)([^"')]+)\1\s*\)/g;
 const RELATIVE_URLS_PATH_LEVELS_REGEX = /^(\.\.\/)+/;
 let FONTS_META = [];
+let STATIC_GLOBALS_CREATED = false;
 
 let cssSpecifiers = [".css", ".scss", ".sass", ".less", ".styl"];
 let fileSpecifiers = [".gif", ".png", ".svg", ".jpg", ".jpeg"];
@@ -91,6 +93,22 @@ let fileLoaderExts = [
 let extensions = [".js", ".jsx", ".tsx", ".ts"];
 let nodeModulesRegex = /node_modules/;
 
+global.MODULE_GRAPH_FOR_STATIC_GENERATION = new Map();
+global.TEST_GLOBAL_USE = "THE GLOBAL USE";
+
+const RESOLVE_SPECIFIER_TO_URL = {};
+const PACKAGE_FILES = new Map();
+let isStaticMode = false;
+
+// global.REGISTER_MODULE = function (file, meta) {
+//   MODULE_GRAPH_FOR_STATIC_GENERATION.set(file, {
+//     externals: new Set(meta.externals || []),
+//     deps: new Set(meta.deps || []),
+//     imports: meta.imports || {},
+//   });
+// };
+
+let madeDir = null;
 export async function load(url, context, nextLoad) {
   const { format, parentURL = "" } = context;
 
@@ -106,6 +124,12 @@ export async function load(url, context, nextLoad) {
     )}`,
     fileExtension
   );
+
+  if (url === "virtual:static-module-graph") {
+    return loadVirtualModule();
+  }
+
+  addDependencyFromLoad(url);
 
   try {
     if (
@@ -130,15 +154,30 @@ export async function load(url, context, nextLoad) {
         options = {
           presets: ["@babel/preset-react", "@babel/preset-typescript"],
           plugins: [
-            "@babel/plugin-syntax-import-assertions",
-            "@babel/plugin-transform-typescript",
-            [
-              "babel-plugin-styled-components",
-              { ssr: true, displayName: true },
-            ],
+            // "@babel/plugin-syntax-import-assertions",
+            // "@babel/plugin-transform-typescript",
+            // [
+            //   "babel-plugin-styled-components",
+            //   { ssr: true, displayName: true },
+            // ],
           ],
         };
-        loggas.load.debug("READING FILE", fileExtension, url);
+        if (
+          process.env?.KOTII_MODE &&
+          process.env?.KOTII_MODE?.toLowerCase() === "ssg"
+        )
+          options.plugins.push([
+            `${path.join(
+              kotiiRootPath,
+              "./babel-plugins/transform-react-state-plugin/index.cjs"
+            )}`,
+            {
+              aliases: meta.aliases,
+              fileName: url,
+              staticDepsResolver: staticDepsResolver,
+            },
+          ]);
+        loggas.load.debug("READING FILE", fileExtension, url, options.plugins);
         let urlInstance = new URL(url).pathname;
         if (url.indexOf("/api/") >= 0) {
           if (!fs.existsSync(urlInstance)) {
@@ -244,12 +283,28 @@ export async function load(url, context, nextLoad) {
 
       let result = fileLoaderExts.includes(fileExtension)
         ? babel.transformFileSync(source, options)
-        : babel.transform(rawSource, {
+        : fileExtension === extJsx
+        ? babel.transform(rawSource, {
             filename: url,
             presets: options.presets,
-          });
-      if (fileLoaderExts.includes(fileExtension)) {
-        loggas.load.debug("TRANSFORM RESULT", result);
+            plugins: options.plugins,
+          })
+        : { code: rawSource };
+
+      if (result?.metadata?.__STATIC_META__) {
+        console.log("RESULT.METADATA", result.metadata.__STATIC_META__);
+        MODULE_GRAPH_FOR_STATIC_GENERATION.set(url, {
+          externals: result.metadata.__STATIC_META__.externals,
+          deps: new Set(result.metadata.__STATIC_META__.deps),
+          imports: result.metadata.__STATIC_META__.imports,
+          reactOptHooks: result.metadata.__STATIC_META__.reactOptHooks,
+        });
+        console.log(
+          "MODULE GRAPH EXTERNALS",
+          MODULE_GRAPH_FOR_STATIC_GENERATION,
+          "Specifiers Resolves",
+          RESOLVE_SPECIFIER_TO_URL
+        );
       }
 
       return {
@@ -261,6 +316,7 @@ export async function load(url, context, nextLoad) {
 
     return nextLoad(url);
   } catch (error) {
+    console.log("LOAD IS FAILING", error);
     const parsed = parseLoaderError(error);
     const { file } = parsed;
     const matchPartialPagesPathPattern = `/kotii-land/dev/pages.js`;
@@ -289,6 +345,17 @@ export async function load(url, context, nextLoad) {
 export async function resolve(specifier, context, nextResolve) {
   const { parentURL = "" } = context;
   loggas.resolve.debug("RESOLVE specifier", specifier, parentURL);
+  loggas.resolve.debug("PACKAGES FILES LIST", PACKAGE_FILES);
+
+  // if(
+  //   process.env?.KOTII_MODE &&
+  //   process.env?.KOTII_MODE?.toLowerCase() === "ssg" && !STATIC_GLOBALS_CREATED
+  // ){
+  //   createStaticGenerationGlobals()
+  // }
+  if (!isStaticMode && process?.env?.KOTII_MODE) {
+    initiateStaticStatus();
+  }
 
   try {
     let shouldTerminate = false;
@@ -314,19 +381,34 @@ export async function resolve(specifier, context, nextResolve) {
       loggas.resolve.debug("ALSO HANDLED BY LOADERS", meta);
     }
 
+    if (isStaticMode) {
+      shouldTerminate = resolveVirtualModule(specifier);
+      if (shouldTerminate) return shouldTerminate;
+    }
+
     shouldTerminate = resolveUserAliase(specifier);
-    if (shouldTerminate) return shouldTerminate;
+    if (shouldTerminate) {
+      saveTargetSpecifier(specifier, shouldTerminate, parentURL);
+      return shouldTerminate;
+    }
 
     // shouldTerminate = resolveKotiiInternalImports(specifier);
     // if (shouldTerminate) return shouldTerminate;
     // shouldTerminate = resolveUserlandImports(specifier);
     // if (shouldTerminate) return shouldTerminate;
     shouldTerminate = resolveAliasedImports(specifier);
-    if (shouldTerminate) return shouldTerminate;
+    if (shouldTerminate) {
+      saveTargetSpecifier(specifier, shouldTerminate, parentURL);
+      return shouldTerminate;
+    }
     // shouldTerminate = resolveKotiiLandImports(specifier);
     // if (shouldTerminate) return shouldTerminate;
     shouldTerminate = resolvePagesImports(specifier);
-    if (shouldTerminate) return shouldTerminate;
+    if (shouldTerminate) {
+      saveTargetSpecifier(specifier, shouldTerminate, parentURL);
+
+      return shouldTerminate;
+    }
     // shouldTerminate = resolveKotiiScriptsImports(specifier);
     // if (shouldTerminate) return shouldTerminate;
     // shouldTerminate = resolveKotiiUserApiPlugins(specifier);
@@ -334,7 +416,10 @@ export async function resolve(specifier, context, nextResolve) {
     // shouldTerminate = resolveKotiiScriptsInternalImports(specifier);
     // if (shouldTerminate) return shouldTerminate;
 
-    return nextResolve(specifier);
+    let resolveResult = await nextResolve(specifier);
+    saveTargetSpecifier(specifier, resolveResult, parentURL);
+
+    return resolveResult;
   } catch (error) {
     const parsed = parseLoaderError(error);
 
@@ -746,6 +831,17 @@ export const guessPathExtension = (guessPath) => {
     );
 
   return livingExtension;
+};
+
+export const resolveVirtualModule = (specifier) => {
+  if (specifier === "virtual:static-module-graph") {
+    return {
+      url: "virtual:static-module-graph",
+      shortCircuit: true,
+    };
+  } else {
+    return false;
+  }
 };
 
 /**
@@ -1319,4 +1415,167 @@ const storeFontMeta = () => {
     encoding: "utf8",
   });
   FONTS_META = [];
+};
+
+const createStaticGenerationGlobals = () => {
+  loggas.resolve.debug("CREATE STATIC GLOBALS");
+  global.MODULE_GRAPH_FOR_STATIC_GENERATION__ = new Map();
+  global.REGISTER_MODULE = function (file, fileMetaData) {
+    MODULE_GRAPH_FOR_STATIC_GENERATION.set(file, {
+      externals: new Set(fileMetaData.externals || []),
+      deps: new Set(fileMetaData.deps || []),
+      imports: fileMetaData.imports || {},
+    });
+  };
+};
+
+const loadVirtualModule = () => {
+  const serialized = JSON.stringify(
+    [...MODULE_GRAPH_FOR_STATIC_GENERATION.entries()].map(([url, data]) => [
+      url,
+      {
+        externals: data.externals,
+        deps: [...data.deps],
+        imports: data.imports,
+        reactOptHooks: data.reactOptHooks,
+      },
+    ])
+  );
+  const resolvesSerialized = JSON.stringify(RESOLVE_SPECIFIER_TO_URL);
+  let packagesFilesSerialized = {};
+  JSON.stringify(
+    [...PACKAGE_FILES.entries()].map((packageAsDep) => {
+      packagesFilesSerialized[packageAsDep[0]] = { ...packageAsDep[1] };
+    })
+  );
+  console.log("THE PACKAGES FILES", packagesFilesSerialized);
+
+  return {
+    format: "module",
+    shortCircuit: true,
+    source: `
+        const  MODULE_GRAPH_FOR_STATIC_GENERATION = new Map(${serialized});
+        const  RESOLVED_JSX_MODULES = new Object(${resolvesSerialized})
+        const PACKAGES_FILES = ${JSON.stringify(packagesFilesSerialized)}
+        export {RESOLVED_JSX_MODULES,MODULE_GRAPH_FOR_STATIC_GENERATION, PACKAGES_FILES}       
+      `,
+  };
+};
+
+const staticDepsResolver = (specifier) => {
+  if (specifier.startsWith(".")) {
+    let checkResults = resolvePagesImports(specifier);
+    console.log("THE STATIC RESOLVER", checkResults);
+    return specifier;
+  } else {
+    let checkResults = resolveAliasedImports(specifier);
+    console.log("THE STATIC RESOLVER absolute", checkResults);
+    return specifier;
+  }
+};
+
+const initiateStaticStatus = () => {
+  if (
+    process?.env?.KOTII_MODE &&
+    process.env.KOTII_MODE.toLowerCase() === "ssg"
+  )
+    isStaticMode = true;
+};
+const isJsxFile = (url) => {
+  if (path.extname(url) === extJsx) return true;
+  return false;
+};
+const isNotInResolveList = (specifier) => {
+  if (RESOLVE_SPECIFIER_TO_URL[specifier]) return true;
+  return false;
+};
+
+const saveTargetSpecifier = (specifier, shouldTerminate, parentURL) => {
+  if (!isStaticMode) return;
+  console.log("SPECIFIER.PARENT URL", specifier, "parent", parentURL);
+  addFileAsPackageDep(specifier, shouldTerminate.url, parentURL);
+  if (isJsxFile(shouldTerminate.url)) {
+    if (!isNotInResolveList(specifier)) {
+      RESOLVE_SPECIFIER_TO_URL[specifier] = {
+        url: shouldTerminate.url,
+        parentURL,
+      };
+    }
+  }
+};
+
+const addFileAsPackageDep = (specifier, url, parentURL) => {
+  if (isBuiltin(specifier)) return;
+  console.log("SPECIFIER", specifier, "url", url, "parent url", parentURL);
+  const owner = findOwningPackage(specifier, url);
+  const files = ensurePackage(owner);
+
+  files[specifier] = url;
+  console.log("THE PARENT OWNER", owner);
+  // if (owner) {
+  //   PACKAGE_FILES.get(owner)[specifier] = url;
+  // }
+
+  // if (!specifier.startsWith(".") && !specifier.startsWith("/")) {
+  //     if (!PACKAGE_FILES.has(specifier)) {
+  //       PACKAGE_FILES.set(specifier, {});
+  //     }
+
+  //     PACKAGE_FILES.get(specifier)[specifier] = url;
+  // }
+};
+
+const addDependencyFromLoad = (url) => {
+  console.log("ADD DEP FROM LOAD", url);
+  if (!isStaticMode) return;
+  for (const files of PACKAGE_FILES.values()) {
+    console.log("PACKAGES LIST FILE...", files);
+    if (files[url]) {
+      // this file belongs to that package
+      files[url] = url;
+    }
+  }
+};
+
+const findOwningPackage = (specifier, url) => {
+  const filePath = path.normalize(new URL(url).pathname);
+
+  const nmIndex = filePath.lastIndexOf("node_modules");
+
+  // External dependency
+  if (nmIndex !== -1) {
+    const afterNodeModules = filePath.slice(
+      nmIndex + "node_modules".length + 1
+    );
+
+    const parts = afterNodeModules.split(path.sep);
+
+    if (parts[0].startsWith("@")) {
+      return `${parts[0]}/${parts[1]}`;
+    }
+
+    return parts[0];
+  }
+
+  // Local package (derived from specifier)
+  if (specifier.startsWith(".")) {
+    const dir = path.dirname(specifier);
+
+    if (dir === ".") {
+      return specifier;
+    }
+
+    return dir;
+  }
+
+  // fallback for unusual imports
+  return specifier;
+};
+
+const ensurePackage = (pkg) => {
+  if (!PACKAGE_FILES.has(pkg)) {
+    PACKAGE_FILES.set(pkg, {});
+  }
+
+  return PACKAGE_FILES.get(pkg);
 };

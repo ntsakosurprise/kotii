@@ -85,19 +85,34 @@ methods.handleReactStaticViews = function (data) {
   self.effectsData = {};
 
   self.debug("THE VIEW DATA", data);
-  const { views } = data;
+  const { views, info } = data;
   let mappedPromises = views.map(async (view) => {
     let gotHtmlView = await self.runReactView({
-      view: { match: view.path },
+      view: {
+        match: view.path,
+        htmlPath: view.htmlPath,
+        staticPath: view.staticPath,
+        componentSourcePath: view?.componentSourcePath || null,
+      },
       route: view,
       staticRender: true,
+      info: info,
     });
-    // self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
-    return { content: gotHtmlView, name: view.name };
+    self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
+    return {
+      content: gotHtmlView,
+      name: view.name,
+      staticPath: view?.staticPath || "",
+      htmlPath: view?.htmlPath || "",
+    };
   });
   Promise.all(mappedPromises).then((htmlViews) => {
-    // self.debug("ALL VIEWS PROMISES MAPPED", htmlViews);
-    self.callback(htmlViews);
+    self.debug("ALL VIEWS PROMISES MAPPED", self.styledTags);
+    self.callback({
+      htmlViews,
+      styles: self.styledTags,
+      jsStaticFilesToSave: self.pageJsPackages,
+    });
   });
 };
 methods.handleReactSpa = function (data) {
@@ -124,12 +139,20 @@ methods.handleReceiveEnvVariables = function (data) {
 };
 methods.runReactView = function (data) {
   const self = this;
+  const { REACTAPP, React } = self;
 
   const { renderToString, HeadHelmet, meta } = self;
-  const { view, staticRender = false, route = null, authUser = null } = data;
+  const {
+    view,
+    staticRender = false,
+    route = null,
+    authUser = null,
+    info = null,
+  } = data;
   const { app } = meta;
   const { stateVendor = "" } = app;
-  self.debug("THE PROCESS.REACT", process);
+
+  self.debug("THE PROCESS.REACT");
 
   // Grab the initial state from our Redux store
   return new Promise(async (resolve) => {
@@ -185,6 +208,15 @@ methods.runReactView = function (data) {
     // goodies=null,
     // storeFromSource = null}=props
     let html = "";
+    console.log(
+      "VIEW PATH EXTENSION",
+      "CURRENT PROCESS ENV",
+      process?.env?.useLazyLoad,
+      "THE VIEW",
+      view,
+      "extension",
+      path.extname(view?.staticPath)
+    );
 
     const sheet = new ServerStyleSheet();
     process.env?.useLazyLoad ? await self.preloadLazyComponents(view) : null;
@@ -197,30 +229,62 @@ methods.runReactView = function (data) {
     }
 
     let goodies = self.comps;
-    // let authUser = {
-    //   name: "Ntsako Surprise",
-    //   age: "Grown man",
-    //   timeNow: new Date(),
-    // };
+
     try {
       const context = createHeadStore();
       self.debug("THE HEAD STORE", context);
-      html = renderToString(
-        sheet.collectStyles(
-          self.createAppElement({
-            store,
-            layoutRoot,
-            goodies,
-            authUser,
-            view,
-            context,
-          })
-        )
+      let generatedPage;
+      let CurrentRouteComp = self.getCurrentRouteComponent(view);
+      self.debug("THE REACT COMPONENT FROM GENERATE", view);
+      let Page = sheet.collectStyles(
+        self.createAppElement({
+          store,
+          layoutRoot,
+          goodies,
+          authUser,
+          view,
+          context,
+        })
       );
-      const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
-      self.styledTags = styleTags;
-      self.debug("STYLED-COMPONENTS STYLE TAGS", styleTags);
-      self.debug("THE HEAD STORE AFTER CREATE HEAD", context.getEntries());
+      generatedPage = await self.generatePageStaticParts(Page, view);
+      const { html, pageJs = "", pageJsPackages } = generatedPage;
+
+      self.debug("THE STATIC PART JS FROM SSG", pageJs);
+      console.log("THE FINAL STATE", store, store.getState());
+      const finalState = store.getState() || store;
+      const helmetGenerated = HeadHelmet.renderStatic();
+      self.doStyledSheets(sheet);
+
+      // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
+      self["pageJsPackages"] = pageJsPackages;
+      const fullPage = self.renderStaticFullPage({
+        html,
+        pageJs,
+        head: helmetGenerated,
+        info,
+        pageJsPackages,
+      });
+      self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
+      resolve(fullPage);
+
+      // const context = createHeadStore();
+      // self.debug("THE HEAD STORE", context);
+      // html = renderToString(
+      //   sheet.collectStyles(
+      //     self.createAppElement({
+      //       store,
+      //       layoutRoot,
+      //       goodies,
+      //       authUser,
+      //       view,
+      //       context,
+      //     })
+      //   )
+      // );
+      // const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
+      // self.styledTags = styleTags;
+      // self.debug("STYLED-COMPONENTS STYLE TAGS", styleTags);
+      // self.debug("THE HEAD STORE AFTER CREATE HEAD", context.getEntries());
     } catch (error) {
       // handle error
       console.error(error);
@@ -228,20 +292,20 @@ methods.runReactView = function (data) {
       sheet.seal();
     }
 
-    console.log("THE FINAL STATE", store, store.getState());
-    const finalState = store.getState() || store;
-    const helmetGenerated = HeadHelmet.renderStatic();
-    // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
-    const fullPage = self.renderFullPage({
-      html,
-      preloadedState: finalState,
-      staticRender,
-      view,
-      head: helmetGenerated,
-      authUser,
-    });
-    self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
-    resolve(fullPage);
+    // console.log("THE FINAL STATE", store, store.getState());
+    // const finalState = store.getState() || store;
+    // const helmetGenerated = HeadHelmet.renderStatic();
+    // // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
+    // const fullPage = self.renderFullPage({
+    //   html,
+    //   preloadedState: finalState,
+    //   staticRender,
+    //   view,
+    //   head: helmetGenerated,
+    //   authUser,
+    // });
+    // self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
+    // resolve(fullPage);
   });
 };
 
@@ -266,6 +330,7 @@ methods.renderFullPage = function ({
   html,
   preloadedState,
   staticRender,
+
   view,
   head,
   scripts = [],
@@ -274,6 +339,7 @@ methods.renderFullPage = function ({
   const self = this;
   if (!self.styleTags) self.doKotiiStyles();
   if (self?.htmlPageSettings) self.doPageSettings();
+  self.debug("THE HTML IN RENDER FULL", html);
 
   self.debug("THE PRELOADED STATE", preloadedState);
   return `
@@ -292,13 +358,53 @@ methods.renderFullPage = function ({
     </head>
 		<body ${head.bodyAttributes.toString()}>
 			<div id="root">${html}</div>
-			${!staticRender ? self.includeScripts(preloadedState, authUser) : null}
+			${
+        !staticRender
+          ? self.includeScripts(preloadedState, authUser)
+          : self.includeScripts(preloadedState, authUser)
+      }
 			
 		</body>
 		</html>
     `;
 };
+methods.renderStaticFullPage = function ({
+  html,
+  info,
+  head,
+  pageJs = "test.js",
+  pageJsPackages,
+} = props) {
+  const self = this;
 
+  if (self?.htmlPageSettings) self.doPageSettings();
+  self.debug("THE HTML IN RENDER FULL", html);
+
+  return `
+		<!doctype html>
+		<html ${head.htmlAttributes.toString()}> 
+    <head>
+    ${head?.title.toString()}
+    ${head?.meta.toString()}
+
+    ${self?.pageSettings || ""}
+    <link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="css/${
+      info.css
+    }" />
+    </head>
+		<body ${head.bodyAttributes.toString()}>
+		 <div id="root">${html}</div>
+		<script> window.process = {env:${process.env.APP_ENVS}} </script>
+    <script src="./assets/vendor/bootstrap.js"></script>
+    <script src="./assets/vendor/packages.js"></script>
+    <script >${pageJs}</script>
+    
+     
+			
+		</body>
+		</html>
+    `;
+};
 methods.includeScripts = function (preloadedState, authUser) {
   const self = this;
   const { serialize } = self;
@@ -322,10 +428,7 @@ methods.includeScripts = function (preloadedState, authUser) {
     window.__KOTII_AUTH_USER__ = ${serialize(JSON.stringify(authUser))}
     window.__KOTII_APP_URL__ = ${JSON.stringify(process?.env?.KOTII_APP_URL)}
     ${self.getProductionProcess()}
-   
-    
-     
-   
+  
    </script>
    <script src="/server.js" ></script>
    ${possibleExtraScripts}
@@ -485,14 +588,14 @@ methods.doKotiiStyles = function () {
         : true
       : null;
     if (process?.tailwindGenerated)
-      self.styleTags = `<link rel="stylesheet" id="tailwind-stylesheet-link" type="text/css" href="/${process.tailwindStyleSheetName}">`;
+      self.styleTags = `<link rel="stylesheet" id="tailwind-stylesheet-link" type="text/css" href="/${process.tailwindStyleSheetName}" />`;
     if (!jsonStyles) return null;
     if (process?.useLinkStyleTag) {
       self.styleTags = `${
         self?.styleTags || ""
       }<link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="/${
         process?.styleSheetName || "index.css"
-      }">`;
+      }" />`;
     } else {
       self.styleTags = `${
         self?.styleTags || ""
@@ -501,7 +604,7 @@ methods.doKotiiStyles = function () {
         .replaceAll(",", " ")}</style>`;
     }
   } else {
-    self.styleTags = `<link rel="stylesheet" type="text/css" href="/index.css">`;
+    self.styleTags = `<link rel="stylesheet" type="text/css" href="/css/index.css">`;
   }
 };
 
@@ -520,7 +623,7 @@ methods.doPageSettings = function () {
   if (self.htmlPageSettings?.links) {
     const links = self.htmlPageSettings.links;
     links.forEach((link) => {
-      possibleLinks = `${possibleLinks} <link rel="stylesheet" href="${link.href}"`;
+      possibleLinks = `${possibleLinks} <link rel="stylesheet" href="${link.href}"/>`;
     });
   }
 
@@ -561,6 +664,8 @@ methods.preloadLazyComponents = async function (view) {
     }
   }
   let markdownCompsRouteIndex = -1;
+
+  console.log("THE MARKDOWN ROUTES IN PRELOAD", self?.comps?.markdownRoutes);
 
   if (self?.comps?.markdownRoutes) {
     for (let i = 0; i < self.comps.markdownRoutes.length; i++) {
@@ -684,6 +789,7 @@ methods.createAppElement = function ({
   const self = this;
   const { REACTAPP, React } = self;
   let appElement;
+  console.log("THE LAYOUT IN", layoutRoot);
 
   if (!layoutRoot) {
     appElement = React.createElement(
@@ -760,4 +866,61 @@ methods.createAppElement = function ({
   //   sheet.collectStyles(appElement)
   // );
 };
+methods.generatePageStaticParts = function (Component, view) {
+  const self = this;
+  self.debug("THE STATIC PART PAGE", Component);
+
+  return new Promise((resolve, reject) => {
+    self.emit({
+      type: "generate-ssg-interactivity",
+      data: {
+        payload: { type: "react", Page: Component, view },
+        callback: (err, pageJs) => {
+          self.debug("THE STATIC PART PAGE RESULTS", err, pageJs);
+          if (!err) return resolve(pageJs);
+          reject(err);
+        },
+      },
+    });
+  });
+};
+methods.getCurrentRouteComponent = function (view) {
+  const self = this;
+  self.debug("THE STATIC PART ROUTE", view);
+  let RouteComponent = "";
+  let compsList = Object.keys(self.comps.comps);
+  self.debug("THE COMPONENTS LIST", compsList);
+  for (let i = 0; i < self.comps.routes.length; i++) {
+    if (self.comps.routes[i].path === view.match) {
+      RouteComponent = self.comps.routes[i].component;
+      break;
+    }
+  }
+  self.debug("THE STATIC ROUTE", self.comps.comps[RouteComponent]);
+  return self.comps.comps[RouteComponent];
+};
+methods.doStyledSheets = function (sheet, isStatic = false) {
+  const self = this;
+
+  if (!isStatic) {
+    const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
+    self.styledTags = styleTags;
+  } else {
+    const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
+    self.styleTags += styleTags;
+  }
+};
+// methods.addStyledCssToFile = function(){
+
+//   const self = this
+
+// }
+methods.doPageJsPackages = function (pageJsPackages) {
+  let packagesCode = ``;
+  pageJsPackages.forEach((currentPackage) => {
+    packagesCode += `\n<script src="./assets/vendor/${currentPackage.fileName}" ></script>`;
+  });
+  return packagesCode;
+};
+
 export default methods;

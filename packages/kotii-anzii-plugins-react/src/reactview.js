@@ -51,6 +51,11 @@ class ReactView {
     this.handleReceiveEnvVariables = methods.handleReceiveEnvVariables;
     this.getProductionProcess = methods.getProductionProcess;
     this.createAppElement = methods.createAppElement;
+    this.generatePageStaticParts = methods.generatePageStaticParts;
+    this.getCurrentRouteComponent = methods.getCurrentRouteComponent;
+    this.doStyledSheets = methods.doStyledSheets;
+    this.renderStaticFullPage = methods.renderStaticFullPage;
+    this.doPageJsPackages = methods.doPageJsPackages;
   }
 }
 

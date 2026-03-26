@@ -231,6 +231,8 @@ methods.getItemPathAndFile = function (item) {
     componentName,
     componentPath,
     component,
+    staticPath,
+    htmlPath,
   } = self.getItemPath(item);
 
   return new Promise((res, rej) => {
@@ -246,7 +248,8 @@ methods.getItemPathAndFile = function (item) {
       workDir,
       cwdPos,
       absolutePath,
-      requiredPath
+      requiredPath,
+      htmlPath
     );
     let absolutePathPre =
       process.env.NODE_ENV === ENV_DEVELOPMENT ? "kotii-dev" : "kotii-prod";
@@ -288,6 +291,9 @@ methods.getItemPathAndFile = function (item) {
         universalEffects,
         isBracketParams,
         isPrivate,
+        staticPath,
+        htmlPath,
+        componentFullPath: item,
       });
     });
   });
@@ -312,6 +318,10 @@ methods.getItemPath = function (item) {
       : ""; // remove pages from path
   self.debug("Got endpoint", gotEndpoint);
   self.debug("GOT ENDPOINT PAGES REMOVED", gotEndpoint.replace("pages", ""));
+  let endpointPath = gotEndpoint.replace("pages", "");
+
+  // let endpointSplit = endpointPath.trim().split("/").filter(Boolean);
+  // console.log("ENPOINT WITHOUT PAGES", endpointPath, endpointSplit)
   let patternMatch = gotEndpoint
     .replace("pages", "") // Replace pages with empty string
     .replace(extMatchPattern, "") // Replace extensions from path file name
@@ -335,18 +345,65 @@ methods.getItemPath = function (item) {
   }
   let splitPatternMatch = patternMatch.split("/");
   let splitLen = splitPatternMatch.length;
+  let componentName =
+    patternMatch === "/"
+      ? "Home"
+      : capitalizeFirstLetter(
+          camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
+        );
+  let componentNameAsIs = splitPatternMatch[splitLen - 1].replace(/:/g, "");
+  console.log("ENDPOINT PATH BEFORE", endpointPath);
+  let capturedFileNameFromPath = path
+    .basename(endpointPath)
+    .replace(/\.[a-zA-Z0-9]+$/, "");
+  let nameWithExtension = path.basename(endpointPath);
+  let htmlPath = "";
+  console.log(
+    "THE ENDPOINT CAPTURED",
+    capturedFileNameFromPath,
+    nameWithExtension,
+    componentName
+  );
+  // let shouldReplaceName = capturedFileNameFromPath.toLowerCase() !== componentName.toLowerCase() ? true : false
+  // shouldReplaceName ? endpointPath = `${endpointPath}${path.basename(endpointPath).replace(/\.[a-zA-Z0-9]+$/,"")}` : endpointPath
+  console.log(
+    "ENDPOINT PATH AFTER",
+    capturedFileNameFromPath,
+    nameWithExtension,
+    endpointPath,
+    componentNameAsIs
+  );
+
+  if (
+    componentNameAsIs.toLowerCase() !== capturedFileNameFromPath.toLowerCase()
+  ) {
+    htmlPath =
+      endpointPath.slice(0, endpointPath.indexOf(nameWithExtension)) +
+      componentName.toLowerCase() +
+      ".html";
+    console.log("THE ENDPOINT PATH AFTER AFTER", htmlPath);
+  } else {
+    htmlPath =
+      patternMatch !== "/"
+        ? `${endpointPath.replace(/\.[a-zA-Z0-9]+$/, ".html")}`
+        : `${endpointPath
+            .replace(/index/g, "home")
+            .replace(/\.[a-zA-Z0-9]+$/, ".html")}`;
+    console.log(
+      "THE BASE NAME FROM PATH",
+      path.basename(endpointPath).replace(/\.[a-zA-Z0-9]+$/, "")
+    );
+  }
 
   return {
     patternMatch,
     isBracketParams,
-    componentName:
-      patternMatch === "/"
-        ? "Home"
-        : capitalizeFirstLetter(
-            camelCase(splitPatternMatch[splitLen - 1].replace(/:/g, ""))
-          ),
+    componentName,
     component: item,
     componentPath: item,
+    staticPath: endpointPath,
+    htmlPath,
+    componentNameAsIs,
   };
 
   // fileAsComp = loadFileSync(item);
@@ -730,6 +787,21 @@ methods.astAddNode = function (routesNode, compsNode, toAdd) {
             t.identifier("component"),
             // t.functionExpression(t.identifier(funcName), [], funcBody)
             t.stringLiteral(adding.componentName)
+          ),
+          t.objectProperty(
+            t.identifier("componentName"),
+            // t.functionExpression(t.identifier(funcName), [], funcBody)
+            t.stringLiteral(adding.componentName)
+          ),
+          t.objectProperty(
+            t.identifier("htmlPath"),
+            // t.functionExpression(t.identifier(funcName), [], funcBody)
+            t.stringLiteral(adding.htmlPath)
+          ),
+          t.objectProperty(
+            t.identifier("staticPath"),
+            // t.functionExpression(t.identifier(funcName), [], funcBody)
+            t.stringLiteral(adding.staticPath)
           ),
         ])
       );
@@ -1393,9 +1465,18 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
       method: "GET",
       type: route?.isPrivate ? "private" : "public",
       name: route.componentName,
+      componentName: route.componentName,
       requiresData: route.getServerState,
       hasEffectsToRun: route.universalEffects ? true : false,
       effectsToRun: route.universalEffects,
+      staticPath: route?.staticPath || "",
+      htmlPath: route?.htmlPath || "",
+      componentSourcePath: route?.componentFullPath
+        ? route.componentFullPath
+        : route?.markdownComponents &&
+          Object.keys(route.markdownComponents).length > 0
+        ? JSON.stringify(route?.markdownComponents)
+        : null,
     };
   });
   // self.debug("ROUTES BUILT", builtRoutes);
@@ -1770,6 +1851,7 @@ methods.createMarkdownRoutesAst = function (options) {
     //   "THE PARSED MARKDOWN",
     //   route.markdownData[0].parsedMarkdown?.specialContent?.file
     // );
+    console.log("THE PARSED MARKDOWN:::", route?.markdownComponents);
     try {
       return t.objectExpression(
         [
@@ -1817,6 +1899,16 @@ methods.astMarkdownUtils = function () {
         t.objectProperty(
           t.identifier("isBracketParams"),
           t.booleanLiteral(route.isBracketParams)
+        ),
+        t.objectProperty(
+          t.identifier("htmlPath"),
+          // t.functionExpression(t.identifier(funcName), [], funcBody)
+          t.stringLiteral(route.htmlPath)
+        ),
+        t.objectProperty(
+          t.identifier("staticPath"),
+          // t.functionExpression(t.identifier(funcName), [], funcBody)
+          t.stringLiteral(route.staticPath)
         ),
       ];
     },
