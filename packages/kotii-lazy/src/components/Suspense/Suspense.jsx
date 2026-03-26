@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { Suspense } from "react";
 
 const KotiiSuspense = ({ children, fallback }) => {
