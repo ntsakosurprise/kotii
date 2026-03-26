@@ -263,15 +263,18 @@ methods.postBuildStaticResources = async function (context) {
   //     );
   // self.copyImageFilesSync(context.buildFolder,`${context.distFolder}/img`,['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'])
   fs.writeFileSync(cssSavePath, cssJoined);
-  jsPackages.forEach((jsPackage) => {
-    jsPackage?.packageName
-      ? (combinedJsFiles += `\n${jsPackage.code}\n`)
-      : (bootStrapCode = jsPackage.code);
-  });
+  if (jsPackages && jsPackages instanceof Array) {
+    jsPackages.forEach((jsPackage) => {
+      jsPackage?.packageName
+        ? (combinedJsFiles += `\n${jsPackage.code}\n`)
+        : (bootStrapCode = jsPackage.code);
+    });
+    console.log("PACKAGES JS", jsPackagesPath, combinedJsFiles);
+    fs.writeFileSync(`${jsPackagesPath}`, combinedJsFiles);
+  }
+
   console.log("BOOTSTRAP JS", appBootstrapPath, bootStrapCode);
-  console.log("PACKAGES JS", jsPackagesPath, combinedJsFiles);
   if (bootStrapCode) fs.writeFileSync(`${appBootstrapPath}`, bootStrapCode);
-  fs.writeFileSync(`${jsPackagesPath}`, combinedJsFiles);
   // fs.writeFileSync(kotiiBundleSavePath, kotiiBundleSaveContent);
   // fs.writeFileSync(kotiiBundleSaveImportsPath, `${context.pagesSourceCode}`);
 };
