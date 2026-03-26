@@ -91,7 +91,8 @@ methods.handleReactStaticViews = function (data) {
       view: {
         match: view.path,
         htmlPath: view.htmlPath,
-        componentSourcePath: view.componentSourcePath,
+        staticPath: view.staticPath,
+        componentSourcePath: view?.componentSourcePath || null,
       },
       route: view,
       staticRender: true,
@@ -207,6 +208,15 @@ methods.runReactView = function (data) {
     // goodies=null,
     // storeFromSource = null}=props
     let html = "";
+    console.log(
+      "VIEW PATH EXTENSION",
+      "CURRENT PROCESS ENV",
+      process?.env?.useLazyLoad,
+      "THE VIEW",
+      view,
+      "extension",
+      path.extname(view?.staticPath)
+    );
 
     const sheet = new ServerStyleSheet();
     process.env?.useLazyLoad ? await self.preloadLazyComponents(view) : null;
@@ -654,6 +664,8 @@ methods.preloadLazyComponents = async function (view) {
     }
   }
   let markdownCompsRouteIndex = -1;
+
+  console.log("THE MARKDOWN ROUTES IN PRELOAD", self?.comps?.markdownRoutes);
 
   if (self?.comps?.markdownRoutes) {
     for (let i = 0; i < self.comps.markdownRoutes.length; i++) {
