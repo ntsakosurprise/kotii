@@ -42,6 +42,8 @@ class SsgInteractive {
     this.convertESMToCommonJS = methods.convertESMToCommonJS;
     this.findPackageJson = methods.findPackageJson;
     this.detectModuleTypeSync = methods.detectModuleTypeSync;
+    this.getPagesToExtract = methods.getPagesToExtract;
+    this.onDemandVirtualLoad = methods.onDemandVirtualLoad;
   }
 }
 export default SsgInteractive;
