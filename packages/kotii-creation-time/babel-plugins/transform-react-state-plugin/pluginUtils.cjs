@@ -23,7 +23,12 @@ const BUILTINS = new Set([
   "BigInt",
   "Intl",
 ]);
-const REACT_OPT_HOOKS = new Set(["useMemo", "useCallback"]);
+const REACT_OPT_HOOKS = new Set([
+  "useMemo",
+  "useCallback",
+  "startTransition",
+  "useEffect",
+]);
 
 const ExtractImports = (path, state, options) => {
   const source = path.node.source.value;
@@ -48,6 +53,16 @@ const ExtractImports = (path, state, options) => {
   });
 };
 const ExtractVariables = (path, state) => {
+  const parent = path.scope.block;
+
+  if (
+    parent &&
+    (parent.type === "ArrowFunctionExpression" ||
+      parent.type === "FunctionDeclaration")
+  ) {
+    extractComponentProps(path.scope.path, state);
+  }
+
   const { init } = path.node;
   if (
     t.isCallExpression(init) &&
@@ -66,7 +81,7 @@ const ExtractVariables = (path, state) => {
   // Top-level statics
   VariablesGetFileLevelIdentifiers(path, state);
 
-  // Component-scoped binding (🔥 ALWAYS track)
+  // Component-scoped binding ( ALWAYS track)
   VariablesGetComponentLevelIdentifiers(path, state);
 };
 const ExtractJSX = (path, state) => {
@@ -82,6 +97,8 @@ const ProgramEnter = (path, state) => {
   state.componentBindings = new Set();
   state.derivedStatics = new Map();
   state.reactOptHooks = [];
+
+  state.componentProps = new Set();
   console.log("PROGRAM ENTER FILE NAME", state.filename);
 };
 const ProgramExiter = (path, state) => {
@@ -105,11 +122,37 @@ const ProgramExiter = (path, state) => {
       continue;
     }
 
+    // if (state.componentProps.has(name)) {
+    //   refinedExternals[name] = {
+    //     type: "prop"
+    //   };
+    //   continue;
+    // }
+
+    // if (state.derivedStatics.has(name)) {
+    //   refinedExternals[name] = {
+    //     type: "runtime",
+    //     factory: state.derivedStatics.get(name),
+    //   };
+    //   continue;
+    // }
+
     if (state.derivedStatics.has(name)) {
-      refinedExternals[name] = {
-        type: "runtime",
-        factory: state.derivedStatics.get(name),
-      };
+      const value = state.derivedStatics.get(name);
+
+      //  handle call expressions
+      if (value.type === "call") {
+        refinedExternals[name] = {
+          type: "runtime",
+          call: value,
+        };
+      } else {
+        refinedExternals[name] = {
+          type: "runtime",
+          factory: value,
+        };
+      }
+
       continue;
     }
 
@@ -148,7 +191,25 @@ const MatchJSXElement = (path, state) => {
 
   if (openingType?.toLowerCase() !== "jsxidentifier") return false;
 
-  // 1️⃣ If Interactive → collect event externals
+  // detect prop functions passed to components
+  if (jsxName && jsxName[0] === jsxName[0].toUpperCase()) {
+    const attrs = path.get("openingElement.attributes");
+
+    attrs.forEach((attr) => {
+      if (!attr.isJSXAttribute()) return;
+
+      const valuePath = attr.get("value");
+      if (!valuePath.isJSXExpressionContainer()) return;
+
+      const expr = valuePath.get("expression");
+
+      if (expr.isIdentifier()) {
+        analyzePropFunctionBinding(expr, state);
+      }
+    });
+  }
+
+  //  If Interactive → collect event externals
   if (jsxName?.toLowerCase() === "interactive") {
     const elementChildren = path.get("children");
     if (elementChildren) {
@@ -156,7 +217,7 @@ const MatchJSXElement = (path, state) => {
     }
   }
 
-  // 2️⃣ ALWAYS attach state bindings
+  // ALWAYS attach state bindings
   attachStateBindings(path, state);
 };
 
@@ -211,6 +272,29 @@ function collectFromIdentifierBinding(idPath, state, visited = new Set()) {
   if (!init) return;
   console.log("INIT BINDING AFTER", name, t.isCallExpression(init));
 
+  // handle call expressions like useNavigate()
+  if (t.isCallExpression(init)) {
+    const callee = init.callee;
+
+    // direct call: useNavigate()
+    if (t.isIdentifier(callee)) {
+      if (!BUILTINS.has(callee.name)) {
+        state.externals.add(callee.name);
+      }
+    }
+
+    // namespaced: router.useNavigate()
+    if (t.isMemberExpression(callee)) {
+      const obj = callee.object;
+
+      if (t.isIdentifier(obj) && !BUILTINS.has(obj.name)) {
+        state.externals.add(obj.name);
+      }
+    }
+
+    return;
+  }
+
   // Store the function if needed
   if (t.isFunctionExpression(init) || t.isArrowFunctionExpression(init)) {
     console.log("THE INIT FUNCTION EXPRESSION", name);
@@ -226,7 +310,7 @@ function collectInteractiveExternals(
   visited = new Set(),
   isReactOptHook = false
 ) {
-  // 1️⃣ Inline function handlers
+  //  Inline function handlers
   if (path.isFunction()) {
     const localBindings = new Set();
 
@@ -306,7 +390,7 @@ function collectInteractiveExternals(
     return;
   }
 
-  // 2️⃣ Referenced handlers: onClick={handleClick}
+  // Referenced handlers: onClick={handleClick}
   if (path.isIdentifier() || path.isMemberExpression()) {
     if (path.isIdentifier()) {
       collectFromIdentifierBinding(path, state);
@@ -315,14 +399,14 @@ function collectInteractiveExternals(
     return;
   }
 
-  // 3️⃣ Logical handlers: cond && handleClick
+  //  Logical handlers: cond && handleClick
   if (path.isLogicalExpression()) {
     collectInteractiveExternals(path.get("left"), state);
     collectInteractiveExternals(path.get("right"), state);
     return;
   }
 
-  // 4️⃣ Conditional handlers: cond ? a : b
+  // 4 Conditional handlers: cond ? a : b
   if (path.isConditionalExpression()) {
     collectInteractiveExternals(path.get("consequent"), state);
     collectInteractiveExternals(path.get("alternate"), state);
@@ -386,10 +470,10 @@ const VariablesGetComponentLevelIdentifiers = (path, state) => {
     path.scope.block.type === "ArrowFunctionExpression" ||
     path.scope.block.type === "FunctionDeclaration"
   ) {
-    // 1️⃣ Always track component bindings
-    state.componentBindings.add(id.name);
+    // Track component bindings
+    if (id && t.isIdentifier(id)) state.componentBindings.add(id.name);
 
-    // 2️⃣ True component statics (unchanged)
+    // Track normal statics
     if (
       t.isLiteral(init) ||
       t.isArrayExpression(init) ||
@@ -397,24 +481,72 @@ const VariablesGetComponentLevelIdentifiers = (path, state) => {
       t.isFunctionExpression(init) ||
       t.isArrowFunctionExpression(init)
     ) {
-      state.componentStatics.set(id.name, init);
+      if (id && t.isIdentifier(id)) state.componentStatics.set(id.name, init);
     }
 
-    // 3️⃣ 🔥 ADD: React optimisation hooks
-    if (
-      t.isCallExpression(init) &&
-      t.isIdentifier(init.callee) &&
-      REACT_OPT_HOOKS.has(init.callee.name)
-    ) {
-      const fnArg = init.arguments[0];
+    // Handle React hooks
+    if (t.isCallExpression(init) && t.isIdentifier(init.callee)) {
+      const hookName = init.callee.name;
 
-      if (t.isFunction(fnArg)) {
-        // This function *defines* the runtime value
-        state.derivedStatics.set(id.name, fnArg);
-        state.reactOptHooks.push(id.name);
+      if (REACT_OPT_HOOKS.has(hookName)) {
+        const fnArg = init.arguments[0];
 
-        // Traverse the factory function
-        collectInteractiveExternals(path.get("init.arguments.0"), state);
+        if (t.isFunction(fnArg)) {
+          // Only store the function argument as a derived static
+          if (id && t.isIdentifier(id)) {
+            state.derivedStatics.set(id.name, fnArg); // Assigned hooks
+          } else {
+            // For unassigned hooks like startTransition(() => {...})
+            // Do NOT store as external; runtime can inline it
+            collectInteractiveExternals(path.get("init.arguments.0"), state);
+          }
+
+          // Traverse function to collect nested externals
+          collectInteractiveExternals(path.get("init.arguments.0"), state);
+        }
+      }
+    }
+
+    //capture derived runtime values from call expressions
+    if (t.isCallExpression(init) && id && t.isIdentifier(id)) {
+      const callee = init.callee;
+
+      // direct call: useNavigate()
+      // if (t.isIdentifier(callee)) {
+      //   if (state.imports[callee.name]) {
+      //     state.derivedStatics.set(id.name, {
+      //       type: "call",
+      //       callee: callee.name,
+      //       args: init.arguments,
+      //     });
+      //   }
+      // }
+
+      // direct call: useNavigate()
+      if (t.isIdentifier(callee)) {
+        if (state.imports[callee.name]) {
+          state.derivedStatics.set(id.name, {
+            type: "call",
+            callee: callee.name,
+            args: init.arguments,
+          });
+          init.arguments.forEach((arg) => {
+            collectRenderExternalsFromNode(arg, state, path);
+          });
+        }
+      }
+
+      // namespaced: router.useNavigate()
+      if (t.isMemberExpression(callee)) {
+        const obj = callee.object;
+
+        if (t.isIdentifier(obj) && state.imports[obj.name]) {
+          state.derivedStatics.set(id.name, {
+            type: "call",
+            callee: generate(callee).code,
+            args: init.arguments,
+          });
+        }
       }
     }
   }
@@ -586,7 +718,7 @@ function collectStateFromExpression(node, state, bindings) {
       bindings.add(buildMemberPath(node));
     }
 
-    return; // 🚨 STOP HERE — do not traverse deeper
+    return; // STOP HERE — do not traverse deeper
   }
 
   // Logical expressions etc (rare for bind)
@@ -634,6 +766,41 @@ function buildMemberPath(node) {
   }
 
   return parts.join(".");
+}
+
+function extractComponentProps(path, state) {
+  const params = path.node.params;
+  if (!params.length) return;
+
+  const param = params[0];
+
+  if (t.isObjectPattern(param)) {
+    param.properties.forEach((p) => {
+      if (t.isObjectProperty(p) && t.isIdentifier(p.key)) {
+        state.componentProps.add(p.key.name);
+      }
+    });
+  }
+}
+
+function analyzePropFunctionBinding(identifierPath, state) {
+  const name = identifierPath.node.name;
+
+  const binding = identifierPath.scope.getBinding(name);
+  if (!binding) return;
+
+  const init = binding.path.node.init;
+  if (!init) return;
+
+  if (t.isArrowFunctionExpression(init) || t.isFunctionExpression(init)) {
+    state.externals.add(name);
+
+    // store function so runtime can reconstruct it
+    state.componentStatics.set(name, init);
+
+    // collect externals inside it
+    collectInteractiveExternals(binding.path.get("init"), state);
+  }
 }
 
 const TRAVERSERS = {
