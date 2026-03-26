@@ -1471,7 +1471,12 @@ methods.buildServerRoutes = function (routesSource, routesObject) {
       effectsToRun: route.universalEffects,
       staticPath: route?.staticPath || "",
       htmlPath: route?.htmlPath || "",
-      componentSourcePath: route?.componentFullPath,
+      componentSourcePath: route?.componentFullPath
+        ? route.componentFullPath
+        : route?.markdownComponents &&
+          Object.keys(route.markdownComponents).length > 0
+        ? JSON.stringify(route?.markdownComponents)
+        : null,
     };
   });
   // self.debug("ROUTES BUILT", builtRoutes);
@@ -1846,6 +1851,7 @@ methods.createMarkdownRoutesAst = function (options) {
     //   "THE PARSED MARKDOWN",
     //   route.markdownData[0].parsedMarkdown?.specialContent?.file
     // );
+    console.log("THE PARSED MARKDOWN:::", route?.markdownComponents);
     try {
       return t.objectExpression(
         [
