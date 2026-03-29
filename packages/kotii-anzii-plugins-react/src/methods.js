@@ -207,16 +207,8 @@ methods.runReactView = function (data) {
     // layout = null,
     // goodies=null,
     // storeFromSource = null}=props
-    let html = "";
-    console.log(
-      "VIEW PATH EXTENSION",
-      "CURRENT PROCESS ENV",
-      process?.env?.useLazyLoad,
-      "THE VIEW",
-      view,
-      "extension",
-      path.extname(view?.staticPath)
-    );
+
+    // console.log("VIEW PATH EXTENSION","CURRENT PROCESS ENV", process?.env?.useLazyLoad,"THE VIEW", view,"extension",path.extname(view?.staticPath) )
 
     const sheet = new ServerStyleSheet();
     process.env?.useLazyLoad ? await self.preloadLazyComponents(view) : null;
@@ -233,63 +225,79 @@ methods.runReactView = function (data) {
     try {
       const context = createHeadStore();
       self.debug("THE HEAD STORE", context);
-      let generatedPage;
-      let CurrentRouteComp = self.getCurrentRouteComponent(view);
-      self.debug("THE REACT COMPONENT FROM GENERATE", view);
-      let Page = sheet.collectStyles(
-        self.createAppElement({
-          store,
-          layoutRoot,
-          goodies,
-          authUser,
+
+      if (!staticRender) {
+        let html = "";
+
+        html = renderToString(
+          sheet.collectStyles(
+            self.createAppElement({
+              store,
+              layoutRoot,
+              goodies,
+              authUser,
+              view,
+              context,
+            })
+          )
+        );
+        const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
+        self.styledTags = styleTags;
+        self.debug("STYLED-COMPONENTS STYLE TAGS", styleTags);
+        self.debug("THE HEAD STORE AFTER CREATE HEAD", context.getEntries());
+
+        console.log("THE FINAL STATE", store, store.getState());
+        const finalState = store.getState() || store;
+        const helmetGenerated = HeadHelmet.renderStatic();
+        // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
+        const fullPage = self.renderFullPage({
+          html,
+          preloadedState: finalState,
+          staticRender,
           view,
-          context,
-        })
-      );
-      generatedPage = await self.generatePageStaticParts(Page, view);
-      const { html, pageJs = "", pageJsPackages } = generatedPage;
+          head: helmetGenerated,
+          authUser,
+        });
+        self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
+        resolve(fullPage);
+      } else {
+        let generatedPage;
+        // let CurrentRouteComp = self.getCurrentRouteComponent(view);
+        self.debug("THE REACT COMPONENT FROM GENERATE", view);
+        let Page = sheet.collectStyles(
+          self.createAppElement({
+            store,
+            layoutRoot,
+            goodies,
+            authUser,
+            view,
+            context,
+          })
+        );
+        generatedPage = await self.generatePageStaticParts(Page, view);
+        const { html, pageJs = "", pageJsPackages } = generatedPage;
 
-      self.debug("THE STATIC PART JS FROM SSG", pageJs);
-      console.log("THE FINAL STATE", store, store.getState());
-      const finalState = store.getState() || store;
-      const helmetGenerated = HeadHelmet.renderStatic();
-      self.doStyledSheets(sheet);
+        self.debug("THE STATIC PART JS FROM SSG", pageJs);
+        console.log("THE FINAL STATE", store, store.getState());
+        const finalState = store.getState() || store;
+        const helmetGenerated = HeadHelmet.renderStatic();
+        self.doStyledSheets(sheet);
 
-      // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
-      self["pageJsPackages"] = pageJsPackages;
-      const fullPage = self.renderStaticFullPage({
-        html,
-        pageJs,
-        head: helmetGenerated,
-        info,
-        pageJsPackages,
-      });
-      self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
-      resolve(fullPage);
-
-      // const context = createHeadStore();
-      // self.debug("THE HEAD STORE", context);
-      // html = renderToString(
-      //   sheet.collectStyles(
-      //     self.createAppElement({
-      //       store,
-      //       layoutRoot,
-      //       goodies,
-      //       authUser,
-      //       view,
-      //       context,
-      //     })
-      //   )
-      // );
-      // const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
-      // self.styledTags = styleTags;
-      // self.debug("STYLED-COMPONENTS STYLE TAGS", styleTags);
-      // self.debug("THE HEAD STORE AFTER CREATE HEAD", context.getEntries());
+        // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
+        self["pageJsPackages"] = pageJsPackages;
+        const fullPage = self.renderStaticFullPage({
+          html,
+          pageJs,
+          head: helmetGenerated,
+          info,
+          pageJsPackages,
+        });
+        self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
+        resolve(fullPage);
+      }
     } catch (error) {
       // handle error
       console.error(error);
-    } finally {
-      sheet.seal();
     }
 
     // console.log("THE FINAL STATE", store, store.getState());
@@ -410,7 +418,7 @@ methods.includeScripts = function (preloadedState, authUser) {
   const { serialize } = self;
   let possibleExtraScripts =
     process?.env?.NODE_ENV !== ENV_PRODUCTION
-      ? `<script src="/kotii-client.js" ></script>`
+      ? `<script src="/app/kotii-client.js" ></script>`
       : "";
   self.debug("THE SELF.KOTIIENV", self.kotiiEnvs);
   if (self?.htmlPageSettings && self.htmlPageSettings?.scripts) {
@@ -430,7 +438,7 @@ methods.includeScripts = function (preloadedState, authUser) {
     ${self.getProductionProcess()}
   
    </script>
-   <script src="/server.js" ></script>
+   <script src="/app/server.js" ></script>
    ${possibleExtraScripts}
   `;
 };
@@ -588,12 +596,12 @@ methods.doKotiiStyles = function () {
         : true
       : null;
     if (process?.tailwindGenerated)
-      self.styleTags = `<link rel="stylesheet" id="tailwind-stylesheet-link" type="text/css" href="/${process.tailwindStyleSheetName}" />`;
+      self.styleTags = `<link rel="stylesheet" id="tailwind-stylesheet-link" type="text/css" href="/app/css/${process.tailwindStyleSheetName}" />`;
     if (!jsonStyles) return null;
     if (process?.useLinkStyleTag) {
       self.styleTags = `${
         self?.styleTags || ""
-      }<link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="/${
+      }<link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="/app/css/${
         process?.styleSheetName || "index.css"
       }" />`;
     } else {
@@ -604,7 +612,7 @@ methods.doKotiiStyles = function () {
         .replaceAll(",", " ")}</style>`;
     }
   } else {
-    self.styleTags = `<link rel="stylesheet" type="text/css" href="/css/index.css">`;
+    self.styleTags = `<link rel="stylesheet" type="text/css" href="/app/css/index.css">`;
   }
 };
 
