@@ -100,6 +100,10 @@ class WebpackConfig {
     this.sendReloadSignaOnRestart = methods.sendReloadSignaOnRestart;
     this.getVendorModulesFromVirutal = methods.getVendorModulesFromVirutal;
     this.doImport = methods.doImport;
+    this.finalizeBuildAssets = methods.finalizeBuildAssets;
+    this.finalizeCss = methods.finalizeCss;
+    this.finalizeDevClientJs = methods.finalizeDevClientJs;
+    this.finalizeFonts = methods.finalizeFonts;
   }
 }
 export default WebpackConfig;

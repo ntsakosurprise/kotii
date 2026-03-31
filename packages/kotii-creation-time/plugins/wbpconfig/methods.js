@@ -225,8 +225,8 @@ methods.configureWebPack = function (
         ? contextApp.appManifest.fileLoader.inline
         : false,
     runOnceDone: self.runOnceDone.bind(self),
-    createCssStyles: contextApp.appManifest?.appStyles
-      ? self.createCssStyles.bind(self)
+    finalizeBuildAssets: contextApp.appManifest?.appStyles
+      ? self.finalizeBuildAssets.bind(self)
       : null,
     tailwindConfig: contextApp?.appTailwindConfig || null,
     runForTailwindCss: self.runForTailwindCss.bind(self),
@@ -401,6 +401,7 @@ methods.configureDevServer = function (
                 ...appConfig,
                 // router: anziiManualConfigs.routes,
                 domain: [{ name: "static", set: "build" }],
+
                 cluster: { workers: 1, spawn: false },
                 server: serverConfig,
               },
@@ -1649,8 +1650,21 @@ methods.recursivelyRemoveChildren = function (childrenParent, imports) {
  * browser. The file is only created and written if a user has opted for it.
  * A user has an option to set the file name as well.
  */
-methods.createCssStyles = async function (appStyles, appBuildFolder) {
+methods.finalizeBuildAssets = async function (
+  appStyles,
+  appBuildFolder,
+  kotiiRootPath
+) {
   const self = this;
+
+  self.finalizeCss(appStyles, appBuildFolder);
+  self.finalizeFonts(appBuildFolder);
+  self.finalizeDevClientJs(appBuildFolder, kotiiRootPath);
+};
+
+methods.finalizeCss = function (appStyles, appBuildFolder) {
+  const self = this;
+
   self.debug("App Styles", appStyles, appBuildFolder);
   let useTagKeys = ["style", "link"];
   if (!appStyles?.useTag)
@@ -1703,8 +1717,13 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
     fs.mkdirSync(`${appBuildFolder}/app/css`);
     fs.writeFileSync(`${appBuildFolder}/app/css/${fileName}`, stylesString);
   }
+};
+
+methods.finalizeFonts = function (appBuildFolder) {
+  const self = this;
+
   let appFontsPath = USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_FONTS];
-  console.log("THE APP FONTS PATH", appFontsPath);
+  self.debug("THE APP FONTS PATH", appFontsPath);
   if (fs.existsSync(appFontsPath) && fs.statSync(appFontsPath)?.size > 0) {
     let appFonts = JSON.parse(
       fs.readFileSync(appFontsPath, {
@@ -1735,6 +1754,13 @@ methods.createCssStyles = async function (appStyles, appBuildFolder) {
       });
     }
   }
+};
+
+methods.finalizeDevClientJs = function (appBuildFolder, kotiiRootPath) {
+  const self = this;
+  let devClientJsPath = `${kotiiRootPath}/client-tools/index.js`;
+  fs.mkdirSync(`${appBuildFolder}/app/js`);
+  fs.copyFileSync(devClientJsPath, `${appBuildFolder}/app/js/kotii-client.js`);
 };
 
 methods.buildListToRemoveOnClient = function (toBuildFor, built, imports) {

@@ -448,6 +448,7 @@ export default (options) => {
           assetsFolderName: options.appManifest.assets,
           appAssetsPublic: options.appAssetsPublic,
           buildFolder: options.buildFolder,
+          kotiiRootPath,
 
           // runForTailwindCss: options.runForTailwindCss,
         },
@@ -504,7 +505,7 @@ const getCopyFiles = (options, env) => {
 
   if (options.appManifest?.appStyles) {
     files.push({
-      fileEmitter: options.createCssStyles,
+      fileEmitter: options.finalizeBuildAssets,
       extra: {
         build: options.buildFolder,
         assetsFolder: options.assetsFolder,
