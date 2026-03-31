@@ -7,6 +7,7 @@ const imagesMime = {
   gif: "data:image/gif",
 };
 
+// eslint-disable-next-line no-unused-vars
 const secret = "Hi";
 let fileNamePattern = "";
 export default (loaderConfig, fileConfig) => {
@@ -21,10 +22,12 @@ export default (loaderConfig, fileConfig) => {
   if (!fileNamePattern) fileNamePattern = getFileNameFromConfig(loaderConfig);
   console.log("THE FILE NAME PATTERN", fileNamePattern);
   if (fileNamePattern.isHash) {
-    resultObject["content"] = createFileNameWithHash(fileConfig);
+    resultObject["content"] = `/assets/images${createFileNameWithHash(
+      fileConfig
+    )}`;
     return resultObject;
   } else {
-    resultObject["content"] = createFileNameAsIs(fileConfig);
+    resultObject["content"] = `/assets/images${createFileNameAsIs(fileConfig)}`;
     return resultObject;
   }
 };
@@ -52,6 +55,7 @@ const createFileNameWithHash = (config) => {
 const createFileNameAsIs = (config) => {
   return `${config.filename}`;
 };
+// eslint-disable-next-line no-unused-vars
 const createFileNameAsB64 = (config, fName) => {
   let pngContent = fs.readFileSync(config.fullUrl, { encoding: "base64" });
   const b64 = pngContent.toString("base64");
