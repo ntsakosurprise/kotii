@@ -44,7 +44,7 @@ class CopyAssetsWebpackPlugin {
 
       files.forEach((fileItem) => {
         if (!fileItem?.fileEmitter) {
-          assetsToBuild.push(`${fileItem.kotiiRootPath}/client-tools/index.js`);
+          // assetsToBuild.push(`${fileItem.kotiiRootPath}/client-tools/index.js`);
           // fs.copyFileSync(
           //   `${fileItem.kotiiRootPath}/client-tools/index.js`,
           //   `${path.resolve(assetsJs, "kotii-client.js")}`
