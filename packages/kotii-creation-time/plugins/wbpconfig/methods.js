@@ -1875,7 +1875,11 @@ methods.runForTailwindCss = async function (options) {
           }
         } else {
           let tailwindFilePath = `${buildFolder}/app/css/tailwind.css`;
-          fs.writeFileSync(tailwindFilePath, result.css);
+
+          if (!fs.existsSync(`${buildFolder}/app/css`)) {
+            fs.mkdirSync(`${buildFolder}/app/css`);
+            fs.writeFileSync(tailwindFilePath, result.css);
+          }
         }
       });
   });
