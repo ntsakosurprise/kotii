@@ -87,10 +87,14 @@ methods.doStartUp = function (data) {
             loadFile(`${rootStats.buildRoot}${path.sep}.config.js`).then(
               (config) => {
                 let domain = config.domain;
+                console.log("FOUND CONFIG SETTINGS", config);
+                console.log("THE ROOT FILES", rootFiles);
 
                 domain.forEach((doma) => {
                   if (doma.name === "static") {
-                    doma.set = `${rootFiles[0].buildRoot}/${doma.set}`;
+                    doma.set = doma?.set
+                      ? `${rootFiles[0].buildRoot}/${doma.set}`
+                      : `${rootFiles[0].buildRoot}/public`;
                     doma.absolute = true;
                   }
                 });
