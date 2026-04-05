@@ -234,13 +234,13 @@ methods.savePageToFile = function (filepath, content) {
 methods.postBuildStaticResources = async function (context) {
   const self = this;
   self.debug("THE CONTEXT AGGREGATE PRODUCTION", context);
-  let cssSavePath = `${context.distFolder}/css/index.css`;
-  let vendorFolder = `${context.distFolder}/assets/vendor`;
-  let appBootstrapPath = `${context.distFolder}/assets/vendor/bootstrap.js`;
-  let jsPackagesPath = `${context.distFolder}/assets/vendor/packages.js`;
+  let cssSavePath = `${context.distFolder}/public/assets/css/index.css`;
+  let vendorFolder = `${context.distFolder}/public/assets/vendor`;
+  let appBootstrapPath = `${context.distFolder}/public/assets/vendor/bootstrap.js`;
+  let jsPackagesPath = `${context.distFolder}/public/assets/vendor/packages.js`;
   let combinedJsFiles = "";
   let bootStrapCode = null;
-  let files = await self.readFiles(`${context.buildFolder}/app/css`);
+  let files = await self.readFiles(`${context.buildFolder}/public/assets/css`);
   let cssJoined = files.join(" ");
   cssJoined += context.styles;
   let jsPackages = context.jsStaticFilesToSave;
@@ -256,7 +256,7 @@ methods.postBuildStaticResources = async function (context) {
   // const appImagesMap = ${JSON.stringify(images)};
   // export {appModules, appImagesMap};
   // `;
-  self.createDistFolder(`${context.distFolder}${path.sep}css`);
+  // self.createDistFolder(`${context.distFolder}${path.sep}public/assets/css`);
   self.createDistFolder(`${vendorFolder}`);
   // self.createDistFolder(
   //       `${context.distFolder}${path.sep}img`
