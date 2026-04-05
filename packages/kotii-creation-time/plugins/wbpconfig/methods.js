@@ -363,7 +363,7 @@ methods.configureDevServer = function (
   webpacks.compiler.hooks.emit.tap("Debug", () =>
     console.log("🧩 emitting assets")
   );
-  webpacks.compiler.hooks.done.tap("Debug", () => console.log("🧩 build done"));
+  webpacks.compiler.hooks.done.tap("Debug", () => console.log(" build done"));
   //   webpacks.compiler.hooks.watchRun.tapAsync("MyPlugin", (compiler) => {
   //   console.log("Modified files:", compiler.modifiedFiles);
   //   console.log("Removed files:", compiler.removedFiles);
@@ -1650,16 +1650,18 @@ methods.recursivelyRemoveChildren = function (childrenParent, imports) {
  * browser. The file is only created and written if a user has opted for it.
  * A user has an option to set the file name as well.
  */
-methods.finalizeBuildAssets = async function (
+methods.finalizeBuildAssets = async function ({
   appStyles,
   appBuildFolder,
-  kotiiRootPath
-) {
+  kotiiRootPath,
+  assetsFolder,
+}) {
   const self = this;
 
   self.finalizeCss(appStyles, appBuildFolder);
-  self.finalizeFonts(appBuildFolder);
-  self.finalizeDevClientJs(appBuildFolder, kotiiRootPath);
+  self.finalizeFonts(assetsFolder);
+  if (process?.env?.NODE_ENV !== "production")
+    self.finalizeDevClientJs(appBuildFolder, kotiiRootPath);
 };
 
 methods.finalizeCss = function (appStyles, appBuildFolder) {
@@ -1714,12 +1716,30 @@ methods.finalizeCss = function (appStyles, appBuildFolder) {
       }
     });
 
-    fs.mkdirSync(`${appBuildFolder}/app/css`);
-    fs.writeFileSync(`${appBuildFolder}/app/css/${fileName}`, stylesString);
+    if (process?.env?.NODE_ENV !== "production") {
+      if (!fs.existsSync(`${appBuildFolder}/app/css`))
+        fs.mkdirSync(`${appBuildFolder}/app/css`);
+      fs.writeFileSync(`${appBuildFolder}/app/css/${fileName}`, stylesString);
+    } else {
+      let appPath = `${appBuildFolder}/public`;
+      let assetsPath = `${appPath}/assets`;
+      let cssPath = `${assetsPath}/css`;
+      // console.log("APP BUILD FOLDER",buildFolder)
+      // if(!fs.existsSync(buildFolder)) console.log("App Folder does not exist")
+      // fs.writeFileSync(tailwindFilePath, result.css);
+
+      // console.log("THE BUILD FOLDER", buildFolder)
+
+      if (!fs.existsSync(appPath)) fs.mkdirSync(appPath);
+      if (!fs.existsSync(assetsPath)) fs.mkdirSync(assetsPath);
+      if (!fs.existsSync(cssPath)) fs.mkdirSync(cssPath);
+
+      fs.writeFileSync(`${cssPath}/${fileName}`, stylesString);
+    }
   }
 };
 
-methods.finalizeFonts = function (appBuildFolder) {
+methods.finalizeFonts = function (assetsFolder) {
   const self = this;
 
   let appFontsPath = USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_FONTS];
@@ -1733,7 +1753,7 @@ methods.finalizeFonts = function (appBuildFolder) {
     self.debug("THE APP FONTS", appFonts);
     if (appFonts.length > 0) {
       appFonts.forEach((font) => {
-        let assetsFolder = `${appBuildFolder}/assets`;
+        // let assetsFolder = `${appBuildFolder}/assets`;
         let fontsFolder = `${assetsFolder}/${font.folderTo}`;
         let fontFilePath = `${fontsFolder}/${font.fileName}`;
 
@@ -1759,8 +1779,12 @@ methods.finalizeFonts = function (appBuildFolder) {
 methods.finalizeDevClientJs = function (appBuildFolder, kotiiRootPath) {
   const self = this;
   let devClientJsPath = `${kotiiRootPath}/client-tools/index.js`;
-  fs.mkdirSync(`${appBuildFolder}/app/js`);
-  fs.copyFileSync(devClientJsPath, `${appBuildFolder}/app/js/kotii-client.js`);
+  let appFolder = `${appBuildFolder}/app`;
+  let appJsFolder = `${appFolder}/js`;
+  let clientJs = `${appJsFolder}/kotii-client.js`;
+  if (!fs.existsSync(appFolder)) fs.mkdirSync(appJsFolder);
+  if (!fs.existsSync(appJsFolder)) fs.mkdirSync(appJsFolder);
+  fs.copyFileSync(devClientJsPath, clientJs);
 };
 
 methods.buildListToRemoveOnClient = function (toBuildFor, built, imports) {
@@ -1874,12 +1898,20 @@ methods.runForTailwindCss = async function (options) {
             console.log("CSS SAVING ERROR", error);
           }
         } else {
-          let tailwindFilePath = `${buildFolder}/app/css/tailwind.css`;
+          let tailwindFilePath = `${buildFolder}/public/assets/css/tailwind.css`;
+          let appPath = `${buildFolder}/public`;
+          let assetsPath = `${appPath}/assets`;
+          let cssPath = `${assetsPath}/css`;
+          // console.log("APP BUILD FOLDER",buildFolder)
+          // if(!fs.existsSync(buildFolder)) console.log("App Folder does not exist")
+          // fs.writeFileSync(tailwindFilePath, result.css);
 
-          if (!fs.existsSync(`${buildFolder}/app/css`)) {
-            fs.mkdirSync(`${buildFolder}/app/css`);
-            fs.writeFileSync(tailwindFilePath, result.css);
-          }
+          // console.log("THE BUILD FOLDER", buildFolder)
+
+          if (!fs.existsSync(appPath)) fs.mkdirSync(appPath);
+          if (!fs.existsSync(cssPath)) fs.mkdirSync(cssPath);
+
+          fs.writeFileSync(tailwindFilePath, result.css);
         }
       });
   });

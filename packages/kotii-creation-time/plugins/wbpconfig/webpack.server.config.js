@@ -91,7 +91,10 @@ export default (options) => {
     stats: "errors-only",
     devtool: "eval",
     output: {
-      filename: "app/server.js",
+      filename:
+        process?.env?.NODE_ENV !== "production"
+          ? "app/server.js"
+          : "public/assets/js/bundle.js",
       path: options.buildFolder,
       chunkFilename: "lazy/[name].lazy.js",
 
