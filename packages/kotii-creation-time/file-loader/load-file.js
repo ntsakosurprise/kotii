@@ -7,12 +7,14 @@ const imagesMime = {
   gif: "data:image/gif",
 };
 
-// eslint-disable-next-line no-unused-vars
 const secret = "Hi";
 let fileNamePattern = "";
 export default (loaderConfig, fileConfig) => {
   console.log("THE FILE LOADR R", loaderConfig, fileConfig);
   let resultObject = { inlined: false };
+  let isProduction = process?.env?.NODE_ENV === "production" ? true : false;
+  let preAssetPath = !isProduction ? "/assets/images" : "/assets/images";
+  console.log("THE PRE ASSET", preAssetPath, isProduction);
   if (checkIfShouldInline(loaderConfig, fileConfig)) {
     console.log("IS CONFIG .PNG");
     resultObject.inlined = true;
@@ -22,12 +24,14 @@ export default (loaderConfig, fileConfig) => {
   if (!fileNamePattern) fileNamePattern = getFileNameFromConfig(loaderConfig);
   console.log("THE FILE NAME PATTERN", fileNamePattern);
   if (fileNamePattern.isHash) {
-    resultObject["content"] = `/assets/images${createFileNameWithHash(
+    resultObject["content"] = `${preAssetPath}${createFileNameWithHash(
       fileConfig
     )}`;
     return resultObject;
   } else {
-    resultObject["content"] = `/assets/images${createFileNameAsIs(fileConfig)}`;
+    resultObject["content"] = `${preAssetPath}${createFileNameAsIs(
+      fileConfig
+    )}`;
     return resultObject;
   }
 };
@@ -55,7 +59,6 @@ const createFileNameWithHash = (config) => {
 const createFileNameAsIs = (config) => {
   return `${config.filename}`;
 };
-// eslint-disable-next-line no-unused-vars
 const createFileNameAsB64 = (config, fName) => {
   let pngContent = fs.readFileSync(config.fullUrl, { encoding: "base64" });
   const b64 = pngContent.toString("base64");
