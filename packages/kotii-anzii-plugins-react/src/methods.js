@@ -281,7 +281,7 @@ methods.runReactView = function (data) {
         console.log("THE FINAL STATE", store, store.getState());
         const finalState = store.getState() || store;
         const helmetGenerated = HeadHelmet.renderStatic();
-        self.doStyledSheets(sheet);
+        self.doStyledSheets(sheet, true);
 
         // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
         self["pageJsPackages"] = pageJsPackages;
@@ -376,6 +376,7 @@ methods.renderFullPage = function ({
 		</html>
     `;
 };
+
 methods.renderStaticFullPage = function ({
   html,
   info,
@@ -396,15 +397,15 @@ methods.renderStaticFullPage = function ({
     ${head?.meta.toString()}
 
     ${self?.pageSettings || ""}
-    <link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="css/${
+    <link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="./public/assets/css/${
       info.css
     }" />
     </head>
 		<body ${head.bodyAttributes.toString()}>
 		 <div id="root">${html}</div>
 		<script> window.process = {env:${process.env.APP_ENVS}} </script>
-    <script src="./assets/vendor/bootstrap.js"></script>
-    <script src="./assets/vendor/packages.js"></script>
+    <script src="./public/assets/vendor/bootstrap.js"></script>
+    <script src="./public/assets/vendor/packages.js"></script>
     <script >${pageJs}</script>
     
      
@@ -418,7 +419,7 @@ methods.includeScripts = function (preloadedState, authUser) {
   const { serialize } = self;
   let possibleExtraScripts =
     process?.env?.NODE_ENV !== ENV_PRODUCTION
-      ? `<script src="/app/kotii-client.js" ></script>`
+      ? `<script src="/app/js/kotii-client.js" ></script>`
       : "";
   self.debug("THE SELF.KOTIIENV", self.kotiiEnvs);
   if (self?.htmlPageSettings && self.htmlPageSettings?.scripts) {
@@ -426,6 +427,10 @@ methods.includeScripts = function (preloadedState, authUser) {
     //   possibleExtraScripts = `${possibleExtraScripts}\n <script src=${script.src}></script>`;
     // });
   }
+  let bundleScritPath =
+    process?.env?.NODE_ENV !== "production"
+      ? "/app/server.js"
+      : "/assets/js/bundle.js";
 
   return `
    <script>
@@ -438,7 +443,7 @@ methods.includeScripts = function (preloadedState, authUser) {
     ${self.getProductionProcess()}
   
    </script>
-   <script src="/app/server.js" ></script>
+   <script src="${bundleScritPath}" ></script>
    ${possibleExtraScripts}
   `;
 };
@@ -612,7 +617,7 @@ methods.doKotiiStyles = function () {
         .replaceAll(",", " ")}</style>`;
     }
   } else {
-    self.styleTags = `<link rel="stylesheet" type="text/css" href="/app/css/index.css">`;
+    self.styleTags = `<link rel="stylesheet" type="text/css" href="/assets/css/index.css">`;
   }
 };
 
@@ -909,13 +914,15 @@ methods.getCurrentRouteComponent = function (view) {
 };
 methods.doStyledSheets = function (sheet, isStatic = false) {
   const self = this;
+  console.log("DO STYLED SHEETS", isStatic);
 
   if (!isStatic) {
     const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
     self.styledTags = styleTags;
   } else {
-    const styleTags = sheet.getStyleTags(); // or sheet.getStyleElement();
-    self.styleTags += styleTags;
+    console.log("NOT STATIC DO STYLED");
+    let styleTags = sheet.instance.toString(); // or sheet.getStyleElement();
+    self.styledTags += styleTags;
   }
 };
 // methods.addStyledCssToFile = function(){
@@ -926,7 +933,7 @@ methods.doStyledSheets = function (sheet, isStatic = false) {
 methods.doPageJsPackages = function (pageJsPackages) {
   let packagesCode = ``;
   pageJsPackages.forEach((currentPackage) => {
-    packagesCode += `\n<script src="./assets/vendor/${currentPackage.fileName}" ></script>`;
+    packagesCode += `\n<script src="./public/assets/vendor/${currentPackage.fileName}" ></script>`;
   });
   return packagesCode;
 };
