@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { getFileFormatMaps } from "../globals.js";
+import { kotiiRootPath } from "kotii-creation-time/root";
 
 class CopyAssetsWebpackPlugin {
   loggas = null;
@@ -21,30 +22,39 @@ class CopyAssetsWebpackPlugin {
         "PLUGIN:: Copy Asssets Webpack plugin"
       );
       console.log("THE ASSETS PATH FOR SYNC", this.options);
+      let appEnv = process.env.NODE_ENV;
+
       let files = this.options.files;
       let buildFolder = this.options.buildFolder;
-      console.log("THE BUILD FOLDER", buildFolder);
-      let assetsFolderName = this.options.assetsFolderName;
+      console.log("THE BUILD FOLDER:COPY", buildFolder, process.env.NODE_ENV);
+
+      let assetsFolderName = this?.options?.assetsFolderName || "assets";
+      if (appEnv === "production")
+        assetsFolderName = `public/${assetsFolderName}`;
       console.log("THE ASSETS FOLDER NAME", assetsFolderName);
+
+      // let assetsJs = createFolder(`${assetsFolder}/js`)
+      // console.log("THE ASSETS FOLDER", assetsFolder);
+
+      let appAssetsPublic = this.options?.appAssetsPublic;
+      let isPublicAssets = fs.existsSync(appAssetsPublic) ? true : false;
+      let assetsToBuild = [];
+
+      if (isPublicAssets || appEnv === "production") {
+        let buildPublicFolder = !fs.existsSync(`${buildFolder}/public`)
+          ? createFolder(`${buildFolder}/public`)
+          : `${buildFolder}/public`;
+        // console.log("THE BUILD PUBLIC FOLDER", assetsFolder);
+        if (isPublicAssets) copyDirectory(appAssetsPublic, buildPublicFolder);
+      }
+
       let possibleAssetFolder = `${buildFolder}/${assetsFolderName}`;
       let assetsFolder = !fs.existsSync(possibleAssetFolder)
         ? createFolder(`${buildFolder}/${assetsFolderName}`)
         : possibleAssetFolder;
-      // let assetsJs = createFolder(`${assetsFolder}/js`)
-      console.log("THE ASSETS FOLDER", assetsFolder);
-
-      let appAssetsPublic = this.options.appAssetsPublic;
-      let assetsToBuild = [];
-
-      if (fs.existsSync(appAssetsPublic)) {
-        let buildPublicFolder = createFolder(`${buildFolder}/public`);
-        console.log("THE BUILD PUBLIC FOLDER", assetsFolder);
-        copyDirectory(appAssetsPublic, buildPublicFolder);
-      }
 
       files.forEach((fileItem) => {
         if (!fileItem?.fileEmitter) {
-          // assetsToBuild.push(`${fileItem.kotiiRootPath}/client-tools/index.js`);
           // fs.copyFileSync(
           //   `${fileItem.kotiiRootPath}/client-tools/index.js`,
           //   `${path.resolve(assetsJs, "kotii-client.js")}`
@@ -58,7 +68,12 @@ class CopyAssetsWebpackPlugin {
           );
           // console.log("THE ASSETS MANIFEST", this.assetsManifestData);
         } else {
-          fileItem.fileEmitter(fileItem.extra.appStyles, fileItem.extra.build);
+          fileItem.fileEmitter({
+            appStyles: fileItem.extra.appStyles,
+            appBuildFolder: fileItem.extra.build,
+            kotiiRootPath: this.options.kotiiRootPath,
+            assetsFolder,
+          });
         }
       });
       organizeAssets(assetsToBuild, assetsFolder);
