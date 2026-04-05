@@ -44,7 +44,7 @@ methods.handleServerBuild = function (data) {
   // if (fs.existsSync(`${kotiiKotiiLandPath}/dev/styles.json`)) {
   //   fs.rmSync(`${kotiiKotiiLandPath}/dev/styles.json`);
   // }
-  if (fs.existsSync(destination)) fs.rmSync(destination, { recursive: true });
+  // if (fs.existsSync(destination)) fs.rmSync(destination, { recursive: true });
 
   const localPackageJson = JSON.parse(
     readFileSync(`${kotiiRootPath}/package.json`)
@@ -158,6 +158,9 @@ methods.handleServerBuild = function (data) {
       //       chalk.bgRedBright(saveErr)
       //     );
       //   });
+      let assetsFolder = contextApp?.appManifest?.assets || "assets";
+      if (process.env.NODE_ENV === "production")
+        assetsFolder = `public/${assetsFolder}`;
       self
         .doKotiiLandPagesFile(destination, {
           contextApp,
@@ -170,7 +173,7 @@ methods.handleServerBuild = function (data) {
             cwd: kotiiRootPath,
             appBuildFolder: destination,
             pagesSourceCode,
-            staticPath: `${destination}/${contextApp.appManifest.static}`,
+            staticPath: `${destination}/${assetsFolder}`,
           });
           self.callback({ message: "Build done successfully" });
         });
@@ -415,6 +418,8 @@ methods.doKotiiLandPagesFile = function (destination, options) {
     const jsFile = readFileSync(`${USER_LAND_ALIASES[USER_LAND_ALIAS_PAGES]}`);
     self.debug(
       "THE SOURCE FILE PATH",
+      jsFile,
+      USER_LAND_ALIASES,
       `${USER_LAND_ALIASES[USER_LAND_ALIAS_PAGES]}`
     );
     let ast = parser.parse(jsFile, {
@@ -831,7 +836,7 @@ methods.getStylesMap = function (kotiiAppPath) {
 methods.aggregateProductionResources = function (context) {
   const self = this;
   self.debug("THE CONTEXT AGGREGATE PRODUCTION", context);
-  let cssSavePath = `${context.staticPath}/index.css`;
+  let cssSavePath = `${context.staticPath}/css/index.css`;
   let kotiiBundleSavePath = `${context.appBuildFolder}/.kotii-land/bundle.js`;
   let kotiiBundleSaveImportsPath = `${context.appBuildFolder}/.kotii-land/bundle-imports.js`;
   let cssModulesMap = self.aggregateAppKotiiMeta(context);
@@ -851,9 +856,14 @@ methods.aggregateProductionResources = function (context) {
 };
 methods.aggregateAppCss = function (context) {
   const self = this;
+  let isProduction = process?.env?.NODE_ENV === "production" ? true : false;
   let assetsPath = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`;
-  let pathTailwind = `${context.staticPath}/tailwind.css`;
-  let pathRegularCss = `${context.staticPath}/kotii-styles.css`;
+  let pathTailwind = !isProduction
+    ? `${context.staticPath}/tailwind.css`
+    : `${context.staticPath}/css/tailwind.css`;
+  let pathRegularCss = !isProduction
+    ? `${context.staticPath}/kotii-styles.css`
+    : `${context.staticPath}/css/kotii-styles.css`;
   // let savePath = `${context.appBuildFolder}/index.css`;
   // console.log("THE SAVE PATH", savePath);
   let cssContent = "";
