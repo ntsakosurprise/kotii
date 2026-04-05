@@ -9,7 +9,8 @@ export const USER_LAND_ALIASES = {
   "@kotii/_user/redux": { value: `/src/store/index` },
   "@kotii/_user/plugins": { value: "api/index" },
   "@kotii/_user/pages":
-    process?.env?.NODE_ENV?.toLowerCase() != "production"
+    process?.env?.NODE_ENV?.toLowerCase() !== "production" ||
+    process?.env?.KOTII_MODE
       ? `${kotiiInternal}/pages.js`
       : { value: ".kotii-land/bundle-imports.js" },
   "@kotii/_user/build": `${kotiiInternal}/build.js`,
@@ -23,6 +24,12 @@ export const USER_LAND_ALIASES = {
   "@kotii/_css/fonts": `${kotiiInternalCss}/styles-css-fonts.json`,
 };
 
+console.log(
+  "THE ENVIRONMENT IN INTERNAL",
+  process.env.NODE_ENV,
+  "mode",
+  process.env.KOTII_MODE
+);
 export const USER_LAND_ALIAS_PLUGINS = "@kotii/_user/plugins";
 export const USER_LAND_ALIAS_REDUX = "@kotii/_user/redux";
 export const USER_LAND_ALIAS_START_UP = "@kotii/_user/startup";
