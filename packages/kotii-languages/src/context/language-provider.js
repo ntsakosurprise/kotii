@@ -66,6 +66,8 @@ export const LanguageProvider = (props) => {
         get,
         getLanguageNames,
         languageName,
+        translations,
+        setCurrentLanguage,
       }}
     >
       {children}

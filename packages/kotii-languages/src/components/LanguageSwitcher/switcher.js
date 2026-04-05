@@ -224,7 +224,7 @@ const LanguageSwitcher = () => {
 
   if (options.length === 0) return null;
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ position: "relative", zIndex: 1 }}>
       <ThemeSelector onClick={showUpdatedLanguages}>
         <LanguageText>{languageName}</LanguageText>
         {/* <DropdownIcon
