@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /* eslint-disable no-self-assign */
 /* eslint-disable no-unused-vars */
 import babel from "@babel/core";
@@ -125,7 +124,7 @@ export async function load(url, context, nextLoad) {
     fileExtension
   );
 
-  if (url === "virtual:static-module-graph") {
+  if (url.startsWith("virtual:static-module-graph")) {
     return loadVirtualModule();
   }
 
@@ -834,9 +833,9 @@ export const guessPathExtension = (guessPath) => {
 };
 
 export const resolveVirtualModule = (specifier) => {
-  if (specifier === "virtual:static-module-graph") {
+  if (specifier.startsWith("virtual:static-module-graph")) {
     return {
-      url: "virtual:static-module-graph",
+      url: specifier,
       shortCircuit: true,
     };
   } else {
@@ -1362,7 +1361,7 @@ const createFontsMeta = ({
       console.log("THE ERROR MESSAGE", errorMessage);
       throw new Error(errorMessage);
     }
-    absoluteUrl = `/fonts/${fontFileName}`;
+    absoluteUrl = `/assets/fonts/${fontFileName}`;
   } else {
     let topLevelPosition = fontFileParentUrlPieces.length - (foldersUp + 2);
     let relativePathTopLevelFolder = fontFileParentUrlPieces[topLevelPosition];
@@ -1376,7 +1375,7 @@ const createFontsMeta = ({
       fontFullPath
     );
     if (!fs.existsSync(fontFullPath)) throw new Error(errorMessage);
-    absoluteUrl = `/fonts/${fontFileName}`;
+    absoluteUrl = `/assets/fonts/${fontFileName}`;
   }
 
   FONTS_META.push({
