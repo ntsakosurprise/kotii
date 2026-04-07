@@ -89,7 +89,8 @@ const ServerApp = function () {
     storeFromSource = null,
     effectsStore,
     authUser = null,
-    reduxResources = null
+    reduxResources = null,
+    locale
   } = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : props;
   const store = storeFromSource;
   const existsMeta = fs.existsSync("".concat(process.cwd()).concat(path.sep, "app.manifest.json"));
@@ -111,7 +112,8 @@ const ServerApp = function () {
     authUser,
     isStoreCreated: true,
     reduxEnabled: stateVendor && stateVendor === "redux" ? true : false,
-    reduxResources
+    reduxResources,
+    locale
   });
 
   // if (stateVendor && stateVendor === "redux") {
@@ -143,13 +145,16 @@ const AppGeneric = props => {
   const {
     isServer = false,
     goodies = {},
-    authUser = null
+    authUser = null,
+    locale
   } = props;
   const AppWrapper = appWrapper;
   console.log("THE APP GENERIC. props ", props);
   return appWrapper ? /*#__PURE__*/React.createElement(AuthProvider, {
     authUser: authUser
-  }, /*#__PURE__*/React.createElement(AppWrapper, null, !isServer ? /*#__PURE__*/React.createElement(ClientRoutes, {
+  }, /*#__PURE__*/React.createElement(AppWrapper, {
+    locale: locale
+  }, !isServer ? /*#__PURE__*/React.createElement(ClientRoutes, {
     goodies: goodies
   }) : /*#__PURE__*/React.createElement(ServerRoutes, {
     goodies: goodies
@@ -171,7 +176,8 @@ const KotiiMainApp = props => {
     authUser,
     isStoreCreated = false,
     reduxEnabled,
-    reduxResources
+    reduxResources,
+    locale
   } = props;
   return /*#__PURE__*/React.createElement(StrictMode, null, /*#__PURE__*/React.createElement(LazySuspense, null, /*#__PURE__*/React.createElement(OptionalDynamiceReduxWrapperLazy, {
     enabled: reduxEnabled,
@@ -181,11 +187,13 @@ const KotiiMainApp = props => {
   }, /*#__PURE__*/React.createElement(AppProvider, {
     appWrapper: appWrapper,
     layout: layout,
-    effectsStore: effectsStore
+    effectsStore: effectsStore,
+    locale: locale
   }, /*#__PURE__*/React.createElement(AppGeneric, {
     isServer: isServer,
     goodies: goodies,
-    authUser: authUser
+    authUser: authUser,
+    locale: locale
   })))));
 };
 const kotiiApp = props => {

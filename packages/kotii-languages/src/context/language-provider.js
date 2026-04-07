@@ -10,64 +10,101 @@ import { addLanguages, initialize } from "../config/config.js";
 const LanguageContext = React.createContext(null);
 //console.log(config);
 
-export const LanguageProvider = (props) => {
+// export const LanguageProvider = (props) => {
+//   const { t, i18n } = useTranslation();
+//   const [language, setCurrentLanguage] = useState(
+//     props.language || i18n.language
+//   );
+
+//   const { children, ln, translations } = props;
+//   const [updateLanguages, setUpdateLanguages] = useState(null);
+//   const [languageName, setLanguageName] = useState("english");
+//   //const [languagesSet, setLanguagesSet] = useState(false);
+
+//   // console.log("the children;;", ln);
+//   console.log("PROVIDER TRANSLATIONS", props);
+//   console.log("children", children);
+//   console.log("ln", ln);
+
+//   initialize();
+
+//   useEffect(() => {
+//     addLanguages(translations);
+//     //removeDefaultLanguage(translations, setLanguagesSet);
+//     setUpdateLanguages(translations);
+//   }, []);
+
+//   useEffect(() => {
+//     console.log("UpdateLanguages updated", updateLanguages);
+//     console.log("NewLanguages;;;", i18n.languages);
+//   }, [updateLanguages]);
+
+//   const changeCurrentLanguage = (language, langName) => {
+//     setLanguageName(langName);
+//     i18n.changeLanguage(language, () => {
+//       setCurrentLanguage(language);
+//     });
+//   };
+//   const getLanguageNames = () => {
+//     return translations.map((trans) => {
+//       return { name: trans.label, locale: trans.locale };
+//     });
+//   };
+//   const get = (message = "") => {
+//     console.log("GET MESSAGE;;;", message);
+//     console.log(t);
+//     return t(message);
+//   };
+
+//   //if (!languagesSet) return null;
+
+//   return (
+//     <LanguageContext.Provider
+//       value={{
+//         language,
+//         changeCurrentLanguage,
+//         get,
+//         getLanguageNames,
+//         languageName,
+//         translations,
+//         setCurrentLanguage,
+//       }}
+//     >
+//       {children}
+//     </LanguageContext.Provider>
+//   );
+// };
+
+export const LanguageProvider = ({ children, ln = "en", translations }) => {
   const { t, i18n } = useTranslation();
-  const [language, setCurrentLanguage] = useState(
-    props.language || i18n.language
-  );
 
-  const { children, ln, translations } = props;
-  const [updateLanguages, setUpdateLanguages] = useState(null);
-  const [languageName, setLanguageName] = useState("english");
-  //const [languagesSet, setLanguagesSet] = useState(false);
+  // Load translations synchronously
+  translations.forEach(({ locale, trans }) => {
+    if (!i18n.hasResourceBundle(locale, "translations")) {
+      i18n.addResourceBundle(locale, "translations", trans);
+    }
+  });
 
-  // console.log("the children;;", ln);
-  console.log("PROVIDER TRANSLATIONS", props);
-  console.log("children", children);
-  console.log("ln", ln);
+  // Set language BEFORE render
+  if (i18n.language !== ln) {
+    i18n.changeLanguage(ln);
+  }
 
-  initialize();
-
-  useEffect(() => {
-    addLanguages(translations);
-    //removeDefaultLanguage(translations, setLanguagesSet);
-    setUpdateLanguages(translations);
-  }, []);
-
-  useEffect(() => {
-    console.log("UpdateLanguages updated", updateLanguages);
-    console.log("NewLanguages;;;", i18n.languages);
-  }, [updateLanguages]);
-
-  const changeCurrentLanguage = (language, langName) => {
-    setLanguageName(langName);
-    i18n.changeLanguage(language, () => {
-      setCurrentLanguage(language);
-    });
+  const changeCurrentLanguage = (language) => {
+    i18n.changeLanguage(language);
   };
-  const getLanguageNames = () => {
-    return translations.map((trans) => {
-      return { name: trans.label, locale: trans.locale };
-    });
-  };
-  const get = (message = "") => {
-    console.log("GET MESSAGE;;;", message);
-    console.log(t);
-    return t(message);
-  };
-
-  //if (!languagesSet) return null;
 
   return (
     <LanguageContext.Provider
       value={{
-        language,
+        get: t,
+        language: i18n.language,
         changeCurrentLanguage,
-        get,
-        getLanguageNames,
-        languageName,
-        translations,
-        setCurrentLanguage,
+        getLanguageNames: () =>
+          translations.map(({ label, locale }) => ({
+            name: label,
+            locale,
+          })),
       }}
     >
       {children}
