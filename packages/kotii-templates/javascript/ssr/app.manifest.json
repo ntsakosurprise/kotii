@@ -26,33 +26,27 @@
       }
     ]
   },
-  "staticBuildSettings": {
-    "markdown": {
-      "runType": "dynamic"
-    }
-  },
-  "pages": {
-    "onNewPage": {
-      "openPage": true
-    },
-    "onDeleteOfPage": {
-      "openPage": "/"
-    }
-  },
   "useHttps": true,
   "useCustomDomain": true,
   "useSetPort": true,
   "useInlinedPngs": true,
   "useAsDefaultPage": "/",
-  "useLazyLoad": true,
   "build": "build",
-  "static": "static",
+  "assets": "assets",
+  "ssg": {
+    "useLocalRelativeUrls": true,
+    "localization": {
+      "locales": ["en", "ts"],
+      "defaultLocale": "en"
+    }
+  },
   "aliases": {
     "Layouts": "/src/components/layout/index",
     "Pages": "/src/components/pages/index",
     "Docs": "/src/components/docs/index",
     "Markdowns": "/src/mds/",
     "Modules": "/src/modules/",
+    "Models": "/src/models/index",
     "Startup": "/src/components/startup/index",
     "UI": "/src/components/ui/index",
     "Config": "/src/config/index",
@@ -67,7 +61,9 @@
     "Services": "/src/services/",
     "Constants": "/src/constants/",
     "Assets": "/src/assets/index",
-    "AppGlobals": "/src/globals/index"
+    "AppGlobals": "/src/globals/index",
+    "Shared": "/src/shared/index",
+    "App-Api": "/src/api/index"
   },
   "file-loader": {
     "name": "[name].[ext]",
