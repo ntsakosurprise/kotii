@@ -32,7 +32,7 @@ methods.handleStaticGeneration = function (data) {
   const { routes, routesObject, resources } = dataToConfig;
   const { appManifest } = resources;
   const { ssg = {} } = appManifest;
-  const { useLocalRelativeUrls = false } = ssg;
+  const { useLocalRelativeUrls = false, localization = null } = ssg;
   const getWorkingFolder = pao.pa_getWorkingFolder;
 
   self.debug("THE DATA OF SSG PLUGIN", dataToConfig);
@@ -48,10 +48,10 @@ methods.handleStaticGeneration = function (data) {
   });
 
   self
-    .renderApp(routes)
+    .renderApp(routes, localization)
     // eslint-disable-next-line no-undef
-    .then(({ htmlViews, styles, jsStaticFilesToSave = null } = rendered) => {
-      self.debug("THE HTML on render app", htmlViews);
+    .then(({ localesViews, styles, jsStaticFilesToSave = null } = rendered) => {
+      self.debug("THE HTML on render app", localesViews);
 
       const DIST = self.createDistFolder(
         `${resources.appFolder}${path.sep}dist`
@@ -68,67 +68,74 @@ methods.handleStaticGeneration = function (data) {
         styles,
         jsStaticFilesToSave,
       });
-      htmlViews.forEach((html) => {
-        // let pagesFolder =  `${DIST}${path.sep}pages`
-        // if(!fs.existsSync(pagesFolder)) makeFolderSync(pagesFolder)
-        let pagePath = !html.staticPath.trim()
-          ? []
-          : html.staticPath.trim().split("/").filter(Boolean);
+      localesViews.forEach(({ htmlViews, locale }) => {
+        console.log("THE CURRENT LOCAL FILES", locale);
+        let localeFolder = `${DIST}${path.sep}${locale}`;
+        if (!fs.existsSync(localeFolder)) makeFolderSync(localeFolder);
+        htmlViews.forEach((html) => {
+          // let pagesFolder =  `${DIST}${path.sep}pages`
+          // if(!fs.existsSync(pagesFolder)) makeFolderSync(pagesFolder)
+          let pagePath = !html.staticPath.trim()
+            ? []
+            : html.staticPath.trim().split("/").filter(Boolean);
+          console.log("THE PAGE PATH", pagePath);
 
-        if (useLocalRelativeUrls) {
-          html.content = self.rewriteHtmlString(
-            html.content,
-            html,
-            pathsTables
-          );
-        }
+          if (useLocalRelativeUrls) {
+            html.content = self.rewriteHtmlString(
+              html.content,
+              html,
+              pathsTables
+            );
+          }
 
-        if (pagePath.length > 1) {
-          let fileName = pagePath.pop();
-          console.log("THE PAGE PAGE", fileName, pagePath);
-          let possibleFolderPath = "";
-          pagePath.forEach((folder, i) => {
-            console.log("THE FOLDER INDEX", i, folder);
-            console.log("THE PREVIOUS FOLDER", pagePath[pagePath.length - i]);
-            let currentFolderPath = `${DIST}${path.sep}${folder}`;
-            if (!fs.existsSync(`${currentFolderPath}`)) {
-              if (possibleFolderPath.trim()) {
-                let pathToMake = `${possibleFolderPath}${path.sep}${folder}`;
-                if (!fs.existsSync(pathToMake)) makeFolderSync(pathToMake);
-                possibleFolderPath = pathToMake;
+          if (pagePath.length > 1) {
+            let fileName = pagePath.pop();
+            console.log("THE PAGE PAGE", fileName, pagePath);
+            let possibleFolderPath = "";
+            pagePath.forEach((folder, i) => {
+              console.log("THE FOLDER INDEX", i, folder);
+              console.log("THE PREVIOUS FOLDER", pagePath[pagePath.length - i]);
+              let currentFolderPath = `${localeFolder}${path.sep}${folder}`;
+              if (!fs.existsSync(`${currentFolderPath}`)) {
+                if (possibleFolderPath.trim()) {
+                  let pathToMake = `${possibleFolderPath}${path.sep}${folder}`;
+                  if (!fs.existsSync(pathToMake)) makeFolderSync(pathToMake);
+                  possibleFolderPath = pathToMake;
+                } else {
+                  makeFolderSync(currentFolderPath);
+                  possibleFolderPath = currentFolderPath;
+                }
               } else {
-                makeFolderSync(currentFolderPath);
                 possibleFolderPath = currentFolderPath;
               }
-            } else {
-              possibleFolderPath = currentFolderPath;
-            }
-          });
-          console.log("THE POSSIBLE FOLDER PATH", possibleFolderPath);
+            });
+            console.log("THE POSSIBLE FOLDER PATH", possibleFolderPath);
 
-          self.savePageToFile(
-            `${possibleFolderPath}/${html.name.toLowerCase()}.html`,
-            html.content
-          );
-        } else {
-          self.savePageToFile(
-            `${DIST}${path.sep}${html.name.toLowerCase()}.html`,
-            self.formatAndSaveHtml(html.content)
-          );
-        }
+            self.savePageToFile(
+              `${possibleFolderPath}/${html.name.toLowerCase()}.html`,
+              html.content
+            );
+          } else {
+            self.savePageToFile(
+              `${localeFolder}${path.sep}${html.name.toLowerCase()}.html`,
+              self.formatAndSaveHtml(html.content)
+            );
+          }
 
-        // self.savePageToFile(
-        //   `${DIST}${path.sep}${html.name.toLowerCase()}.html`,
-        //   html.content
-        // )
+          // self.savePageToFile(
+          //   `${DIST}${path.sep}${html.name.toLowerCase()}.html`,
+          //   html.content
+          // )
+        });
       });
+
       setCall({ message: "Static html has completed" });
     })
     .catch((err) => {
       self.debug("RENDERAPP REJECTED", err);
     });
 };
-methods.renderApp = function (views) {
+methods.renderApp = function (views, localization) {
   const self = this;
   const staticMetaData = {
     css: "index.css",
@@ -142,6 +149,7 @@ methods.renderApp = function (views) {
         views: views,
         info: staticMetaData,
         staticRender: true,
+        localization,
         callback: (data) => {
           resolve(data);
         },
