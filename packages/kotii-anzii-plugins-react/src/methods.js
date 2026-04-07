@@ -80,41 +80,152 @@ methods.processViewAfterCheck = function (data, authData = null) {
 
 methods.handleReactStaticViews = function (data) {
   const self = this;
-  // self.debug("Static Views");
+
   self.callback = data.callback;
   self.effectsData = {};
 
   self.debug("THE VIEW DATA", data);
-  const { views, info } = data;
-  let mappedPromises = views.map(async (view) => {
-    let gotHtmlView = await self.runReactView({
-      view: {
-        match: view.path,
-        htmlPath: view.htmlPath,
-        staticPath: view.staticPath,
-        componentSourcePath: view?.componentSourcePath || null,
-      },
-      route: view,
-      staticRender: true,
-      info: info,
+
+  const { views, info, localization = null } = data;
+  const { locales = ["en"] } = localization || {};
+
+  Promise.all(
+    locales.map((locale) => {
+      return Promise.all(
+        views.map((view) => {
+          return self
+            .runReactView({
+              view: {
+                match: view.path,
+                htmlPath: view.htmlPath,
+                staticPath: view.staticPath,
+                componentSourcePath: view?.componentSourcePath || null,
+              },
+              route: view,
+              staticRender: true,
+              info: info,
+              locale,
+            })
+            .then((gotHtmlView) => {
+              self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
+
+              return {
+                content: gotHtmlView,
+                name: view.name,
+                staticPath: view?.staticPath || "",
+                htmlPath: view?.htmlPath || "",
+              };
+            });
+        })
+      ).then((htmlViews) => {
+        self.debug("ALL VIEWS PROMISES MAPPED", htmlViews);
+
+        return {
+          htmlViews,
+          locale,
+        };
+      });
+    })
+  )
+    .then((localesViews) => {
+      self.callback({
+        localesViews,
+        styles: self.styledTags,
+        jsStaticFilesToSave: self.pageJsPackages,
+      });
+    })
+    .catch((err) => {
+      self.debug("ERROR IN handleReactStaticViews", err);
+      self.callback({ error: err });
     });
-    self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
-    return {
-      content: gotHtmlView,
-      name: view.name,
-      staticPath: view?.staticPath || "",
-      htmlPath: view?.htmlPath || "",
-    };
-  });
-  Promise.all(mappedPromises).then((htmlViews) => {
-    self.debug("ALL VIEWS PROMISES MAPPED", self.styledTags);
-    self.callback({
-      htmlViews,
-      styles: self.styledTags,
-      jsStaticFilesToSave: self.pageJsPackages,
-    });
-  });
 };
+
+// methods.handleReactStaticViews = function (data) {
+//   const self = this;
+//   // self.debug("Static Views");
+//   self.callback = data.callback;
+//   self.effectsData = {};
+
+//   self.debug("THE VIEW DATA", data);
+//   const { views, info,localization=null } = data;
+//   const {locales=["en"]} = localization
+
+//   //let localesViews = []
+//   // locales.forEach((locale)=>{
+//   //   let mappedPromises = views.map(async (view) => {
+//   //   let gotHtmlView = await self.runReactView({
+//   //     view: {
+//   //       match: view.path,
+//   //       htmlPath: view.htmlPath,
+//   //       staticPath: view.staticPath,
+//   //       componentSourcePath: view?.componentSourcePath || null
+//   //     },
+//   //     route: view,
+//   //     staticRender: true,
+//   //     info: info,
+//   //     locale
+//   //   });
+//   //   self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
+//   //   return {
+//   //     content: gotHtmlView,
+//   //     name: view.name,
+//   //     staticPath: view?.staticPath || "",
+//   //     htmlPath: view?.htmlPath || "",
+//   //   };
+//   // });
+
+//   // Promise.all(mappedPromises).then((htmlViews, thisLocale) => {
+//   //   self.debug("ALL VIEWS PROMISES MAPPED", htmlViews);
+//   //   localesViews.push({htmlViews, locale:thisLocale})
+//   // });
+//   // })
+
+//   //  self.callback({ localesViews, styles: self.styledTags,jsStaticFilesToSave:self.pageJsPackages });
+
+//   let localesViews = await Promise.all(
+//   locales.map(async (locale) => {
+//     let htmlViews = await Promise.all(
+//       views.map(async (view) => {
+//         let gotHtmlView = await self.runReactView({
+//           view: {
+//             match: view.path,
+//             htmlPath: view.htmlPath,
+//             staticPath: view.staticPath,
+//             componentSourcePath: view?.componentSourcePath || null
+//           },
+//           route: view,
+//           staticRender: true,
+//           info: info,
+//           locale
+//         });
+
+//         self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
+
+//         return {
+//           content: gotHtmlView,
+//           name: view.name,
+//           staticPath: view?.staticPath || "",
+//           htmlPath: view?.htmlPath || "",
+//         };
+//       })
+//     );
+
+//     self.debug("ALL VIEWS PROMISES MAPPED", htmlViews);
+
+//     return {
+//       htmlViews,
+//       locale
+//     };
+//   })
+// );
+
+// self.callback({
+//   localesViews,
+//   styles: self.styledTags,
+//   jsStaticFilesToSave: self.pageJsPackages
+// });
+
+// };
 methods.handleReactSpa = function (data) {
   const self = this;
   self.debug("Handling ReactView Event", data);
@@ -148,11 +259,12 @@ methods.runReactView = function (data) {
     route = null,
     authUser = null,
     info = null,
+    locale = "ts",
   } = data;
   const { app } = meta;
   const { stateVendor = "" } = app;
 
-  self.debug("THE PROCESS.REACT");
+  self.debug("THE PROCESS.REACT", locale);
 
   // Grab the initial state from our Redux store
   return new Promise(async (resolve) => {
@@ -272,6 +384,7 @@ methods.runReactView = function (data) {
             authUser,
             view,
             context,
+            locale,
           })
         );
         generatedPage = await self.generatePageStaticParts(Page, view);
@@ -798,6 +911,7 @@ methods.createAppElement = function ({
   goodies,
   authUser,
   context,
+  locale,
 }) {
   const self = this;
   const { REACTAPP, React } = self;
@@ -817,6 +931,7 @@ methods.createAppElement = function ({
           effectsStore,
           authUser,
           reduxResources: self.reduxResources,
+          locale,
         })
       )
     );
@@ -835,6 +950,7 @@ methods.createAppElement = function ({
           effectsStore,
           authUser,
           reduxResources: self.reduxResources,
+          locale,
         })
       )
     );
@@ -852,6 +968,7 @@ methods.createAppElement = function ({
           effectsStore,
           authUser,
           reduxResources: self.reduxResources,
+          locale,
         })
       )
     );
@@ -868,6 +985,7 @@ methods.createAppElement = function ({
           effectsStore,
           authUser,
           reduxResources: self.reduxResources,
+          locale,
         })
       )
     );
