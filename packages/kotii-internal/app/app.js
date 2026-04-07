@@ -87,6 +87,7 @@ const ServerApp = ({
   effectsStore,
   authUser = null,
   reduxResources = null,
+  locale,
 } = props) => {
   const store = storeFromSource;
   const existsMeta = fs.existsSync(
@@ -111,6 +112,7 @@ const ServerApp = ({
     isStoreCreated: true,
     reduxEnabled: stateVendor && stateVendor === "redux" ? true : false,
     reduxResources,
+    locale,
   });
 
   // if (stateVendor && stateVendor === "redux") {
@@ -137,13 +139,13 @@ const AppGeneric = (props) => {
   console.log("THE APP GENERIC. Server", ServerRoutes);
   console.log("THE APP GENERIC. Client", ClientRoutes);
   const { appWrapper } = useAppContext();
-  const { isServer = false, goodies = {}, authUser = null } = props;
+  const { isServer = false, goodies = {}, authUser = null, locale } = props;
   const AppWrapper = appWrapper;
   console.log("THE APP GENERIC. props ", props);
 
   return appWrapper ? (
     <AuthProvider authUser={authUser}>
-      <AppWrapper>
+      <AppWrapper locale={locale}>
         {!isServer ? (
           <ClientRoutes goodies={goodies} />
         ) : (
@@ -174,6 +176,7 @@ const KotiiMainApp = (props) => {
     isStoreCreated = false,
     reduxEnabled,
     reduxResources,
+    locale,
   } = props;
 
   return (
@@ -189,11 +192,13 @@ const KotiiMainApp = (props) => {
             appWrapper={appWrapper}
             layout={layout}
             effectsStore={effectsStore}
+            locale={locale}
           >
             <AppGeneric
               isServer={isServer}
               goodies={goodies}
               authUser={authUser}
+              locale={locale}
             />
           </AppProvider>
         </OptionalDynamiceReduxWrapperLazy>
