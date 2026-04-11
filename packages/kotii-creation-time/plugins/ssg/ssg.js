@@ -28,6 +28,7 @@ class Ssg {
     this.shouldAppendHtml = methods.shouldAppendHtml;
     this.localizeHrefUrl = methods.localizeHrefUrl;
     this.formatAndSaveHtml = methods.formatAndSaveHtml;
+    this.localizeAppResources = methods.localizeAppResources;
   }
 }
 export default Ssg;

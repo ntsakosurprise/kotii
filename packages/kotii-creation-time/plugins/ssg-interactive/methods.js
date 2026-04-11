@@ -38,6 +38,7 @@ methods.handleStaticInteractivity = async function (data) {
   const pao = self.pao;
   const { payload } = data;
   const { type = "react", Page, view } = payload;
+
   console.log("HANDLE STATIC INTERACTIVE", view);
 
   if (!self?.REACT_PROXIED) self.createReactProxy();
@@ -101,7 +102,20 @@ methods.handleStaticInteractivity = async function (data) {
 
       self.generatePageJs(parts.interactions).then((results) => {
         console.log("THE GENERATE PAGE RESULTS", results);
-        data.callback(null, {
+        if (!self?.commonCodeSet) {
+          console.log("COMMON CODE CODE SETTING");
+          self["commonCode"] = `
+             ${self.modulesBrowserSkeleton()}\n
+             ${self.getStateUpdater()} \n
+             ${self.getFactoryCreator()}\n
+             ${self.getFactoriesRunner()}\n
+          `;
+
+          self["commonCodeSet"] = true;
+        }
+
+        console.log("COMMON CODE CODE", self.commonCode);
+        let pageResults = {
           html: parts.html,
           pageJs: `var __STATE__=${JSON.stringify(
             self.__STATIC_RUNTIME_STATE
@@ -110,14 +124,21 @@ methods.handleStaticInteractivity = async function (data) {
           )}\n var __REACT_OPT_HOOKS__ = ${JSON.stringify(
             self.__REACT_OPT_HOOKS__
           )}\n
-             ${self.createPackagesRequires()}
-             ${self.getStateUpdater()} \n ${results.pageJs}\n
-             ${self.getFactoryCreator()}\n
-             ${self.getFactoriesRunner()}\n
-             runFactories()
+             ${self.createPackagesRequires()}\n
+             runFactories(__EXTERNALS__, __REACT_OPT_HOOKS__)
             `,
-          pageJsPackages: self.__PACKAGES_CODE__,
-        });
+        };
+        if (self?.commonCode) {
+          pageResults["pageJsPackages"] = [
+            ...self.__PACKAGES_CODE__,
+            { code: self.commonCode },
+          ];
+          self.commonCode = null;
+        } else {
+          pageResults["pageJsPackages"] = self.__PACKAGES_CODE__;
+        }
+
+        data.callback(null, pageResults);
       });
     })
     .catch((err) => {
@@ -742,10 +763,9 @@ methods.createExternalsState = function () {
     }
   });
 
-  self.__PACKAGES_CODE__ = [
-    { code: self.modulesBrowserSkeleton() },
-    ...self.__PACKAGES_CODE__,
-  ];
+  // if(!self?.commonCodeSet){
+  //   self.__PACKAGES_CODE__ = [{code:self.modulesBrowserSkeleton()}, ...self.__PACKAGES_CODE__]
+  // }
 };
 methods.restoreFunctionsForRuntime = function (externals) {
   const self = this;
@@ -1245,7 +1265,7 @@ methods.getFactoryCreator = function () {
 };
 
 methods.getFactoriesRunner = function () {
-  return function runFactories() {
+  return function runFactories(__EXTERNALS__, __REACT_OPT_HOOKS__) {
     //  Object.entries(__EXTERNALS__).forEach((entry)=>{
     //   let ID  = entry[0]
     //   console.log("THE ENTRIES ENTRY",ID)
