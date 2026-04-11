@@ -16,7 +16,11 @@ const ASSETS_FOLDERS = {
 const URL_ATTRS = ["href", "src", "poster"];
 
 const SRCSET_ATTRS = ["srcset"];
-
+const appStatics = [
+  "app-static-bootstrap/bootstrap.js",
+  "app-static-packages/packages.js",
+  "app-static-css/index.css",
+];
 methods.init = function () {
   this.listens({
     "generate-static-content": this.handleStaticGeneration.bind(this),
@@ -56,6 +60,7 @@ methods.handleStaticGeneration = function (data) {
       const DIST = self.createDistFolder(
         `${resources.appFolder}${path.sep}dist`
       );
+      self.DIST = DIST;
       self.debug("THE DIST FOLDER", DIST);
       self.copyPublicToDist(resources.appAssetsPublic, DIST, "index.html");
       self.copyPublicToDist(BUILD, DIST, ["index.html"]);
@@ -84,7 +89,8 @@ methods.handleStaticGeneration = function (data) {
             html.content = self.rewriteHtmlString(
               html.content,
               html,
-              pathsTables
+              pathsTables,
+              locale
             );
           }
 
@@ -242,49 +248,55 @@ methods.savePageToFile = function (filepath, content) {
 methods.postBuildStaticResources = async function (context) {
   const self = this;
   self.debug("THE CONTEXT AGGREGATE PRODUCTION", context);
-  let cssSavePath = `${context.distFolder}/public/assets/css/index.css`;
-  let vendorFolder = `${context.distFolder}/public/assets/vendor`;
-  let appBootstrapPath = `${context.distFolder}/public/assets/vendor/bootstrap.js`;
-  let jsPackagesPath = `${context.distFolder}/public/assets/vendor/packages.js`;
-  let combinedJsFiles = "";
-  let bootStrapCode = null;
-  let files = await self.readFiles(`${context.buildFolder}/public/assets/css`);
-  let cssJoined = files.join(" ");
-  cssJoined += context.styles;
-  let jsPackages = context.jsStaticFilesToSave;
-  // let kotiiBundleSavePath = `${context.appBuildFolder}/.kotii-land/bundle.js`;
-  // let kotiiBundleSaveImportsPath = `${context.appBuildFolder}/.kotii-land/bundle-imports.js`;
-  // let cssModulesMap = self.aggregateAppKotiiMeta(context);
-  // let css = self.aggregateAppCss(context);
-  // let images = self.aggregateAppImages(context);
-  // console.log("THE IMAGES", images, cssSavePath);
-  // console.log("THE CSS MODULES", cssModulesMap);
-  // let kotiiBundleSaveContent = `
-  // const ƒ = ${JSON.stringify(cssModulesMap)};
-  // const appImagesMap = ${JSON.stringify(images)};
-  // export {appModules, appImagesMap};
-  // `;
-  // self.createDistFolder(`${context.distFolder}${path.sep}public/assets/css`);
-  self.createDistFolder(`${vendorFolder}`);
-  // self.createDistFolder(
-  //       `${context.distFolder}${path.sep}img`
-  //     );
-  // self.copyImageFilesSync(context.buildFolder,`${context.distFolder}/img`,['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'])
-  fs.writeFileSync(cssSavePath, cssJoined);
-  if (jsPackages && jsPackages instanceof Array) {
-    jsPackages.forEach((jsPackage) => {
-      jsPackage?.packageName
-        ? (combinedJsFiles += `\n${jsPackage.code}\n`)
-        : (bootStrapCode = jsPackage.code);
-    });
-    console.log("PACKAGES JS", jsPackagesPath, combinedJsFiles);
-    fs.writeFileSync(`${jsPackagesPath}`, combinedJsFiles);
-  }
+  try {
+    let cssSavePath = `${context.distFolder}/public/assets/css/index.css`;
+    let vendorFolder = `${context.distFolder}/public/assets/vendor`;
+    let appBootstrapPath = `${context.distFolder}/public/assets/vendor/bootstrap.js`;
+    let jsPackagesPath = `${context.distFolder}/public/assets/vendor/packages.js`;
+    let combinedJsFiles = "";
+    let bootStrapCode = "";
+    let files = await self.readFiles(
+      `${context.buildFolder}/public/assets/css`
+    );
+    let cssJoined = files.join(" ");
+    cssJoined += context.styles;
+    let jsPackages = context.jsStaticFilesToSave;
+    // let kotiiBundleSavePath = `${context.appBuildFolder}/.kotii-land/bundle.js`;
+    // let kotiiBundleSaveImportsPath = `${context.appBuildFolder}/.kotii-land/bundle-imports.js`;
+    // let cssModulesMap = self.aggregateAppKotiiMeta(context);
+    // let css = self.aggregateAppCss(context);
+    // let images = self.aggregateAppImages(context);
+    // console.log("THE IMAGES", images, cssSavePath);
+    // console.log("THE CSS MODULES", cssModulesMap);
+    // let kotiiBundleSaveContent = `
+    // const ƒ = ${JSON.stringify(cssModulesMap)};
+    // const appImagesMap = ${JSON.stringify(images)};
+    // export {appModules, appImagesMap};
+    // `;
+    // self.createDistFolder(`${context.distFolder}${path.sep}public/assets/css`);
+    self.createDistFolder(`${vendorFolder}`);
+    // self.createDistFolder(
+    //       `${context.distFolder}${path.sep}img`
+    //     );
+    // self.copyImageFilesSync(context.buildFolder,`${context.distFolder}/img`,['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg'])
+    fs.writeFileSync(cssSavePath, cssJoined);
+    if (jsPackages && jsPackages instanceof Array) {
+      jsPackages.forEach((jsPackage) => {
+        jsPackage?.packageName
+          ? (combinedJsFiles += `\n${jsPackage.code}\n`)
+          : (bootStrapCode += jsPackage.code);
+      });
+      console.log("PACKAGES JS", jsPackagesPath, combinedJsFiles);
+      fs.writeFileSync(`${jsPackagesPath}`, combinedJsFiles);
+    }
 
-  console.log("BOOTSTRAP JS", appBootstrapPath, bootStrapCode);
-  if (bootStrapCode) fs.writeFileSync(`${appBootstrapPath}`, bootStrapCode);
-  // fs.writeFileSync(kotiiBundleSavePath, kotiiBundleSaveContent);
-  // fs.writeFileSync(kotiiBundleSaveImportsPath, `${context.pagesSourceCode}`);
+    console.log("BOOTSTRAP JS", appBootstrapPath, bootStrapCode);
+    if (bootStrapCode) fs.writeFileSync(`${appBootstrapPath}`, bootStrapCode);
+    // fs.writeFileSync(kotiiBundleSavePath, kotiiBundleSaveContent);
+    // fs.writeFileSync(kotiiBundleSaveImportsPath, `${context.pagesSourceCode}`);
+  } catch (error) {
+    console.log("APP SSG GENERATION FAILING ON", error);
+  }
 };
 
 methods.readFiles = async function (directoryPath) {
@@ -354,6 +366,39 @@ methods.getDepthFromHtmlPath = function (htmlPath) {
   return htmlPath.replace(/^\//, "").split("/").slice(0, -1).length;
 };
 
+methods.localizeAppResources = function (url, depth, assetType = null) {
+  console.log("THE LOCALIZE RESOUREC", assetType);
+
+  let prefix = "";
+  let prefixPath = "../";
+  let cssPath = "public/assets/css/index.css";
+  let packagesJS = "public/assets/vendor/packages.js";
+  let bootStrapJS = "public/assets/vendor/bootstrap.js";
+  depth === 0
+    ? (prefix = prefixPath)
+    : depth === 1
+    ? (prefix = prefixPath.repeat(depth + 1))
+    : (prefix = prefixPath.repeat(depth));
+  console.log(
+    "THE PREFIX STRING",
+    prefix,
+    "DEPTH",
+    depth,
+    "REPEAT",
+    prefixPath.repeat(depth)
+  );
+
+  if (assetType && assetType === "assets") return prefix + "public" + url;
+
+  if (url.indexOf("index.css") >= 0) {
+    return `${prefix}${cssPath}`;
+  } else if (url.indexOf("bootstrap.js")) {
+    return `${prefix}${bootStrapJS}`;
+  } else {
+    return `${prefix}${packagesJS}`;
+  }
+};
+
 methods.shouldUrlLocalized = function (url) {
   if (!url || !url.trim()) return false;
   if (url.startsWith("#")) return false;
@@ -382,11 +427,33 @@ methods.localizeUrl = function (url, depth) {
 
 methods.localizeHrefUrl = function (url, htmlPath, urlPath = null) {
   const self = this;
+  console.log(
+    "LOCALIZE HREF",
+    "url:",
+    url,
+    "pageHTMLpATH:",
+    htmlPath,
+    "URL MATCH ROUTEBABLE",
+    urlPath
+  );
 
   const normalized = self.normalizeLinkHref(url);
+  console.log("LOCALIZE NORMALIZED", normalized);
+
+  //  if(appStatics.includes(url)){
+
+  //           return `${attr}=${quoted[0]}${rewritten}${quoted[0]}`;
+  //         }
 
   if (!urlPath) {
-    return self.localizeUrl(normalized, self.getDepthFromHtmlPath(htmlPath));
+    if (appStatics.includes(url)) {
+      return self.localizeAppResources(
+        url,
+        self.getDepthFromHtmlPath(htmlPath)
+      );
+    } else {
+      return self.localizeUrl(normalized, self.getDepthFromHtmlPath(htmlPath));
+    }
   } else {
     let urlPathDepth = self.getDepthFromHtmlPath(urlPath);
     let pageDepth = self.getDepthFromHtmlPath(htmlPath);
@@ -475,7 +542,7 @@ methods.validateAsset = function (url, htmlPath, assetIndex) {
   return assetIndex.has(rootPath);
 };
 
-methods.rewriteHtmlString = function (html, page, routesTable) {
+methods.rewriteHtmlString = function (html, page, routesTable, locale) {
   const self = this;
   let out = html;
 
@@ -513,11 +580,26 @@ methods.rewriteHtmlString = function (html, page, routesTable) {
           );
           return `${attr}=${quoted[0]}${rewritten}${quoted[0]}`;
         } else {
-          rewritten = self.localizeUrl(
-            url,
-            self.getDepthFromHtmlPath(page.htmlPath)
-          );
-          return `${attr}=${quoted[0]}${rewritten}${quoted[0]}`;
+          console.log("NONE-HRE ATTR", url);
+          if (appStatics.includes(url)) {
+            rewritten = self.localizeAppResources(
+              url,
+              self.getDepthFromHtmlPath(page.htmlPath)
+            );
+            return `${attr}=${quoted[0]}${rewritten}${quoted[0]}`;
+          } else if (url.indexOf("/assets/") >= 0) {
+            rewritten = self.localizeAppResources(
+              url,
+              self.getDepthFromHtmlPath(page.htmlPath),
+              "assets"
+            );
+            return `${attr}=${quoted[0]}${rewritten}${quoted[0]}`;
+          }
+          // rewritten = self.localizeUrl(
+          //   url,
+          //   self.getDepthFromHtmlPath(page.htmlPath)
+          // );
+          return `${attr}=${quoted[0]}${url}${quoted[0]}`;
         }
       }
 
