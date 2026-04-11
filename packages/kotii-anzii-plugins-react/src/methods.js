@@ -89,55 +89,64 @@ methods.handleReactStaticViews = function (data) {
   const { views, info, localization = null } = data;
   const { locales = ["en"] } = localization || {};
 
-  Promise.all(
-    locales.map((locale) => {
-      return Promise.all(
-        views.map((view) => {
-          return self
-            .runReactView({
-              view: {
-                match: view.path,
-                htmlPath: view.htmlPath,
-                staticPath: view.staticPath,
-                componentSourcePath: view?.componentSourcePath || null,
-              },
-              route: view,
-              staticRender: true,
-              info: info,
-              locale,
-            })
-            .then((gotHtmlView) => {
-              self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
+  try {
+    Promise.all(
+      locales.map((locale) => {
+        return Promise.all(
+          views.map((view) => {
+            return self
+              .runReactView({
+                view: {
+                  match: view.path,
+                  htmlPath: view.htmlPath,
+                  staticPath: view.staticPath,
+                  componentSourcePath: view?.componentSourcePath || null,
+                },
+                route: view,
+                staticRender: true,
+                info: info,
+                locale,
+              })
+              .then((gotHtmlView) => {
+                self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
 
-              return {
-                content: gotHtmlView,
-                name: view.name,
-                staticPath: view?.staticPath || "",
-                htmlPath: view?.htmlPath || "",
-              };
-            });
-        })
-      ).then((htmlViews) => {
-        self.debug("ALL VIEWS PROMISES MAPPED", htmlViews);
+                return {
+                  content: gotHtmlView,
+                  name: view.name,
+                  staticPath: view?.staticPath || "",
+                  htmlPath: view?.htmlPath || "",
+                };
+              });
+          })
+        ).then((htmlViews) => {
+          self.debug("ALL VIEWS PROMISES MAPPED", htmlViews);
 
-        return {
-          htmlViews,
-          locale,
-        };
+          return {
+            htmlViews,
+            locale,
+          };
+        });
+      })
+    )
+      .then((localesViews) => {
+        console.log("THE LOCALES VIEWS", localesViews);
+
+        self.pageJsPackages.push({
+          code: `window.process = {env:${process.env.APP_ENVS}}`,
+        });
+        self.callback({
+          localesViews,
+          styles: self.styledTags,
+          jsStaticFilesToSave: self.pageJsPackages,
+        });
+      })
+      .catch((err) => {
+        self.debug("ERROR IN handleReactStaticViews", err);
+        self.callback({ error: err });
       });
-    })
-  )
-    .then((localesViews) => {
-      self.callback({
-        localesViews,
-        styles: self.styledTags,
-        jsStaticFilesToSave: self.pageJsPackages,
-      });
-    })
-    .catch((err) => {
-      self.debug("ERROR IN handleReactStaticViews", err);
-      self.callback({ error: err });
-    });
+  } catch (error) {
+    console.log("THE HANDLE STATIC ERROR", error);
+  }
 };
 
 // methods.handleReactStaticViews = function (data) {
@@ -390,14 +399,22 @@ methods.runReactView = function (data) {
         generatedPage = await self.generatePageStaticParts(Page, view);
         const { html, pageJs = "", pageJsPackages } = generatedPage;
 
-        self.debug("THE STATIC PART JS FROM SSG", pageJs);
+        self.debug("THE STATIC PART JS FROM SSG", pageJsPackages);
         console.log("THE FINAL STATE", store, store.getState());
         const finalState = store.getState() || store;
         const helmetGenerated = HeadHelmet.renderStatic();
         self.doStyledSheets(sheet, true);
 
         // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
-        self["pageJsPackages"] = pageJsPackages;
+        if (pageJsPackages) {
+          self["pageJsPackages"]
+            ? (self["pageJsPackages"] = [
+                ...self.pageJsPackages,
+                ...pageJsPackages,
+              ])
+            : (self["pageJsPackages"] = pageJsPackages);
+        }
+
         const fullPage = self.renderStaticFullPage({
           html,
           pageJs,
@@ -495,7 +512,6 @@ methods.renderStaticFullPage = function ({
   info,
   head,
   pageJs = "test.js",
-  pageJsPackages,
 } = props) {
   const self = this;
 
@@ -510,15 +526,12 @@ methods.renderStaticFullPage = function ({
     ${head?.meta.toString()}
 
     ${self?.pageSettings || ""}
-    <link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="./public/assets/css/${
-      info.css
-    }" />
+    <link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="app-static-css/index.css" />
     </head>
 		<body ${head.bodyAttributes.toString()}>
 		 <div id="root">${html}</div>
-		<script> window.process = {env:${process.env.APP_ENVS}} </script>
-    <script src="./public/assets/vendor/bootstrap.js"></script>
-    <script src="./public/assets/vendor/packages.js"></script>
+    <script src="app-static-bootstrap/bootstrap.js"></script>
+    <script src="app-static-packages/packages.js"></script>
     <script >${pageJs}</script>
     
      
