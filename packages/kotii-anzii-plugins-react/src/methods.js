@@ -86,7 +86,7 @@ methods.handleReactStaticViews = function (data) {
 
   self.debug("THE VIEW DATA", data);
 
-  const { views, info, localization = null } = data;
+  const { views, info, localization = null, usesRelativeUrls = false } = data;
   const { locales = ["en"] } = localization || {};
 
   try {
@@ -106,6 +106,7 @@ methods.handleReactStaticViews = function (data) {
                 staticRender: true,
                 info: info,
                 locale,
+                usesRelativeUrls,
               })
               .then((gotHtmlView) => {
                 self.debug("THE GOT HTML VIEW", gotHtmlView, view.name);
@@ -268,7 +269,8 @@ methods.runReactView = function (data) {
     route = null,
     authUser = null,
     info = null,
-    locale = "ts",
+    locale = "en",
+    usesRelativeUrls = false,
   } = data;
   const { app } = meta;
   const { stateVendor = "" } = app;
@@ -420,6 +422,7 @@ methods.runReactView = function (data) {
           pageJs,
           head: helmetGenerated,
           info,
+          usesRelativeUrls,
           pageJsPackages,
         });
         self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
@@ -512,8 +515,25 @@ methods.renderStaticFullPage = function ({
   info,
   head,
   pageJs = "test.js",
+  usesRelativeUrls = false,
 } = props) {
   const self = this;
+
+  if (!self?.appAssetsSet) {
+    if (!usesRelativeUrls) {
+      self.staticAssets = {
+        css: "/assets/css/index.css",
+        bootstrap: "/assets/vendor/bootstrap.js",
+        packages: "/assets/vendor/package.js",
+      };
+    } else {
+      self.staticAssets = {
+        css: "app-static-css/index.css",
+        bootstrap: "app-static-bootstrap/bootstrap.js",
+        packages: "app-static-packages/packages.js",
+      };
+    }
+  }
 
   if (self?.htmlPageSettings) self.doPageSettings();
   self.debug("THE HTML IN RENDER FULL", html);
@@ -526,12 +546,14 @@ methods.renderStaticFullPage = function ({
     ${head?.meta.toString()}
 
     ${self?.pageSettings || ""}
-    <link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="app-static-css/index.css" />
+    <link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="${
+      self.staticAssets.css
+    }" />
     </head>
 		<body ${head.bodyAttributes.toString()}>
 		 <div id="root">${html}</div>
-    <script src="app-static-bootstrap/bootstrap.js"></script>
-    <script src="app-static-packages/packages.js"></script>
+    <script src="${self.staticAssets.bootstrap}"></script>
+    <script src="${self.staticAssets.packages}"></script>
     <script >${pageJs}</script>
     
      
