@@ -38,6 +38,7 @@ methods.handleStaticGeneration = function (data) {
   const { ssg = {} } = appManifest;
   const { useLocalRelativeUrls = false, localization = null } = ssg;
   const getWorkingFolder = pao.pa_getWorkingFolder;
+  self.localization = localization;
 
   self.debug("THE DATA OF SSG PLUGIN", dataToConfig);
 
@@ -52,7 +53,7 @@ methods.handleStaticGeneration = function (data) {
   });
 
   self
-    .renderApp(routes, localization)
+    .renderApp(routes, localization, useLocalRelativeUrls)
     // eslint-disable-next-line no-undef
     .then(({ localesViews, styles, jsStaticFilesToSave = null } = rendered) => {
       self.debug("THE HTML on render app", localesViews);
@@ -75,7 +76,7 @@ methods.handleStaticGeneration = function (data) {
       });
       localesViews.forEach(({ htmlViews, locale }) => {
         console.log("THE CURRENT LOCAL FILES", locale);
-        let localeFolder = `${DIST}${path.sep}${locale}`;
+        let localeFolder = localization ? `${DIST}${path.sep}${locale}` : DIST;
         if (!fs.existsSync(localeFolder)) makeFolderSync(localeFolder);
         htmlViews.forEach((html) => {
           // let pagesFolder =  `${DIST}${path.sep}pages`
@@ -141,7 +142,7 @@ methods.handleStaticGeneration = function (data) {
       self.debug("RENDERAPP REJECTED", err);
     });
 };
-methods.renderApp = function (views, localization) {
+methods.renderApp = function (views, localization, useRelativeUrls) {
   const self = this;
   const staticMetaData = {
     css: "index.css",
@@ -156,6 +157,7 @@ methods.renderApp = function (views, localization) {
         info: staticMetaData,
         staticRender: true,
         localization,
+        usesRelativeUrls: useRelativeUrls,
         callback: (data) => {
           resolve(data);
         },
@@ -368,9 +370,9 @@ methods.getDepthFromHtmlPath = function (htmlPath) {
 
 methods.localizeAppResources = function (url, depth, assetType = null) {
   console.log("THE LOCALIZE RESOUREC", assetType);
-
+  const self = this;
   let prefix = "";
-  let prefixPath = "../";
+  let prefixPath = !self?.localization ? "./" : "../";
   let cssPath = "public/assets/css/index.css";
   let packagesJS = "public/assets/vendor/packages.js";
   let bootStrapJS = "public/assets/vendor/bootstrap.js";
@@ -392,7 +394,7 @@ methods.localizeAppResources = function (url, depth, assetType = null) {
 
   if (url.indexOf("index.css") >= 0) {
     return `${prefix}${cssPath}`;
-  } else if (url.indexOf("bootstrap.js")) {
+  } else if (url.indexOf("bootstrap.js") >= 0) {
     return `${prefix}${bootStrapJS}`;
   } else {
     return `${prefix}${packagesJS}`;
