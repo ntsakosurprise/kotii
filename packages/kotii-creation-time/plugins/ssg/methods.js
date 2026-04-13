@@ -36,7 +36,17 @@ methods.handleStaticGeneration = function (data) {
   const { routes, routesObject, resources } = dataToConfig;
   const { appManifest } = resources;
   const { ssg = {} } = appManifest;
-  const { useLocalRelativeUrls = false, localization = null } = ssg;
+  const {
+    useLocalRelativeUrls = false,
+    localization = null,
+    baseUrl = "",
+    robots = [
+      { id: "User-agent", value: "*" },
+      { id: "Disallow", value: "/admin/" },
+      { id: "Disallow", value: "/login/" },
+      { id: "Allow", value: "/" },
+    ],
+  } = ssg;
   const getWorkingFolder = pao.pa_getWorkingFolder;
   self.localization = localization;
 
@@ -48,8 +58,29 @@ methods.handleStaticGeneration = function (data) {
   const BUILD = `${resources.appBuildFolder}`;
 
   const pathsTables = {};
+  const routesForSitemap = [];
   routes.forEach((route) => {
     pathsTables[route.path] = route.htmlPath;
+    let xmlRoute = {
+      loc: `${baseUrl}${route.path}`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: "weekly",
+      priority: 1.0,
+    };
+    if (localization)
+      xmlRoute["alternates"] = localization.locales.map((locale) => {
+        return { hreflang: locale, href: `${baseUrl}/${locale}${route.path}` };
+      });
+    // if(xmlRoute?.media){
+    //   if(xmlRoute.media?.images){
+    //     xmlRoute["images"] =  xmlRoute.media.images.map((img)=>{
+    //       return {
+    //         url:
+    //       }
+    //     })
+    //   }
+    // }
+    routesForSitemap.push(xmlRoute);
   });
 
   self
@@ -78,6 +109,7 @@ methods.handleStaticGeneration = function (data) {
         console.log("THE CURRENT LOCAL FILES", locale);
         let localeFolder = localization ? `${DIST}${path.sep}${locale}` : DIST;
         if (!fs.existsSync(localeFolder)) makeFolderSync(localeFolder);
+
         htmlViews.forEach((html) => {
           // let pagesFolder =  `${DIST}${path.sep}pages`
           // if(!fs.existsSync(pagesFolder)) makeFolderSync(pagesFolder)
@@ -134,7 +166,42 @@ methods.handleStaticGeneration = function (data) {
           //   html.content
           // )
         });
+        !localization
+          ? self.createSiteMap(routesForSitemap, "sitemap.xml")
+          : self.createSiteMap(routesForSitemap, `${locale}.xml`);
       });
+      if (self?.xmlSiteMaps) {
+        if (self.xmlSiteMaps.length === 1) {
+          let sitemap = self.xmlSiteMaps[0];
+          fs.writeFileSync(`${DIST}/public/${sitemap.id}`, sitemap.content);
+        } else {
+          let appSiteMaps = self.xmlSiteMaps;
+          let sitemapsPath = `${DIST}/public/sitemaps`;
+          if (!fs.existsSync(sitemapsPath)) makeFolderSync(sitemapsPath);
+          let siteMaps = appSiteMaps.map((sitemap) => {
+            fs.writeFileSync(`${sitemapsPath}/${sitemap.id}`, sitemap.content);
+            return `
+              <sitemap>
+                  <loc>${baseUrl}/${sitemap.id}</loc>
+                  <lastmod>${sitemap.date}</lastmod>
+              </sitemap>
+
+              `;
+          });
+          let indexSiteMap = self.sitemapsXmlSkeleton(siteMaps.join(""));
+
+          fs.writeFileSync(`${DIST}/public/sitemap.xml`, indexSiteMap);
+        }
+      }
+      if (robots) {
+        let robotsPath = `${DIST}/public/robots.txt`;
+        let robotsString = self.createOrMergeRobotsTxt(
+          robots,
+          baseUrl,
+          robotsPath
+        );
+        fs.writeFileSync(robotsPath, robotsString.trim());
+      }
 
       setCall({ message: "Static html has completed" });
     })
@@ -644,4 +711,91 @@ methods.formatAndSaveHtml = function (htmlContent) {
   return formattedHtml;
 };
 
+methods.createSiteMap = function (sitemapFilteredRoutes, siteMapName) {
+  const self = this;
+
+  let createdSitemapUrls = sitemapFilteredRoutes.map((siteMapRoute) => {
+    let url = `<loc>${siteMapRoute.loc}</loc>\n`;
+
+    if (siteMapRoute?.lastModified)
+      url += `<lastmod>${siteMapRoute.lastModified}</lastmod>\n`;
+    if (siteMapRoute?.changeFrequency)
+      url += `<changefreq>${siteMapRoute.changeFrequency}</changefreq>\n`;
+    if (siteMapRoute?.priority)
+      url += `<priority>${siteMapRoute.priority}</priority>\n`;
+    if (siteMapRoute?.alternates)
+      url += siteMapRoute.alternates
+        .map((alt) => {
+          return `<xhtml:link rel="alternate" hreflang="${alt.hreflang}" href="${alt.href}" />\n`;
+        })
+        .join("");
+    url = self.sitemapXmlPageUrlSkeleton(url);
+    return url;
+  });
+  let sitemapFile = {
+    id: siteMapName,
+    content: self.sitemapXmlSkeleton(createdSitemapUrls.join("")),
+    date: new Date().toISOString(),
+  };
+
+  if (!self.xmlSiteMaps) {
+    self["xmlSiteMaps"] = [sitemapFile];
+  } else {
+    self.xmlSiteMaps.push(sitemapFile);
+  }
+};
+methods.sitemapXmlSkeleton = function (urlsString) {
+  return `
+  <?xml version="1.0" encoding="UTF-8"?>
+  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  ${urlsString}
+  </urlset>
+  </xml>
+  `;
+};
+methods.sitemapsXmlSkeleton = function (siteMaps) {
+  return `
+  <?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${siteMaps}
+</sitemapindex>
+  `;
+};
+methods.sitemapXmlPageUrlSkeleton = function (urlContent) {
+  return `<url>
+    ${urlContent}
+  </url>
+
+    `;
+
+  //     <image:image>
+  //   <image:loc>https://example.com/image.jpg</image:loc>
+  // </image:image>
+  // <video:video>
+  //     <video:thumbnail_loc>${vid.thumbnail_loc}</video:thumbnail_loc>
+  //     <video:title>${escapeXml(vid.title)}</video:title>
+  //     <video:description>${escapeXml(vid.description)}</video:description>
+};
+methods.createOrMergeRobotsTxt = function (robotsData, baseURl, robotsPath) {
+  const self = this;
+
+  let isUserAgentRule = false;
+  let content = robotsData.map((robotRule) => {
+    if (robotRule.id === "User-agent") isUserAgentRule = true;
+    return `${robotRule.id}: ${robotRule.value}`;
+  });
+  if (!fs.existsSync(robotsPath)) {
+    let robotsContent = "";
+
+    if (!isUserAgentRule) {
+      robotsContent = `
+       User-agent: *\n${content.join("\n")}`;
+    } else {
+      robotsContent = `${content.join("\n")}`;
+    }
+    robotsContent = `${robotsContent}\nSitemap: ${baseURl}/sitemap.xml`;
+
+    return robotsContent;
+  }
+};
 export default methods;
