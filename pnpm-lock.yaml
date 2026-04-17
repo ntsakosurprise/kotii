@@ -1780,6 +1780,49 @@ importers:
         specifier: ^29.5.0
         version: 29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5))
 
+  packages/kotii-serve:
+    dependencies:
+      anzii:
+        specifier: 8.0.1
+        version: 8.0.1
+      arg:
+        specifier: ^4.1.3
+        version: 4.1.3
+      args:
+        specifier: ^5.0.3
+        version: 5.0.3
+      chalk:
+        specifier: ^4.1.0
+        version: 4.1.2
+      clear:
+        specifier: ^0.1.0
+        version: 0.1.0
+      clui:
+        specifier: ^0.3.6
+        version: 0.3.6
+      console-table-printer:
+        specifier: ^2.12.1
+        version: 2.15.0
+      execa:
+        specifier: ^4.0.3
+        version: 4.1.0
+      figlet:
+        specifier: ^1.5.0
+        version: 1.9.4
+      inquirer:
+        specifier: ^7.3.3
+        version: 7.3.3
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.21.0
+        version: 9.39.1
+      cross-env:
+        specifier: ^10.1.0
+        version: 10.1.0
+      jest:
+        specifier: ^29.5.0
+        version: 29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5))
+
   packages/kotii-styled:
     dependencies:
       styled-components:
@@ -3710,13 +3753,13 @@ packages:
       anzii: 8.0.1
 
   '@kotii/anzii-plugins-filerouter@file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz':
-    resolution: {integrity: sha512-jTthaeHQyRGJ1AtQrfArZLata+TtF56BrjPuIoyjoDsphUGyX4ro0zxb8AS9DEri3qyDYPDS7XPGFom+oTbdMQ==, tarball: file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz}
+    resolution: {integrity: sha512-RHWXGscMknlm1mYuMBz3IJ4PtmS+Dj8WbH+UXFCviAnBG7szNRcv4z130Yx6IQz5xrQo5U3TBrvd+dSsyUNE/g==, tarball: file:packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz}
     version: 1.0.0-beta.1.0
     peerDependencies:
       anzii: 8.0.1
 
   '@kotii/anzii-plugins-react@file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz':
-    resolution: {integrity: sha512-qBfIVWWHWTz58My9OZz/TQ3PkZGgbOlVk/2Z9NzjS0TNIAPy4deNUkg+JnEMCjAC+54baQqZ0mj5IMqKngn2Eg==, tarball: file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz}
+    resolution: {integrity: sha512-TazaqCnFOP1HKYtG/DvQahkVmNHVOHTAZk8K5txRdH/txoOPU8fyezA0/VqmBsrbeiMKNgS0FDbL6HyxWHVkvQ==, tarball: file:packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz}
     version: 1.0.0-beta.1.0
     peerDependencies:
       anzii: 8.0.1
@@ -8955,22 +8998,15 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
 
-  kotii-components@file:packages/kotii-components/kotii-components-1.0.0-beta.1.0.tgz:
-    resolution: {integrity: sha512-h7f6OF0TpLmo8ZmPq9z8F0YVYNn9Od6mq16rvXy+EIWsQqMxlsobUqpBh7nQGirOjwDfgy3jwhSjc8YmdwS84w==, tarball: file:packages/kotii-components/kotii-components-1.0.0-beta.1.0.tgz}
-    version: 1.0.0-beta.1.0
-    peerDependencies:
-      react: ^18.2.0
-      react-dom: ^18.2.0
-
   kotii-components@file:packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz:
-    resolution: {integrity: sha512-96uItmjl8ms0xy6IhghZSxy7LiLkNB/kmlcbxS5eHT7UZqSisrMXgGo/IEVD80wmV4c650WCcQgQOIIesBm2hQ==, tarball: file:packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz}
+    resolution: {integrity: sha512-X6Qj9rtvyGnsTh19RvaaPDiTAZTBvhg6rd/tg8tGnKRANYpw+55QBzxnAiLRu8U4ytWO4W/Gmc/05TvvGu4IyQ==, tarball: file:packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz}
     version: 1.0.0-beta.2.0
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
 
   kotii-creation-time@file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.2.0.tgz:
-    resolution: {integrity: sha512-n0F7ikaHPUpIMtboL1lazNHrFmF+a+JOQVnPXGlTD6EqBqpGfDKSoIZl1Dfo39ZbjZL+Ybd9dAR1Kddc5IPRsA==, tarball: file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.2.0.tgz}
+    resolution: {integrity: sha512-FPHBk38w5qMBVVFCfsi9Vqw+kb7CtDVULl5XYsqk+5saHVAIxO9/O1tm5N137H9iTHYduFgtBuQ70hgJS4F3LA==, tarball: file:packages/kotii-creation-time/kotii-creation-time-1.0.0-beta.2.0.tgz}
     version: 1.0.0-beta.2.0
 
   kotii-head@file:packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz:
@@ -8981,7 +9017,7 @@ packages:
       react-dom: ^18.2.0
 
   kotii-internal@file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz:
-    resolution: {integrity: sha512-QDbE4phHUvY8w4ZUTUI8OLavbGI3x9rSmXwtMfhszJWLlF9mprXtUaRfm6FCglb8WeiiPvwLRpjKFbHCeVvaUw==, tarball: file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz}
+    resolution: {integrity: sha512-Xrl29vV3yABO54wCClkh2jlXWJ7avQYMDBGpLf0cnee82AAPJXlHJjgOpsqLhP0lq9bYd0OcdQb5nn2i1T3bIQ==, tarball: file:packages/kotii-internal/kotii-internal-1.0.0-beta.1.0.tgz}
     version: 1.0.0-beta.1.0
     peerDependencies:
       react: ^18.2.0
@@ -21944,12 +21980,6 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       react-helmet: 6.1.0(react@18.3.1)
 
-  kotii-components@file:packages/kotii-components/kotii-components-1.0.0-beta.1.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-helmet: 6.1.0(react@18.3.1)
-
   kotii-components@file:packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
@@ -22063,7 +22093,7 @@ snapshots:
       anzii: 8.0.1
       arg: 4.1.3
       kotii-auth: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      kotii-components: file:packages/kotii-components/kotii-components-1.0.0-beta.1.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      kotii-components: file:packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-head: file:packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-runtime: 1.0.0-beta.1.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))
       react: 18.3.1
