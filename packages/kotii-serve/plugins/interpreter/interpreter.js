@@ -26,15 +26,15 @@ class Interpreter {
     this.prompt = methods.prompt;
     this.outPut = methods.outPut;
     this.showAvailableCommands = methods.showAvailableCommands;
-    this.createKotiiAppCommandHelpOption =
-      methods.createKotiiAppCommandHelpOption;
+    this.createKotiiServveCommandHelpOption =
+      methods.createKotiiServveCommandHelpOption;
     this.help = methods.help;
     this.version = methods.version;
     this.parseCommands = methods.parseCommands;
     this.processOptionsAsCommands = methods.processOptionsAsCommands;
     this.createCommandAlias = methods.createCommandAlias;
     this.capitalizeFirstLetter = methods.capitalizeFirstLetter;
-    this.createApp = methods.createApp;
+    this.spa = methods.spa;
     this.commandOptionMissing = methods.commandOptionMissing;
     this.validateStringFlags = methods.validateStringFlags;
     this.getFlagsAsTasks = methods.getFlagsAsTasks;
