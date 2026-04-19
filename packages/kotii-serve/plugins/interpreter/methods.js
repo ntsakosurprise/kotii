@@ -25,7 +25,7 @@ methods.handleInterpreterCliInput = async function (data) {
   let stopFurtherExecution = false;
 
   const commands = self.parseCommands();
-  self.logSync("THE COMMANDS", commands);
+  self.debug("THE COMMANDS", commands);
 
   const filtered = self.processOptionsAsCommands(commands.options);
   // console.log("THE FILTERED", filtered);
@@ -335,7 +335,7 @@ methods.version = function () {
   // console.log(help)
 };
 
-methods.createKotiiAppCommandHelpOption = function () {
+methods.createKotiiServveCommandHelpOption = function () {
   const self = this;
   const chalk = self.chalk;
 
@@ -566,13 +566,13 @@ methods.parseCommands = function () {
 methods.processOptionsAsCommands = function (options) {
   const self = this;
   const { pao, commands } = self;
-  // console.log("COMMANDS FROM SELF", commands, options);
+  self.debug("COMMANDS FROM SELF", commands, options);
 
   const entries = Object.keys(commands).map((en, i) => en.toLowerCase());
   // console.log("ENTRIES LOWERCASED", entries);
   const command = options[0];
   const commandIndex = entries.indexOf(command);
-  // console.log("COMMAND INDEX", commandIndex);
+  self.debug("COMMAND INDEX", commandIndex);
   const definedCommand = commandIndex >= 0 ? command : null;
   return {
     shouldDoCommand: definedCommand ? true : false,
@@ -600,30 +600,31 @@ methods.capitalizeFirstLetter = function (text) {
   return `${text.slice(0, 1).toUpperCase()}${text.slice(1)}`;
 };
 
-methods.createApp = function (commandData, flags = []) {
+methods.spa = function (commandData, flags = []) {
   // console.log("COMMAND, OPTIONS, FLAGS", flags);
   // console.log("COMMAND OPTIONS", commandData);
   const self = this;
-  const stringFlags = ["--type", "--template", "--packager"];
+  const stringFlags = ["--folder"];
   const help = flags["--help"] ? true : false;
   let tasks = null;
-  if (help) return self.createKotiiAppCommandHelpOption();
+  if (help) return self.createKotiiServveCommandHelpOption();
   if (!self.validateStringFlags(flags, stringFlags)) return;
   tasks = self.getFlagsAsTasks(flags);
-  self.infoSync("tasks");
-  self.infoSync(tasks);
+  self.debug("tasks");
+  self.debug(tasks);
 
   const { commandOptions, command } = commandData;
   if (commandOptions.length === 0) {
     let message = `Command: ${command}, requires app name, please specify the name of your app`;
     return self.commandOptionMissing(message);
   }
-  let appName = commandOptions[0];
+  let folder = commandOptions[0];
+  self.debug("THE APP NAME", folder, command);
   self.emit({
-    type: "scaffold-app",
+    type: `run-${command}`,
     data: {
       command: {
-        appName,
+        folder: folder,
         commandName: command,
         tasks,
       },
@@ -634,26 +635,26 @@ methods.createApp = function (commandData, flags = []) {
 
 methods.validateStringFlags = function (flags, players) {
   const self = this;
-  const contains = self.pao.pa_contains;
-  const validations = self.messages;
-  // const help = flags["--help"] ? true : false;
+  // const contains = self.pao.pa_contains;
+  // const validations = self.messages;
+  // // const help = flags["--help"] ? true : false;
 
-  // if (help) return self.createKotiiAppCommand();
-  let pLen = players.length;
+  // // if (help) return self.createKotiiAppCommand();
+  // let pLen = players.length;
 
-  for (let p = 0; p < pLen; p++) {
-    let pItem = players[p];
+  // for (let p = 0; p < pLen; p++) {
+  //   let pItem = players[p];
 
-    if (flags[pItem]) {
-      let flagItemValue = flags[pItem];
-      let validKeys = validations[pItem].validKeys;
+  //   if (flags[pItem]) {
+  //     let flagItemValue = flags[pItem];
+  //     let validKeys = validations[pItem].validKeys;
 
-      if (!contains(validKeys, flagItemValue)) {
-        self.commandOptionMissing(validations[pItem].invalidOption);
-        return { valid: false };
-      }
-    }
-  }
+  //     if (!contains(validKeys, flagItemValue)) {
+  //       self.commandOptionMissing(validations[pItem].invalidOption);
+  //       return { valid: false };
+  //     }
+  //   }
+  // }
 
   return { valid: true };
 };
