@@ -6,11 +6,7 @@ class Spa {
 
     this.init = methods.init;
     this.handleSpaCommand = methods.handleSpaCommand;
-    this.doStartUp = methods.doStartUp;
-    this.copyFromToFolder = methods.copyFromToFolder;
-    this.createFolder = methods.createFolder;
-    this.doProdRoutes = methods.doProdRoutes;
-    this.getEnvVariables = methods.getEnvVariables;
+    this.handleCatchAll = methods.handleCatchAll;
   }
 }
 export default Spa;
