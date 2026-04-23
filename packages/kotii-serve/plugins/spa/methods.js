@@ -37,7 +37,8 @@ methods.handleSpaCommand = function (data) {
 methods.handleCatchAll = function (data) {
   const self = this;
 
-  let html = path.resolve(__dirname, self.folderName, "index.html");
+  let html = path.resolve(process.cwd(), self.folderName);
+  self.debug("HTML PATH", html);
   self.callback({
     html: html,
   });
