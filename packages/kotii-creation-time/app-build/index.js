@@ -1,4 +1,4 @@
 import run from "../run.js";
 export const build = () => {
-  run();
+  run("build");
 };
