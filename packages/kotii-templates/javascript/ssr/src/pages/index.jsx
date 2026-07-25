@@ -4,7 +4,7 @@ import { CONFIG } from "Config";
 // import SearchImage from "../assets/docs_search.png";
 // import StonesJPG from "../assets/stones.jpg";
 import { loggas } from "kotii-logger";
-import { Head, useUniversalEffect } from "kotii";
+import { Head, useUniversalEffect, Interactive } from "kotii";
 import styled from "kotii-styled";
 import React from "react";
 import { AiFillFile, AiFillFolder } from "react-icons/ai/index.js";
@@ -17,6 +17,8 @@ import User from "../state/user.xml";
 import * as actions from "../store/home/actions.js";
 import colorStyles from "../styles/color.module.less";
 import "../styles/index.css";
+import {useLanguage} from "kotii-languages"
+
 // import "../global.css"
 
 const Main = styled("div")({
@@ -114,7 +116,7 @@ const Path = () => {
 
         <PathIcon>
           <AiFillFolder color="#00BFA5" />
-          <PathText>pages</PathText>
+          <PathText>pagez</PathText>
           <PathPointer>
             <FaLongArrowAltRight />
           </PathPointer>
@@ -203,7 +205,7 @@ const UserComp = (props) => {
   return null;
 };
 
-const Index = () => {
+const Index = (test="my test prop") => {
   loggas.app.log("THE ENVIRONMENT CONFIG", CONFIG.GITHUB_APP_ID);
   loggas.app.log("OUR NODE ENV", process.env.NODE_ENV);
   loggas.app.log("OUR IMAGES: SEARCH", images.SearchImage);
@@ -212,6 +214,16 @@ const Index = () => {
   loggas.app.log("USER XML", User);
   loggas.app.log("NAMES", names);
   console.log("THE COLOR STYLES", colorStyles);
+  console.log("USE LANGUAGES",useLanguage)
+  
+   const {  language,
+        changeCurrentLanguage,
+        get,
+        getLanguageNames,
+        languageName,
+        translations, } = useLanguage();
+   console.log("THE LANUGAGES", translations, get)
+   console.log("HEADER ITEM",get("home.instruction"))
   // const peopleList = useSelector((state) => {
   //   loggas.app.log("STATE RECEIVED", state);
   //   return state.homeReducer.people;
@@ -240,18 +252,24 @@ const Index = () => {
   );
   return (
     <Main className="app-background">
-      <Head title={"Kotii Framework Boilerplate"} />
+      {/* <Head title={"Kotii Framework Boilerplate TEST"} /> */}
       <Hero>
         <HeroText>
-          sbhale, saved, and see your changes reflected in real-time. Get
-          started by going to:
+          VuxA Kianda, {get("home.instruction")}
         </HeroText>
         {/* <Hero>{names[0]}</Hero> */}
         <Path />
         <StyledButton>
           <ButtonBackCard />
           {/* <ButtonFrontCard onClick={doList}>Learn More </ButtonFrontCard> */}
-          <ButtonFrontCard>My Button </ButtonFrontCard>
+        <Interactive>
+            <ButtonFrontCard onClick={(e)=>{
+              e.preventDefault()
+              console.log("IM THE BUTTON THAT HAS BEE CLICKED")
+
+            }}>
+            </ButtonFrontCard> 
+          </Interactive>
         </StyledButton>
 
         {/* {peopleList ? <PeopleList people={peopleList} /> : null} */}
@@ -269,7 +287,7 @@ const Index = () => {
           <span>I'm a span with color</span>
           <small>I'm a small with color</small>
           <strong>I'm a strong with color</strong>
-          <blockquote>next sibling</blockquote>
+          {/* <blockquote>next sibling</blockquote> */}
         </p>
         {/* <p className="text-color-yellow text-lg test-class" id="kotii-test-element">
           The effect DATA: {dataTwo?.actor?.age || "nothing"}
@@ -298,7 +316,7 @@ const Index = () => {
 //   return store.dispatch(actions.showPeopleList());
 // };
 
-export const getServerState = (store) => {
+export const getServerState = async (store) => {
   return store.dispatch(actions.showUser());
 };
 const runAsEffect = () => {

@@ -2,10 +2,12 @@
 @import url("./include.css");
 @import url("./include_2.css");
 @import url("./include_3.css");
+@import url("./jo_index.css");
+@import url("./jo_style.css");
 .text-color {
   color: rgb(38, 0, 255) !important;
 }
 
 .text-color-yellow {
-  color: rgb(26, 102, 105) !important;
+  color: rgb(17, 209, 209) !important;
 }

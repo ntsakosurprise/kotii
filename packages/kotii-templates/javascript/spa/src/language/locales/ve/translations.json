@@ -1,0 +1,19 @@
+
+{
+ 
+  "header":{
+  "home": "hayani",
+  "posts": "maṅwalo",
+  "connection": "vhukwamani",
+  "about": "nga ha",
+  "todo": "zwine zwa tea u itwa",
+  "goals": "zwipikwa"
+},
+  "common": {
+    "greetings": "Ndaa",
+    "message": "Vho vuwa hani?"
+  },
+  "home": {
+    "instruction": "Zwo vhulungwa, nahone ni do vhona tshanduko dzau dzi tshi vhonala nga tshifhinga tsha vhukuma. Thomani nga u ya kha:"
+  }
+}

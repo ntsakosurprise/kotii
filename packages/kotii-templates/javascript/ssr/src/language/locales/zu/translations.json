@@ -1,0 +1,20 @@
+
+
+{
+ 
+  "header":{
+  "home": "ekhaya",
+  "posts": "okuthunyelwe",
+  "connection": "ukuxhumana",
+  "about": "mayelana",
+  "todo": "okumele kwenziwe",
+  "goals": "izinhloso"
+  },
+  "common": {
+   "greetings": "Ngisekhaya",
+  "message": "Ngizizwa njengomdlali webhola, osanda kuthola isheke"
+  },
+  "home": {
+    "instruction": "Kulondoloziwe, futhi uzobona izinguquko zakho zibonakala ngesikhathi sangempela. Qala ngokuya ku:"
+  }
+}

@@ -1,0 +1,19 @@
+
+{
+ 
+  "header":{
+  "home": "gae",
+  "posts": "diposo",
+  "connection": "dikgokagano",
+  "about": "ka ga",
+  "todo": "tše di swanetšego go dirwa",
+  "goals": "dipakane"
+},
+  "common": {
+    "greetings": "ke lapeng",
+  "message": "Ho shebahala joalo ka mohlala ea sa tsoa fumana cheke"
+  },
+  "home": {
+    "instruction": "Di bolokilwe, gomme o tla bona diphetogo tša gago di bonagala ka nako ya nnete. Thoma ka go ya go:"
+}
+}

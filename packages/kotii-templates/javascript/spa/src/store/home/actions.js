@@ -9,26 +9,33 @@ export const showPeopleList = () => {
   dispatch(showPeopleListSuccess());
 };
 export const showUser = () => {
+  loggas.app.debug("SHOW USER ACTION",CONFIG);
+
   return async (dispatch) => {
     const url = !CONFIG.APP_URL
       ? `${JSON.parse(process.env.KOTII_APP_URL)}/get-users`
       : `${CONFIG.APP_URL}/get-users`;
+loggas.app.debug("THE REQUEST URL",url);
     try {
       const response = await fetch(url, { method: "POST" });
+
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
       }
 
       const json = await response.json();
-      loggas.app.log("rESPONSE AS JSON", json);
       dispatch(showUserSuccess(json));
+
+      return json; 
     } catch (error) {
-      loggas.app.log("FETCH ERROR", error);
-      console.error(error?.message);
+      console.log("THE ACTIONS FETCH ERROR",error)
       dispatch(showUserSuccess({ actor: { name: "Msapu" } }));
+
+      return { actor: { name: "Msapu" } }; 
     }
   };
 };
+
 
 export const showPeopleListSuccess = () => {
   return {

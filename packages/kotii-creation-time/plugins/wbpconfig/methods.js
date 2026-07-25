@@ -80,6 +80,7 @@ methods.handleWebpackConfig = function (data) {
     fs.mkdirSync(contextApp.appSsl);
     process.env["ANZII_APP_USE_HTTPS"] = true;
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+
     loadFile(path.resolve(kotiiKotiiLandPath, ".certsConfig.json"))
       .then((sslConfig) => {
         let config = JSON.parse(sslConfig);

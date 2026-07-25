@@ -23,7 +23,7 @@ const Faqs = () => {
   if (isLoading) return <p>Component is Loading</p>;
   return (
     <div>
-      <Head title={"Faqs page kotii"} />
+      {/* <Head title={"Faqs page kotii"} /> */}
       <p>
         <button
           onClick={() => {

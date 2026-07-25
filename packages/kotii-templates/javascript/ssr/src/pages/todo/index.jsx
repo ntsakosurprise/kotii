@@ -1,15 +1,21 @@
-import { Head } from "kotii";
+import { Head, Interactive} from "kotii";
 import React from "react";
 import "../../styles/color.styl";
 import "../../styles/color.global.scss";
-import styles from "./todo.module.less";
+import styles from "./todo.module.less"
+
 
 const Todo = () => {
-  console.log("THE STYLES", styles);
+   console.log("THE STYLES", styles)
   return (
     <div>
-      <Head title={"Todo page kotii"} />
+      {/* <Head title={"Todo page kotii"} /> */}
       <p className="yellow">Im tHe TODO Page</p>;
+      <Interactive>
+        <button onClick={()=>{
+          console.log("MY NAME IS MY NAME")
+        }}>TODO BUTTON</button>
+      </Interactive>
       <p className={styles["scoped-text"]}>Im styled by scoped classes</p>
       <p className={styles["scoped-text-two"]}>Im styled by scoped 2</p>
       <p className={styles["scoped-text-three"]}>Im styled by scoped 3</p>

@@ -54,7 +54,7 @@ const About = () => {
   console.log("logiy");
   return (
     <div>
-      <Head title={"About page kotii"} />
+      {/* <Head title={"About page kotii"} /> */}
       <p className="green">Im the ABOUT pageZ</p>
       <p>With Users:</p>
       {doUsers()}

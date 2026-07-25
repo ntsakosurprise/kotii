@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import styled from "kotii-styled";
 import React from "react";
-import { Link } from "wouter";
+import { Link } from "kotii-router";
 import KotiiAltSvg from "./kotiiAltSvg.jsx";
 import KotiiSvg from "./kotiiSvg.jsx";
 
@@ -31,7 +31,7 @@ const Brand = (props) => {
   return (
     <StyledBrand>
       <Link
-        href="/"
+        to="/"
         style={{
           display: "flex",
           flexDirection: "row",

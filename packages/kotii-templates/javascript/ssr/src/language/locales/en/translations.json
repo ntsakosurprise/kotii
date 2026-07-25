@@ -1,0 +1,22 @@
+
+{
+ 
+  "header":{
+    
+  "home": "home",
+  "posts": "posts",
+  "connection": "connection",
+  "about": "about",
+  "todo": "todo",
+  "goals": "goals"
+
+  },
+  "common": {
+    "greetings": "Welcome",
+    "message": "How are you doing?",
+    "button":"button"
+  },
+  "home": {
+    "instruction": "saved, an see you changes reflected in real-time. Get started by going to:"
+  }
+}

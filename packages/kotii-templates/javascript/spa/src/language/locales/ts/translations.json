@@ -1,0 +1,19 @@
+
+{
+ 
+  "header":{
+    "home": "kaya",
+    "posts":"tipost",
+    "connection":"konekxini",
+    "about":"hihina",
+    "todo":"swiendlo",
+    "goals":"tigoals"
+  },
+  "common": {
+    "greetings": "Welcome",
+    "message": "How are you doing?"
+  },
+  "home": {
+    "instruction": "Ku hlayisiwa, naswona u ta vona ku cinca ka wena ku kombisa hi nkarhi wa xiviri. Sungula hi ku ya eka:"
+  }
+}

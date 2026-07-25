@@ -15,10 +15,12 @@ const StyledFooter = styled("footer")({
 
 const Footer = () => {
   return (
+    <>
     <StyledFooter>
       <FooterActions />
       <FooterBrand />
     </StyledFooter>
+    </>
   );
 };
 
