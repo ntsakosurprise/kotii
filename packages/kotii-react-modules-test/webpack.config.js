@@ -13,79 +13,88 @@ module.exports = {
     filename: "index.js",
     chunkFilename: "[id].js",
     publicPath: "",
-    // library: "nextgen-docs-react-modules",
-    // libraryTarget: "umd",
   },
-  //devtool: "source-map",
-  // externals: {
-  //   react: {
-  //     root: "React",
-  //     commonjs2: "react",
-  //     commonjs: "react",
-  //     amd: "react",
-  //     umd: "react",
-  //   },
-  //   "react-dom": {
-  //     root: "ReactDOM",
-  //     commonjs2: "react-dom",
-  //     commonjs: "react-dom",
-  //     amd: "react-dom",
-  //     umd: "react-dom",
-  //   },
-  // },
+  resolveLoader: {
+    modules: [
+      "node_modules",
+      path.resolve(__dirname, "node_modules"),
+      path.resolve(__dirname, "../../node_modules"),
+      path.resolve(__dirname, "../../node_modules/.pnpm/node_modules"),
+    ],
+  },
   resolve: {
     extensions: [".js", ".jsx"],
     alias: {
-      Layouts: "/src/components/layout/index",
-      Pages: "/src/components/pages/index",
-      Docs: "/src/components/docs/index",
-      Markdowns: "/src/mds/",
-      Modules: "/src/modules/",
-      Startup: "/src/components/startup/index",
-      UI: "/src/components/ui/index",
-      Config: "/src/config/",
-      HOC: "/src/hoc/",
-      Hooks: "/src/hooks/index",
-      Context: "/src/context/",
-      Language: "/src/language/index",
-      AppRoutes: "/src/routes/",
-      AppModules: "/src/modules/",
-      Store: "/src/store/",
-      Utilities: "/src/utils/index",
-      Services: "/src/services/",
-      Constants: "/src/constants/",
-      Assets: "/src/assets/",
-      AppGlobals: "/src/globals/index",
-      MarkdownComps: "/src/components/",
+      Layouts: path.resolve(__dirname, "src/components/layout/index"),
+      Pages: path.resolve(__dirname, "src/components/pages/index"),
+      Docs: path.resolve(__dirname, "src/components/docs/index"),
+      Markdowns: path.resolve(__dirname, "src/mds/"),
+      Modules: path.resolve(__dirname, "src/modules/"),
+      Startup: path.resolve(__dirname, "src/components/startup/index"),
+      UI: path.resolve(__dirname, "src/components/ui/index"),
+      Config: path.resolve(__dirname, "src/config/"),
+      HOC: path.resolve(__dirname, "src/hoc/"),
+      Hooks: path.resolve(__dirname, "src/hooks/index"),
+      Context: path.resolve(__dirname, "src/context/"),
+      Language: path.resolve(__dirname, "src/language/index"),
+      AppRoutes: path.resolve(__dirname, "src/routes/"),
+      AppModules: path.resolve(__dirname, "src/modules/"),
+      Store: path.resolve(__dirname, "src/store/"),
+      Utilities: path.resolve(__dirname, "src/utils/index"),
+      Services: path.resolve(__dirname, "src/services/"),
+      Constants: path.resolve(__dirname, "src/constants/"),
+      Assets: path.resolve(__dirname, "src/assets/"),
+      AppGlobals: path.resolve(__dirname, "src/globals/index"),
+      MarkdownComps: path.resolve(__dirname, "src/components/"),
+      "kotii-react-modules": path.resolve(
+        __dirname,
+        "node_modules/kotii-react-modules"
+      ),
+      "kotii-markdown-loader": path.resolve(
+        __dirname,
+        "node_modules/kotii-markdown-loader"
+      ),
     },
+    // CRITICAL: Set to false so Webpack reads packages out of your app's local node_modules structure
+    // instead of tracking them inside pnpm's hidden .pnpm directories.
+    symlinks: false,
+
+    modules: [
+      "node_modules",
+      path.resolve(__dirname, "node_modules"),
+      path.resolve(__dirname, "../../node_modules"),
+      path.resolve(__dirname, "../../node_modules/.pnpm/node_modules"),
+    ],
   },
+
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        // use: "babel-loader",
-        use: ["babel-loader", "source-map-loader"],
+        // We include your local src and any local 'kotii-' modules inside the local node_modules directory
+        include: [
+          path.resolve(__dirname, "src"),
+          path.resolve(__dirname, "node_modules/kotii-react-modules"),
+          path.resolve(__dirname, "../../packages"), // Fallback if links resolve globally
+        ],
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              "@babel/preset-env",
+              ["@babel/preset-react", { runtime: "automatic" }],
+            ],
+          },
+        },
       },
       {
         test: /\.md$/,
         use: ["kotii-markdown-loader"],
       },
-      // {
-      //   test: /\.html$/,
-      //   use: "html-loader",
-      // },
-      /*Choose only one of the following two: if you're using 
-      plain CSS, use the first one, and if you're using a
-      preprocessor, in this case SASS, use the second one*/
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"],
       },
-      // {
-      //   test: /\.scss$/,
-      //   use: ["style-loader", "css-loader", "sass-loader"],
-      // },
     ],
   },
 
