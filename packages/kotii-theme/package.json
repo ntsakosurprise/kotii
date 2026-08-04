@@ -16,7 +16,7 @@
     "kotii-utils": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz",
     "react-i18next": "^11.18.1",
     "react-select": "^5.4.0",
-    "styled-components": "^6.0.2"
+    "kotii-styled": "1.0.0-beta.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",

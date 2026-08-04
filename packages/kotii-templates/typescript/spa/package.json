@@ -22,7 +22,7 @@
     "react-markdown": "^8.0.0",
     "react-router-dom": "^5.2.0",
     "shortid": "^2.2.16",
-    "styled-components": "^6.0.5",
+    "kotii-styled": "1.0.0-beta.2.0",
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {

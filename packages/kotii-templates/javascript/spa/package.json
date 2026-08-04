@@ -18,6 +18,6 @@
     "kotii": "1.0.0-beta.2.0",
     "react-markdown": "^8.0.0",
     "react-router-dom": "^6.20.1",
-    "styled-components": "^6.1.1"
+    "kotii-styled": "1.0.0-beta.2.0"
   }
 }

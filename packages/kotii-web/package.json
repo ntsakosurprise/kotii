@@ -52,7 +52,7 @@
     "react-syntax-highlighter": "^15.4.5",
     "remark-gfm": "^3.0.1",
     "shortid": "^2.2.16",
-    "styled-components": "^6.0.5",
+    "kotii-styled": "1.0.0-beta.2.0",
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {

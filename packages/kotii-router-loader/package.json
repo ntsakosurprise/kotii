@@ -13,7 +13,7 @@
     "@node-loader/babel": "^2.0.1",
     "marked": "^4.0.18",
     "prism": "^4.1.2",
-    "styled-components": "^6.0.5"
+    "kotii-styled": "1.0.0-beta.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",
