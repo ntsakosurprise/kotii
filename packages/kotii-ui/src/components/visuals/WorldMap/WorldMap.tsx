@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 //import { WorldMap as Gworldmap } from "grommet";
 
 // import { BoxProps } from "./types";

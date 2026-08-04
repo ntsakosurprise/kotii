@@ -1,6 +1,6 @@
 import { Card as Gcard } from "grommet";
 import React from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 // import { BoxProps } from "./types";
 import { CardProps } from "./types";
 

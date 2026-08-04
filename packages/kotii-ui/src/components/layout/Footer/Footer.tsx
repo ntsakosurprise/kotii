@@ -1,6 +1,6 @@
 import { Footer as Gfooter } from "grommet";
 import React from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 import { FooterProps } from "./types";
 
 const WrappedFooter = styled.div<FooterProps>``;

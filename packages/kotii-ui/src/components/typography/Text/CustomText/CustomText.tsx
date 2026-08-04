@@ -2,7 +2,7 @@ import React from "react";
 import { PageHeaderProps } from "../types";
 import textDefaults from "./textDefaults";
 
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const Text = styled("span")((props: PageHeaderProps) => ({
   width: "100%",

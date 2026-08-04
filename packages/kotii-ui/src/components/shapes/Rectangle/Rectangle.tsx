@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 import { useKotiiTheme } from "../../../context";
 import { createJSCSSSchema } from "../helpers";
 import { Shapes } from "../types";

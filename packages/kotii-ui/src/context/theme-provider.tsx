@@ -32,7 +32,7 @@ const ThemeContext = React.createContext<ThemeProps>({} as ThemeProps);
 export const CustomThemeProvider = (props) => {
   const { themes, isThemeLoaded } = useTheme();
   const [themeMode, setThemeMode] = React.useState<ThemeModeProps>("dark");
-  const [themeName, setThemeName] = useState("dark");
+  const [themeName, setThemeName] = useState<ThemeModeProps>("dark");
   const [currentTheme, setCurrentTheme] = useState(directThemes[themeName]);
 
   // console.log("currentTheme;;;", theme);

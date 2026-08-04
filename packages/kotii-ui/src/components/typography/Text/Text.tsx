@@ -1,6 +1,6 @@
 // import { Text as Gtext } from "grommet";
 import React from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 import CustomText from "./CustomText";
 
 // import { BoxProps } from "./types";

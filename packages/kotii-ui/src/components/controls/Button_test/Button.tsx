@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 import { ButtonProps } from "./types";
 
 const StyledButton = styled.button<ButtonProps>`

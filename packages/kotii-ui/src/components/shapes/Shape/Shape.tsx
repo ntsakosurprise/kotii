@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 import { useKotiiTheme } from "../../../context/";
 import { Shapes } from "../types";
 // import { defaultValues } from "./defaults";
