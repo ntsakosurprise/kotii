@@ -3,7 +3,7 @@
 import { useTheme } from "Hooks";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 import { getFromStorage } from "Utilities";
 
 const ThemedButton = styled.button`

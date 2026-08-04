@@ -4,7 +4,7 @@ import { useTheme } from "Hooks";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { generate } from "shortid";
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const Container = styled.div`
   display: grid;
