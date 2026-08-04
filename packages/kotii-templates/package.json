@@ -1,6 +1,6 @@
 {
   "name": "kotii-templates",
-  "version": "1.0.0-beta.2.0",
+  "version": "1.0.0-beta.3.0",
   "description": "a lightweight template provider for the Kotii ecosystem.It delivers ready-to-use **SSR (Server-Side Rendering)** and **SPA (Single-Page Application)** templates, supporting both **JavaScript** and **TypeScript** project setups",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
   "homepage": "https://github.com/ntsakosurprise/kotii",

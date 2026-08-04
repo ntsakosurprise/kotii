@@ -26,7 +26,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "kotii-styled": "1.0.0-beta.2.0",
     "use-local-storage": "^2.3.6"
   },
   "devDependencies": {
