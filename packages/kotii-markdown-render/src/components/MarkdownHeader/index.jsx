@@ -6,7 +6,7 @@ import { ThemeSwitcher, useKotiiTheme } from "kotii-theme";
 import { Button } from "kotii-ui";
 
 import PropTypes from "prop-types";
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const Header = styled("header")((theme) => {
   return {
