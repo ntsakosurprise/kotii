@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename);
 console.log("Webpack dir name", __dirname);
 console.log("webpack path", path.resolve(__dirname, "node_modules"));
 const isESM = process.env.NODE_MODE === "esm" ? true : false;
-
+console.log("iS ESM", isESM);
 const kotiiRouter = {
   entry: "./src/index.tsx",
   target: "web",
@@ -69,7 +69,36 @@ const kotiiRouter = {
       {
         test: /\.(js|jsx|ts|tsx)$/,
         exclude: /node_modules/,
-        use: ["babel-loader", "source-map-loader", "ts-loader"],
+        // use: ["babel-loader", "source-map-loader", "ts-loader"],
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              presets: [
+                [
+                  "@babel/preset-env",
+                  {
+                    modules: isESM ? false : "auto",
+                  },
+                ],
+                "@babel/preset-react",
+              ],
+            },
+          },
+          "source-map-loader",
+          {
+            loader: "ts-loader",
+            options: {
+              compilerOptions: {
+                // Dynamically forces ts-loader to output modern ESM instead of CommonJS
+                module: isESM ? "ESNext" : "CommonJS",
+              },
+            },
+          },
+        ],
+        resolve: {
+          fullySpecified: false,
+        },
       },
       // {
       //   test: /\.html$/,
