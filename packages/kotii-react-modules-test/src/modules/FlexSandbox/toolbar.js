@@ -6,7 +6,7 @@ import {
   AiOutlineProfile,
   AiOutlineSetting,
 } from "react-icons/ai";
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const ToolbarNav = styled("div")(() => ({
   nav: {

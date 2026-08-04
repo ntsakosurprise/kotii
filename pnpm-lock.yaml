@@ -68,7 +68,7 @@ importers:
         version: 8.57.1
       eslint-plugin-jest:
         specifier: ^27.9.0
-        version: 27.9.0(eslint@8.57.1)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5)))(typescript@4.9.5)
+        version: 27.9.0(eslint@8.57.1)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5)
       eslint-plugin-react:
         specifier: ^7.30.1
         version: 7.37.5(eslint@8.57.1)
@@ -92,7 +92,7 @@ importers:
         version: 2.8.8
       ts-jest:
         specifier: ^29.1.1
-        version: 29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(esbuild@0.18.20)(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5)))(typescript@4.9.5)
+        version: 29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5)
       typescript:
         specifier: ^4.9.4
         version: 4.9.5
@@ -276,7 +276,7 @@ importers:
     dependencies:
       debug:
         specifier: ^4.4.0
-        version: 4.4.3(supports-color@5.5.0)
+        version: 4.4.3(supports-color@7.2.0)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -340,7 +340,7 @@ importers:
         version: 10.9.2(@types/node@24.10.1)(typescript@4.9.5)
       webpack:
         specifier: ^5.69.1
-        version: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+        version: 5.103.0(webpack-cli@4.10.0)
       webpack-cli:
         specifier: ^4.9.2
         version: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
@@ -936,7 +936,7 @@ importers:
         version: 7.28.5(@babel/core@7.28.5)
       '@babel/traverse':
         specifier: 7.28.5
-        version: 7.28.5(supports-color@5.5.0)
+        version: 7.28.5
       '@eslint/js':
         specifier: ^9.21.0
         version: 9.39.1
@@ -1027,7 +1027,7 @@ importers:
     dependencies:
       debug:
         specifier: ^4.4.0
-        version: 4.4.3(supports-color@5.5.0)
+        version: 4.4.3(supports-color@7.2.0)
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -1106,7 +1106,7 @@ importers:
     dependencies:
       debug:
         specifier: ^4.4.0
-        version: 4.4.3(supports-color@5.5.0)
+        version: 4.4.3(supports-color@7.2.0)
     devDependencies:
       '@babel/core':
         specifier: ^7.17.5
@@ -1146,7 +1146,7 @@ importers:
         version: 4.0.2(webpack@5.103.0)
       ts-jest:
         specifier: ^29.1.1
-        version: 29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(esbuild@0.18.20)(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5)))(typescript@4.9.5)
+        version: 29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5)
       webpack:
         specifier: ^5.69.1
         version: 5.103.0(webpack-cli@4.10.0)
@@ -1335,7 +1335,7 @@ importers:
     dependencies:
       debug:
         specifier: ^4.4.0
-        version: 4.4.3(supports-color@5.5.0)
+        version: 4.4.3(supports-color@7.2.0)
       html-react-parser:
         specifier: ^4.0.0
         version: 4.2.10(react@18.3.1)
@@ -1577,7 +1577,7 @@ importers:
         version: 7.28.5(@babel/core@7.28.5)
       '@babel/traverse':
         specifier: ^7.18.11
-        version: 7.28.5(supports-color@5.5.0)
+        version: 7.28.5
       '@babel/types':
         specifier: ^7.18.10
         version: 7.28.5
@@ -1631,7 +1631,7 @@ importers:
     dependencies:
       debug:
         specifier: ^4.4.0
-        version: 4.4.3(supports-color@5.5.0)
+        version: 4.4.3(supports-color@7.2.0)
       kotii-head:
         specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz
         version: file:packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1891,8 +1891,8 @@ importers:
         specifier: ^21.8.14
         version: 21.10.0
       kotii-utils:
-        specifier: 1.0.0-beta.3.0
-        version: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz
+        version: file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-i18next:
         specifier: ^11.18.1
         version: 11.18.6(i18next@21.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1953,19 +1953,19 @@ importers:
         version: 4.2.3
       grommet:
         specifier: ^2.33.1
-        version: 2.51.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@19.2.0)(react@18.3.1))
+        version: 2.51.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      kotii-styled:
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-styled/kotii-styled-1.0.0-beta.2.0.tgz
+        version: file:packages/kotii-styled/kotii-styled-1.0.0-beta.2.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-utils:
-        specifier: 1.0.0-beta.3.0
-        version: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz
+        version: file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-icons:
         specifier: ^4.11.0
         version: 4.12.0(react@18.3.1)
       react-switch:
         specifier: ^7.0.0
         version: 7.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      styled-components:
-        specifier: 5.3.11
-        version: 5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@19.2.0)(react@18.3.1)
     devDependencies:
       '@babel/core':
         specifier: ^7.17.5
@@ -2029,7 +2029,7 @@ importers:
         version: 10.9.2(@types/node@24.10.1)(typescript@4.9.5)
       webpack:
         specifier: ^5.69.1
-        version: 5.103.0(webpack-cli@4.10.0)
+        version: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
       webpack-cli:
         specifier: ^4.9.2
         version: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
@@ -3374,14 +3374,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@emotion/stylis@0.8.5':
-    resolution: {integrity: sha512-h6KtPihKFn3T9fuIrwvXXUOwlx3rfUvfZIcP5a6rh8Y7zjE3O06hT5Ss4S/YI1AYhuZ1kjaE/5EaOOI2NqSylQ==}
-
   '@emotion/unitless@0.10.0':
     resolution: {integrity: sha512-dFoMUuQA20zvtVTuxZww6OHoJYgrzfKM1t52mVySDJnMSEa08ruEvdYQbhvyu6soU+NeLVd3yKfTfT0NeV6qGg==}
-
-  '@emotion/unitless@0.7.5':
-    resolution: {integrity: sha512-OWORNpfjMsSSUBVrRBVGECkhWcULOAJz9ZW8uK9qgxD+87M7jHRcvh/A96XXNhXTLmKcoYSQtBEX7lHMO7YRwg==}
 
   '@emotion/unitless@0.8.1':
     resolution: {integrity: sha512-KOEGMu6dmJZtpadb476IsZBclKvILjopjUii3V+7MnXIQCYh8W3NgNcgwo21n9LXZX6EDIKvqfjYxXebDwxKmQ==}
@@ -9012,7 +9006,7 @@ packages:
       react-dom: ^18.2.0
 
   kotii-components@file:packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz:
-    resolution: {integrity: sha512-6JGYpBWb4NFcOwpc9h897ZwuOFiHy1aZdKlHBtvNI564chX9nl/65BB0xCocXXHHWlc6Buf5Ys7s+UIOAp6FQg==, tarball: file:packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz}
+    resolution: {integrity: sha512-0nv4Urpycuh291e3cRZKnbtzPNZtk60jjy9sJnw2K972k7+mXOfUOsDl4Jy0Ko05Yx5C5L23V/XC4rQ2nzFN8A==, tarball: file:packages/kotii-components/kotii-components-1.0.0-beta.2.0.tgz}
     version: 1.0.0-beta.2.0
     peerDependencies:
       react: ^18.2.0
@@ -9023,7 +9017,7 @@ packages:
     version: 1.0.0-beta.2.0
 
   kotii-head@file:packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz:
-    resolution: {integrity: sha512-8rPPJQN7VUCeJZa/GKSBKJD25ookysATVLayzlymKTY3AsJjHEJV0HoZ1zNkf1bVaK4agAtraYK99L8zj6nzTQ==, tarball: file:packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz}
+    resolution: {integrity: sha512-g+H332FKFw+lb2MhHmNjLlKOp2t4gVP9U3DrMgUrKPd6BrdmNimXzgi3FvbOtw4Z/8beijWWMXvf0akpIrxGYw==, tarball: file:packages/kotii-head/kotii-head-1.0.0-beta.1.0.tgz}
     version: 1.0.0-beta.1.0
     peerDependencies:
       react: ^18.2.0
@@ -9056,7 +9050,7 @@ packages:
     resolution: {integrity: sha512-QnWko8R8bvn8C06NQS9Y8LPHETwgdYB88oYoNDlFk3QPezhy5E2hSjvyTv4jQiAQE/1Uk7SYm3LTl+9komVV1Q==}
 
   kotii-markdown-loader@file:packages/kotii-markdown-loader/kotii-markdown-loader-1.0.0.tgz:
-    resolution: {integrity: sha512-TkBI+/cY71uyfe5gDrqUwmQI5Bz84frJoUiXlTLFLPHpS426WlcnT1i6D5GfmgacdXzNDzwVy+YKrta2k8m1Hg==, tarball: file:packages/kotii-markdown-loader/kotii-markdown-loader-1.0.0.tgz}
+    resolution: {integrity: sha512-8Ej7hHECUqHqoRspbbxR9Zaj3SM/iFY2UBXA64TWiR6HFeCwPmqrZaXThLMmmBUWxEFeLdYFq3KcJhHi8SODLQ==, tarball: file:packages/kotii-markdown-loader/kotii-markdown-loader-1.0.0.tgz}
     version: 1.0.0
 
   kotii-markdown-render@1.0.0-beta.1.0:
@@ -9074,7 +9068,7 @@ packages:
     version: 1.0.0
 
   kotii-react-modules@file:packages/kotii-react-modules/kotii-react-modules-1.0.0-beta.3.0.tgz:
-    resolution: {integrity: sha512-Pd8NA5McBha/CtTu7W9uzBUEDTlsPF8UzpdzeRpOlbbvMleKoh3aR5nzdT4uLrjc6i05KyGg4YsOZSaug927jA==, tarball: file:packages/kotii-react-modules/kotii-react-modules-1.0.0-beta.3.0.tgz}
+    resolution: {integrity: sha512-CF2doolpWq8k+Ra5a1lZLtqp8wL+DTZnr1DK5yboIp3XdhHtyWotYpk+Mazb2ZMo2GcmuL6vX/S/KO3V8MaosQ==, tarball: file:packages/kotii-react-modules/kotii-react-modules-1.0.0-beta.3.0.tgz}
     version: 1.0.0-beta.3.0
     peerDependencies:
       react: ^18.2.0
@@ -9092,12 +9086,16 @@ packages:
   kotii-styled@1.0.0-beta.2.0:
     resolution: {integrity: sha512-HzF9zl5v8SsVREWsUxkxQCuK2NwHpJL9j6wgUgHZXvkPkyRIaRzS1OB64AtX1cDXOaqPu03jYpZNbr2kGTnCQQ==}
 
+  kotii-styled@file:packages/kotii-styled/kotii-styled-1.0.0-beta.2.0.tgz:
+    resolution: {integrity: sha512-HzF9zl5v8SsVREWsUxkxQCuK2NwHpJL9j6wgUgHZXvkPkyRIaRzS1OB64AtX1cDXOaqPu03jYpZNbr2kGTnCQQ==, tarball: file:packages/kotii-styled/kotii-styled-1.0.0-beta.2.0.tgz}
+    version: 1.0.0-beta.2.0
+
   kotii-templates@1.0.0-beta.2.0:
     resolution: {integrity: sha512-sx0F3RAf+XaJz+vSaLHNncQi7QR0/4ko0TTKEvKjYjLNocSigplF4lsgcLpO5zHPNWOs5YqpLso6PuTFvL6AiA==}
     engines: {node: '>=17.2.0', npm: '>=8.19.2', yarn: '>=1.22.11'}
 
   kotii-theme@file:packages/kotii-theme/kotii-theme-1.0.0.tgz:
-    resolution: {integrity: sha512-1pHbCB4vo104kj0/jwkEoL4j2KBEbo1y2U8awKYKMLD1aPpYthbYG2OgNIoZ0L2yFhRsFsNUWZ2j/P5JY4WO7Q==, tarball: file:packages/kotii-theme/kotii-theme-1.0.0.tgz}
+    resolution: {integrity: sha512-MOHk5mqzo8EWlHkN7vJjh+pYx/51npeDVgwPsjPeBnX7zBJEbdMZqgl2ImUj/uTNUKQ3KKHTysSXONLng6oPYA==, tarball: file:packages/kotii-theme/kotii-theme-1.0.0.tgz}
     version: 1.0.0
 
   kotii-utils@1.0.0-beta.2.0:
@@ -9106,9 +9104,9 @@ packages:
   kotii-utils@1.0.0-beta.3.0:
     resolution: {integrity: sha512-ARkXw1axBr5gQX5jeyc9ItyrHkKDkzqaceqR8dFNOxtkoSRESf5h5PJHLNDr94ex1ttroAS8gAtRDzIrP9iIOg==}
 
-  kotii-utils@file:packages/kotii-utils/kotii-utils-1.0.0-beta.3.0.tgz:
-    resolution: {integrity: sha512-ARkXw1axBr5gQX5jeyc9ItyrHkKDkzqaceqR8dFNOxtkoSRESf5h5PJHLNDr94ex1ttroAS8gAtRDzIrP9iIOg==, tarball: file:packages/kotii-utils/kotii-utils-1.0.0-beta.3.0.tgz}
-    version: 1.0.0-beta.3.0
+  kotii-utils@file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz:
+    resolution: {integrity: sha512-QXM8Y9MjMZd6aXMDfvSvro+aIpZfDiTgnvNImyTLODTOxIBYBSYj1YyN0GoPM1KX1tHpOsNYX7B2gmTjI+IxIQ==, tarball: file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz}
+    version: 1.0.0-beta.4.0
 
   kuler@2.0.0:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
@@ -12025,14 +12023,6 @@ packages:
   style-to-object@1.0.3:
     resolution: {integrity: sha512-xOpx7S53E0V3DpVsvt7ySvoiumRpfXiC99PUXLqGB3wiAnN9ybEIpuzlZ8LAZg+h1sl9JkEUwtSQXxcCgFqbbg==}
 
-  styled-components@5.3.11:
-    resolution: {integrity: sha512-uuzIIfnVkagcVHv9nE0VPlHPSCmXIUGKfJ42LNjxCCTDTL5sgnJ8Z7GZBq0EnLYGln77tPpEpExt2+qa+cZqSw==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      react: '>= 16.8.0'
-      react-dom: '>= 16.8.0'
-      react-is: '>= 16.8.0'
-
   styled-components@6.1.19:
     resolution: {integrity: sha512-1v/e3Dl1BknC37cXMhwGomhO8AkYmN41CqyX9xhUDxry1ns3BFQy2lLDRQXJRdVVWB9OHemv/53xaStimvWyuA==}
     engines: {node: '>= 16'}
@@ -13135,11 +13125,11 @@ snapshots:
       '@babel/helpers': 7.28.4
       '@babel/parser': 7.28.5
       '@babel/template': 7.27.2
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
       '@babel/types': 7.28.5
       '@jridgewell/remapping': 2.3.5
       convert-source-map: 2.0.0
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -13174,7 +13164,7 @@ snapshots:
       '@babel/helper-optimise-call-expression': 7.27.1
       '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.5)
       '@babel/helper-skip-transparent-expression-wrappers': 7.27.1
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -13191,7 +13181,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       lodash.debounce: 4.0.8
       resolve: 1.22.11
     transitivePeerDependencies:
@@ -13203,20 +13193,20 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-compilation-targets': 7.27.2
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-member-expression-to-functions@7.28.5':
     dependencies:
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
       '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/helper-module-imports@7.27.1(supports-color@5.5.0)':
+  '@babel/helper-module-imports@7.27.1':
     dependencies:
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
       '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
@@ -13224,9 +13214,9 @@ snapshots:
   '@babel/helper-module-transforms@7.28.3(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -13241,7 +13231,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-annotate-as-pure': 7.27.3
       '@babel/helper-wrap-function': 7.28.3
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -13250,13 +13240,13 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-member-expression-to-functions': 7.28.5
       '@babel/helper-optimise-call-expression': 7.27.1
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
   '@babel/helper-skip-transparent-expression-wrappers@7.27.1':
     dependencies:
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
       '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
@@ -13270,7 +13260,7 @@ snapshots:
   '@babel/helper-wrap-function@7.28.3':
     dependencies:
       '@babel/template': 7.27.2
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
       '@babel/types': 7.28.5
     transitivePeerDependencies:
       - supports-color
@@ -13295,7 +13285,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -13322,7 +13312,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -13449,14 +13439,14 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-remap-async-to-generator': 7.27.1(@babel/core@7.28.5)
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
   '@babel/plugin-transform-async-to-generator@7.27.1(@babel/core@7.28.5)':
     dependencies:
       '@babel/core': 7.28.5
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-remap-async-to-generator': 7.27.1(@babel/core@7.28.5)
     transitivePeerDependencies:
@@ -13496,7 +13486,7 @@ snapshots:
       '@babel/helper-globals': 7.28.0
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-replace-supers': 7.27.1(@babel/core@7.28.5)
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -13510,7 +13500,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -13573,7 +13563,7 @@ snapshots:
       '@babel/core': 7.28.5
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -13619,7 +13609,7 @@ snapshots:
       '@babel/helper-module-transforms': 7.28.3(@babel/core@7.28.5)
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -13659,7 +13649,7 @@ snapshots:
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-transform-destructuring': 7.28.5(@babel/core@7.28.5)
       '@babel/plugin-transform-parameters': 7.27.7(@babel/core@7.28.5)
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
     transitivePeerDependencies:
       - supports-color
 
@@ -13732,7 +13722,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.5
       '@babel/helper-annotate-as-pure': 7.27.3
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
       '@babel/types': 7.28.5
@@ -13960,7 +13950,7 @@ snapshots:
       '@babel/parser': 7.28.5
       '@babel/types': 7.28.5
 
-  '@babel/traverse@7.28.5(supports-color@5.5.0)':
+  '@babel/traverse@7.28.5':
     dependencies:
       '@babel/code-frame': 7.27.1
       '@babel/generator': 7.28.5
@@ -13968,7 +13958,7 @@ snapshots:
       '@babel/parser': 7.28.5
       '@babel/template': 7.27.2
       '@babel/types': 7.28.5
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -14421,7 +14411,7 @@ snapshots:
 
   '@emotion/babel-plugin@11.13.5':
     dependencies:
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1
       '@babel/runtime': 7.28.4
       '@emotion/hash': 0.9.2
       '@emotion/memoize': 0.9.0
@@ -14531,11 +14521,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@emotion/stylis@0.8.5': {}
-
   '@emotion/unitless@0.10.0': {}
-
-  '@emotion/unitless@0.7.5': {}
 
   '@emotion/unitless@0.8.1': {}
 
@@ -14625,7 +14611,7 @@ snapshots:
   '@eslint/eslintrc@0.4.3':
     dependencies:
       ajv: 6.12.6
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       espree: 7.3.1
       globals: 13.24.0
       ignore: 4.0.6
@@ -14639,7 +14625,7 @@ snapshots:
   '@eslint/eslintrc@2.1.4':
     dependencies:
       ajv: 6.12.6
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       espree: 9.6.1
       globals: 13.24.0
       ignore: 5.3.2
@@ -14690,7 +14676,7 @@ snapshots:
   '@humanwhocodes/config-array@0.13.0':
     dependencies:
       '@humanwhocodes/object-schema': 2.0.3
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -14698,7 +14684,7 @@ snapshots:
   '@humanwhocodes/config-array@0.5.0':
     dependencies:
       '@humanwhocodes/object-schema': 1.2.1
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -15005,7 +14991,7 @@ snapshots:
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -16474,7 +16460,7 @@ snapshots:
       chalk: 4.1.2
       cli-table3: 0.6.5
       compression: 1.8.1
-      detect-port: 1.6.1
+      detect-port: 1.6.1(supports-color@7.2.0)
       express: 4.21.2(supports-color@7.2.0)
       fs-extra: 11.3.2
       globby: 11.1.0
@@ -16501,7 +16487,7 @@ snapshots:
     dependencies:
       '@babel/generator': 7.28.5
       '@babel/parser': 7.28.5
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
+      '@babel/traverse': 7.28.5
       '@babel/types': 7.28.5
       '@storybook/csf': 0.1.13
       '@storybook/types': 7.6.20
@@ -17038,7 +17024,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.7.3
@@ -17148,7 +17134,7 @@ snapshots:
 
   '@webpack-cli/configtest@1.2.0(webpack-cli@4.10.0)(webpack@5.103.0)':
     dependencies:
-      webpack: 5.103.0(webpack-cli@4.10.0)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
 
   '@webpack-cli/configtest@2.1.1(webpack-cli@5.1.4)(webpack@5.103.0)':
@@ -17262,7 +17248,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -17709,7 +17695,7 @@ snapshots:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.103.0(webpack-cli@4.10.0)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
 
   babel-loader@9.2.1(@babel/core@7.28.5)(webpack@5.103.0):
     dependencies:
@@ -17769,22 +17755,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  babel-plugin-styled-components@2.1.4(@babel/core@7.28.5)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@19.2.0)(react@18.3.1))(supports-color@5.5.0):
-    dependencies:
-      '@babel/helper-annotate-as-pure': 7.27.3
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
-      '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
-      lodash: 4.17.21
-      picomatch: 2.3.1
-      styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@19.2.0)(react@18.3.1)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - supports-color
-
   babel-plugin-styled-components@2.1.4(@babel/core@7.28.5)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:
       '@babel/helper-annotate-as-pure': 7.27.3
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
+      '@babel/helper-module-imports': 7.27.1
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.5)
       lodash: 4.17.21
       picomatch: 2.3.1
@@ -18958,12 +18932,6 @@ snapshots:
     optionalDependencies:
       supports-color: 7.2.0
 
-  debug@4.4.3(supports-color@5.5.0):
-    dependencies:
-      ms: 2.1.3
-    optionalDependencies:
-      supports-color: 5.5.0
-
   debug@4.4.3(supports-color@7.2.0):
     dependencies:
       ms: 2.1.3
@@ -19126,13 +19094,6 @@ snapshots:
   detect-package-manager@2.0.1:
     dependencies:
       execa: 5.1.1
-
-  detect-port@1.6.1:
-    dependencies:
-      address: 1.2.2
-      debug: 4.4.3(supports-color@5.5.0)
-    transitivePeerDependencies:
-      - supports-color
 
   detect-port@1.6.1(supports-color@7.2.0):
     dependencies:
@@ -19508,7 +19469,7 @@ snapshots:
 
   esbuild-register@3.6.0(esbuild@0.18.20):
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       esbuild: 0.18.20
     transitivePeerDependencies:
       - supports-color
@@ -19558,7 +19519,7 @@ snapshots:
     optionalDependencies:
       source-map: 0.6.1
 
-  eslint-plugin-jest@27.9.0(eslint@8.57.1)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5)))(typescript@4.9.5):
+  eslint-plugin-jest@27.9.0(eslint@8.57.1)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5):
     dependencies:
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.1)(typescript@4.9.5)
       eslint: 8.57.1
@@ -19618,7 +19579,7 @@ snapshots:
       ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.6
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       doctrine: 3.0.0
       enquirer: 2.4.1
       escape-string-regexp: 4.0.0
@@ -19668,7 +19629,7 @@ snapshots:
       ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.6
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       doctrine: 3.0.0
       escape-string-regexp: 4.0.0
       eslint-scope: 7.2.2
@@ -20138,7 +20099,7 @@ snapshots:
 
   follow-redirects@1.15.11(debug@4.4.3):
     optionalDependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
 
   for-each@0.3.5:
     dependencies:
@@ -20515,27 +20476,11 @@ snapshots:
 
   graphemer@1.4.0: {}
 
-  grommet-icons@4.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@19.2.0)(react@18.3.1)):
-    dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@19.2.0)(react@18.3.1)
-
   grommet-icons@4.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       styled-components: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-
-  grommet@2.51.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@19.2.0)(react@18.3.1)):
-    dependencies:
-      '@emotion/is-prop-valid': 1.4.0
-      grommet-icons: 4.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@19.2.0)(react@18.3.1))
-      markdown-to-jsx: 7.4.4(react@18.3.1)
-      prop-types: 15.8.1
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@19.2.0)(react@18.3.1)
 
   grommet@2.51.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:
@@ -20782,7 +20727,7 @@ snapshots:
     dependencies:
       '@tootallnate/once': 2.0.0
       agent-base: 6.0.2
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -20815,14 +20760,14 @@ snapshots:
   https-proxy-agent@4.0.0:
     dependencies:
       agent-base: 5.1.1
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
   https-proxy-agent@5.0.1:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -21366,7 +21311,7 @@ snapshots:
 
   istanbul-lib-source-maps@4.0.1:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       istanbul-lib-coverage: 3.2.2
       source-map: 0.6.1
     transitivePeerDependencies:
@@ -21998,7 +21943,7 @@ snapshots:
 
   kotii-auth@1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
@@ -22167,7 +22112,7 @@ snapshots:
 
   kotii-lazy@1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
@@ -22175,13 +22120,13 @@ snapshots:
 
   kotii-logger@1.0.0-beta.2.0:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
   kotii-logger@1.0.0-beta.4.0:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -22229,7 +22174,7 @@ snapshots:
 
   kotii-react-modules@file:packages/kotii-react-modules/kotii-react-modules-1.0.0-beta.3.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       html-react-parser: 4.2.10(react@18.3.1)
       kotii-markdown: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-utils: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -22241,7 +22186,7 @@ snapshots:
 
   kotii-router@1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
@@ -22277,6 +22222,13 @@ snapshots:
       - react
       - react-dom
 
+  kotii-styled@file:packages/kotii-styled/kotii-styled-1.0.0-beta.2.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      styled-components: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+    transitivePeerDependencies:
+      - react
+      - react-dom
+
   kotii-templates@1.0.0-beta.2.0:
     dependencies:
       anzii: 8.0.1
@@ -22290,7 +22242,7 @@ snapshots:
       grommet: 2.51.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       grommet-icons: 4.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       i18next: 21.10.0
-      kotii-utils: file:packages/kotii-utils/kotii-utils-1.0.0-beta.3.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      kotii-utils: file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-i18next: 11.18.6(i18next@21.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-select: 5.10.2(@types/react@17.0.90)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -22317,7 +22269,7 @@ snapshots:
       - react
       - react-dom
 
-  kotii-utils@file:packages/kotii-utils/kotii-utils-1.0.0-beta.3.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  kotii-utils@file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       styled-components: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       use-local-storage: 2.3.6(react@18.3.1)
@@ -23013,7 +22965,7 @@ snapshots:
   micromark@3.2.0:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       decode-named-character-reference: 1.2.0
       micromark-core-commonmark: 1.1.0
       micromark-factory-space: 1.1.0
@@ -24531,7 +24483,7 @@ snapshots:
   puppeteer-core@2.1.1:
     dependencies:
       '@types/mime-types': 2.1.4
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       extract-zip: 1.7.0
       https-proxy-agent: 4.0.0
       mime: 2.6.0
@@ -25513,7 +25465,7 @@ snapshots:
     dependencies:
       '@kwsites/file-exists': 1.1.1
       '@kwsites/promise-deferred': 1.1.1
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -25590,7 +25542,7 @@ snapshots:
   socks-proxy-agent@7.0.0:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       socks: 2.8.7
     transitivePeerDependencies:
       - supports-color
@@ -25670,7 +25622,7 @@ snapshots:
 
   spdy-transport@3.0.0:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       detect-node: 2.1.0
       hpack.js: 2.1.6
       obuf: 1.1.2
@@ -25681,7 +25633,7 @@ snapshots:
 
   spdy@4.0.2:
     dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       handle-thing: 2.0.1
       http-deceiver: 1.2.7
       select-hose: 2.0.0
@@ -25901,7 +25853,7 @@ snapshots:
 
   style-loader@3.3.4(webpack@5.103.0):
     dependencies:
-      webpack: 5.103.0(webpack-cli@5.1.4)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
 
   style-to-js@1.1.8:
     dependencies:
@@ -25914,24 +25866,6 @@ snapshots:
   style-to-object@1.0.3:
     dependencies:
       inline-style-parser: 0.2.2
-
-  styled-components@5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@19.2.0)(react@18.3.1):
-    dependencies:
-      '@babel/helper-module-imports': 7.27.1(supports-color@5.5.0)
-      '@babel/traverse': 7.28.5(supports-color@5.5.0)
-      '@emotion/is-prop-valid': 1.4.0
-      '@emotion/stylis': 0.8.5
-      '@emotion/unitless': 0.7.5
-      babel-plugin-styled-components: 2.1.4(@babel/core@7.28.5)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@18.3.1(react@18.3.1))(react-is@19.2.0)(react@18.3.1))(supports-color@5.5.0)
-      css-to-react-native: 3.2.0
-      hoist-non-react-statics: 3.3.2
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      react-is: 19.2.0
-      shallowequal: 1.1.0
-      supports-color: 5.5.0
-    transitivePeerDependencies:
-      - '@babel/core'
 
   styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -25954,7 +25888,7 @@ snapshots:
   stylus@0.63.0:
     dependencies:
       '@adobe/css-tools': 4.3.3
-      debug: 4.4.3(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@7.2.0)
       glob: 7.2.3
       sax: 1.3.0
       source-map: 0.7.6
@@ -26274,6 +26208,26 @@ snapshots:
       '@jest/types': 30.2.0
       babel-jest: 29.7.0(@babel/core@7.28.5)
       esbuild: 0.18.20
+      jest-util: 30.2.0
+
+  ts-jest@29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5):
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      handlebars: 4.7.8
+      jest: 29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5))
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.7.3
+      type-fest: 4.41.0
+      typescript: 4.9.5
+      yargs-parser: 21.1.1
+    optionalDependencies:
+      '@babel/core': 7.28.5
+      '@jest/transform': 29.7.0
+      '@jest/types': 30.2.0
+      babel-jest: 29.7.0(@babel/core@7.28.5)
       jest-util: 30.2.0
 
   ts-loader@9.5.4(typescript@4.9.5)(webpack@5.103.0):
@@ -26701,7 +26655,7 @@ snapshots:
       import-local: 3.2.0
       interpret: 2.2.0
       rechoir: 0.7.1
-      webpack: 5.103.0(webpack-cli@4.10.0)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
       webpack-merge: 5.10.0
     optionalDependencies:
       webpack-dev-server: 4.15.2(webpack-cli@4.10.0)(webpack@5.103.0)
@@ -26746,7 +26700,7 @@ snapshots:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.3.3
-      webpack: 5.103.0(webpack-cli@4.10.0)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
 
   webpack-dev-server@4.15.2(debug@4.4.3)(webpack-cli@4.10.0)(webpack@5.103.0):
     dependencies:
@@ -26781,7 +26735,7 @@ snapshots:
       webpack-dev-middleware: 5.3.4(webpack@5.103.0)
       ws: 8.18.3
     optionalDependencies:
-      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+      webpack: 5.103.0(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
     transitivePeerDependencies:
       - bufferutil
@@ -26822,7 +26776,7 @@ snapshots:
       webpack-dev-middleware: 5.3.4(webpack@5.103.0)
       ws: 8.18.3
     optionalDependencies:
-      webpack: 5.103.0(webpack-cli@4.10.0)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
     transitivePeerDependencies:
       - bufferutil

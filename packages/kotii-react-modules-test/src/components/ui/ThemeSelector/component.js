@@ -4,7 +4,7 @@ import { useTheme } from "Hooks";
 import { getFromStorage } from "kotii-utils";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const ThemedButton = styled.button`
   border: 0;

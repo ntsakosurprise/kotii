@@ -4,7 +4,7 @@ import { Button } from "kotii-ui";
 
 import PropTypes from "prop-types";
 import React from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const Header = styled("header")((theme) => {
   return {

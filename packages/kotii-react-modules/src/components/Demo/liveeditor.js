@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const CodeContainer = styled("div")(() => ({
   display: "flex",
@@ -48,7 +48,7 @@ const TextArea = styled("textarea")(() => ({
 }));
 
 const codeTest = `
-import styled from "styled-components";
+import styled from "kotii-styled";
 import SampleDemo from "./sample";
 const TestComp = ()=>{
     console.log('IAM ACORN',styled)

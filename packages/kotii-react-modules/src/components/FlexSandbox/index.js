@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import React from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const Sandbox = styled("div")(() => ({
   backgroundColor: "red",

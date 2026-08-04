@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
 import React from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const CardDemoHeader = styled("div")(() => ({
   width: "300px",

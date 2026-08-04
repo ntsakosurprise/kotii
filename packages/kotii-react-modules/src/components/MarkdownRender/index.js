@@ -6,7 +6,7 @@ import { capitalizeFirstLetter } from "kotii-utils";
 import PropTypes from "prop-types";
 import React from "react";
 
-import styled from "styled-components";
+import styled from "kotii-styled";
 import MarkdownAd from "../MarkdownAd/index.js";
 // import MarkdownHeader from "../MarkdownHeader/index.js";
 import MarkdownVideo from "../MarkdownVideo/index.js";

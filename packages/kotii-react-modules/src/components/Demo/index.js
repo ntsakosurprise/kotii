@@ -2,7 +2,7 @@
 // import { docs } from "Markdowns/intro/TES.md";
 import { markdownComponents, markdownData } from "Markdowns/intro/intro.md";
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 import createTextEditor from "./editor";
 import Preview from "./preview";
 import SampleDemo from "./sample";

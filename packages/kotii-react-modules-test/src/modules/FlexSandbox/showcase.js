@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const ShowCase = styled("div")(() => ({
   background: "#eee",

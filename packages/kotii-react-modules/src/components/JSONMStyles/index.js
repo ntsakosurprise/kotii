@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const JSONNMStyles = styled("div")(() => ({
   "& h1, h2, h3, h4": { fontWeight: 400 },

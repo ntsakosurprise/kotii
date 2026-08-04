@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { Component } from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 import "./special.css";
 
 const Title = styled.h2`

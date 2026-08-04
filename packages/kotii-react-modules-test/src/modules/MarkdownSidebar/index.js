@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const Sidebar = styled("div")(() => {
   return { width: "18%", order: -1, height: "100vh" };

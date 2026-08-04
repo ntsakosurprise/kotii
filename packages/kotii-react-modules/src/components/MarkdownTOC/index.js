@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const TableOfContents = styled("div")(() => {
   return { width: "15%", order: 2, paddingLeft: "3%" };

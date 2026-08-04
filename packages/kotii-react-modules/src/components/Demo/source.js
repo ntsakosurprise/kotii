@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from "react";
-//import styled from "styled-components";
+//import styled from "kotii-styled";
 // import DocsComponent from "../DocsComponent/component";
 import { StyledMarkdown } from "../StyledMarkdown";
 import LiveEditor from "./liveeditor";

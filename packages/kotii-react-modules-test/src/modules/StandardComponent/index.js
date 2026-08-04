@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import PropTtypes from "prop-types";
 import React from "react";
-import styled from "styled-components";
+import styled from "kotii-styled";
 
 const StyledStandardComponent = styled("div")(() => ({
   width: "100%",
