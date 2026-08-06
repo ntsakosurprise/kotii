@@ -2,6 +2,7 @@ import {
   kotiiInternal,
   kotiiInternalCss,
   kotiiInternalAssets,
+  kotiiInternalStyled,
 } from "./internal.js";
 
 export const USER_LAND_ALIASES = {
@@ -18,10 +19,12 @@ export const USER_LAND_ALIASES = {
   "@kotii/_css/styles": `${kotiiInternalCss}/styles.json`,
   "@kotii/_css/modules": `${kotiiInternalCss}/styles-css-modules.json`,
   "@kotii/_assets/asset": `${kotiiInternalAssets}/assets.manifest.json`,
+  "@kotii/_cache/styled": `${kotiiInternalStyled}/styled-components-manifest.json`,
   "@kotii/_path/css": kotiiInternalCss,
   "@kotii/_path/app": kotiiInternal,
   "@kotii/_path/asset": kotiiInternalAssets,
   "@kotii/_css/fonts": `${kotiiInternalCss}/styles-css-fonts.json`,
+  "@kotii/_path/cache": kotiiInternalStyled,
 };
 
 console.log(
@@ -43,6 +46,7 @@ export const USER_LAND_ALIAS_STYLES_FONTS = "@kotii/_css/fonts";
 export const USER_LAND_PATH_CSS = "@kotii/_path/css";
 export const USER_LAND_PATH_APP = "@kotii/_path/app";
 export const USER_LAND_PATH_ASSET = "@kotii/_path/asset";
+export const USER_LAND_PATH_CACHE = "@kotii/_path/cache";
 
 // ENVIRONMENT VARIABLES
 
