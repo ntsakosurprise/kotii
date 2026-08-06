@@ -34,6 +34,7 @@ let metaChecked = false;
 let workdir = `${process.cwd()}`;
 let GLOBAL_STYLES_REGEX = /global\.+/;
 let CSS_MODULES_REGEX = /\.module\./;
+let KOTII_STYLED_REGEX = /import\s+styled\s+from\s+['"]package-styled['"]/;
 let JSON_STYLES_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`;
 let JSON_STYLES_MAP_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_MODULES]}`;
 let JSON_STYLES_FONTS_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_FONTS]}`;
