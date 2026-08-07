@@ -15,6 +15,8 @@ import {
   USER_LAND_PATH_ASSET,
   USER_LAND_ALIAS_REDUX,
   USER_LAND_ALIAS_START_UP,
+  USER_LAND_ALIAS_STYLED_MANIFEST,
+  USER_LAND_PATH_CACHE,
 } from "kotii-internal/user";
 import {
   BroadcastCompilationWebpackPlugin,
@@ -195,6 +197,10 @@ export default (options) => {
           `${kotiiRootPath}`,
           "webpack-loaders/add-hot-loader/index.cjs"
         ),
+        "sync-styled-components-loader": path.resolve(
+          `${kotiiRootPath}`,
+          "webpack-loaders/sync-styled-components-calls/index.cjs"
+        ),
 
         // "test-styles-loader": path.resolve(
         //   `${kotiiRootPath}`,
@@ -227,19 +233,26 @@ export default (options) => {
               },
             },
             {
+              loader: "sync-styled-components-loader",
+              options: {
+                referenceAssetsPath: `${USER_LAND_ALIASES[USER_LAND_PATH_CACHE]}`,
+                assetsFile: "styled-components-manifest.json",
+                fileFormat: "json",
+              },
+            },
+            {
               loader: "babel-loader",
               options: {
                 presets: [
                   ["@babel/preset-env"],
                   ["@babel/preset-react", { runtime: "automatic" }],
                 ],
-                plugins: [
-                  [
-                    "babel-plugin-styled-components",
-                    { ssr: true, displayName: true },
-                  ],
-                  ["babel-plugin-kotii-styled"],
-                ],
+                // plugins: [
+                //   [
+                //     "babel-plugin-styled-components",
+                //     { ssr: true, displayName: true },
+                //   ],
+                // ],
               },
             },
             // {
