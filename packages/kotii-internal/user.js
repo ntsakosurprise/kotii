@@ -40,6 +40,7 @@ export const USER_LAND_ALIAS_PAGES = "@kotii/_user/pages";
 export const USER_LAND_ALIAS_STYLES_JSON = "@kotii/_css/styles";
 export const USER_LAND_ALIAS_STYLES_MODULES = "@kotii/_css/modules";
 export const USER_LAND_ALIAS_ASSETS_MANIFEST = "@kotii/_assets/asset";
+export const USER_LAND_ALIAS_STYLED_MANIFEST = "@kotii/_cache/styled";
 export const USER_LAND_ALIAS_MANIFEST = "@kotii/_user/manifest";
 export const USER_LAND_ALIAS_BUILD = "@kotii/_user/build";
 export const USER_LAND_ALIAS_STYLES_FONTS = "@kotii/_css/fonts";
