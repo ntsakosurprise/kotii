@@ -8,6 +8,7 @@ import { pathToFileURL } from "node:url";
 import path from "path";
 import chalk from "chalk";
 import boxen from "boxen";
+import crypto from "node:crypto";
 import {
   lessToCssConverter,
   renderCssModules,
@@ -23,6 +24,7 @@ import {
   USER_LAND_ALIAS_STYLES_MODULES,
   USER_LAND_ALIAS_ASSETS_MANIFEST,
   USER_LAND_ALIAS_STYLES_FONTS,
+  USER_LAND_ALIAS_STYLED_MANIFEST,
 } from "kotii-internal/user";
 import { USER_LAND_PATH_CACHE } from "../../kotii-internal/user.js";
 // import { kotiiInternal } from "kotii-internal";
@@ -36,6 +38,8 @@ let workdir = `${process.cwd()}`;
 let GLOBAL_STYLES_REGEX = /global\.+/;
 let CSS_MODULES_REGEX = /\.module\./;
 let KOTII_STYLED_REGEX = /import\s+styled\s+from\s+['"]kotii-styled['"]/;
+let STYLED_USAGE_REGEX =
+  /\b([A-Za-z0-9_]+)\s*=\s*styled(?:\.([A-Za-z0-9]+)|\(([^)]+)\))/g;
 let JSON_STYLES_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`;
 let JSON_STYLES_MAP_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_MODULES]}`;
 let JSON_STYLES_FONTS_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_FONTS]}`;
@@ -1603,8 +1607,69 @@ const findStyledComponentsPatterns = (nodejsSource, urlInstance) => {
 
 const transformStyledComponentCalls = (sourceString, componentRelPath) => {
   console.log("FIND STYLED COMPONENT PATTERNS");
-  const dir = path.dirname(USER_LAND_PATH_CACHE);
+  const dir = path.dirname(USER_LAND_ALIAS_STYLED_MANIFEST);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
+  }
+
+  let manifest = {};
+  if (fs.existsSync(USER_LAND_ALIAS_STYLED_MANIFEST)) {
+    try {
+      manifest = JSON.parse(
+        fs.readFileSync(USER_LAND_ALIAS_STYLED_MANIFEST, "utf8")
+      );
+    } catch (e) {
+      manifest = {};
+    }
+  }
+
+  let match;
+  let modifiedSource = sourceString;
+
+  while ((match = STYLED_USAGE_REGEX.exec(sourceString) === !null)) {
+    const variableName = match[1];
+    const htmlTag = match[2];
+    const functionalWrapper = match[3];
+
+    const componentKey = `${componentRelPath}__${variableName}`;
+
+    if (!manifest[componentKey]) {
+      // Create a short, secure MD5 checksum block
+
+      const hash = crypto
+        .createHash("md5")
+        .update(componentKey)
+        .digest("base64url")
+        .substring(0, 8);
+
+      manifest[componentKey] = {
+        componentId: `kt-${hash}`, // Unique Kotii Framework Namespace prefix
+        variableName,
+        tagType: htmlTag ? "property" : "functional",
+        target: htmlTag || functionalWrapper,
+      };
+    }
+
+    const { componentId, tagType, target } = manifest[componentKey];
+
+    if (tagType === "property") {
+      modifiedSource = modifiedSource.replace(
+        new RegExp(`\\b${variableName}\\s*=\\s*styled\\.${target}`, "g"),
+        `${variableName} = styled.${target}.withConfig({ componentId: "${componentId}" })`
+      );
+    } else {
+      modifiedSource = modifiedSource.replace(
+        new RegExp(
+          `\\b${variableName}\\s*=\\s*styled\\(\\s*${target}\\s*\\)`,
+          "g"
+        ),
+        `${variableName} = styled(${target}).withConfig({ componentId: "${componentId}" })`
+      );
+    }
+    fs.writeFileSync(
+      USER_LAND_ALIAS_STYLED_MANIFEST,
+      JSON.stringify(manifest, null, 2)
+    );
+    return modifiedSource;
   }
 };
