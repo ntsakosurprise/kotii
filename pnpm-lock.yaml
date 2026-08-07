@@ -68,7 +68,7 @@ importers:
         version: 8.57.1
       eslint-plugin-jest:
         specifier: ^27.9.0
-        version: 27.9.0(eslint@8.57.1)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5)))(typescript@4.9.5)
+        version: 27.9.0(eslint@8.57.1)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5)
       eslint-plugin-react:
         specifier: ^7.30.1
         version: 7.37.5(eslint@8.57.1)
@@ -92,7 +92,7 @@ importers:
         version: 2.8.8
       ts-jest:
         specifier: ^29.1.1
-        version: 29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(esbuild@0.18.20)(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5)))(typescript@4.9.5)
+        version: 29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5)
       typescript:
         specifier: ^4.9.4
         version: 4.9.5
@@ -340,7 +340,7 @@ importers:
         version: 10.9.2(@types/node@24.10.1)(typescript@4.9.5)
       webpack:
         specifier: ^5.69.1
-        version: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+        version: 5.103.0(webpack-cli@4.10.0)
       webpack-cli:
         specifier: ^4.9.2
         version: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
@@ -1143,7 +1143,7 @@ importers:
         version: 4.0.2(webpack@5.103.0)
       ts-jest:
         specifier: ^29.1.1
-        version: 29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(esbuild@0.18.20)(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5)))(typescript@4.9.5)
+        version: 29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5)
       webpack:
         specifier: ^5.69.1
         version: 5.103.0(webpack-cli@4.10.0)
@@ -1171,9 +1171,6 @@ importers:
       prism:
         specifier: ^4.1.2
         version: 4.1.2(react@18.3.1)
-      styled-components:
-        specifier: ^6.0.5
-        version: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       '@babel/core':
         specifier: ^7.17.5
@@ -1837,9 +1834,9 @@ importers:
 
   packages/kotii-styled:
     dependencies:
-      kotii-styled:
-        specifier: 1.0.0-beta.2.0
-        version: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      styled-components:
+        specifier: ^6.1.11
+        version: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       cross-env:
         specifier: ^10.1.0
@@ -1895,7 +1892,7 @@ importers:
         version: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-utils:
         specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz
-        version: file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz(react@18.3.1)
       react-i18next:
         specifier: ^11.18.1
         version: 11.18.6(i18next@21.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1959,7 +1956,7 @@ importers:
         version: file:packages/kotii-styled/kotii-styled-1.0.0-beta.2.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-utils:
         specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz
-        version: file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz(react@18.3.1)
       react-icons:
         specifier: ^4.11.0
         version: 4.12.0(react@18.3.1)
@@ -2029,7 +2026,7 @@ importers:
         version: 10.9.2(@types/node@24.10.1)(typescript@4.9.5)
       webpack:
         specifier: ^5.69.1
-        version: 5.103.0(webpack-cli@4.10.0)
+        version: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
       webpack-cli:
         specifier: ^4.9.2
         version: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
@@ -2039,9 +2036,6 @@ importers:
 
   packages/kotii-utils:
     dependencies:
-      kotii-styled:
-        specifier: 1.0.0-beta.2.0
-        version: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       use-local-storage:
         specifier: ^2.3.6
         version: 2.3.6(react@18.3.1)
@@ -9050,7 +9044,7 @@ packages:
     resolution: {integrity: sha512-QnWko8R8bvn8C06NQS9Y8LPHETwgdYB88oYoNDlFk3QPezhy5E2hSjvyTv4jQiAQE/1Uk7SYm3LTl+9komVV1Q==}
 
   kotii-markdown-loader@file:packages/kotii-markdown-loader/kotii-markdown-loader-1.0.0.tgz:
-    resolution: {integrity: sha512-8Ej7hHECUqHqoRspbbxR9Zaj3SM/iFY2UBXA64TWiR6HFeCwPmqrZaXThLMmmBUWxEFeLdYFq3KcJhHi8SODLQ==, tarball: file:packages/kotii-markdown-loader/kotii-markdown-loader-1.0.0.tgz}
+    resolution: {integrity: sha512-b4iY0wvMXkLo9L8hoYB+epO0KsWtx46BYEXZ+cnrMbqn4++4DF0vWoiK3/oqtzDzQDR6ZTH1XSuOdHvv6bV29Q==, tarball: file:packages/kotii-markdown-loader/kotii-markdown-loader-1.0.0.tgz}
     version: 1.0.0
 
   kotii-markdown-render@1.0.0-beta.1.0:
@@ -9105,7 +9099,7 @@ packages:
     resolution: {integrity: sha512-ARkXw1axBr5gQX5jeyc9ItyrHkKDkzqaceqR8dFNOxtkoSRESf5h5PJHLNDr94ex1ttroAS8gAtRDzIrP9iIOg==}
 
   kotii-utils@file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz:
-    resolution: {integrity: sha512-QXM8Y9MjMZd6aXMDfvSvro+aIpZfDiTgnvNImyTLODTOxIBYBSYj1YyN0GoPM1KX1tHpOsNYX7B2gmTjI+IxIQ==, tarball: file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz}
+    resolution: {integrity: sha512-DB7ZbiWUkirT2njLLITnn/d9w1jzgs3yMUbo/hsYmngIRtqIU6bHlGORxs1VWbLZID20GjCj96rFseSr/5IX7g==, tarball: file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz}
     version: 1.0.0-beta.4.0
 
   kuler@2.0.0:
@@ -17134,7 +17128,7 @@ snapshots:
 
   '@webpack-cli/configtest@1.2.0(webpack-cli@4.10.0)(webpack@5.103.0)':
     dependencies:
-      webpack: 5.103.0(webpack-cli@4.10.0)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
 
   '@webpack-cli/configtest@2.1.1(webpack-cli@5.1.4)(webpack@5.103.0)':
@@ -17695,7 +17689,7 @@ snapshots:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.103.0(webpack-cli@4.10.0)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
 
   babel-loader@9.2.1(@babel/core@7.28.5)(webpack@5.103.0):
     dependencies:
@@ -19519,7 +19513,7 @@ snapshots:
     optionalDependencies:
       source-map: 0.6.1
 
-  eslint-plugin-jest@27.9.0(eslint@8.57.1)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5)))(typescript@4.9.5):
+  eslint-plugin-jest@27.9.0(eslint@8.57.1)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5):
     dependencies:
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.1)(typescript@4.9.5)
       eslint: 8.57.1
@@ -22134,9 +22128,9 @@ snapshots:
     dependencies:
       '@node-loader/babel': 2.1.0
       kotii-markdown: file:packages/kotii-markdown/kotii-markdown-1.0.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      kotii-styled: 1.0.0-beta.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       marked: 4.3.0
       prism: 4.1.2(react@18.3.1)
-      styled-components: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - react
       - react-dom
@@ -22242,7 +22236,7 @@ snapshots:
       grommet: 2.51.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       grommet-icons: 4.14.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       i18next: 21.10.0
-      kotii-utils: file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      kotii-utils: file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz(react@18.3.1)
       react-i18next: 11.18.6(i18next@21.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-select: 5.10.2(@types/react@17.0.90)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       styled-components: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -22269,13 +22263,11 @@ snapshots:
       - react
       - react-dom
 
-  kotii-utils@file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  kotii-utils@file:packages/kotii-utils/kotii-utils-1.0.0-beta.4.0.tgz(react@18.3.1):
     dependencies:
-      styled-components: 6.1.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       use-local-storage: 2.3.6(react@18.3.1)
     transitivePeerDependencies:
       - react
-      - react-dom
 
   kuler@2.0.0: {}
 
@@ -25853,7 +25845,7 @@ snapshots:
 
   style-loader@3.3.4(webpack@5.103.0):
     dependencies:
-      webpack: 5.103.0(webpack-cli@4.10.0)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
 
   style-to-js@1.1.8:
     dependencies:
@@ -26045,7 +26037,7 @@ snapshots:
       schema-utils: 4.3.3
       serialize-javascript: 6.0.2
       terser: 5.44.1
-      webpack: 5.103.0(webpack-cli@4.10.0)
+      webpack: 5.103.0(webpack-cli@5.1.4)
 
   terser@5.44.1:
     dependencies:
@@ -26208,6 +26200,26 @@ snapshots:
       '@jest/types': 30.2.0
       babel-jest: 29.7.0(@babel/core@7.28.5)
       esbuild: 0.18.20
+      jest-util: 30.2.0
+
+  ts-jest@29.4.5(@babel/core@7.28.5)(@jest/transform@29.7.0)(@jest/types@30.2.0)(babel-jest@29.7.0(@babel/core@7.28.5))(jest-util@30.2.0)(jest@29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0))(typescript@4.9.5):
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      handlebars: 4.7.8
+      jest: 29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@4.9.5))
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.7.3
+      type-fest: 4.41.0
+      typescript: 4.9.5
+      yargs-parser: 21.1.1
+    optionalDependencies:
+      '@babel/core': 7.28.5
+      '@jest/transform': 29.7.0
+      '@jest/types': 30.2.0
+      babel-jest: 29.7.0(@babel/core@7.28.5)
       jest-util: 30.2.0
 
   ts-loader@9.5.4(typescript@4.9.5)(webpack@5.103.0):
@@ -26635,7 +26647,7 @@ snapshots:
       import-local: 3.2.0
       interpret: 2.2.0
       rechoir: 0.7.1
-      webpack: 5.103.0(webpack-cli@4.10.0)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
       webpack-merge: 5.10.0
     optionalDependencies:
       webpack-dev-server: 4.15.2(webpack-cli@4.10.0)(webpack@5.103.0)
@@ -26680,7 +26692,7 @@ snapshots:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.3.3
-      webpack: 5.103.0(webpack-cli@4.10.0)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
 
   webpack-dev-server@4.15.2(debug@4.4.3)(webpack-cli@4.10.0)(webpack@5.103.0):
     dependencies:
@@ -26715,7 +26727,7 @@ snapshots:
       webpack-dev-middleware: 5.3.4(webpack@5.103.0)
       ws: 8.18.3
     optionalDependencies:
-      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
+      webpack: 5.103.0(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
     transitivePeerDependencies:
       - bufferutil
@@ -26756,7 +26768,7 @@ snapshots:
       webpack-dev-middleware: 5.3.4(webpack@5.103.0)
       ws: 8.18.3
     optionalDependencies:
-      webpack: 5.103.0(webpack-cli@4.10.0)
+      webpack: 5.103.0(esbuild@0.18.20)(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-dev-server@4.15.2)(webpack@5.103.0)
     transitivePeerDependencies:
       - bufferutil

@@ -238,6 +238,7 @@ export default (options) => {
                     "babel-plugin-styled-components",
                     { ssr: true, displayName: true },
                   ],
+                  ["babel-plugin-kotii-styled"],
                 ],
               },
             },

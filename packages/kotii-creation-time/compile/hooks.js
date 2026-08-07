@@ -34,7 +34,7 @@ let metaChecked = false;
 let workdir = `${process.cwd()}`;
 let GLOBAL_STYLES_REGEX = /global\.+/;
 let CSS_MODULES_REGEX = /\.module\./;
-let KOTII_STYLED_REGEX = /import\s+styled\s+from\s+['"]package-styled['"]/;
+let KOTII_STYLED_REGEX = /import\s+styled\s+from\s+['"]kotii-styled['"]/;
 let JSON_STYLES_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`;
 let JSON_STYLES_MAP_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_MODULES]}`;
 let JSON_STYLES_FONTS_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_FONTS]}`;
@@ -132,6 +132,7 @@ export async function load(url, context, nextLoad) {
   addDependencyFromLoad(url);
 
   try {
+    let urlInstance = new URL(url).pathname;
     if (
       (fileExtension === extJsx ||
         fileExtension === extJS ||
@@ -180,7 +181,7 @@ export async function load(url, context, nextLoad) {
             },
           ]);
         loggas.load.debug("READING FILE", fileExtension, url, options.plugins);
-        let urlInstance = new URL(url).pathname;
+
         if (url.indexOf("/api/") >= 0) {
           if (!fs.existsSync(urlInstance)) {
             source = `export default ${JSON.stringify({ noApi: true })}`;
@@ -282,6 +283,8 @@ export async function load(url, context, nextLoad) {
         source = await nextLoad(url, { ...context, format });
       }
       let rawSource = typeof source === "string" ? source : source.source;
+      if (!isThirdPartyNodeModule)
+        findStyledComponentsPatterns(result, urlInstance);
 
       let result = fileLoaderExts.includes(fileExtension)
         ? babel.transformFileSync(source, options)
@@ -308,8 +311,6 @@ export async function load(url, context, nextLoad) {
           RESOLVE_SPECIFIER_TO_URL
         );
       }
-
-      if (!isThirdPartyNodeModule) findStyledComponentsPatterns(rawSource, url);
 
       return {
         format: format ? (format === "commonjs" ? "module" : format) : "module",
@@ -1584,6 +1585,12 @@ const ensurePackage = (pkg) => {
   return PACKAGE_FILES.get(pkg);
 };
 
-const findStyledComponentsPatterns = (sourceString, url) => {
-  const filePath = path.normalize(new URL(url).pathname);
+const findStyledComponentsPatterns = (nodejsSource, urlInstance) => {
+  let sourceString = nodejsSource?.source?.toString();
+  if (KOTII_STYLED_REGEX.test(sourceString)) {
+    let relativeFilePath = path.relative(process.cwd(), urlInstance);
+    // let newSourceWithStyledConfig =
+  }
 };
+
+const transformStyledComponentCalls = (sourceString, componentRelPath) => {};
