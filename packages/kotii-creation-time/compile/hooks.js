@@ -143,6 +143,8 @@ export async function load(url, context, nextLoad) {
       loggas.load.debug("EXTENSIONS EXECUTION", fileExtension);
       let source = null;
       let options = null;
+      const isThirdPartyNodeModule =
+        nodeModulesRegex.test(url) && !url.includes("kotii-");
 
       if (
         fileExtension === extJsx ||
@@ -306,6 +308,8 @@ export async function load(url, context, nextLoad) {
           RESOLVE_SPECIFIER_TO_URL
         );
       }
+
+      if (!isThirdPartyNodeModule) findStyledComponentsPatterns(rawSource, url);
 
       return {
         format: format ? (format === "commonjs" ? "module" : format) : "module",
@@ -1578,4 +1582,8 @@ const ensurePackage = (pkg) => {
   }
 
   return PACKAGE_FILES.get(pkg);
+};
+
+const findStyledComponentsPatterns = (sourceString, url) => {
+  const filePath = path.normalize(new URL(url).pathname);
 };
