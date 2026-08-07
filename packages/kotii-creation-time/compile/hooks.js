@@ -24,6 +24,7 @@ import {
   USER_LAND_ALIAS_ASSETS_MANIFEST,
   USER_LAND_ALIAS_STYLES_FONTS,
 } from "kotii-internal/user";
+import { USER_LAND_PATH_CACHE } from "../../kotii-internal/user.js";
 // import { kotiiInternal } from "kotii-internal";
 
 let meta = null;
@@ -1589,8 +1590,21 @@ const findStyledComponentsPatterns = (nodejsSource, urlInstance) => {
   let sourceString = nodejsSource?.source?.toString();
   if (KOTII_STYLED_REGEX.test(sourceString)) {
     let relativeFilePath = path.relative(process.cwd(), urlInstance);
-    // let newSourceWithStyledConfig =
+    console.log("COMPONENT-REL-PATH", relativeFilePath);
+    let newSourceWithStyledConfig = transformStyledComponentCalls(
+      sourceString,
+      relativeFilePath
+    );
+
+    nodejsSource.source = newSourceWithStyledConfig;
+    return;
   }
 };
 
-const transformStyledComponentCalls = (sourceString, componentRelPath) => {};
+const transformStyledComponentCalls = (sourceString, componentRelPath) => {
+  console.log("FIND STYLED COMPONENT PATTERNS");
+  const dir = path.dirname(USER_LAND_PATH_CACHE);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+};
