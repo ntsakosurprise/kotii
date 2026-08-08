@@ -42,10 +42,9 @@
   "license": "MIT",
   "dependencies": {
     "@kotii/anzii-plugins-env": "1.0.0-beta.1.0",
-    "@kotii/anzii-plugins-filerouter": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-filerouter/kotii-anzii-plugins-filerouter-1.0.0-beta.1.0.tgz",
-    "@kotii/anzii-plugins-react": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-anzii-plugins-react/kotii-anzii-plugins-react-1.0.0-beta.1.0.tgz",
-    "@kotii/anzii-plugins-viewguard": "1.0.0-beta.1.0",
-    "react-helmet": "^6.1.0"
+    "@kotii/anzii-plugins-filerouter": "1.0.0-beta.1.0",
+    "@kotii/anzii-plugins-react": "1.0.0-beta.1.0",
+    "@kotii/anzii-plugins-viewguard": "1.0.0-beta.1.0"
   },
   "peerDependencies": {
     "react": "^18.2.0",
