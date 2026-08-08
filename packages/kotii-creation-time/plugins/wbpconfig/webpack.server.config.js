@@ -140,7 +140,10 @@ export default (options) => {
         "react-router": path.resolve(
           `${env.appFolder}/node_modules/react-router`
         ),
-        // kotii: scriptsWebpackResolve,
+        "styled-components$": path.resolve(
+          `${env.appFolder}/node_modules/styled-components`
+        ),
+        kotii: scriptsWebpackResolve,
         [USER_LAND_ALIAS_REDUX]: guessPathExtension(
           `${env.appSrc}/store/index`
         ),

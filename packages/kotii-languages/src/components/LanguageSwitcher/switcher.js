@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 // import { AiTwotoneCopyrightCircle as Circle } from "react-icons/ai";
 // import { BsFillMoonStarsFill as MoonIcon } from "react-icons/bs";
 // import { RiArrowDropDownLine as DropdownIcon } from "react-icons";
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes } from "kotii-styled";
 import { useLanguage } from "../../context/language-provider.js";
 
 import React from "react";

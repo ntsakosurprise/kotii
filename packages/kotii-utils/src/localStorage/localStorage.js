@@ -1,12 +1,12 @@
 export const setInStorage = async (key, value) => {
-  if (!window || window === "undefined") return false;
+  if (typeof window == "undefined") return false;
   localStorage.setItem(key, JSON.stringify(value));
   if (getFromStorage(key)) return true;
   return false;
 };
 
 export const getFromStorage = async (key) => {
-  if (!window || window === "undefined") return false;
+  if (typeof window == "undefined") return false;
   let foundItem = key ? localStorage.getItem(key) : null;
   if (!foundItem) return null;
   if (!foundItem) return null;
@@ -19,7 +19,7 @@ export const getFromStorage = async (key) => {
 
 export const removeFromStorage = async (key) => {
   // console.log("Removing Key from storage;;;", key);
-  if (!window || window === "undefined") return false;
+  if (typeof window == "undefined") return false;
   localStorage.removeItem(key);
   if (!getFromStorage(key)) return true;
   return false;

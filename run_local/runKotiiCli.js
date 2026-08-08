@@ -13,7 +13,7 @@ console.log("Packages PATH", kotiiScriptsPath);
 const madeTarballs = createTarballs(packagesPath, [
   // "kotii-cli",
   "kotii",
-  // "kotii-styled",
+  "kotii-styled",
   "kotii-templates",
   "kotii-logger",
   "kotii-markdown",
