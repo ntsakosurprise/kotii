@@ -95,7 +95,7 @@
     "html-react-parser": "^4.0.0",
     "kotii-auth": "1.0.0-beta.3.0",
     "kotii-components": "1.0.0-beta.1.0",
-    "kotii-internal": ".0.0-beta.3.0",
+    "kotii-internal": "1.0.0-beta.3.0",
     "kotii-languages": "1.0.0-beta.5.0",
     "kotii-lazy": "1.0.0-beta.3.0",
     "kotii-logger": "1.0.0-beta.4.0",
