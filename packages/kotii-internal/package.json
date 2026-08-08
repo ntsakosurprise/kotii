@@ -99,6 +99,7 @@
     "dev/",
     "dist/",
     "css/",
+    "cache/",
     "user.js",
     "internal.js",
     "README.md",
