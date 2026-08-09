@@ -1,6 +1,6 @@
 {
   "name": "@kotii/anzii-plugins-react",
-  "version": "1.0.0-beta.2.0",
+  "version": "1.0.0-beta.3.0",
   "description": "A full-featured React Server-Side Rendering (SSR), SPA rendering, static rendering, and effects-driven data loader plugin for the **Anzii Framework** built for kotii.",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
   "homepage": "https://github.com/ntsakosurprise/kotii",
@@ -34,7 +34,7 @@
     "kotii-head": "1.0.0-beta.1.0",
     "kotii-internal": "1.0.0-beta.3.0",
     "kotii-router": "1.0.0-beta.3.0",
-    "kotii-styled": "1.0.0-beta.3.0.tgz",
+    "kotii-styled": "1.0.0-beta.3.0",
     "serialize-javascript": "^6.0.1"
   },
   "peerDependencies": {
