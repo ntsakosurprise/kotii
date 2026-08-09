@@ -1,6 +1,6 @@
 {
   "name": "@kotii/anzii-plugins-filerouter",
-  "version": "1.0.0-beta.1.0",
+  "version": "1.0.0-beta.2.0",
   "description": "is an advanced file-based routing engine that automatically scans your filesystem, parses your files into ASTs, generates React components, builds static and lazy route imports, processes Markdown, and maintains a live routing manifest with caching and file watching.",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
   "homepage": "https://github.com/ntsakosurprise/kotii",
