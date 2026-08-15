@@ -1,2 +1,2 @@
-import styled from "./styled.js";
+import styled from "./styled.ts";
 export { styled };

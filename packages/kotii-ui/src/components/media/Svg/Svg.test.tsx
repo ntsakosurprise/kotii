@@ -4,7 +4,7 @@ import React from "react";
 
 import { KotiiThemeProvider } from "../../../context";
 // const kottiSvg = require("./kotii.svg") as string;
-const KotiiSVG = require("./kotii.svg");
+import KotiiSVG from "./kotii.svg";
 
 import { DOM_BY_TEXT } from "../../../constants";
 import Svg from "./Svg";
@@ -12,7 +12,7 @@ describe("Running Test for Svg component", () => {
   test("Check if Svg component renders", () => {
     render(
       <KotiiThemeProvider>
-        <Svg asComponent={KotiiSVG} inline={true} testID={DOM_BY_TEXT} />
+        <Svg asComponent={KotiiSVG as any} inline={true} testID={DOM_BY_TEXT} />
       </KotiiThemeProvider>
     );
     // expect(

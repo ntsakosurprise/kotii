@@ -5,6 +5,7 @@
     "ignoreDeprecations": "6.0",
     "skipLibCheck": true,
     // "rootDir": ".",
+
     "allowJs": true,
     "baseUrl": "./",
     "module": "CommonJS"

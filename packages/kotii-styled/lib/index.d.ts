@@ -1,3 +1,3 @@
-import { styled } from "./src/index.js";
+import { styled } from "./src/index.ts";
 export * from "styled-components";
 export default styled;
