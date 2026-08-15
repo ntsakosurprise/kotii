@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "allowJs": true,
+    "outDir": "./lib",
+    "allowImportingTsExtensions": true,
+    "moduleResolution": "NodeNext",
+    "declaration": true,
+    "emitDeclarationOnly": true, // Webpack handles JS code emission, TS just handles types
+    "skipLibCheck": true,
+    "esModuleInterop": true
+  },
+  "include": ["./index.ts", "src/**/*"]
+}

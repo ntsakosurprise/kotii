@@ -31,12 +31,15 @@
     "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
+    "@node-loader/babel": "^2.0.1",
     "@storybook/cli": "^7.1.0",
+    "@svgr/webpack": "^8.1.0",
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^29.5.12",
-    "@types/styled-components": "^5.1.26",
+    "@types/react": "^19.2.18",
+    "@types/styled-components": "^5.1.36",
     "babel-cli": "^6.26.0",
     "babel-loader": "^8.2.3",
     "cross-env": "^10.0.0",
@@ -53,13 +56,14 @@
     "webpack-dev-server": "^4.7.4"
   },
   "dependencies": {
-    "@node-loader/babel": "^2.0.1",
-    "@svgr/webpack": "^8.1.0",
     "color": "^4.2.3",
     "grommet": "^2.33.1",
-    "kotii-styled": "1.0.0-beta.3.0",
-    "kotii-utils": "1.0.0-beta.5.0",
     "react-icons": "^4.11.0",
-    "react-switch": "^7.0.0"
+    "react-switch": "^7.0.0",
+    "styled-components": "^6.5.2"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }

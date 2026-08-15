@@ -45,6 +45,7 @@
     "anzii": "8.0.0",
     "cross-spawn": "^7.0.3",
     "kotii-languages": "file:/Users/surprisemashele/Documents/kotii/packages/kotii-languages/kotii-languages-1.0.0-beta.3.0.tgz",
+    "kotii-styled": "link:../../../../Library/pnpm/global/5/node_modules/kotii-styled",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -75,7 +76,8 @@
   },
   "pnpm": {
     "overrides": {
-      "babel-preset-current-node-syntax": "1.0.0"
+      "babel-preset-current-node-syntax": "1.0.0",
+      "kotii-styled": "link:../../../../Library/pnpm/global/5/node_modules/kotii-styled"
     }
   }
 }

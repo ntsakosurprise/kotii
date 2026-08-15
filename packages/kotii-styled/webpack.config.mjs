@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 const isESM = process.env.NODE_MODE === "esm" ? true : false;
 
 const kotiiStyled = {
-  entry: "./index.js",
+  entry: "./index.ts",
   mode: "development",
 
   experiments: {
@@ -25,12 +25,12 @@ const kotiiStyled = {
   },
 
   resolve: {
-    extensions: [".js", ".jsx"],
+    extensions: [".js", ".jsx", ".ts", ".tsx"],
   },
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\.(js|jsx|ts|tsx)$/,
         exclude: [path.resolve(__dirname, "node_modules")],
         use: {
           loader: "babel-loader",
@@ -43,12 +43,18 @@ const kotiiStyled = {
                 },
               ],
               "@babel/preset-react",
-            ], // Use presets for ES features and React JSX
+              [
+                "@babel/preset-typescript",
+                {
+                  ignoreExtensions: true,
+                },
+              ],
+            ],
           },
         },
       },
     ],
-    exprContextCritical: false, // Temporary workaround
+    exprContextCritical: false,
   },
 };
 
