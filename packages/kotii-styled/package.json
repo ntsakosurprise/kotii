@@ -1,6 +1,6 @@
 {
   "name": "kotii-styled",
-  "version": "1.0.0-beta.6.0",
+  "version": "1.0.0-beta.7.0",
   "description": "a wrapper around the official styled-components",
   "homepage": "https://github.com/kotii",
   "main": "./dist/index.cjs",
