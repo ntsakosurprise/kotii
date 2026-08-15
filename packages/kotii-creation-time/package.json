@@ -102,7 +102,7 @@
     "kotii-markdown": "1.0.0-beta.3.0",
     "kotii-markdown-render": "1.0.0-beta.1.0",
     "kotii-router": "1.0.0-beta.3.0",
-    "kotii-styled": "1.0.0-beta.3.0",
+    "kotii-styled": "1.0.0-beta.7.0",
     "less": "^4.2.0",
     "node-cache": "^5.1.2",
     "papaparse": "^5.5.3",

@@ -24,8 +24,8 @@ importers:
         specifier: 1.0.0-beta.3.0
         version: 1.0.0-beta.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       kotii-styled:
-        specifier: 1.0.0-beta.3.0
-        version: 1.0.0-beta.3.0(styled-components@6.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: 1.0.0-beta.7.0
+        version: 1.0.0-beta.7.0(styled-components@6.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -2866,8 +2866,8 @@ packages:
   kotii-runtime@1.0.0-beta.1.0:
     resolution: {integrity: sha512-vdjeYT9IXddU7VAqFBGhXRgw16nIWQpg2/+nIODiibXEkzHixqv8jqtY53xLUQW/ZC0eu3fOP3Fh9UbStVquEA==}
 
-  kotii-styled@1.0.0-beta.3.0:
-    resolution: {integrity: sha512-kxYVlNZkdrf4d9rGI1c70BrbS7sTp/VJxN9YWdPjtHs4qEEKQjE08sTa3vzEp9v3eK0HEW/Izef5l/dchvLaYA==}
+  kotii-styled@1.0.0-beta.7.0:
+    resolution: {integrity: sha512-f1bmhbHF2zGdo1ErHCOsM785yvBsbMl6XXpygGjfXrAIdfbhVZYxqxE+o2mRZq6BR19o+yk/MygJFnGGlsLwRA==}
     peerDependencies:
       styled-components: ^6.1.11
 
@@ -7978,7 +7978,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  kotii-styled@1.0.0-beta.3.0(styled-components@6.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
+  kotii-styled@1.0.0-beta.7.0(styled-components@6.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:
       styled-components: 6.5.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
