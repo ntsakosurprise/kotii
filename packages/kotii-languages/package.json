@@ -1,6 +1,6 @@
 {
   "name": "kotii-languages",
-  "version": "1.0.0-beta.4.0",
+  "version": "1.0.0-beta.5.0",
   "description": "is a lightweight and flexible library for managing multilingual support in your React applications.",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
   "homepage": "https://github.com/kotii",
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "i18next": "^21.8.14",
-    "kotii-styled": "1.0.0-beta.6.0",
+    "kotii-styled": "1.0.0-beta.7.0",
     "kotii-utils": "1.0.0-beta.6.0",
     "react-i18next": "^11.18.1",
     "react-icons": "^4.12.0",
