@@ -1,6 +1,6 @@
 {
   "name": "kotii-styled",
-  "version": "1.0.0-beta.5.0",
+  "version": "1.0.0-beta.6.0",
   "description": "a wrapper around the official styled-components",
   "homepage": "https://github.com/kotii",
   "main": "./dist/index.cjs",
@@ -10,9 +10,9 @@
   "exports": {
     ".": {
       "types": "./lib/index.d.ts",
-      "import": "./index.ts",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
-      "default": "./index.ts"
+      "default": "./dist/index.mjs"
     }
   },
   "author": {

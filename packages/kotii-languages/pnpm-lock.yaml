@@ -12,8 +12,8 @@ importers:
         specifier: ^21.8.14
         version: 21.10.0
       kotii-styled:
-        specifier: 1.0.0-beta.4.0
-        version: 1.0.0-beta.4.0(styled-components@6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
+        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-styled/kotii-styled-1.0.0-beta.5.0.tgz
+        version: file:../kotii-styled/kotii-styled-1.0.0-beta.5.0.tgz(styled-components@6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       kotii-utils:
         specifier: 1.0.0-beta.2.0
         version: 1.0.0-beta.2.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -2355,8 +2355,9 @@ packages:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
 
-  kotii-styled@1.0.0-beta.4.0:
-    resolution: {integrity: sha512-qL/ZZx8kRYX9tZ5q/JRm74jh832bUqaTU8YNdMxBXUgn75tVygO4JGSskuj8GLyePL5wnvK+TPxYybx+zt500A==}
+  kotii-styled@file:../kotii-styled/kotii-styled-1.0.0-beta.5.0.tgz:
+    resolution: {integrity: sha512-XcupLdgiRYIeWacDPPR0peTr1oRoq8rM473sGyHR0HmxeyuFnoIkCkaEneM++UG/FmSUvde/Q6ZO6vWEChI8sQ==, tarball: file:../kotii-styled/kotii-styled-1.0.0-beta.5.0.tgz}
+    version: 1.0.0-beta.5.0
     peerDependencies:
       styled-components: ^6.1.11
 
@@ -6491,7 +6492,7 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  kotii-styled@1.0.0-beta.4.0(styled-components@6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)):
+  kotii-styled@file:../kotii-styled/kotii-styled-1.0.0-beta.5.0.tgz(styled-components@6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)):
     dependencies:
       styled-components: 6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
