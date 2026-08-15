@@ -12,11 +12,11 @@ importers:
         specifier: ^21.8.14
         version: 21.10.0
       kotii-styled:
-        specifier: file:/Users/surprisemashele/Documents/kotii/packages/kotii-styled/kotii-styled-1.0.0-beta.5.0.tgz
-        version: file:../kotii-styled/kotii-styled-1.0.0-beta.5.0.tgz(styled-components@6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
+        specifier: 1.0.0-beta.6.0
+        version: 1.0.0-beta.6.0(styled-components@6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8))
       kotii-utils:
-        specifier: 1.0.0-beta.2.0
-        version: 1.0.0-beta.2.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 1.0.0-beta.6.0
+        version: 1.0.0-beta.6.0
       react-i18next:
         specifier: ^11.18.1
         version: 11.18.6(i18next@21.10.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -2355,14 +2355,13 @@ packages:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
 
-  kotii-styled@file:../kotii-styled/kotii-styled-1.0.0-beta.5.0.tgz:
-    resolution: {integrity: sha512-XcupLdgiRYIeWacDPPR0peTr1oRoq8rM473sGyHR0HmxeyuFnoIkCkaEneM++UG/FmSUvde/Q6ZO6vWEChI8sQ==, tarball: file:../kotii-styled/kotii-styled-1.0.0-beta.5.0.tgz}
-    version: 1.0.0-beta.5.0
+  kotii-styled@1.0.0-beta.6.0:
+    resolution: {integrity: sha512-bcRAS06qodSQMzRG8pKDvjeKeMibKnjbpGxj/cBJ0SlMuWKFnV3dMAG2vzpW1Tk4ayCucIe1T+v1arncf8N+Pg==}
     peerDependencies:
       styled-components: ^6.1.11
 
-  kotii-utils@1.0.0-beta.2.0:
-    resolution: {integrity: sha512-Fe6+CrnFVJWR+nZNiCIL9yYP1XC6okgqi+LzPkV+LCUKFHu63ooXQ45SPImv4MbkxcINWiJ2mfCOFAuMs7gKow==}
+  kotii-utils@1.0.0-beta.6.0:
+    resolution: {integrity: sha512-v+zcXxxExJPOLId6fXlGX/X8FlBymbANkpMMiUqCCaKv9UJzTdmcjWr9feJW7fjt0KsqigxcnFEBBmgSDpt6Cw==}
 
   launch-editor@2.14.1:
     resolution: {integrity: sha512-QWBrQsMpH7gPr965dsKD/3cKWiNoTjpATQf++Xq63N6sKRGMwlVXz41O1IZTMfZQgBctD/K5Zt06+/I6pP6+HA==}
@@ -3303,11 +3302,6 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
-
-  use-local-storage@2.3.6:
-    resolution: {integrity: sha512-OJQHWYbH2M5mMaSY6uYIbfzOm7eVz1fBYFw1wqQurCR2+gQb+FjVt0KzzDAsgTOSEUNVAbaiJ0I4WcNjRn7u5w==}
-    peerDependencies:
-      react: '>=16.8.1'
 
   use@3.1.1:
     resolution: {integrity: sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==}
@@ -6492,19 +6486,11 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  kotii-styled@file:../kotii-styled/kotii-styled-1.0.0-beta.5.0.tgz(styled-components@6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)):
+  kotii-styled@1.0.0-beta.6.0(styled-components@6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)):
     dependencies:
       styled-components: 6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
 
-  kotii-utils@1.0.0-beta.2.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
-    dependencies:
-      styled-components: 6.5.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      use-local-storage: 2.3.6(react@19.2.8)
-    transitivePeerDependencies:
-      - css-to-react-native
-      - react
-      - react-dom
-      - react-native
+  kotii-utils@1.0.0-beta.6.0: {}
 
   launch-editor@2.14.1:
     dependencies:
@@ -7463,10 +7449,6 @@ snapshots:
       react: 19.2.8
     optionalDependencies:
       '@types/react': 19.2.18
-
-  use-local-storage@2.3.6(react@19.2.8):
-    dependencies:
-      react: 19.2.8
 
   use@3.1.1:
     optional: true
