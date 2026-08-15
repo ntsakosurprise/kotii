@@ -2,6 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "lib",
+    "ignoreDeprecations": "6.0",
+    "skipLibCheck": true,
     // "rootDir": ".",
     "allowJs": true,
     "baseUrl": "./",
