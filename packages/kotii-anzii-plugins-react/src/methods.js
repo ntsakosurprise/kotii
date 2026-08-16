@@ -371,7 +371,7 @@ methods.runReactView = function (data) {
 
         console.log("THE FINAL STATE", store, store.getState());
         const finalState = store.getState() || store;
-        const helmetGenerated = HeadHelmet.renderStatic();
+        // const helmetGenerated = HeadHelmet.renderStatic();
         // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
         const fullPage = self.renderFullPage({
           html,
@@ -404,7 +404,7 @@ methods.runReactView = function (data) {
         self.debug("THE STATIC PART JS FROM SSG", pageJsPackages);
         console.log("THE FINAL STATE", store, store.getState());
         const finalState = store.getState() || store;
-        const helmetGenerated = HeadHelmet.renderStatic();
+        // const helmetGenerated = HeadHelmet.renderStatic();
         self.doStyledSheets(sheet, true);
 
         // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
@@ -420,7 +420,8 @@ methods.runReactView = function (data) {
         const fullPage = self.renderStaticFullPage({
           html,
           pageJs,
-          head: helmetGenerated,
+          // head: helmetGenerated,
+          head: {},
           info,
           usesRelativeUrls,
           pageJsPackages,

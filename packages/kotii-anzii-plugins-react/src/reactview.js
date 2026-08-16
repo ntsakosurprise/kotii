@@ -4,7 +4,6 @@ import { renderToPipeableStream, renderToString } from "react-dom/server";
 import serialize from "serialize-javascript";
 import { ServerApp } from "kotii-internal/app";
 import { meta } from "kotii-internal";
-import { Head, HeadHelmet } from "kotii-components";
 import methods from "./methods.js";
 
 /**
@@ -25,8 +24,6 @@ class ReactView {
     this.renderToString = renderToString;
     this.renderToPipeableStream = renderToPipeableStream;
     this.serialize = serialize;
-    this.Head = Head;
-    this.HeadHelmet = HeadHelmet;
     this.meta = meta;
 
     this.init = methods.init;

@@ -1,6 +1,6 @@
 {
   "name": "kotii-internal",
-  "version": "1.0.0-beta.4.0",
+  "version": "1.0.0-beta.5.0",
   "description": "is a next-generation full-stack meta-framework for building modern web applications It combines a powerful compiler pipeline, flexible backend architecture, file-based routing, and first-class React support — all built on top of the Anzii framework and its event-driven, plugin-powered architecture.",
   "main": "./dist/index.js",
   "type": "module",
@@ -100,6 +100,7 @@
     "dist/",
     "css/",
     "cache/",
+    "assets/",
     "user.js",
     "internal.js",
     "README.md",
