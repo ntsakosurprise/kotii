@@ -1,6 +1,6 @@
 {
   "name": "kotii-router",
-  "version": "1.0.0-beta.3.0",
+  "version": "1.0.0-beta.4.0",
   "description": "a lightweight and flexible routing library for modern JavaScript and TypeScript applications. It provides declarative routing components and powerful hooks to manage navigation, route matching, and redirection.",
   "author": "ntsakosurprise <mashelesepru@gmail.com>",
   "homepage": "https://github.com/kotii",
@@ -64,7 +64,7 @@
   },
   "dependencies": {
     "debug": "^4.4.0",
-    "kotii-head": "1.0.0-beta.1.0",
+    "kotii-head": "1.0.0-beta.2.0",
     "suku": "^1.0.0"
   }
 }
