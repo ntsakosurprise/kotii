@@ -70,7 +70,7 @@
     "@babel/preset-react": "^7.22.15",
     "@babel/preset-typescript": "^7.26.0",
     "@kotii/anzii-plugins-env": "1.0.0-beta.1.0",
-    "@kotii/anzii-plugins-filerouter": "1.0.0-beta.2.0",
+    "@kotii/anzii-plugins-filerouter": "1.0.0-beta.3.0",
     "@kotii/anzii-plugins-react": "1.0.0-beta.4.0",
     "@kotii/anzii-plugins-viewguard": "1.0.0-beta.1.0",
     "@reduxjs/toolkit": "^2.0.1",

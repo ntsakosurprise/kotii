@@ -289,7 +289,7 @@ export async function load(url, context, nextLoad) {
       }
       let rawSource = typeof source === "string" ? source : source.source;
       if (!isThirdPartyNodeModule)
-        findStyledComponentsPatterns(result, urlInstance);
+        findStyledComponentsPatterns(rawSource, urlInstance);
 
       let result = fileLoaderExts.includes(fileExtension)
         ? babel.transformFileSync(source, options)
@@ -1591,6 +1591,7 @@ const ensurePackage = (pkg) => {
 };
 
 const findStyledComponentsPatterns = (nodejsSource, urlInstance) => {
+  console.log("TESTING FOR STYLED COMPONENTS ON FILE:", urlInstance);
   let sourceString = nodejsSource?.source?.toString();
   if (KOTII_STYLED_REGEX.test(sourceString)) {
     let relativeFilePath = path.relative(process.cwd(), urlInstance);
