@@ -17,6 +17,9 @@ importers:
       kotii-styled:
         specifier: 1.0.0-beta.8.0
         version: 1.0.0-beta.8.0(styled-components@6.5.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      kotii-utils:
+        specifier: ^1.0.0-beta.6.0
+        version: 1.0.0-beta.6.0
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -3496,6 +3499,9 @@ packages:
     resolution: {integrity: sha512-xtKRyNzaQSqfFlgueh9X/AYDMTI5XSSCx3U/M8TM/bm3cl1M9ZTyKJuYG2dwpBV9hQTDVLUaxnoZ5KM55md6Lw==}
     peerDependencies:
       styled-components: ^6.1.11
+
+  kotii-utils@1.0.0-beta.6.0:
+    resolution: {integrity: sha512-v+zcXxxExJPOLId6fXlGX/X8FlBymbANkpMMiUqCCaKv9UJzTdmcjWr9feJW7fjt0KsqigxcnFEBBmgSDpt6Cw==}
 
   launch-editor@2.14.1:
     resolution: {integrity: sha512-QWBrQsMpH7gPr965dsKD/3cKWiNoTjpATQf++Xq63N6sKRGMwlVXz41O1IZTMfZQgBctD/K5Zt06+/I6pP6+HA==}
@@ -9594,6 +9600,8 @@ snapshots:
   kotii-styled@1.0.0-beta.8.0(styled-components@6.5.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:
       styled-components: 6.5.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+
+  kotii-utils@1.0.0-beta.6.0: {}
 
   launch-editor@2.14.1:
     dependencies:

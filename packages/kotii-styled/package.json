@@ -1,6 +1,6 @@
 {
   "name": "kotii-styled",
-  "version": "1.0.0-beta.8.0",
+  "version": "1.0.0-beta.9.0",
   "description": "a wrapper around the official styled-components",
   "homepage": "https://github.com/kotii",
   "main": "./dist/index.cjs",
@@ -34,7 +34,7 @@
     "build:types": "tsc"
   },
   "peerDependencies": {
-    "styled-components": "^6.1.11"
+    "styled-components": "6.1.11"
   },
   "readme": "See README file",
   "readmeFilename": "README.md",
