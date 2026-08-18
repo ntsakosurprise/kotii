@@ -39,8 +39,8 @@
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^29.5.12",
     "@types/node": "^26.2.0",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
     "@types/styled-components": "^5.1.36",
     "babel-cli": "^6.26.0",
     "babel-loader": "^8.2.3",
@@ -60,7 +60,7 @@
   "dependencies": {
     "color": "^4.2.3",
     "grommet": "^2.33.1",
-    "kotii-styled": "1.0.0-beta.7.0",
+    "kotii-styled": "1.0.0-beta.8.0",
     "react-icons": "^4.11.0",
     "react-switch": "^7.0.0"
   },

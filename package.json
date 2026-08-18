@@ -77,7 +77,9 @@
   "pnpm": {
     "overrides": {
       "babel-preset-current-node-syntax": "1.0.0",
-      "kotii-styled": "link:../../../../Library/pnpm/global/5/node_modules/kotii-styled"
+      "kotii-styled": "link:../../../../Library/pnpm/global/5/node_modules/kotii-styled",
+      "@types/react": "^18.2.0",
+      "@types/react-dom": "^18.2.0"
     }
   }
 }

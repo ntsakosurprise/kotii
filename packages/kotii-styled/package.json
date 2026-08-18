@@ -1,6 +1,6 @@
 {
   "name": "kotii-styled",
-  "version": "1.0.0-beta.7.0",
+  "version": "1.0.0-beta.8.0",
   "description": "a wrapper around the official styled-components",
   "homepage": "https://github.com/kotii",
   "main": "./dist/index.cjs",
@@ -58,8 +58,8 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^8.0.1",
-    "@types/react": "^19.2.16",
-    "@types/react-dom": "^19.2.3",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
     "babel-cli": "^6.26.0",
     "babel-loader": "^8.2.3",
     "cross-env": "^10.0.0",
