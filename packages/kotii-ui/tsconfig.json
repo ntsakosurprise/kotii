@@ -4,7 +4,7 @@
     "outDir": "lib",
     "ignoreDeprecations": "6.0",
     "skipLibCheck": true,
-    // "rootDir": ".",
+    "rootDir": "./",
 
     "allowJs": true,
     "baseUrl": "./",
@@ -19,5 +19,10 @@
     // }
   },
 
-  "include": ["./src", "./jest-setup.ts"]
+  "include": ["src/**/*", "jest-setup.ts"],
+  "exclude": [
+    "node_modules",
+    "../**/node_modules",
+    "lib" // Exclude your outDir to prevent infinite loop compilation
+  ]
 }
