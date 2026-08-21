@@ -28,6 +28,9 @@ const kotiiRouter = {
       react: "react",
       "react-dom": "react-dom",
       "kotii-languages": "kotii-languages",
+      "html-react-parser": "html-react-parser",
+      "kotii-styled": "html-react-parser",
+      "prop-types": "html-react-parser",
     },
   ],
   resolve: {
