@@ -1,6 +1,6 @@
 {
   "name": "kotii-markdown-loader",
-  "version": "1.0.0-beta.2.0",
+  "version": "1.0.0-beta.3.0",
   "main": "index.js",
   "license": "MIT",
   "exports": {
@@ -31,8 +31,7 @@
   "dependencies": {
     "kotii-markdown": "1.0.0-beta.4.0",
     "marked": "^4.0.18",
-    "prism": "^4.1.2",
-    "kotii-styled": "1.0.0-beta.11.0"
+    "prism": "^4.1.2"
   },
   "devDependencies": {
     "@node-loader/babel": "^2.0.1",

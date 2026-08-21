@@ -25,7 +25,12 @@ const kotiiMarkdown = {
 
     module: isESM ? true : false,
   },
-
+  externals: [
+    {
+      prism: "prism",
+      marked: "marked",
+    },
+  ],
   resolve: {
     extensions: [".js"],
     fallback: {
