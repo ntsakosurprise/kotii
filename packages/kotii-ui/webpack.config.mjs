@@ -1,5 +1,6 @@
 import path from "path";
 import { fileURLToPath } from "url";
+import nodeExternals from "webpack-node-externals";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -24,11 +25,19 @@ const kotiiRouter = {
     chunkFormat: isESM ? "module" : "commonjs",
     module: isESM ? true : false,
   },
+  // externals: [
+  //   {
+  //     react: "react",
+  //     "react-dom": "react-dom",
+  //     "kotii-styled": "kotii-styled",
+  //   },
+  // ],
+  externalsPresets: { node: true }, // instructs Webpack to ignore built-in modules like path/fs
   externals: [
-    {
-      react: "react",
-      "react-dom": "react-dom",
-    },
+    nodeExternals({
+      // Ensures dependencies are imported via pure module paths
+      importType: isESM ? "module" : "commonjs",
+    }),
   ],
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
