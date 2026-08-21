@@ -3,12 +3,14 @@ import { fileURLToPath } from "url";
 import nodeExternals from "webpack-node-externals";
 
 const __filename = fileURLToPath(import.meta.url);
-
 const __dirname = path.dirname(__filename);
+
 console.log("Webpack dir name", __dirname);
 console.log("webpack path", path.resolve(__dirname, "node_modules"));
+
 const isESM = process.env.NODE_MODE === "esm" ? true : false;
 console.log("iS ESM", isESM);
+
 const kotiiRouter = {
   entry: "./src/index.tsx",
   target: "web",
@@ -25,20 +27,46 @@ const kotiiRouter = {
     chunkFormat: isESM ? "module" : "commonjs",
     module: isESM ? true : false,
   },
-  // externals: [
-  //   {
-  //     react: "react",
-  //     "react-dom": "react-dom",
-  //     "kotii-styled": "kotii-styled",
-  //   },
-  // ],
-  externalsPresets: { node: true }, // instructs Webpack to ignore built-in modules like path/fs
+
+  externalsPresets: { node: true },
+
   externals: [
     nodeExternals({
-      // Ensures dependencies are imported via pure module paths
       importType: isESM ? "module" : "commonjs",
     }),
+    isESM
+      ? {
+          react: "react",
+          "react-dom": "react-dom",
+          "react-dom/server": "react-dom/server",
+          "styled-components": "styled-components",
+          "@emotion/is-prop-valid": "@emotion/is-prop-valid",
+          "@emotion/memoize": "@emotion/memoize",
+          "@emotion/unitless": "@emotion/unitless",
+        }
+      : {
+          react: "commonjs react",
+          "react-dom": "commonjs react-dom",
+          "react-dom/server": "commonjs react-dom/server",
+          "styled-components": "commonjs styled-components",
+          "@emotion/is-prop-valid": "commonjs @emotion/is-prop-valid",
+          "@emotion/memoize": "commonjs @emotion/memoize",
+          "@emotion/unitless": "commonjs @emotion/unitless",
+        },
+    // FIXED: Strict ESM/CJS runtime object mapper for deep subpath bundles
+    function ({ request }, callback) {
+      if (/^react-icons/.test(request)) {
+        if (isESM) {
+          // Explicitly instructs Webpack to leave deep subpaths as native module imports
+          return callback(null, { [request]: request, type: "module" });
+        } else {
+          return callback(null, { [request]: request, type: "commonjs" });
+        }
+      }
+      callback();
+    },
   ],
+
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
   },
@@ -66,11 +94,9 @@ const kotiiRouter = {
           {
             loader: "ts-loader",
             options: {
-              // FORCES Webpack to skip deep, broken node_modules typechecks
               transpileOnly: true,
               compilerOptions: {
                 module: isESM ? "ESNext" : "CommonJS",
-                // Forces TypeScript compiler instance to ignore third-party library errors
                 skipLibCheck: true,
               },
             },

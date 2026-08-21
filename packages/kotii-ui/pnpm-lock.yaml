@@ -15,8 +15,8 @@ importers:
         specifier: ^2.33.1
         version: 2.56.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-components@6.1.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       kotii-styled:
-        specifier: 1.0.0-beta.10.0
-        version: 1.0.0-beta.10.0(styled-components@6.1.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+        specifier: 1.0.0-beta.11.0
+        version: 1.0.0-beta.11.0(styled-components@6.1.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       kotii-utils:
         specifier: ^1.0.0-beta.6.0
         version: 1.0.0-beta.6.0
@@ -3523,8 +3523,8 @@ packages:
     resolution: {integrity: sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==}
     engines: {node: '>=6'}
 
-  kotii-styled@1.0.0-beta.10.0:
-    resolution: {integrity: sha512-AM5/o0nNFQvFqxp7mviw2wblEQzs9wlf/r4ozt8HVZodkHYlamDKkNrOKTaN3XbnyqI+fRWqvIUScYnQSSnBgQ==}
+  kotii-styled@1.0.0-beta.11.0:
+    resolution: {integrity: sha512-j5lP7JSahVjNiwhWrWgirtFgCbRYBVHMkdEAHr/O4ZoHtdyBaUTMLmqQ6Xm1d9vi1ECtJxrCq3GusH+BMXlEjA==}
     peerDependencies:
       styled-components: 6.1.11
 
@@ -9660,7 +9660,7 @@ snapshots:
 
   kleur@3.0.3: {}
 
-  kotii-styled@1.0.0-beta.10.0(styled-components@6.1.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
+  kotii-styled@1.0.0-beta.11.0(styled-components@6.1.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:
       styled-components: 6.1.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
