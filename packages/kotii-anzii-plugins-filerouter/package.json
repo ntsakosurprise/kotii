@@ -30,7 +30,7 @@
     "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
   },
   "dependencies": {
-    "kotii-internal": "1.0.0-beta.3.0",
+    "kotii-internal": "1.0.0-beta.5.0",
     "glob": "^10.3.10"
   },
   "peerDependencies": {

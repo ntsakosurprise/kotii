@@ -33,7 +33,6 @@
     "compile:cjs": "cross-env NODE_ENV=development NODE_MODE=cjs webpack"
   },
   "dependencies": {
-    "cross-env": "^10.0.0",
     "kotii-styled": "1.0.0-beta.11.0",
     "marked": "^4.0.18",
     "prism": "^4.1.2"
@@ -49,6 +48,7 @@
     "style-loader": "^3.3.1",
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.7.4"
+    "webpack-dev-server": "^4.7.4",
+    "cross-env": "^10.0.0"
   }
 }
