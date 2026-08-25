@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import Redirect from "../Redirect/index.jsx";
 import { matchRoutes } from "./matchRoutes.jsx";
-import suku from "suku";
+
 import {
   // cleanRouteUrl,
   // matchParams,
@@ -23,7 +23,7 @@ import {
 
 import { KotiiRouterContenxt } from "../Router/Router.jsx";
 import { useAuth } from "kotii-auth";
-import { useHead } from "kotii-head";
+import { useHead, useCompileKotiiHead } from "kotii-head";
 
 const Routes = ({ children, routes = null, suspense = null }) => {
   const {
@@ -76,13 +76,9 @@ const Routes = ({ children, routes = null, suspense = null }) => {
   useEffect(() => {
     if (!matched) return;
     console.log("USE LAYOUT EFFECT RUN", matched, collectedHead);
-    const routeHead = matched.route?.head;
-    // const resolved = resolveHead({
-    //   routeHead,
-    //   componentHead: collectedHead,
-    // });
-
-    // applyHead(resolved);
+    const routeHeads = matched.route?.head;
+    const resolved = useCompileKotiiHead(routeHeads);
+    applyHead(resolved);
   }, [matched, collectedHead]);
 
   // for (let childIndex = 0; childIndex < appRoutes.length; childIndex++) {
