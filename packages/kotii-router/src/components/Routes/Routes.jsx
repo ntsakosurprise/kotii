@@ -76,9 +76,11 @@ const Routes = ({ children, routes = null, suspense = null }) => {
   useEffect(() => {
     if (!matched) return;
     console.log("USE LAYOUT EFFECT RUN", matched, collectedHead);
-    const routeHeads = matched.route?.head;
-    const resolved = useCompileKotiiHead(routeHeads);
-    applyHead(resolved);
+    const routeHeads = collectedHead?.renderToStatic(
+      collectedHead.getEntries()
+    );
+    // const resolved = useCompileKotiiHead(routeHeads);
+    applyHead(routeHeads);
   }, [matched, collectedHead]);
 
   // for (let childIndex = 0; childIndex < appRoutes.length; childIndex++) {
