@@ -1,1 +1,7 @@
-export { Head, HeadProvider, useHead, createHeadStore } from "./src/index.jsx";
+export {
+  Head,
+  HeadProvider,
+  useHead,
+  createHeadStore,
+  useCompileKotiiHead,
+} from "./src/index.jsx";

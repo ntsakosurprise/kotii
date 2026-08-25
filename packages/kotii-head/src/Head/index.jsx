@@ -1,42 +1,41 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useHead } from "../HeadProvider/index.jsx";
-import { useEffect, useId } from "react";
+import { useEffect, useId, useRef } from "react";
 
 const Head = ({ title = "", metas = [], links = [], scripts = [] }) => {
-  console.log("THE HEAD IS LOADING", title);
   const head = useHead();
   const id = useId();
 
-  const isServer = typeof window == "undefined" ? true : false;
-  console.log("IS SERVER", isServer, head);
+  // Cache the initial values so the server can access them deterministically during the execution string resolution
+  const isServer = typeof window === "undefined";
+
+  // Construct the static metadata slice data entry structure
   const entry = { id, title, metas, links, scripts };
-  if (isServer) {
-    console.log("THE SERVER RUNS", isServer);
-    head.setHeadEntry(entry, id);
+
+  if (isServer && head) {
+    // Safe for server rendering pass extraction
+    head.setHeadEntry(entry);
   }
 
-  useEffect(() => {
-    head.setHeadEntry(entry);
+  // Create primitive string dependency maps to prevent fresh inline array references ([]) from forcing infinite re-runs
+  const metasString = JSON.stringify(metas);
+  const linksString = JSON.stringify(links);
+  const scriptsString = JSON.stringify(scripts);
 
-    return () => head.unsetHeadEntry(id);
-  }, [title, metas, links, scripts, head]);
+  useEffect(() => {
+    if (!head) return;
+
+    // Register or update the client head configuration node instance
+    head.setHeadEntry({ id, title, metas, links, scripts });
+
+    // Clean up lifecycle: When a component unmounts or a route drops, the entry removes itself safely
+    return () => {
+      head.unsetHeadEntry(id);
+    };
+  }, [title, metasString, linksString, scriptsString, head, id]);
 
   return null;
-
-  // const headContext = useHead();
-  // console.log("THE CURRENT HEAD", headContext);
-
-  // if (headContext?.componentHeadEntries) {
-  //   console.log("THE HEADCONTEXT PUSH IS DEFINED");
-  //   headContext.componentHeadEntries.push({
-  //     title,
-  //     metas,
-  //     links,
-  //     scripts,
-  //   });
-  // }
-  // return null;
 };
 
 export default Head;
