@@ -214,11 +214,21 @@ const kotiiApp = (props) => {
   container = !container ? document.getElementById("root") : container;
 
   if (!window["KOTII_APP_HYDRATED"]) {
+    window["KOTII_HYDRATION_IN_PROGRESS"] = true;
     window["KOTII_APP_HYDRATED"] = hydrateRoot(
       container,
       <KotiiMainApp {...props} />
     );
+    setTimeout(() => {
+      window["KOTII_HYDRATION_IN_PROGRESS"] = false;
+    }, 100);
   } else {
+    if (window["KOTII_HYDRATION_IN_PROGRESS"]) {
+      console.warn(
+        "Render call skipped because core hydration loop is currently active."
+      );
+      return;
+    }
     return window["KOTII_APP_HYDRATED"].render(<KotiiMainApp {...props} />);
   }
 };
