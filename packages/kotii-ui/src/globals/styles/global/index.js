@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from "kotii-styled";
 // import { resetStyles } from "../base/reset.styles";
 // import { markDownStyles } from "../markdown/markdown.styles";
 

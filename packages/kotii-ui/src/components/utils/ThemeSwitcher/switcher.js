@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { BsCheck, BsFillMoonStarsFill as MoonIcon } from "react-icons/bs";
 import { MdOutlineLightMode as ToggleLight } from "react-icons/md";
 import Switch from "react-switch";
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes } from "kotii-styled";
 import { useKotiiTheme } from "../../../context";
 
 // import { themes } from "../../config/themes";

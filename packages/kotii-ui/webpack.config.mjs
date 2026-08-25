@@ -33,6 +33,8 @@ const kotiiRouter = {
   externals: [
     nodeExternals({
       importType: isESM ? "module" : "commonjs",
+      // Add this allowlist block here:
+      allowlist: [/^react-icons/],
     }),
     isESM
       ? {
@@ -53,22 +55,23 @@ const kotiiRouter = {
           "@emotion/memoize": "commonjs @emotion/memoize",
           "@emotion/unitless": "commonjs @emotion/unitless",
         },
-    // FIXED: Strict ESM/CJS runtime object mapper for deep subpath bundles
-    function ({ request }, callback) {
-      if (/^react-icons/.test(request)) {
-        if (isESM) {
-          // Explicitly instructs Webpack to leave deep subpaths as native module imports
-          return callback(null, { [request]: request, type: "module" });
-        } else {
-          return callback(null, { [request]: request, type: "commonjs" });
-        }
-      }
-      callback();
-    },
   ],
 
   resolve: {
     extensions: [".js", ".jsx", ".ts", ".tsx"],
+  },
+  resolveLoader: {
+    alias: {
+      "generate-styled-components-ids-loader": path.resolve(
+        `${__dirname}`,
+        "sync-styled-components-calls/index.cjs"
+      ),
+
+      // "test-styles-loader": path.resolve(
+      //   `${kotiiRootPath}`,
+      //   "webpack-loaders/testStyles.cjs"
+      // ),
+    },
   },
   module: {
     rules: [
@@ -101,9 +104,13 @@ const kotiiRouter = {
               },
             },
           },
+          {
+            loader: "generate-styled-components-ids-loader",
+          },
         ],
         resolve: {
           fullySpecified: false,
+          symlinks: false,
         },
       },
       {

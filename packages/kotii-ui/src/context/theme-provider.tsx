@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { logStoredThemesStatus } from "../config";
 import { useTheme } from "../hooks";
 // import { DemoSection } from "../components/ThemeSwitcher/DemoSection";
-// import { ThemeProvider } from "styled-components";
+// import { ThemeProvider } from "kotii-styled"
 
 import { defaultProps as grommetTheme, Grommet } from "grommet";
 type ThemeModeProps = "dark" | "light";

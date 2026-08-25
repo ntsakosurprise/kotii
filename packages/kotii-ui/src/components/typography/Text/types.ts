@@ -1,4 +1,4 @@
-import { CSSObject } from "styled-components";
+import { CSSObject } from "kotii-styled";
 import {
   Align,
   BaseProps,
