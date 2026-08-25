@@ -39,10 +39,12 @@ let GLOBAL_STYLES_REGEX = /global\.+/;
 let CSS_MODULES_REGEX = /\.module\./;
 let KOTII_STYLED_REGEX = /import\s+styled\s+from\s+['"]kotii-styled['"]/;
 let STYLED_USAGE_REGEX =
-  /\b([A-Za-z0-9_]+)\s*=\s*styled(?:\.([A-Za-z0-9]+)|\(([^)]+)\))/g;
+  /\b([A-Za-z0-9_]+)\s*=\s*styled(?:\.([A-Za-z0-9]+)|\(([^)]+)\))\s*(?:`[\s\S]*?`|\([\s\S]*?\))/g;
+
 let JSON_STYLES_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_JSON]}`;
 let JSON_STYLES_MAP_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_MODULES]}`;
 let JSON_STYLES_FONTS_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLES_FONTS]}`;
+let JSON_STYLED_HYDRATION_MANIFEST_PATH = `${USER_LAND_ALIASES[USER_LAND_ALIAS_STYLED_MANIFEST]}`;
 let JSON_STYLES_PATH_FIRSTTIME_USE = false;
 let JSON_STYLES_PATH_MAP_FIRSTTIME_USE = false;
 let JSON_STYLES_FONTS_PATH_FIRSTTIME_USE = false;
@@ -288,13 +290,19 @@ export async function load(url, context, nextLoad) {
         source = await nextLoad(url, { ...context, format });
       }
       let rawSource = typeof source === "string" ? source : source.source;
+      let modifiedWithStyles = null;
       if (!isThirdPartyNodeModule)
-        findStyledComponentsPatterns(rawSource, urlInstance);
+        modifiedWithStyles = findStyledComponentsPatterns(
+          rawSource,
+          urlInstance
+        );
+
+      modifiedWithStyles = modifiedWithStyles || rawSource;
 
       let result = fileLoaderExts.includes(fileExtension)
-        ? babel.transformFileSync(source, options)
+        ? babel.transformFileSync(modifiedWithStyles, options)
         : fileExtension === extJsx
-        ? babel.transform(rawSource, {
+        ? babel.transform(modifiedWithStyles, {
             filename: url,
             presets: options.presets,
             plugins: options.plugins,
@@ -1592,7 +1600,12 @@ const ensurePackage = (pkg) => {
 
 const findStyledComponentsPatterns = (nodejsSource, urlInstance) => {
   console.log("TESTING FOR STYLED COMPONENTS ON FILE:", urlInstance);
-  let sourceString = nodejsSource?.source?.toString();
+  let sourceString = nodejsSource?.source?.toString() || nodejsSource;
+  console.log(
+    "SOURCE STRING",
+    sourceString,
+    KOTII_STYLED_REGEX.test(sourceString)
+  );
   if (KOTII_STYLED_REGEX.test(sourceString)) {
     let relativeFilePath = path.relative(process.cwd(), urlInstance);
     console.log("COMPONENT-REL-PATH", relativeFilePath);
@@ -1601,76 +1614,95 @@ const findStyledComponentsPatterns = (nodejsSource, urlInstance) => {
       relativeFilePath
     );
 
-    nodejsSource.source = newSourceWithStyledConfig;
-    return;
+    sourceString = newSourceWithStyledConfig;
+    return sourceString;
   }
+  return sourceString;
 };
 
 const transformStyledComponentCalls = (sourceString, componentRelPath) => {
   console.log("FIND STYLED COMPONENT PATTERNS");
   const dir = path.dirname(USER_LAND_ALIAS_STYLED_MANIFEST);
+
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
   let manifest = {};
-  if (fs.existsSync(USER_LAND_ALIAS_STYLED_MANIFEST)) {
+  if (fs.existsSync(JSON_STYLED_HYDRATION_MANIFEST_PATH)) {
     try {
       manifest = JSON.parse(
-        fs.readFileSync(USER_LAND_ALIAS_STYLED_MANIFEST, "utf8")
+        fs.readFileSync(JSON_STYLED_HYDRATION_MANIFEST_PATH, "utf8")
       );
     } catch (e) {
       manifest = {};
     }
   }
 
-  let match;
-  let modifiedSource = sourceString;
+  try {
+    // 1. Ensure regex uses standard global flag options
+    const STYLED_USAGE_REGEX =
+      /\b([A-Za-z0-9_]+)\s*=\s*styled(?:\.([A-Za-z0-9]+)|\(([^)]+)\))/g;
 
-  while ((match = STYLED_USAGE_REGEX.exec(sourceString) === !null)) {
-    const variableName = match[1];
-    const htmlTag = match[2];
-    const functionalWrapper = match[3];
+    let match;
+    let modifiedSource = sourceString;
+    let manifestUpdated = false;
 
-    const componentKey = `${componentRelPath}__${variableName}`;
+    // 2. Iterate using the clean, original source string pointers
+    while ((match = STYLED_USAGE_REGEX.exec(sourceString)) !== null) {
+      console.log("THE STYLED REGEX MATCH WHILE", match);
+      const variableName = match[1];
+      const htmlTag = match[2];
+      const functionalWrapper = match[3];
 
-    if (!manifest[componentKey]) {
-      // Create a short, secure MD5 checksum block
+      const componentKey = `${componentRelPath}__${variableName}`;
 
-      const hash = crypto
-        .createHash("md5")
-        .update(componentKey)
-        .digest("base64url")
-        .substring(0, 8);
+      if (!manifest[componentKey]) {
+        const hash = crypto
+          .createHash("md5")
+          .update(componentKey)
+          .digest("base64url")
+          .substring(0, 8);
 
-      manifest[componentKey] = {
-        componentId: `kt-${hash}`, // Unique Kotii Framework Namespace prefix
-        variableName,
-        tagType: htmlTag ? "property" : "functional",
-        target: htmlTag || functionalWrapper,
-      };
+        manifest[componentKey] = {
+          componentId: `kt-${hash}`,
+          variableName,
+          tagType: htmlTag ? "property" : "functional",
+          target: htmlTag || functionalWrapper,
+        };
+        manifestUpdated = true;
+      }
+
+      const { componentId, tagType, target } = manifest[componentKey];
+
+      // 3. Inject configuration context safely by anchoring onto the initialization signature
+      if (tagType === "property") {
+        modifiedSource = modifiedSource.replace(
+          new RegExp(`\\b${variableName}\\s*=\\s*styled\\.${target}\\b`, "g"),
+          `${variableName} = styled.${target}.withConfig({ componentId: "${componentId}" })`
+        );
+      } else {
+        modifiedSource = modifiedSource.replace(
+          new RegExp(
+            `\\b${variableName}\\s*=\\s*styled\\(\\s*${target.trim()}\\s*\\)`,
+            "g"
+          ),
+          `${variableName} = styled(${target.trim()}).withConfig({ componentId: "${componentId}" })`
+        );
+      }
     }
 
-    const { componentId, tagType, target } = manifest[componentKey];
-
-    if (tagType === "property") {
-      modifiedSource = modifiedSource.replace(
-        new RegExp(`\\b${variableName}\\s*=\\s*styled\\.${target}`, "g"),
-        `${variableName} = styled.${target}.withConfig({ componentId: "${componentId}" })`
-      );
-    } else {
-      modifiedSource = modifiedSource.replace(
-        new RegExp(
-          `\\b${variableName}\\s*=\\s*styled\\(\\s*${target}\\s*\\)`,
-          "g"
-        ),
-        `${variableName} = styled(${target}).withConfig({ componentId: "${componentId}" })`
+    // 4. Only write to the manifest filesystem when all items have been parsed
+    if (manifestUpdated) {
+      fs.writeFileSync(
+        JSON_STYLED_HYDRATION_MANIFEST_PATH,
+        JSON.stringify(manifest, null, 2)
       );
     }
-    fs.writeFileSync(
-      USER_LAND_ALIAS_STYLED_MANIFEST,
-      JSON.stringify(manifest, null, 2)
-    );
+
     return modifiedSource;
+  } catch (error) {
+    console.log("TRY CATCH IN STYLED", error);
+    return sourceString;
   }
 };
