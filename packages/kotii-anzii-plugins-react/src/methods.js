@@ -361,6 +361,7 @@ methods.runReactView = function (data) {
               authUser,
               view,
               context,
+              effectsStore,
             })
           )
         );
@@ -371,14 +372,14 @@ methods.runReactView = function (data) {
 
         console.log("THE FINAL STATE", store, store.getState());
         const finalState = store.getState() || store;
-        // const helmetGenerated = HeadHelmet.renderStatic();
-        // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
+        const kotiiHeadInfo = context.renderStatic();
+        self.debug("KOTII HEAD GENERATED", kotiiHeadInfo?.title);
         const fullPage = self.renderFullPage({
           html,
           preloadedState: finalState,
           staticRender,
           view,
-          head: helmetGenerated,
+          head: kotiiHeadInfo,
           authUser,
         });
         self.debug("THE HTML IN RUN REACT-VIEW", fullPage);
@@ -404,7 +405,8 @@ methods.runReactView = function (data) {
         self.debug("THE STATIC PART JS FROM SSG", pageJsPackages);
         console.log("THE FINAL STATE", store, store.getState());
         const finalState = store.getState() || store;
-        // const helmetGenerated = HeadHelmet.renderStatic();
+        const kotiiHeadInfo = context.renderStatic();
+        self.debug("KOTII HEAD GENERATED", kotiiHeadInfo?.title);
         self.doStyledSheets(sheet, true);
 
         // self.debug("HELMET GENERATED", helmetGenerated.title.toString());
@@ -420,8 +422,7 @@ methods.runReactView = function (data) {
         const fullPage = self.renderStaticFullPage({
           html,
           pageJs,
-          // head: helmetGenerated,
-          head: {},
+          head: kotiiHeadInfo,
           info,
           usesRelativeUrls,
           pageJsPackages,
@@ -486,11 +487,11 @@ methods.renderFullPage = function ({
   self.debug("THE PRELOADED STATE", preloadedState);
   return `
 		<!doctype html>
-		<html ${head.htmlAttributes.toString()}> 
+		<html ${head?.htmlAttributes?.toString()}> 
     <head>
-    ${head?.title.toString()}
-    ${head?.meta.toString()}
-    ${head?.link.toString()}
+    ${head?.title?.toString()}
+    ${head?.meta?.toString()}
+    ${head?.link?.toString()}
     ${self?.styledTags || ""}
     ${self?.styleTags || ""}
     ${process?.env?.NODE_ENV === ENV_DEVELOPMENT ? self.loaderStyles() : ""}
@@ -498,7 +499,7 @@ methods.renderFullPage = function ({
 
 
     </head>
-		<body ${head.bodyAttributes.toString()}>
+		<body ${head?.bodyAttributes?.toString()}>
 			<div id="root">${html}</div>
 			${
         !staticRender
@@ -541,17 +542,17 @@ methods.renderStaticFullPage = function ({
 
   return `
 		<!doctype html>
-		<html ${head.htmlAttributes.toString()}> 
+		<html ${head?.htmlAttributes.toString()}> 
     <head>
-    ${head?.title.toString()}
-    ${head?.meta.toString()}
+    ${head?.title?.toString()}
+    ${head?.meta?.toString()}
 
     ${self?.pageSettings || ""}
     <link rel="stylesheet" type="text/css" id="kotii-stylesheet-link" href="${
       self.staticAssets.css
     }" />
     </head>
-		<body ${head.bodyAttributes.toString()}>
+		<body ${head?.bodyAttributes?.toString()}>
 		 <div id="root">${html}</div>
     <script src="${self.staticAssets.bootstrap}"></script>
     <script src="${self.staticAssets.packages}"></script>
