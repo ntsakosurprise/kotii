@@ -4,7 +4,7 @@ import { queueDomUpdate } from "../utils/clientDomain";
 export const createHeadStore = () => {
   const storeMap = new Map(); // Completely private instance scoped strictly to this request/mount invocation
   const isClient = typeof window !== "undefined" ? true : false;
-  let isUpdateQueScheduled = false;
+  let updateTracker = { isScheduled: false };
 
   return {
     setHeadEntry: function (entry) {
@@ -12,16 +12,15 @@ export const createHeadStore = () => {
 
       storeMap.set(entry.id, entry);
       if (isClient) {
-        if (isUpdateQueScheduled) return;
-        queueDomUpdate();
-        isUpdateQueScheduled = true;
+        if (updateTracker.isScheduled) return;
+        queueDomUpdate(updateTracker, this.getEntries);
       }
     },
     unsetHeadEntry: function (id) {
       storeMap.delete(id);
       if (isClient) {
-        if (isUpdateQueScheduled) return;
-        isUpdateQueScheduled = true;
+        if (updateTracker.isScheduled) return;
+        queueDomUpdate(updateTracker, this.getEntries);
       }
     },
     getEntries: function () {
