@@ -103,8 +103,11 @@ export const matchRoute = (routeComponentPath, currentPath) => {
   return false;
 };
 export const applyHead = (head) => {
-  console.log("SUKU OBJECT", suku);
-  if (head?.title) suku.get_document_head().title = head.title;
+  console.log("Head object for Suku to update", head);
+  // let document = suku.get_document_head();
+  console.log("THE DOCUMENT HEAD", document, "SUKU", suku);
+  if (head?.title) document.title = head.title;
+  console.log("CURRENT HEAD VALUE", document.title);
 };
 export const resolveHead = (headers) => {
   console.log("THE HEADER IN RESOLVE", headers);
