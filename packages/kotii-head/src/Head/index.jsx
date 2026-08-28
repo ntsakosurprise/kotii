@@ -11,6 +11,7 @@ const Head = ({ title = "", metas = [], links = [], scripts = [] }) => {
   const isServer = typeof window === "undefined";
 
   // Construct the static metadata slice data entry structure
+  console.log("HEAD COMPONENT head", head);
   const entry = { id, title, metas, links, scripts };
   console.log("THE CURRENT ENTRY", entry);
 
