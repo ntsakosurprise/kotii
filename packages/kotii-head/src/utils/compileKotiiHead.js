@@ -1,4 +1,5 @@
 export const compileKotiiHead = (headArray) => {
+  console.log("THE HEAD ARRAY", headArray);
   let titleStr = "";
   let htmlAttrStr = "";
 
@@ -10,7 +11,11 @@ export const compileKotiiHead = (headArray) => {
   headArray.forEach((instance) => {
     // 1. Process Title (Last In Wins)
     if (instance.title) {
-      titleStr = `<title>${instance.title}</title>`;
+      if (typeof window === "undefined") {
+        titleStr = `<title>${instance.title}</title>`;
+      } else {
+        titleStr = instance.title;
+      }
     }
 
     // 2. Process Metas Array
@@ -60,7 +65,7 @@ export const compileKotiiHead = (headArray) => {
       .map(([k, v]) => `${k}="${v}"`)
       .join(" ");
 
-  return {
+  let compiledHeadInfo = {
     htmlAttributes: htmlAttrStr,
     title: titleStr,
     meta: Object.values(metaStore)
@@ -73,4 +78,6 @@ export const compileKotiiHead = (headArray) => {
       .map((s) => `<script ${stringifyAttributes(s)}></script>`)
       .join("\n    "),
   };
+  console.log("THE COMPILED HEAD", compiledHeadInfo);
+  return compiledHeadInfo;
 };
