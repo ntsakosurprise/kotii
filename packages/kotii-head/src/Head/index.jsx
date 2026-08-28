@@ -12,6 +12,7 @@ const Head = ({ title = "", metas = [], links = [], scripts = [] }) => {
 
   // Construct the static metadata slice data entry structure
   const entry = { id, title, metas, links, scripts };
+  console.log("THE CURRENT ENTRY", entry);
 
   if (isServer && head) {
     // Safe for server rendering pass extraction
@@ -24,6 +25,7 @@ const Head = ({ title = "", metas = [], links = [], scripts = [] }) => {
   const scriptsString = JSON.stringify(scripts);
 
   useEffect(() => {
+    console.log("USE EFFECT RUNNNG", head);
     if (!head) return;
 
     // Register or update the client head configuration node instance
@@ -31,6 +33,7 @@ const Head = ({ title = "", metas = [], links = [], scripts = [] }) => {
 
     // Clean up lifecycle: When a component unmounts or a route drops, the entry removes itself safely
     return () => {
+      console.log("HEAD IN CONTEXT UNMOUNTING");
       head.unsetHeadEntry(id);
     };
   }, [title, metasString, linksString, scriptsString, head, id]);
