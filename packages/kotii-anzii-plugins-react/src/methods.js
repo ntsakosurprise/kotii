@@ -372,7 +372,7 @@ methods.runReactView = function (data) {
 
         console.log("THE FINAL STATE", store, store.getState());
         const finalState = store.getState() || store;
-        const kotiiHeadInfo = context.renderStatic();
+        const kotiiHeadInfo = context.renderToStatic(context.getEntries());
         self.debug("KOTII HEAD GENERATED", kotiiHeadInfo?.title);
         const fullPage = self.renderFullPage({
           html,
@@ -405,7 +405,7 @@ methods.runReactView = function (data) {
         self.debug("THE STATIC PART JS FROM SSG", pageJsPackages);
         console.log("THE FINAL STATE", store, store.getState());
         const finalState = store.getState() || store;
-        const kotiiHeadInfo = context.renderStatic();
+        const kotiiHeadInfo = context.renderToStatic(context.getEntries());
         self.debug("KOTII HEAD GENERATED", kotiiHeadInfo?.title);
         self.doStyledSheets(sheet, true);
 
