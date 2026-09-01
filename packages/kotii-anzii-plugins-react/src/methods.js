@@ -455,15 +455,21 @@ methods.runReactView = function (data) {
 methods.renderHtmlSpa = function () {
   const self = this;
 
+  if (!self.styleTags) self.doKotiiStyles();
+
   return `
 		<!doctype html>
 		<html> 
     <head>
     <link rel="stylesheet" type="text/css" href="/tailwind.css">
+     ${self?.styledTags || ""}
+    ${self?.styleTags || ""}
+    ${process?.env?.NODE_ENV === ENV_DEVELOPMENT ? self.loaderStyles() : ""}
+  
     </head>
 		<body>
 			<div id="root"></div>
-      <script src="/server.bundle.js" ></script>	
+      <script src="/app/server.js" ></script>	
 		</body>
 		</html>
     `;
