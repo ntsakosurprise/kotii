@@ -60,10 +60,13 @@ export const compileKotiiHead = (headArray) => {
   });
 
   // Helper utility to turn object configurations into attribute string markup
-  const stringifyAttributes = (obj) =>
-    Object.entries(obj)
+  const stringifyAttributes = (obj) => {
+    let stringifiedHeadItem = Object.entries(obj)
       .map(([k, v]) => `${k}="${v}"`)
       .join(" ");
+    console.log("STRINGIFIED HEAD ITEM", stringifiedHeadItem);
+    return;
+  };
 
   let compiledHeadInfo = {
     htmlAttributes: htmlAttrStr,
@@ -77,6 +80,9 @@ export const compileKotiiHead = (headArray) => {
     script: Object.values(scriptStore)
       .map((s) => `<script ${stringifyAttributes(s)}></script>`)
       .join("\n    "),
+    rawMeta: metaStore,
+    rawScripts: scriptStore,
+    rawLinks: linkStore,
   };
   console.log("THE COMPILED HEAD", compiledHeadInfo);
   return compiledHeadInfo;
