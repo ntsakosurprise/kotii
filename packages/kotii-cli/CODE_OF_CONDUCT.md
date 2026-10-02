@@ -29,4 +29,4 @@ new app: `kotii create-app app-name --packager npm`
 <p> Exapmple:  `jonentsakodoe@jonentsako ~ % kotii create-app to-do-app --packager yarn` </p>
 
 - With default config: `kotii create-app new-with-pnpm --yes --packager pnpm`
-- With local scripts: `kotii create-app new-with-pnpm --yes --packager pnpm --local-scripts /Users/surprisemashele/Documents/kotii`
+- With local scripts: `kotii create-app new-with-pnpm --yes --packager pnpm --local-scripts /Users/surprise.mashele/Documents/computer-science/kotii`

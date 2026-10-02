@@ -66,7 +66,7 @@ methods.handleStaticInteractivity = async function (data) {
     "RESOLVED JS MODULES",
     RESOLVED_JSX_MODULES,
     "PACKAGES FILE",
-    PACKAGES_FILES
+    PACKAGES_FILES,
   );
   if (view?.componentSourcePath) {
     const url = view.componentSourcePath;
@@ -95,7 +95,7 @@ methods.handleStaticInteractivity = async function (data) {
         "THE GENERATE PAGE JS",
         parts?.interactions,
         view,
-        self.__EXTERNALS__
+        self.__EXTERNALS__,
       );
       if (!parts?.interactions)
         return data.callback(null, { html: parts.html });
@@ -118,11 +118,11 @@ methods.handleStaticInteractivity = async function (data) {
         let pageResults = {
           html: parts.html,
           pageJs: `var __STATE__=${JSON.stringify(
-            self.__STATIC_RUNTIME_STATE
+            self.__STATIC_RUNTIME_STATE,
           )}\n var __EXTERNALS__= {}\n ${self.normalizeExternalsForBrowser(
-            self.restoreFunctionsForRuntime(self.__EXTERNALS__)
+            self.restoreFunctionsForRuntime(self.__EXTERNALS__),
           )}\n var __REACT_OPT_HOOKS__ = ${JSON.stringify(
-            self.__REACT_OPT_HOOKS__
+            self.__REACT_OPT_HOOKS__,
           )}\n
              ${self.createPackagesRequires()}\n
              runFactories(__EXTERNALS__, __REACT_OPT_HOOKS__)
@@ -181,8 +181,8 @@ methods.extractPageInteractiveParts = function (Page, vendorType) {
         React.createElement(
           InteractionProvider,
           { interactions: self.thisPageInteractions },
-          pageElement
-        )
+          pageElement,
+        ),
       );
       console.log("THIS ELEMENT INTERACTIONS", self.thisPageInteractions);
       console.log("THE EXTRACT HTMLE", html);
@@ -246,7 +246,7 @@ methods.ReactStateCapture = function () {
       state,
       stateName,
       self,
-      self.__STATIC_RUNTIME_STATE
+      self.__STATIC_RUNTIME_STATE,
     );
     self.__STATIC_RUNTIME_STATE[`${stateName}`] = state;
     self.__STATE_SETTERS[stateSetter] = stateName;
@@ -264,7 +264,7 @@ methods.eventsSourceAst = function (eventAst) {
     "THE SETTERS",
     self.__STATE_SETTERS,
     "STATIC EXTERNALS",
-    self.__STATIC_EXTERNALS_STATE
+    self.__STATIC_EXTERNALS_STATE,
   );
 
   traverse(eventAst, {
@@ -277,13 +277,13 @@ methods.eventsSourceAst = function (eventAst) {
         const { newAssignment, updateCall } = self.createUpdaterFromReactSetter(
           path,
           name,
-          true
+          true,
         );
         //  console.log("WRAPPED BELLOW")
         const wrappedFunction = t.functionExpression(
           null, // anonymous
           [t.identifier("param")], // no params
-          t.blockStatement([newAssignment, updateCall])
+          t.blockStatement([newAssignment, updateCall]),
         );
         path.replaceWith(wrappedFunction);
         path.skip();
@@ -339,7 +339,7 @@ methods.eventsSourceAst = function (eventAst) {
       if (self.__STATE_SETTERS[callee.name]) {
         const { newAssignment, updateCall } = self.createUpdaterFromReactSetter(
           path,
-          callee.name
+          callee.name,
         );
 
         // Replace original setter call with two statements
@@ -382,7 +382,7 @@ methods.modifyUseStateCallsAst = function (componentAst) {
             t.callExpression(t.identifier("useState"), [
               init.arguments[0],
               t.stringLiteral(stateName),
-            ])
+            ]),
           );
       }
     },
@@ -475,13 +475,13 @@ methods.createBindElementsFromBindList = function (bindList = []) {
           [
             t.jsxAttribute(
               t.jsxIdentifier("data-bind"),
-              t.stringLiteral(self.__STATIC_RUNTIME_STATE)
+              t.stringLiteral(self.__STATIC_RUNTIME_STATE),
             ),
           ],
-          false
+          false,
         ),
         t.jsxClosingElement(t.jsxIdentifier("span")),
-        [t.jsxText(self.__STATIC_RUNTIME_STATE[b.name])]
+        [t.jsxText(self.__STATIC_RUNTIME_STATE[b.name])],
       );
       b.path.replaceWith(span);
     }
@@ -503,7 +503,7 @@ methods.startPreRenderWork = function (view) {
   const self = this;
   const { componenentSourcePath } = view;
   let ast = self.getComponentFileContentsAst(
-    `/Users/surprisemashele/Documents/KOTII-TESTING-AREA/prod-test/src/pages/index.jsx`
+    `//Users/surprise.mashele/Documents/computer-science/kotii-TESTING-AREA/prod-test/src/pages/index.jsx`,
   );
   self.modifyUseStateCallsAst(ast);
   self.getJsxDataBindingsFromAst(ast);
@@ -583,7 +583,7 @@ methods.getThisPageResourcesGraph = function (filesToWalk) {
     "Imports",
     imports,
     "REACT HOOKS",
-    reactOptHooks
+    reactOptHooks,
   );
   return { externals, imports, reactOptHooks };
 };
@@ -602,7 +602,7 @@ methods.reactRenderTimeInterceptor = function ({ children }) {
 methods.interactionsExtractor = function (
   element,
   idCounter = 0,
-  interactions = []
+  interactions = [],
 ) {
   const self = this;
 
@@ -610,7 +610,7 @@ methods.interactionsExtractor = function (
   if (Array.isArray(element)) {
     console.log("COMPONENT IS ARRAY", element);
     return element.map((el) =>
-      self.interactionsExtractor(el, idCounter, interactions)
+      self.interactionsExtractor(el, idCounter, interactions),
     );
   }
 
@@ -626,8 +626,8 @@ methods.interactionsExtractor = function (
       element,
       element.props,
       React.Children.map(element.props.children, (child) =>
-        self.interactionsExtractor(child, idCounter, interactions)
-      )
+        self.interactionsExtractor(child, idCounter, interactions),
+      ),
     );
   }
 
@@ -640,7 +640,7 @@ methods.interactionsExtractor = function (
       (child) => {
         console.log("THE ELEMENT CHILD", child, "props", child?.props);
         return self.interactionsExtractor(child, idCounter, interactions);
-      }
+      },
     );
   }
   console.log("THE DATA INTERACTIVE", elementProps["data-interactive"]);
@@ -678,7 +678,7 @@ methods.normalizeToReactElement = function (input) {
   }
 
   throw new Error(
-    "extractPageInteractiveParts expected a React element or component function"
+    "extractPageInteractiveParts expected a React element or component function",
   );
 };
 methods.loadPagesModuleGraph = function (toImport, all = false, check = false) {
@@ -695,7 +695,7 @@ methods.loadPagesModuleGraph = function (toImport, all = false, check = false) {
       })
       .catch((err) => {
         self.debug(
-          `importing VIRTUAL module:${toImport}, has failed with an error:${err}`
+          `importing VIRTUAL module:${toImport}, has failed with an error:${err}`,
         );
         reject(err);
       });
@@ -704,7 +704,7 @@ methods.loadPagesModuleGraph = function (toImport, all = false, check = false) {
 methods.replaceIdentifier = function (path, jsStateID, state) {
   console.log("REPLACE ID", jsStateID, state);
   path.replaceWith(
-    t.memberExpression(t.identifier(jsStateID), t.identifier(state))
+    t.memberExpression(t.identifier(jsStateID), t.identifier(state)),
   );
 };
 methods.createExternalsState = function () {
@@ -732,7 +732,7 @@ methods.createExternalsState = function () {
       };
       wrapper.call?.args?.length > 0
         ? (callerInfo["arguments"] = wrapper.call.args.map(
-            (argAst) => generate(argAst).code
+            (argAst) => generate(argAst).code,
           ))
         : null;
       self.__NEEDED_IMPORTS__CALLERS[key] = callerInfo;
@@ -745,7 +745,7 @@ methods.createExternalsState = function () {
         let currentPackageBrowserCode = self.processPackageForBrowser(
           self.__IMPORTS__[key].source,
           importedOwningPackage,
-          [key]
+          [key],
         );
         self.__NEEDED_IMPORTS__.push({
           importSpecifier: key,
@@ -883,7 +883,7 @@ methods.normalizeExternalsForBrowser = function (runtimeExternals) {
 methods.createUpdaterFromReactSetter = function (
   path,
   name,
-  isSetterReference = false
+  isSetterReference = false,
 ) {
   const self = this;
 
@@ -895,15 +895,15 @@ methods.createUpdaterFromReactSetter = function (
     "=",
     t.memberExpression(
       t.identifier("__STATE__"),
-      t.identifier(self.__STATE_SETTERS[name])
+      t.identifier(self.__STATE_SETTERS[name]),
     ),
-    valueNode
+    valueNode,
   );
 
   const updateCall = t.expressionStatement(
     t.callExpression(t.identifier("stateUpdater"), [
       t.stringLiteral(self.__STATE_SETTERS[name]),
-    ])
+    ]),
   );
 
   return {
@@ -917,7 +917,7 @@ methods.createUpdaterFromReactSetter = function (
 methods.processPackageForBrowser = function (
   packageName,
   packageFiles,
-  entryRequiredImports
+  entryRequiredImports,
 ) {
   const self = this;
 
@@ -936,7 +936,7 @@ methods.processPackageForBrowser = function (
     packageContext.entry,
     packageContext,
     packageFiles,
-    packageName
+    packageName,
   );
   if (standingTree) {
     let browserModulesWrapper = "";
@@ -947,7 +947,7 @@ methods.processPackageForBrowser = function (
         "MODULE ID IN CONTEXT",
         module.id,
         "SPECIFIER",
-        module.moduleSpecifier
+        module.moduleSpecifier,
       );
       self.convertESMToCommonJS(module.ast);
       let updatedSource = generate(module.ast).code;
@@ -974,7 +974,7 @@ methods.collectPackageResourcesForTreeShake = function (
   fileUrl,
   packageContext,
   packageFiles,
-  moduleSpecifier
+  moduleSpecifier,
 ) {
   const self = this;
 
@@ -1018,7 +1018,7 @@ methods.collectPackageResourcesForTreeShake = function (
         "THE CURRENT FILE COLLECT IMPORT FILE",
         moduleInfo.id,
         "Specifier",
-        moduleInfo.moduleSpecifier
+        moduleInfo.moduleSpecifier,
       );
       let importedIds = new Set();
 
@@ -1039,7 +1039,7 @@ methods.collectPackageResourcesForTreeShake = function (
         let packageImportedPackageCode = self.processPackageForBrowser(
           importString,
           PACKAGES_FILES[importString],
-          Array.from(importedIds)
+          Array.from(importedIds),
         );
         console.log("THE PACKAGE IMPORTED PACKAGE CODE", importString);
         self.__PACKAGES_CODE__.push({
@@ -1055,7 +1055,7 @@ methods.collectPackageResourcesForTreeShake = function (
           "THE IMPORTED URL",
           importedFileUrl,
           packageFiles,
-          Array.from(importedIds)
+          Array.from(importedIds),
         );
 
         moduleInfo.imports.set(importedFileUrl, importedIds);
@@ -1063,7 +1063,7 @@ methods.collectPackageResourcesForTreeShake = function (
           importedFileUrl,
           packageContext,
           packageFiles,
-          importString
+          importString,
         );
       }
     },
@@ -1084,7 +1084,7 @@ methods.collectPackageResourcesForTreeShake = function (
     },
     Program(path) {
       moduleInfo.sideEffects = path.node.body.some((node) =>
-        t.isExpressionStatement(node)
+        t.isExpressionStatement(node),
       );
     },
   });
@@ -1277,7 +1277,7 @@ methods.getFactoriesRunner = function () {
     //  })
 
     const priorityMap = new Map(
-      __REACT_OPT_HOOKS__.map((id, index) => [id, index])
+      __REACT_OPT_HOOKS__.map((id, index) => [id, index]),
     );
 
     Object.entries(__EXTERNALS__)
@@ -1532,7 +1532,7 @@ methods.convertESMToCommonJS = function (ast) {
             t.callExpression(
               t.memberExpression(
                 t.identifier("Object"),
-                t.identifier("defineProperty")
+                t.identifier("defineProperty"),
               ),
               [
                 t.identifier("exports"),
@@ -1540,12 +1540,12 @@ methods.convertESMToCommonJS = function (ast) {
                 t.objectExpression([
                   t.objectProperty(
                     t.identifier("value"),
-                    t.booleanLiteral(true)
+                    t.booleanLiteral(true),
                   ),
                 ]),
-              ]
-            )
-          )
+              ],
+            ),
+          ),
         );
       },
     },
@@ -1566,7 +1566,7 @@ methods.convertESMToCommonJS = function (ast) {
 
       if (!moduleId) {
         moduleId = path.scope.generateUidIdentifier(
-          modifiedSource.replace(/[^a-zA-Z]/g, "")
+          modifiedSource.replace(/[^a-zA-Z]/g, ""),
         );
 
         state.moduleIdentifiers.set(modifiedSource, moduleId);
@@ -1576,7 +1576,7 @@ methods.convertESMToCommonJS = function (ast) {
             moduleId,
             t.callExpression(t.identifier("__require__"), [
               t.stringLiteral(modifiedSource),
-            ])
+            ]),
           ),
         ]);
 
@@ -1591,8 +1591,8 @@ methods.convertESMToCommonJS = function (ast) {
           declarations.push(
             t.variableDeclarator(
               spec.local,
-              t.memberExpression(moduleId, spec.imported)
-            )
+              t.memberExpression(moduleId, spec.imported),
+            ),
           );
         }
 
@@ -1601,8 +1601,8 @@ methods.convertESMToCommonJS = function (ast) {
           declarations.push(
             t.variableDeclarator(
               spec.local,
-              t.memberExpression(moduleId, t.identifier("default"))
-            )
+              t.memberExpression(moduleId, t.identifier("default")),
+            ),
           );
         }
 
@@ -1642,11 +1642,11 @@ methods.convertESMToCommonJS = function (ast) {
                   "=",
                   t.memberExpression(
                     t.identifier("exports"),
-                    t.identifier(name)
+                    t.identifier(name),
                   ),
-                  t.identifier(name)
-                )
-              )
+                  t.identifier(name),
+                ),
+              ),
             );
           });
         }
@@ -1659,9 +1659,9 @@ methods.convertESMToCommonJS = function (ast) {
               t.assignmentExpression(
                 "=",
                 t.memberExpression(t.identifier("exports"), t.identifier(name)),
-                t.identifier(name)
-              )
-            )
+                t.identifier(name),
+              ),
+            ),
           );
         }
 
@@ -1681,11 +1681,11 @@ methods.convertESMToCommonJS = function (ast) {
               "=",
               t.memberExpression(
                 t.identifier("exports"),
-                t.identifier(exported)
+                t.identifier(exported),
               ),
-              t.identifier(local)
-            )
-          )
+              t.identifier(local),
+            ),
+          ),
         );
       });
 
@@ -1712,10 +1712,10 @@ methods.convertESMToCommonJS = function (ast) {
               "=",
               t.memberExpression(
                 t.identifier("exports"),
-                t.identifier("default")
+                t.identifier("default"),
               ),
-              id
-            )
+              id,
+            ),
           ),
         ]);
       } else {
@@ -1725,11 +1725,11 @@ methods.convertESMToCommonJS = function (ast) {
               "=",
               t.memberExpression(
                 t.identifier("exports"),
-                t.identifier("default")
+                t.identifier("default"),
               ),
-              decl
-            )
-          )
+              decl,
+            ),
+          ),
         );
       }
     },
@@ -1769,12 +1769,12 @@ methods.convertESMToCommonJS = function (ast) {
                 t.memberExpression(
                   t.identifier("exports"),
                   t.identifier("key"),
-                  true
+                  true,
                 ),
-                t.memberExpression(temp, t.identifier("key"), true)
-              )
+                t.memberExpression(temp, t.identifier("key"), true),
+              ),
             ),
-          ])
+          ]),
         ),
       ]);
     },
@@ -1847,7 +1847,7 @@ methods.getPagesToExtract = function (componentSource) {
 methods.onDemandVirtualLoad = async function () {
   const self = this;
   let STATIC_RESOURCES = await self.loadPagesModuleGraph(
-    `virtual:static-module-graph?ts=${Date.now()}`
+    `virtual:static-module-graph?ts=${Date.now()}`,
   );
   MODULE_GRAPH_FOR_STATIC_GENERATION =
     STATIC_RESOURCES.MODULE_GRAPH_FOR_STATIC_GENERATION;
