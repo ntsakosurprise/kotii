@@ -52,8 +52,8 @@
     "anzii": "8.0.1",
     "arg": "^4.1.3",
     "kotii-components": "1.0.0-beta.4.0",
-    "kotii-head": "file://Users/surprise.mashele/Documents/computer-science/kotii/packages/kotii-head/kotii-head-1.0.0-beta.2.0.tgz",
-    "kotii-internal": "file://Users/surprise.mashele/Documents/computer-science/kotii/packages/kotii-internal/kotii-internal-1.0.0-beta.5.0.tgz",
+    "kotii-head": "1.0.0-beta.2.0",
+    "kotii-internal": "1.0.0-beta.5.0",
     "kotii-runtime": "1.0.0-beta.1.0"
   },
   "optionalDependencies": {

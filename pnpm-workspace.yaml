@@ -1,5 +1,16 @@
 packages:
   - "packages/*"
+allowBuilds:
+  '@fortawesome/fontawesome-common-types': set this to true or false
+  '@fortawesome/fontawesome-svg-core': set this to true or false
+  '@fortawesome/free-solid-svg-icons': set this to true or false
+  '@parcel/watcher': set this to true or false
+  core-js: set this to true or false
+  es5-ext: set this to true or false
+  esbuild: set this to true or false
+  fsevents: set this to true or false
+  nx: set this to true or false
+  react-jsx-parser: set this to true or false
 pnpm:
   overrides:
     react: ^18.2.0

@@ -31,9 +31,9 @@
   },
   "dependencies": {
     "kotii-components": "1.0.0-beta.4.0",
-    "kotii-head": "file://Users/surprise.mashele/Documents/computer-science/kotii/packages/kotii-head/kotii-head-1.0.0-beta.2.0.tgz",
-    "kotii-internal": "file://Users/surprise.mashele/Documents/computer-science/kotii/packages/kotii-internal/kotii-internal-1.0.0-beta.5.0.tgz",
-    "kotii-router": "file://Users/surprise.mashele/Documents/computer-science/kotii/packages/kotii-router/kotii-router-1.0.0-beta.4.0.tgz",
+    "kotii-head": "1.0.0-beta.2.0",
+    "kotii-internal": "1.0.0-beta.5.0",
+    "kotii-router": "1.0.0-beta.4.0",
     "kotii-styled": "1.0.0-beta.11.0",
     "serialize-javascript": "^6.0.1"
   },
