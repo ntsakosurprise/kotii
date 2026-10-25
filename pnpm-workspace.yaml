@@ -13,6 +13,9 @@ allowBuilds:
   nx: true
   react-jsx-parser: false
 
+minimumReleaseAgeExclude:
+  - kotii-creation-time@1.0.0-beta.3.0
+
 overrides:
   react: ^18.2.0
   react-dom: ^18.2.0
